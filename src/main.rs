@@ -1,28 +1,25 @@
-use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
+mod handlers;
+mod models;
+mod routes;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
+use actix_web::{App, HttpServer};
+use dotenv;
+use std::env;
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
+use routes::user_routes::init;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv::from_filename(".env.local").ok();
+    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+
+    println!("Server running at http://{}:{}", host, port);
+
     HttpServer::new(|| {
-        App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+        App::new().configure(init) // Initialize routes
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(format!("{}:{}", host, port))?
     .run()
     .await
 }
