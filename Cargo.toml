@@ -5,3 +5,7 @@ edition = "2024"
 
 [dependencies]
 actix-web = "4"
+# there is a possibility to add TLS support (https://github.com/launchbadge/sqlx?tab=readme-ov-file#install)
+sqlx = { version = "0.8", features = [ "runtime-async-std" ] }
+dotenv = "0.15.0"
+serde = { version = "1.0", features = ["derive"] }
