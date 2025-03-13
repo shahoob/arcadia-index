@@ -8,9 +8,9 @@ arcadia-index is composed of two components:
 ## Developper Setup
 
 ### Required tools
-- (sqlx-cli)[https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md]
-- (cargo)[https://doc.rust-lang.org/cargo/getting-started/installation.html]
-- (docker (recommended))[https://docs.docker.com/desktop/setup/install]
+- [sqlx-cli](https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md)
+- [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
+- [docker (recommended)](https://docs.docker.com/desktop/setup/install)
 
 ### Env
 Copy `.env` to `.env.local`
