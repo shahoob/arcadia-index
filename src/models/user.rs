@@ -1,37 +1,37 @@
-use std::{net::IpAddr, time::Duration};
-
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+use sqlx::prelude::FromRow;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
-    pub id: u32,
+    pub id: i32,
     pub username: String,
     pub email: String,
     pub password_hash: String,
-    pub registered_from_ip: IpAddr,
-    pub created_at: chrono::NaiveDateTime,
+    pub registered_from_ip: String,
+    pub created_at: NaiveDateTime,
     pub description: String,
-    pub uploaded: u64,
-    pub downloaded: u64,
+    pub uploaded: i64,
+    pub downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
-    pub last_seen: chrono::NaiveDateTime,
+    pub last_seen: NaiveDateTime,
     pub class: String,
-    pub forum_posts: u32,
-    pub forum_threads: u32,
-    pub group_comments: u32,
-    pub torrent_comments: u32,
-    pub request_comments: u32,
-    pub artist_comments: u64,
-    pub seeding: u32,
-    pub leeching: u32,
-    pub snatched: u32,
-    pub seeding_size: u64,
-    pub requests_filled: u64,
-    pub collages_started: u64,
-    pub requests_voted: u64,
-    pub average_seeding_time: Duration,
-    pub invited: u64,
+    pub forum_posts: i32,
+    pub forum_threads: i32,
+    pub group_comments: i32,
+    pub torrent_comments: i32,
+    pub request_comments: i32,
+    pub artist_comments: i64,
+    pub seeding: i32,
+    pub leeching: i32,
+    pub snatched: i32,
+    pub seeding_size: i64,
+    pub requests_filled: i64,
+    pub collages_started: i64,
+    pub requests_voted: i64,
+    pub average_seeding_time: i64, //in seconds
+    pub invited: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

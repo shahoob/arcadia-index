@@ -1,10 +1,10 @@
 CREATE TABLE users
 (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(20) NOT NULL,
+    username VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    registered_from_ip INET NOT NULL,
+    registered_from_ip VARCHAR(15) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description TEXT NOT NULL DEFAULT '',
     uploaded BIGINT NOT NULL DEFAULT 1,
