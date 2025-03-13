@@ -2,3 +2,5 @@ target/
 docker/volumes/
 
 .env.local
+
+Cargo.lock
