@@ -29,7 +29,7 @@ CREATE TABLE users
     requests_voted BIGINT NOT NULL DEFAULT 0,
     average_seeding_time BIGINT NOT NULL DEFAULT 0,
     invited BIGINT NOT NULL DEFAULT 0,
-    invites INT NOT NULL DEFAULT 0
+    invites SMALLINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE invitations

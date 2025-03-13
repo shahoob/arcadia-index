@@ -3,12 +3,13 @@ Arcadia's backend
 
 ## Setup
 
-Copy `.env` to `.env.local` and replace the values with yours
+- Copy `.env` to `.env.local` and replace the values with yours
 
+- The `docker/` folder contains some containers to various services used by `actix-index`. Feel free to use these or substitutes
 
-### Optional
+- Create a database with the name that is specified by the env variable `POSTGRESQL_DATABASE`
 
-The `docker/` folder contains some containers to various services used by `actix-index`. Feel free to use these or a local install of them
+- install `sqlx-cli` and run the database migrations : `sqlx migrate run`
 
 
 ## Developing

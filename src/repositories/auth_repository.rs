@@ -1,12 +1,15 @@
-use crate::models::user::{Login, Register, User};
-use actix_web::web;
+use crate::models::user::{Claims, Login, Register, User};
+use actix_web::{FromRequest, HttpRequest, dev::Payload, web};
 use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordVerifier},
 };
+use futures::future::{BoxFuture, Ready, err, ok};
+use jsonwebtoken::{DecodingKey, Validation, decode};
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use std::error::Error;
 use std::net::IpAddr;
+use std::{env, error::Error};
 
 pub async fn create_user(
     pool: &web::Data<PgPool>,
@@ -74,5 +77,45 @@ pub async fn find_user_with_password(
             };
             Err(format!("User not found").into())
         }
+    }
+}
+
+// user provider
+impl FromRequest for User {
+    type Error = actix_web::Error;
+    type Future = BoxFuture<'static, Result<Self, Self::Error>>;
+
+    fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
+        let pool = req.app_data::<PgPool>().cloned();
+        let auth_header = req.headers().get("Authorization").cloned();
+
+        Box::pin(async move {
+            if let (Some(pool), Some(auth_value)) = (pool, auth_header) {
+                if let Ok(auth_str) = auth_value.to_str() {
+                    if auth_str.starts_with("Bearer ") {
+                        let token = &auth_str[7..];
+                        let decoding_key =
+                            DecodingKey::from_secret(env::var("JWT_SECRET").unwrap().as_ref());
+                        let validation = Validation::default();
+
+                        if let Ok(token_data) = decode::<Claims>(token, &decoding_key, &validation)
+                        {
+                            let user_id = token_data.claims.sub;
+
+                            let query = "SELECT id, username, email FROM users WHERE id = $1";
+                            let user = sqlx::query_as::<_, User>(query)
+                                .bind(user_id)
+                                .fetch_one(&pool)
+                                .await;
+
+                            return user.map_err(|_| {
+                                actix_web::error::ErrorUnauthorized("User not found")
+                            });
+                        }
+                    }
+                }
+            }
+            Err(actix_web::error::ErrorUnauthorized("Invalid token"))
+        })
     }
 }
