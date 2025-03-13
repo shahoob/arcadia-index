@@ -44,7 +44,7 @@ pub struct Register {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Login {
-    pub email: String,
+    pub username: String,
     pub password: String,
     pub remember_me: bool,
 }
