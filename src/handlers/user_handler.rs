@@ -1,10 +1,3 @@
-use std::{net::IpAddr, str::FromStr, time::Duration};
-
-use actix_web::{HttpRequest, HttpResponse, web};
-use chrono::Utc;
-
-use crate::models::user::{Register, User};
-
 // pub async fn get_user(user_id: web::Data<u32>) -> HttpResponse {
 //     // For now, we'll just mock a user response.
 //     let mock_user = User {
@@ -17,6 +10,6 @@ use crate::models::user::{Register, User};
 //     HttpResponse::Ok().json(mock_user)
 // }
 
-pub async fn health_check() -> HttpResponse {
-    HttpResponse::Ok().json("API is up and running!")
-}
+// pub async fn health_check() -> HttpResponse {
+//     HttpResponse::Ok().json("API is up and running!")
+// }

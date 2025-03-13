@@ -2,7 +2,7 @@ use crate::models::user::{Login, Register, User};
 use actix_web::web;
 use argon2::{
     Argon2,
-    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
+    password_hash::{PasswordHash, PasswordVerifier},
 };
 use sqlx::PgPool;
 use std::error::Error;
@@ -14,8 +14,6 @@ pub async fn create_user(
     from_ip: &IpAddr,
     password_hash: &str,
 ) -> Result<User, Box<dyn Error>> {
-    // let user = user.into_inner();
-
     let query = r#"
         INSERT INTO users (username, email, password_hash, registered_from_ip) 
         VALUES ($1, $2, $3, $4::inet)

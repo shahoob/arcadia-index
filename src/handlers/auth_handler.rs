@@ -1,7 +1,7 @@
 use actix_web::{HttpRequest, HttpResponse, web};
 use chrono::Duration;
 use chrono::prelude::Utc;
-use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
+use jsonwebtoken::{EncodingKey, Header, encode};
 use sqlx::PgPool;
 use std::{env, net::IpAddr};
 
@@ -16,7 +16,7 @@ use crate::{
 };
 
 pub async fn register(
-    user_register: web::Json<Register>,
+    new_user: web::Json<Register>,
     pool: web::Data<PgPool>,
     req: HttpRequest,
 ) -> HttpResponse {
@@ -25,10 +25,6 @@ pub async fn register(
         .realip_remote_addr()
         .and_then(|ip| ip.parse().ok())
         .unwrap();
-
-    let new_user = Register {
-        ..user_register.into_inner()
-    };
 
     let salt = SaltString::generate(&mut OsRng);
 

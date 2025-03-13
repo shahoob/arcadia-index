@@ -32,6 +32,7 @@ pub struct User {
     pub requests_voted: i64,
     pub average_seeding_time: i64, //in seconds
     pub invited: i64,
+    pub invites: i8,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

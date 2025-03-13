@@ -28,5 +28,18 @@ CREATE TABLE users
     collages_started BIGINT NOT NULL DEFAULT 0,
     requests_voted BIGINT NOT NULL DEFAULT 0,
     average_seeding_time BIGINT NOT NULL DEFAULT 0,
-    invited BIGINT NOT NULL DEFAULT 0
+    invited BIGINT NOT NULL DEFAULT 0,
+    invites INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE invitations
+(
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL,
+    message TEXT NOT NULL,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    CONSTRAINT fk_sender FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_receiver FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 );
