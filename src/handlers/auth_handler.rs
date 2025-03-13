@@ -37,7 +37,7 @@ pub async fn register(
         .to_string();
 
     match create_user(&pool, &new_user, &client_ip, &password_hash).await {
-        Ok(user) => HttpResponse::Created().json(user),
+        Ok(user) => HttpResponse::Created().json(serde_json::json!(user)),
         Err(err) => HttpResponse::InternalServerError().json(err.to_string()),
     }
 }
