@@ -65,7 +65,9 @@ pub async fn login(pool: web::Data<PgPool>, user_login: web::Json<Login>) -> Htt
             )
             .unwrap();
 
-            HttpResponse::Ok().json(serde_json::json!(token))
+            HttpResponse::Ok().json(serde_json::json!(serde_json::json!({
+                "token": token
+            })))
         }
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()

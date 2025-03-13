@@ -1,5 +1,9 @@
 use crate::models::user::{Claims, Login, Register, User};
-use actix_web::{FromRequest, HttpRequest, dev::Payload, web};
+use actix_web::{
+    FromRequest, HttpRequest,
+    dev::Payload,
+    web::{self, Data},
+};
 use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordVerifier},
@@ -67,7 +71,7 @@ pub async fn find_user_with_password(
             {
                 Ok(result)
             } else {
-                Err("Wrong password".into())
+                Err("wrong username or password".into())
             }
         }
         Err(e) => {
@@ -86,11 +90,11 @@ impl FromRequest for User {
     type Future = BoxFuture<'static, Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
-        let pool = req.app_data::<PgPool>().cloned();
+        let pool = req.app_data::<web::Data<PgPool>>().unwrap().clone();
         let auth_header = req.headers().get("Authorization").cloned();
 
         Box::pin(async move {
-            if let (Some(pool), Some(auth_value)) = (pool, auth_header) {
+            if let Some(auth_value) = auth_header {
                 if let Ok(auth_str) = auth_value.to_str() {
                     if auth_str.starts_with("Bearer ") {
                         let token = &auth_str[7..];
@@ -102,11 +106,14 @@ impl FromRequest for User {
                         {
                             let user_id = token_data.claims.sub;
 
-                            let query = "SELECT id, username, email FROM users WHERE id = $1";
+                            let query = "SELECT * FROM users WHERE id = $1";
                             let user = sqlx::query_as::<_, User>(query)
                                 .bind(user_id)
-                                .fetch_one(&pool)
-                                .await;
+                                .fetch_one(pool.get_ref())
+                                .await
+                                .map_err(|e| {
+                                    actix_web::error::ErrorInternalServerError(e.to_string())
+                                });
 
                             return user.map_err(|_| {
                                 actix_web::error::ErrorUnauthorized("User not found")
@@ -115,7 +122,7 @@ impl FromRequest for User {
                     }
                 }
             }
-            Err(actix_web::error::ErrorUnauthorized("Invalid token"))
+            Err(actix_web::error::ErrorUnauthorized("authentication error"))
         })
     }
 }
