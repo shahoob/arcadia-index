@@ -1,9 +1,9 @@
 # arcadia-index
 Arcadia's backend
 
-Arcadia is composed of two components:
+arcadia-index is composed of two components:
 - The postgres database
-- The server
+- The web server
 
 ## Developper Setup
 
