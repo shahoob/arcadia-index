@@ -1,19 +1,35 @@
 # arcadia-index
 Arcadia's backend
 
-## Setup
+Arcadia is composed of two components:
+- The postgres database
+- The server
 
-- Copy `.env` to `.env.local` and replace the values with yours
+## Developper Setup
 
-- The `docker/` folder contains some containers to various services used by `actix-index`. Feel free to use these or substitutes
+### Required tools
+- sqlx-cli <https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md>
+- cargo <https://doc.rust-lang.org/cargo/getting-started/installation.html>
+- docker (recommended) <https://docs.docker.com/desktop/setup/install/windows-install/>
 
-- Create a database with the name that is specified by the env variable `POSTGRESQL_DATABASE`
+### Env
+Copy `.env` to `.env.local`
 
-- install `sqlx-cli` and run the database migrations : `sqlx migrate run`
+### Database
 
+The recommended method is using docker:
+```
+docker-compose -f docker/postgres.yml up -d
+sqlx migrate run
+```
 
-## Developing
-
+### Launch server
 ```
 cargo run
 ```
+
+## Database
+
+### Creating a migration file
+TODO
+
