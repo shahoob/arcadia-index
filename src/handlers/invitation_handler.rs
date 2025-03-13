@@ -9,10 +9,9 @@ use crate::{
 pub async fn send_invitation(
     invitation: web::Json<SentInvitation>,
     pool: web::Data<PgPool>,
-    user: User,
+    current_user: User,
 ) -> HttpResponse {
-    println!("{}", user.id);
-    match create_invitation(&pool, &invitation).await {
+    match create_invitation(&pool, &invitation, &current_user).await {
         Ok(user) => HttpResponse::Created().json(serde_json::json!(user)),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()

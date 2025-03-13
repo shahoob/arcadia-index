@@ -1,16 +1,11 @@
 use crate::models::user::{Claims, Login, Register, User};
-use actix_web::{
-    FromRequest, HttpRequest,
-    dev::Payload,
-    web::{self, Data},
-};
+use actix_web::{FromRequest, HttpRequest, dev::Payload, web};
 use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordVerifier},
 };
-use futures::future::{BoxFuture, Ready, err, ok};
+use futures::future::BoxFuture;
 use jsonwebtoken::{DecodingKey, Validation, decode};
-use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use std::net::IpAddr;
 use std::{env, error::Error};
@@ -84,7 +79,7 @@ pub async fn find_user_with_password(
     }
 }
 
-// user provider
+// user provider, which also acts as the auth system
 impl FromRequest for User {
     type Error = actix_web::Error;
     type Future = BoxFuture<'static, Result<Self, Self::Error>>;
