@@ -8,9 +8,9 @@ Arcadia is composed of two components:
 ## Developper Setup
 
 ### Required tools
-- sqlx-cli <https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md>
-- cargo <https://doc.rust-lang.org/cargo/getting-started/installation.html>
-- docker (recommended) <https://docs.docker.com/desktop/setup/install/windows-install/>
+- (sqlx-cli)[https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md]
+- (cargo)[https://doc.rust-lang.org/cargo/getting-started/installation.html]
+- (docker (recommended))[https://docs.docker.com/desktop/setup/install]
 
 ### Env
 Copy `.env` to `.env.local`
@@ -33,3 +33,6 @@ cargo run
 ### Creating a migration file
 TODO
 
+## Notes
+
+- The current auth mechanism relies on an actix extractor, which is the user provider. Everytime a handler accesses the current user, the authentication takes place. This might be replaced by a middleware in the future.
