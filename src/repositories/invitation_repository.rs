@@ -35,7 +35,7 @@ pub async fn create_invitation(
                 sqlx::Error::Database(db_error) => db_error.message().to_string(),
                 _ => e.to_string(),
             };
-            Err(format!("User not found").into())
+            Err(format!("could not send invite").into())
         }
     }
 }

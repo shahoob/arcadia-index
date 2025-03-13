@@ -55,7 +55,7 @@ pub async fn login(pool: web::Data<PgPool>, user_login: web::Json<Login>) -> Htt
                 expiration_date = expiration_date + Duration::days(365);
             }
             let user_claims = Claims {
-                sub: user.username,
+                sub: user.id,
                 exp: expiration_date.timestamp() as usize,
             };
             let token = encode(
