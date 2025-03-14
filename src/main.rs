@@ -14,7 +14,7 @@ use routes::routes::init;
 async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env.local").ok();
 
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
