@@ -14,9 +14,11 @@ use sqlx::prelude::FromRow;
 // To make the search faster, as this is a heavily used function of the site
 // we could have each torrent linked to their TitleGroup and MasterGroup in addition to the exising EditionGroup link
 // this is a form of denormalization, but as torrents should not change groups (unless a rare edit), it might be a good consideration
+//
+// or adding some sort of cache/search engine on top, that has the data deserialized
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct MasterGroup {
-    pub id: i64,
+    pub id: i32,
     pub name: Option<String>,
     pub name_aliases: Vec<String>,
     pub created_at: NaiveDateTime,
@@ -33,6 +35,19 @@ pub struct MasterGroup {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SimilarMasterGroups {
-    pub group_1: i64,
-    pub group_2: i64,
+    pub group_1: i32,
+    pub group_2: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct UserCreatedMasterGroup {
+    pub name: Option<String>,
+    pub name_aliases: Vec<String>,
+    pub description: String,
+    pub original_language: String,
+    pub country_from: String,
+    pub covers: Option<Vec<String>>,
+    pub banners: Option<Vec<String>>,
+    pub fan_arts: Option<Vec<String>>,
+    pub category: i32,
 }
