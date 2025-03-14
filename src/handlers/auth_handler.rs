@@ -3,7 +3,7 @@ use chrono::Duration;
 use chrono::prelude::Utc;
 use jsonwebtoken::{EncodingKey, Header, encode};
 use sqlx::PgPool;
-use std::{env, net::IpAddr};
+use std::{collections::HashMap, env, net::IpAddr};
 
 use argon2::{
     Argon2,
@@ -11,15 +11,47 @@ use argon2::{
 };
 
 use crate::{
-    models::user::{Claims, Login, Register},
-    repositories::auth_repository::{create_user, find_user_with_password},
+    models::{
+        invitation::Invitation,
+        user::{Claims, Login, Register},
+    },
+    repositories::{
+        auth_repository::{create_user, find_user_with_password},
+        invitation_repository::does_invitation_exist,
+    },
 };
 
 pub async fn register(
     new_user: web::Json<Register>,
     pool: web::Data<PgPool>,
     req: HttpRequest,
+    query: web::Query<HashMap<String, String>>,
 ) -> HttpResponse {
+    let invitation: Invitation;
+    let open_signups = env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true";
+    if !open_signups {
+        let invitation_key = query
+            .get("invitation_key")
+            .expect("invitation key not found in query");
+        match does_invitation_exist(&pool, &invitation_key).await {
+            Ok(invitation_found) => {
+                if invitation_found.receiver_id.is_some() {
+                    return HttpResponse::InternalServerError().json(serde_json::json!({
+                        "error": "invitation already used"
+                    }));
+                }
+                invitation = invitation_found
+            }
+            Err(err) => {
+                return HttpResponse::InternalServerError().json(serde_json::json!({
+                    "error": err.to_string()
+                }));
+            }
+        }
+    } else {
+        invitation = Invitation::default();
+    }
+
     let client_ip: IpAddr = req
         .connection_info()
         .realip_remote_addr()
@@ -37,7 +69,16 @@ pub async fn register(
         .unwrap()
         .to_string();
 
-    match create_user(&pool, &new_user, &client_ip, &password_hash).await {
+    match create_user(
+        &pool,
+        &new_user,
+        &client_ip,
+        &password_hash,
+        &invitation,
+        &open_signups,
+    )
+    .await
+    {
         Ok(user) => HttpResponse::Created().json(serde_json::json!(user)),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()

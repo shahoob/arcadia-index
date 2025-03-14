@@ -1,4 +1,7 @@
-use crate::models::user::{Claims, Login, Register, User};
+use crate::models::{
+    invitation::{self, Invitation},
+    user::{Claims, Login, Register, User},
+};
 use actix_web::{FromRequest, HttpRequest, dev::Payload, web};
 use argon2::{
     Argon2,
@@ -15,14 +18,16 @@ pub async fn create_user(
     user: &Register,
     from_ip: &IpAddr,
     password_hash: &str,
+    invitation: &Invitation,
+    open_signups: &bool,
 ) -> Result<User, Box<dyn Error>> {
-    let query = r#"
+    let create_user_query = r#"
         INSERT INTO users (username, email, password_hash, registered_from_ip) 
         VALUES ($1, $2, $3, $4::inet)
         RETURNING *
     "#;
 
-    let result = sqlx::query_as::<_, User>(query)
+    let registered_user = sqlx::query_as::<_, User>(create_user_query)
         .bind(&user.username)
         .bind(&user.email)
         .bind(password_hash)
@@ -30,8 +35,23 @@ pub async fn create_user(
         .fetch_one(pool.get_ref())
         .await;
 
-    match result {
-        Ok(_) => Ok(result.unwrap()),
+    match registered_user {
+        Ok(_) => {
+            let registered_user = registered_user.unwrap();
+            if !*open_signups {
+                let assign_invitation_query = r#"
+                UPDATE invitations SET receiver_id = $1 WHERE id = $2;
+                "#;
+
+                let result = sqlx::query(assign_invitation_query)
+                    .bind(&registered_user.id)
+                    .bind(&invitation.id)
+                    .execute(pool.get_ref())
+                    .await;
+            }
+
+            Ok(registered_user)
+        }
         Err(e) => {
             let error_message = match e {
                 sqlx::Error::Database(db_error) => db_error.message().to_string(),

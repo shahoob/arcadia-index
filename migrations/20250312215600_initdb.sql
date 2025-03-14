@@ -29,7 +29,7 @@ CREATE TABLE users
     requests_voted BIGINT NOT NULL DEFAULT 0,
     average_seeding_time BIGINT NOT NULL DEFAULT 0,
     invited BIGINT NOT NULL DEFAULT 0,
-    invites SMALLINT NOT NULL DEFAULT 0
+    invitations SMALLINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE invitations
@@ -37,9 +37,9 @@ CREATE TABLE invitations
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMP NOT NULL,
+    invitation_key VARCHAR(50) NOT NULL,
     message TEXT NOT NULL,
-    sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
-    CONSTRAINT fk_sender FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_receiver FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    sender_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiver_email VARCHAR(255) NOT NULL,
+    receiver_id INT REFERENCES users(id) ON DELETE SET NULL
 );
