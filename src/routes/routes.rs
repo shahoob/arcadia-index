@@ -3,6 +3,8 @@ use actix_web::web;
 use crate::handlers::{
     auth_handler::{login, register},
     invitation_handler::send_invitation,
+    master_group_handler::add_master_group,
+    // torrent_handler::upload_torrent,
 };
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -12,6 +14,8 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/login", web::post().to(login))
             // these routes should be protected
             // they are protected as soon as we access the user struct in the handler
-            .route("/invitation", web::post().to(send_invitation)),
+            .route("/invitation", web::post().to(send_invitation))
+            // .route("/torrent", web::post().to(upload_torrent))
+            .route("/master-group", web::post().to(add_master_group)),
     );
 }

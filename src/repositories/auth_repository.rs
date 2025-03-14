@@ -1,5 +1,5 @@
 use crate::models::{
-    invitation::{self, Invitation},
+    invitation::Invitation,
     user::{Claims, Login, Register, User},
 };
 use actix_web::{FromRequest, HttpRequest, dev::Payload, web};
