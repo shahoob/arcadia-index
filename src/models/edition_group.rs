@@ -18,8 +18,8 @@ pub struct EditionGroup {
     pub updated_at: NaiveDateTime,
     pub created_by: i32,
     pub description: Option<String>, // specific to the edition
-    pub distributor: Option<i32>, // web: [web stores/distributors], physical: [shop if specific edition ?]
-    pub cover: Vec<String>,
+    pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
+    pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
     pub language: Option<String>,    // (fallback to original language) (english, french, etc.)
     pub source: String, //(dvd, web, bluray, hdtv, scanned book, digital book, cd, vinyl etc.)
@@ -30,12 +30,12 @@ pub struct UserCreatedEditionGroup {
     pub name: String,
     pub release_date: NaiveDateTime,
     pub description: Option<String>,
-    pub distributor: Option<i32>,
-    pub cover: Vec<String>,
+    pub distributor: Option<String>,
+    pub covers: Vec<String>,
     pub external_links: Vec<String>,
     pub language: Option<String>,
     pub source: String,
     // one of them should be given
     pub title_group_id: Option<i32>,
-    pub title_group: Option<UserCreatedTitleGroup>,
+    // pub title_group: Option<UserCreatedTitleGroup>,
 }

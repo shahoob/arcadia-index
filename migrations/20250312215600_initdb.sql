@@ -107,11 +107,31 @@ CREATE TABLE edition_groups (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,
     description TEXT,
-    distributor BIGINT,
-    cover TEXT[] NOT NULL,
+    distributor VARCHAR(255),
+    covers TEXT[] NOT NULL,
     external_links TEXT[] NOT NULL,
     language TEXT,
     source TEXT NOT NULL,
     FOREIGN KEY (title_group) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE torrents (
+    id SERIAL PRIMARY KEY,
+    edition_group INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_by INT NOT NULL,
+    release_name VARCHAR(500), -- maybe change the size
+    release_group VARCHAR(30) NOT NULL, 
+    description TEXT,
+    file_amount_per_type JSONB NOT NULL,
+    uploaded_as_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
+    file_list VARCHAR(255)[] NOT NULL,  -- maybe change the size to the max length of a file name in a torrent
+    mediainfo TEXT NOT NULL,
+    trumpable TEXT,
+    staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
+    size BIGINT NOT NULL, -- in bytes
+    FOREIGN KEY (edition_group) REFERENCES edition_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 );

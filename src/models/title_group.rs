@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::FromRow;
+use serde_json::Value;
+use sqlx::{prelude::FromRow, types::Json};
 
 use super::master_group::UserCreatedMasterGroup;
 
@@ -21,12 +22,12 @@ pub struct TitleGroup {
     pub country_from: String,
     pub covers: Option<Vec<String>>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
-    pub embedded_links: Option<HashMap<String, String>>, // {name: link} (trailer, preview, etc.)
+    pub embedded_links: Option<Json<Value>>, // {name: link} (trailer, preview, etc.)
     // pub main_artists
     // pub artists_affiliated (multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
     pub category: i32, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub public_ratings: Option<HashMap<String, String>>, // {service: rating}
+    pub public_ratings: Option<Json<Value>>, // {service: rating}
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -44,13 +45,13 @@ pub struct UserCreatedTitleGroup {
     pub country_from: String,
     pub covers: Option<Vec<String>>,
     pub external_links: Vec<String>,
-    pub embedded_links: Option<HashMap<String, String>>,
+    pub embedded_links: Option<Json<Value>>,
     // pub main_artists
     // pub artists_affiliated (multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
     pub category: i32, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub public_ratings: Option<HashMap<String, String>>,
+    pub public_ratings: Option<Json<Value>>,
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i32>,
-    pub master_group: Option<UserCreatedMasterGroup>,
+    // pub master_group: Option<UserCreatedMasterGroup>,
 }
