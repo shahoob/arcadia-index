@@ -79,6 +79,8 @@ pub async fn create_torrent(
         .fetch_one(pool.get_ref())
         .await;
 
+    // TODO: edit the torrent file with proper flags, remove announce url and store it to the disk
+
     match uploaded_torrent {
         Ok(_) => Ok(uploaded_torrent.unwrap()),
         Err(e) => {
