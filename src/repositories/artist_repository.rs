@@ -1,15 +1,10 @@
-use std::error::Error;
-
-use actix_web::web;
-
-use sqlx::PgPool;
-
 use crate::models::{
     artist::{Artist, UserCreatedArtist},
-    edition_group::{EditionGroup, UserCreatedEditionGroup},
-    title_group::{TitleGroup, UserCreatedTitleGroup},
     user::User,
 };
+use actix_web::web;
+use sqlx::PgPool;
+use std::error::Error;
 
 pub async fn create_artist(
     pool: &web::Data<PgPool>,

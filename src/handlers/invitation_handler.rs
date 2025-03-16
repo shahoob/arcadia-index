@@ -1,10 +1,9 @@
-use actix_web::{HttpResponse, web};
-use sqlx::PgPool;
-
 use crate::{
     models::{invitation::SentInvitation, user::User},
     repositories::invitation_repository::create_invitation,
 };
+use actix_web::{HttpResponse, web};
+use sqlx::PgPool;
 
 pub async fn send_invitation(
     invitation: web::Json<SentInvitation>,

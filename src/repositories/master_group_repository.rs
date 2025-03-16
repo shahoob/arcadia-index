@@ -1,16 +1,10 @@
-use std::error::Error;
-
-use actix_web::web;
-use rand::{
-    distr::{Alphanumeric, SampleString},
-    rng,
-};
-use sqlx::PgPool;
-
 use crate::models::{
     master_group::{MasterGroup, UserCreatedMasterGroup},
     user::User,
 };
+use actix_web::web;
+use sqlx::PgPool;
+use std::error::Error;
 
 pub async fn create_master_group(
     pool: &web::Data<PgPool>,

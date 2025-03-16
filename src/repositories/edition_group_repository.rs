@@ -1,14 +1,10 @@
-use std::error::Error;
-
-use actix_web::web;
-
-use sqlx::PgPool;
-
 use crate::models::{
     edition_group::{EditionGroup, UserCreatedEditionGroup},
-    title_group::{TitleGroup, UserCreatedTitleGroup},
     user::User,
 };
+use actix_web::web;
+use sqlx::PgPool;
+use std::error::Error;
 
 pub async fn create_edition_group(
     pool: &web::Data<PgPool>,
