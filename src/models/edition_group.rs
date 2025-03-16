@@ -2,8 +2,6 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 
-use super::title_group::UserCreatedTitleGroup;
-
 // This represents encodes/transcodes of the same edition.
 // All the torrents in it originate from the same source.
 // It is independant people that produced multiple encodes/transcodes alongside the original one(s).

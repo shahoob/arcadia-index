@@ -26,6 +26,17 @@ pub struct Torrent {
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
     pub size: i64, // in bytes
+    // ---- audio
+    pub duration: i32, // in seconds
+    pub audio_codec: String,
+    pub audio_bitrate: i32, // in kb/s
+    pub audio_channels: String,
+    // ---- audio
+    // ---- video
+    pub video_codec: String,
+    pub features: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<String>>,
+    // ---- video
 }
 
 #[derive(Debug, MultipartForm, FromRow)]
@@ -39,4 +50,15 @@ pub struct UploadedTorrent {
     // one of them should be given
     pub edition_group_id: Text<i32>,
     // pub edition_group: Option<UserCreatedEditionGroup>,
+    // ---- audio
+    pub duration: Text<i32>, // in seconds
+    pub audio_codec: Text<String>,
+    pub audio_bitrate: Text<i32>, // in kb/s
+    pub audio_channels: Text<String>,
+    // ---- audio
+    // ---- video
+    pub video_codec: Text<String>,
+    pub features: Option<Text<Vec<String>>>,
+    pub subtitle_languages: Option<Text<Vec<String>>>,
+    // ---- video
 }

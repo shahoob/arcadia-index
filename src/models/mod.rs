@@ -1,3 +1,4 @@
+pub mod artist;
 pub mod category;
 pub mod edition_group;
 pub mod invitation;

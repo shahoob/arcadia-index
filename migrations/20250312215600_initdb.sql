@@ -44,20 +44,44 @@ CREATE TABLE invitations
     receiver_id INT REFERENCES users(id) ON DELETE SET NULL
 );
 
+CREATE TABLE artist (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    pictures TEXT[],
+    title_groups_amount INT NOT NULL DEFAULT 0,
+    edition_groups_amount INT NOT NULL DEFAULT 0,
+    torrents_amount INT NOT NULL DEFAULT 0,
+    seeders_amount INT NOT NULL DEFAULT 0,
+    leechers_amount INT NOT NULL DEFAULT 0,
+    snatches_amount INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE similar_artists (
+    artist_1 INT NOT NULL,
+    artist_2 INT NOT NULL,
+
+    PRIMARY KEY (artist_1, artist_2),
+    FOREIGN KEY (artist_1) REFERENCES artist(id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_2) REFERENCES artist(id) ON DELETE CASCADE,
+);
+
 CREATE TABLE master_groups (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
-    name_aliases TEXT[],
+    name_aliases VARCHAR(255)[],
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,
     description TEXT NOT NULL,
-    original_language TEXT NOT NULL,
-    country_from TEXT NOT NULL,
+    original_language VARCHAR(50) NOT NULL,
+    country_from VARCHAR(50) NOT NULL,
     covers TEXT[],
     banners TEXT[],
     fan_arts TEXT[],
     category INT NOT NULL,
+    content_type ENUM('Movie', 'TV-Show', 'Music', 'Game', 'Book', 'SiteRip') NOT NULL,
+    tags VARCHAR(50) NOT NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
@@ -80,6 +104,8 @@ CREATE TABLE title_groups (
     created_by INT NOT NULL,
     description TEXT NOT NULL,
     original_language TEXT NOT NULL,
+    original_release_date TIMESTAMP NOT NULL,
+    tagline TEXT,
     country_from TEXT NOT NULL,
     covers TEXT[],
     external_links TEXT[] NOT NULL,
@@ -98,6 +124,16 @@ CREATE TABLE similar_title_groups (
     FOREIGN KEY (group_2) REFERENCES title_groups(id) ON DELETE CASCADE
 );
 
+CREATE TABLE affiliated_artist (
+    title_group INT NOT NULL,
+    artist INT NOT NULL,
+    status TEXT NOT NULL,
+    nickname TEXT,
+
+    FOREIGN KEY (title_group) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (artist) REFERENCES artists(id) ON DELETE CASCADE
+);
+
 CREATE TABLE edition_groups (
     id SERIAL PRIMARY KEY,
     title_group INT NOT NULL,
@@ -111,7 +147,10 @@ CREATE TABLE edition_groups (
     covers TEXT[] NOT NULL,
     external_links TEXT[] NOT NULL,
     language TEXT,
-    source TEXT NOT NULL,
+    source 
+        ENUM('CD', 'DVD5', 'DVD9', 'Vinyl', 'Web', 'Soundboard', 'SACD', 'DAT', 'Cassette', 'Blu-Ray'
+        'LaserDisc', 'HD-DVD', 'HDTV', 'PDTV', 'TV', 'VHS', 'Mixed', 'Physical-Book') 
+        NOT NULL, -- for web: if it is a DL or a RIP should be specified at the torrent level
     FOREIGN KEY (title_group) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 );
@@ -134,4 +173,24 @@ CREATE TABLE torrents (
     size BIGINT NOT NULL, -- in bytes
     FOREIGN KEY (edition_group) REFERENCES edition_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    -- audio
+    duration INT NOT NULL, -- in seconds
+    audio_codec 
+        ENUM('mp2', 'mp3', 'aac', 'ac3', 'dts', 'flac', 
+        'pcm', 'true-hd', 'opus', 'dsd')
+    NOT NULL,
+    audio_bitrate INT NOT NULL, -- in kb/s, taken from mediainfo
+    audio_bitrate_sampling 
+        ENUM('192', '256', '320', 'APS (VBR)', 'V2 (VBR)', 'V1 (VBR)', 'APX (VBR)', 'V0 (VBR)',
+        'Lossless', '24bit Lossless', 'DSD64', 'DSD128', 'DSD256', 'DSD512', 'other');
+    audio_channels TEXT NOT NULL,
+    -- audio
+    -- video
+    video_codec 
+        ENUM('mpeg1', 'mpeg2', 'Xvid', 'divX', 'h264', 'h265', 'vc-1', 'vp9', 'BD50', 'UHD100') 
+    NOT NULL,
+    features 
+        ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D'),
+    subtitle_languages VARCHAR(20)[],
+    -- video
 );
