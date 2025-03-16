@@ -68,8 +68,6 @@ pub async fn create_torrent(
         .map(|file| file.length())
         .sum::<u64>() as i64;
 
-    println!("{:#?}", (torrent_form.features));
-
     let uploaded_torrent = sqlx::query_as::<_, Torrent>(create_torrent_query)
         .bind(&torrent_form.edition_group_id.0)
         .bind(&current_user.id)

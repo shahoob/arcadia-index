@@ -1,3 +1,4 @@
+pub mod artist_handler;
 pub mod auth_handler;
 pub mod edition_group_handler;
 pub mod invitation_handler;
