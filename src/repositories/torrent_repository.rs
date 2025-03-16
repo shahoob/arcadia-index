@@ -32,19 +32,28 @@ pub async fn create_torrent(
 
     let metainfo =
         Metainfo::from_bytes::<Vec<u8>>(torrent_form.torrent_file.data.clone().into()).unwrap();
-    let file_list = metainfo
-        .info()
+    // let file_list = metainfo
+    //     .info()
+    //     .files()
+    //     .map(|file| {
+    //         let dir = metainfo.info().directory();
+    //         let file_path = file.path().to_str().unwrap();
+    //         if !dir.is_none() {
+    //             format!("{}/{}", dir.unwrap().to_str().unwrap(), file_path)
+    //         } else {
+    //             file_path.to_string()
+    //         }
+    //     })
+    //     .collect::<Vec<String>>();
+
+    let info = metainfo.info();
+    let parent_folder = info.directory().map(|d| d.to_str().unwrap()).unwrap_or("");
+    let files = info
         .files()
-        .map(|file| {
-            let dir = metainfo.info().directory();
-            let file_path = file.path().to_str().unwrap();
-            if !dir.is_none() {
-                format!("{}/{}", dir.unwrap().to_str().unwrap(), file_path)
-            } else {
-                file_path.to_string()
-            }
-        })
-        .collect::<Vec<String>>();
+        .map(|f| json!({"name": f.path().to_str().unwrap(), "size": f.length()}))
+        .collect::<Vec<_>>();
+
+    let file_list = json!({"parent_folder": parent_folder, "files": files});
 
     let file_amount_per_type = json!(
         metainfo
