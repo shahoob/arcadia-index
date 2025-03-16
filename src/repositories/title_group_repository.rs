@@ -15,8 +15,8 @@ pub async fn create_title_group(
     current_user: &User,
 ) -> Result<TitleGroup, Box<dyn Error>> {
     let create_title_group_query = r#"
-        INSERT INTO title_groups (master_group,name,name_aliases,created_by,description,original_language,country_from,covers,external_links,embedded_links,category,public_ratings) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        INSERT INTO title_groups (master_group,name,name_aliases,created_by,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::content_type_enum, $13, $14, $15)
         RETURNING *;
     "#;
 
@@ -32,7 +32,11 @@ pub async fn create_title_group(
         .bind(&title_group_form.external_links)
         .bind(&title_group_form.embedded_links)
         .bind(&title_group_form.category)
-        .bind(&title_group_form.public_ratings)
+        .bind(&title_group_form.content_type)
+        .bind(&title_group_form.original_release_date)
+        .bind(&title_group_form.tags)
+        .bind(&title_group_form.tagline)
+        // .bind(&title_group_form.public_ratings)
         .fetch_one(pool.get_ref())
         .await;
 

@@ -2,12 +2,13 @@ use std::{error::Error, fs::File, io::Read};
 
 use actix_web::{dev::ResourcePath, web};
 use bip_metainfo::Metainfo;
+use std::str::FromStr;
 
 use serde_json::json;
 use sqlx::PgPool;
 
 use crate::models::{
-    torrent::{Torrent, UploadedTorrent},
+    torrent::{Features, Torrent, UploadedTorrent},
     user::User,
 };
 
@@ -20,11 +21,15 @@ pub async fn create_torrent(
     INSERT INTO torrents (
         edition_group, created_by, release_name, 
         release_group, description, file_amount_per_type, uploaded_as_anonymous, 
-        file_list, mediainfo, trumpable, staff_checked, size
+        file_list, mediainfo, trumpable, staff_checked, size,
+        duration, audio_codec, audio_bitrate, audio_bitrate_sampling,
+        audio_channels, video_codec, features, subtitle_languages
     ) VALUES (
         $1, $2, $3, 
         $4, $5, $6, $7, 
-        $8, $9, $10, $11, $12
+        $8, $9, $10, $11, $12,
+        $13, $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
+        $17, $18::video_codec_enum, $19::features_enum[], $20
     ) RETURNING *;
     "#;
 
@@ -63,6 +68,8 @@ pub async fn create_torrent(
         .map(|file| file.length())
         .sum::<u64>() as i64;
 
+    println!("{:#?}", (torrent_form.features));
+
     let uploaded_torrent = sqlx::query_as::<_, Torrent>(create_torrent_query)
         .bind(&torrent_form.edition_group_id.0)
         .bind(&current_user.id)
@@ -76,6 +83,28 @@ pub async fn create_torrent(
         .bind(&trumpable)
         .bind(&false)
         .bind(&size)
+        .bind(&*torrent_form.duration)
+        .bind(&*torrent_form.audio_codec)
+        .bind(&*torrent_form.audio_bitrate)
+        .bind(&*torrent_form.audio_bitrate_sampling)
+        .bind(&*torrent_form.audio_channels)
+        .bind(&*torrent_form.video_codec)
+        .bind(
+            &torrent_form
+                .features
+                .0
+                .split(',')
+                .map(|f| Features::from_str(f).ok().unwrap())
+                .collect::<Vec<Features>>(),
+        )
+        .bind(
+            &torrent_form
+                .subtitle_languages
+                .0
+                .split(',')
+                .map(|f| f.trim())
+                .collect::<Vec<&str>>(),
+        )
         .fetch_one(pool.get_ref())
         .await;
 
@@ -89,7 +118,7 @@ pub async fn create_torrent(
                 sqlx::Error::Database(db_error) => db_error.message().to_string(),
                 _ => e.to_string(),
             };
-            Err(format!("could not send invite").into())
+            Err(format!("could not create torrent").into())
         }
     }
 }

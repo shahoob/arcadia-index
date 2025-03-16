@@ -2,6 +2,32 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 
+#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
+#[sqlx(type_name = "source_enum")]
+pub enum Source {
+    CD,
+    DVD5,
+    DVD9,
+    Vinyl,
+    Web,
+    Soundboard,
+    SACD,
+    DAT,
+    Cassette,
+    #[sqlx(rename = "Blu-Ray")]
+    BluRay,
+    LaserDisc,
+    #[sqlx(rename = "HD-DVD")]
+    HDDVD,
+    HDTV,
+    PDTV,
+    TV,
+    VHS,
+    Mixed,
+    #[sqlx(rename = "Physical-Book")]
+    PhysicalBook,
+}
+
 // This represents encodes/transcodes of the same edition.
 // All the torrents in it originate from the same source.
 // It is independant people that produced multiple encodes/transcodes alongside the original one(s).
@@ -20,7 +46,7 @@ pub struct EditionGroup {
     pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
     pub language: Option<String>,    // (fallback to original language) (english, french, etc.)
-    pub source: String, //(dvd, web, bluray, hdtv, scanned book, digital book, cd, vinyl etc.)
+    pub source: Source,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
@@ -32,7 +58,7 @@ pub struct UserCreatedEditionGroup {
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
     pub language: Option<String>,
-    pub source: String,
+    pub source: Source,
     // one of them should be given
     pub title_group_id: Option<i32>,
     // pub title_group: Option<UserCreatedTitleGroup>,

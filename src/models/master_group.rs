@@ -30,7 +30,8 @@ pub struct MasterGroup {
     pub covers: Option<Vec<String>>,
     pub banners: Option<Vec<String>>,
     pub fan_arts: Option<Vec<String>>,
-    pub category: i32, // ((book: self-help, fiction), (Games: single player, multi)))
+    pub category: Option<String>,
+    pub tags: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -49,5 +50,6 @@ pub struct UserCreatedMasterGroup {
     pub covers: Option<Vec<String>>,
     pub banners: Option<Vec<String>>,
     pub fan_arts: Option<Vec<String>>,
-    pub category: i32,
+    pub category: Option<String>,
+    pub tags: Vec<String>,
 }
