@@ -1,16 +1,13 @@
-use std::{error::Error, fs::File, io::Read};
-
-use actix_web::{dev::ResourcePath, web};
-use bip_metainfo::Metainfo;
-use std::str::FromStr;
-
-use serde_json::json;
-use sqlx::PgPool;
-
 use crate::models::{
     torrent::{Features, Torrent, UploadedTorrent},
     user::User,
 };
+use actix_web::web;
+use bip_metainfo::Metainfo;
+use serde_json::json;
+use sqlx::PgPool;
+use std::error::Error;
+use std::str::FromStr;
 
 pub async fn create_torrent(
     pool: &web::Data<PgPool>,

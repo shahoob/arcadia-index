@@ -1,15 +1,3 @@
-use actix_web::{HttpRequest, HttpResponse, web};
-use chrono::Duration;
-use chrono::prelude::Utc;
-use jsonwebtoken::{EncodingKey, Header, encode};
-use sqlx::PgPool;
-use std::{collections::HashMap, env, net::IpAddr};
-
-use argon2::{
-    Argon2,
-    password_hash::{PasswordHasher, SaltString, rand_core::OsRng},
-};
-
 use crate::{
     models::{
         invitation::Invitation,
@@ -20,6 +8,16 @@ use crate::{
         invitation_repository::does_invitation_exist,
     },
 };
+use actix_web::{HttpRequest, HttpResponse, web};
+use argon2::{
+    Argon2,
+    password_hash::{PasswordHasher, SaltString, rand_core::OsRng},
+};
+use chrono::Duration;
+use chrono::prelude::Utc;
+use jsonwebtoken::{EncodingKey, Header, encode};
+use sqlx::PgPool;
+use std::{collections::HashMap, env, net::IpAddr};
 
 pub async fn register(
     new_user: web::Json<Register>,

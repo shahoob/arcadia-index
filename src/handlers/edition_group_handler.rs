@@ -1,10 +1,9 @@
-use actix_web::{HttpResponse, web};
-use sqlx::PgPool;
-
 use crate::{
     models::{edition_group::UserCreatedEditionGroup, user::User},
     repositories::edition_group_repository::create_edition_group,
 };
+use actix_web::{HttpResponse, web};
+use sqlx::PgPool;
 
 pub async fn add_edition_group(
     form: web::Json<UserCreatedEditionGroup>,

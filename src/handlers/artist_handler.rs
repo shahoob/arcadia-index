@@ -1,10 +1,9 @@
+use crate::{
+    models::{artist::UserCreatedArtist, user::User},
+    repositories::artist_repository::create_artist,
+};
 use actix_web::{HttpResponse, web};
 use sqlx::PgPool;
-
-use crate::{
-    models::{artist::UserCreatedArtist, torrent::UploadedTorrent, user::User},
-    repositories::{artist_repository::create_artist, torrent_repository::create_torrent},
-};
 
 pub async fn add_artist(
     artist: web::Json<UserCreatedArtist>,

@@ -1,10 +1,9 @@
-use actix_web::{HttpResponse, web};
-use sqlx::PgPool;
-
 use crate::{
     models::{master_group::UserCreatedMasterGroup, user::User},
     repositories::master_group_repository::create_master_group,
 };
+use actix_web::{HttpResponse, web};
+use sqlx::PgPool;
 
 pub async fn add_master_group(
     form: web::Json<UserCreatedMasterGroup>,
