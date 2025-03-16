@@ -115,7 +115,7 @@ pub struct Torrent {
     pub description: Option<String>,       // specific to the torrent
     pub file_amount_per_type: Json<Value>, // (5 mp3, 1 log, 5 jpg, etc.)
     pub uploaded_as_anonymous: bool,
-    pub file_list: Vec<String>,
+    pub file_list: Json<Value>,
     pub mediainfo: String,
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
