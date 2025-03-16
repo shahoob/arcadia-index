@@ -1,3 +1,4 @@
+pub mod artist_repository;
 pub mod auth_repository;
 pub mod edition_group_repository;
 pub mod invitation_repository;

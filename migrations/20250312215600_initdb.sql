@@ -49,12 +49,14 @@ CREATE TABLE artists (
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     pictures TEXT[],
+    created_by INT,
     title_groups_amount INT NOT NULL DEFAULT 0,
     edition_groups_amount INT NOT NULL DEFAULT 0,
     torrents_amount INT NOT NULL DEFAULT 0,
     seeders_amount INT NOT NULL DEFAULT 0,
     leechers_amount INT NOT NULL DEFAULT 0,
-    snatches_amount INT NOT NULL DEFAULT 0
+    snatches_amount INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE similar_artists (
