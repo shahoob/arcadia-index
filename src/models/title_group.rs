@@ -49,11 +49,22 @@ pub struct SimilarTitleGroups {
     pub group_2: i32,
 }
 
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct AffiliatedArtist {
     pub title_group: i32,
     pub artist: i32,
     pub status: String,
     pub nickname: Option<String>, // for example: name of the character the actor is playing
+    pub created_at: NaiveDateTime,
+    pub created_by: i32,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UserCreatedAffiliatedArtist {
+    pub title_group_id: i32,
+    pub artist_id: i32,
+    pub status: String,
+    pub nickname: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
@@ -73,6 +84,7 @@ pub struct UserCreatedTitleGroup {
     pub tags: Vec<String>,
     pub tagline: Option<String>,
     pub original_release_date: NaiveDateTime,
+    pub affiliated_artists: Vec<Json<Value>>,
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i32>,
     // pub master_group: Option<UserCreatedMasterGroup>,

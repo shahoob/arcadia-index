@@ -133,9 +133,12 @@ CREATE TABLE affiliated_artists (
     artist INT NOT NULL,
     status TEXT NOT NULL,
     nickname TEXT,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
     FOREIGN KEY (title_group) REFERENCES title_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (artist) REFERENCES artists(id) ON DELETE CASCADE
+    FOREIGN KEY (artist) REFERENCES artists(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- for web: if it is a DL or a RIP should be specified at the torrent level
