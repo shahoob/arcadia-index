@@ -1,7 +1,7 @@
 use actix_web::web;
 
 use crate::handlers::{
-    artist_handler::add_artist,
+    artist_handler::{add_affiliated_artists, add_artist},
     auth_handler::{login, register},
     edition_group_handler::add_edition_group,
     invitation_handler::send_invitation,
@@ -23,6 +23,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/title-group", web::post().to(add_title_group))
             .route("/edition-group", web::post().to(add_edition_group))
             .route("/torrent", web::post().to(upload_torrent))
-            .route("/artist", web::post().to(add_artist)),
+            .route("/artist", web::post().to(add_artist))
+            .route(
+                "/affiliated-artists",
+                web::post().to(add_affiliated_artists),
+            ),
     );
 }
