@@ -41,6 +41,7 @@ pub struct TitleGroup {
     pub content_type: ContentType, // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub public_ratings: Option<Json<Value>>, // {service: rating}
+    pub serie: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -85,6 +86,7 @@ pub struct UserCreatedTitleGroup {
     pub tagline: Option<String>,
     pub original_release_date: NaiveDateTime,
     pub affiliated_artists: Vec<Json<Value>>,
+    pub serie: Option<i32>,
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i32>,
     // pub master_group: Option<UserCreatedMasterGroup>,
