@@ -4,9 +4,8 @@ use sqlx::prelude::FromRow;
 
 // TODO: This is a temporary doc, move it to a proper documentation when made
 // MasterGroups are optional depending on the type of content
-// They are not used for : Music, Movies, Books
+// They are not used for : Music, Movies, Books, TV Shows
 // They are used for :
-//   - TV Shows (master group = series, group = season)
 //   - Games (master group = game, title group = platform)
 //
 // When they are used, SimilarMasterGroups should be favored over SimilarTitleGroups for similarities/recommendations
