@@ -116,8 +116,10 @@ CREATE TABLE title_groups (
     category INT NOT NULL,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
+    serie INT,
     FOREIGN KEY (master_group) REFERENCES master_groups(id) ON DELETE SET NULL,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (serie) REFERENCES series(id) ON DELETE SET NULL,
 );
 
 CREATE TABLE similar_title_groups (
@@ -197,4 +199,16 @@ CREATE TABLE torrents (
     features features_enum[],
     subtitle_languages VARCHAR(20)[]
     -- video
+);
+
+CREATE TABLE series (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    tags VARCHAR(255)[],
+    covers TEXT[],
+    fanarts TEXT[],
+    banners TEXT[],
+    created_by INT,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
