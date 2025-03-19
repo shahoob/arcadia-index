@@ -71,18 +71,18 @@ CREATE TABLE similar_artists (
 CREATE TABLE master_groups (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
-    name_aliases VARCHAR(255)[],
+    -- name_aliases VARCHAR(255)[],
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,
-    description TEXT NOT NULL,
-    original_language VARCHAR(50) NOT NULL,
-    country_from VARCHAR(50) NOT NULL,
-    tags VARCHAR(50)[] NOT NULL,
-    category VARCHAR(25), -- should only be used for TV-Shows (scripted, reality-tv, etc.)
-    covers TEXT[],
-    banners TEXT[],
-    fan_arts TEXT[],
+    -- description TEXT NOT NULL,
+    -- original_language VARCHAR(50) NOT NULL,
+    -- country_from VARCHAR(50) NOT NULL,
+    -- tags VARCHAR(50)[] NOT NULL,
+    -- category VARCHAR(25), -- should only be used for TV-Shows (scripted, reality-tv, etc.)
+    -- covers TEXT[],
+    -- banners TEXT[],
+    -- fan_arts TEXT[],
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
