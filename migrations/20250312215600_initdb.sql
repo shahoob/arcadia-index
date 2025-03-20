@@ -1,5 +1,4 @@
-CREATE TABLE users
-(
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -31,9 +30,7 @@ CREATE TABLE users
     invited BIGINT NOT NULL DEFAULT 0,
     invitations SMALLINT NOT NULL DEFAULT 0
 );
-
-CREATE TABLE invitations
-(
+CREATE TABLE invitations (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMP NOT NULL,
@@ -41,14 +38,14 @@ CREATE TABLE invitations
     message TEXT NOT NULL,
     sender_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     receiver_email VARCHAR(255) NOT NULL,
-    receiver_id INT REFERENCES users(id) ON DELETE SET NULL
+    receiver_id INT REFERENCES users(id) ON DELETE
+    SET NULL
 );
-
 CREATE TABLE artists (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    pictures TEXT[],
+    pictures TEXT [],
     created_by INT,
     title_groups_amount INT NOT NULL DEFAULT 0,
     edition_groups_amount INT NOT NULL DEFAULT 0,
@@ -58,16 +55,13 @@ CREATE TABLE artists (
     snatches_amount INT NOT NULL DEFAULT 0,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
-
 CREATE TABLE similar_artists (
     artist_1 INT NOT NULL,
     artist_2 INT NOT NULL,
-
     PRIMARY KEY (artist_1, artist_2),
     FOREIGN KEY (artist_1) REFERENCES artists(id) ON DELETE CASCADE,
     FOREIGN KEY (artist_2) REFERENCES artists(id) ON DELETE CASCADE
 );
-
 CREATE TABLE master_groups (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
@@ -83,9 +77,9 @@ CREATE TABLE master_groups (
     -- covers TEXT[],
     -- banners TEXT[],
     -- fan_arts TEXT[],
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE
+    SET NULL
 );
-
 CREATE TABLE similar_master_groups (
     group_1 INT NOT NULL,
     group_2 INT NOT NULL,
@@ -93,14 +87,53 @@ CREATE TABLE similar_master_groups (
     FOREIGN KEY (group_1) REFERENCES master_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2) REFERENCES master_groups(id) ON DELETE CASCADE
 );
-
-
-CREATE TYPE content_type_enum AS ENUM ('Movie', 'TV-Show', 'Music', 'Game', 'Book', 'SiteRip');
+CREATE TABLE series (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    tags TEXT [],
+    covers TEXT [],
+    fanarts TEXT [],
+    banners TEXT [],
+    created_by INT,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TYPE content_type_enum AS ENUM (
+    'Movie',
+    'TV-Show',
+    'Music',
+    'Game',
+    'Book',
+    'SiteRip'
+);
+CREATE TYPE category_enum AS ENUM (
+    'Ep',
+    'Album',
+    'Single',
+    'Soundtrack',
+    'Anthology',
+    'Compilation',
+    'SingleCategory',
+    'Remix',
+    'Bootleg',
+    'Mixtape',
+    'ConcertRecording',
+    'DjMix',
+    'FeatureFilm',
+    'ShortFilm',
+    'Game',
+    'Program',
+    'Illustrated',
+    'Periodical',
+    'Book',
+    'Article',
+    'Manual'
+);
 CREATE TABLE title_groups (
     id SERIAL PRIMARY KEY,
     master_group INT,
     name TEXT NOT NULL,
-    name_aliases TEXT[],
+    name_aliases TEXT [],
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,
@@ -108,20 +141,22 @@ CREATE TABLE title_groups (
     original_language TEXT NOT NULL,
     original_release_date TIMESTAMP NOT NULL,
     tagline TEXT,
-    tags VARCHAR(50)[] NOT NULL,
+    tags VARCHAR(50) [] NOT NULL,
     country_from TEXT NOT NULL,
-    covers TEXT[],
-    external_links TEXT[] NOT NULL,
+    covers TEXT [],
+    external_links TEXT [] NOT NULL,
     embedded_links JSONB,
-    category INT NOT NULL,
+    category category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
     serie INT,
-    FOREIGN KEY (master_group) REFERENCES master_groups(id) ON DELETE SET NULL,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
-    FOREIGN KEY (serie) REFERENCES series(id) ON DELETE SET NULL,
+    FOREIGN KEY (master_group) REFERENCES master_groups(id) ON DELETE
+    SET NULL,
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE
+    SET NULL,
+        FOREIGN KEY (serie) REFERENCES series(id) ON DELETE
+    SET NULL
 );
-
 CREATE TABLE similar_title_groups (
     group_1 INT NOT NULL,
     group_2 INT NOT NULL,
@@ -129,7 +164,6 @@ CREATE TABLE similar_title_groups (
     FOREIGN KEY (group_1) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2) REFERENCES title_groups(id) ON DELETE CASCADE
 );
-
 CREATE TABLE affiliated_artists (
     title_group INT NOT NULL,
     artist INT NOT NULL,
@@ -137,15 +171,32 @@ CREATE TABLE affiliated_artists (
     nickname TEXT,
     created_by INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-
     FOREIGN KEY (title_group) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (artist) REFERENCES artists(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE
+    SET NULL
 );
-
 -- for web: if it is a DL or a RIP should be specified at the torrent level
-CREATE TYPE source_enum AS ENUM ('CD', 'DVD5', 'DVD9', 'Vinyl', 'Web', 'Soundboard', 'SACD', 'DAT', 'Cassette', 'Blu-Ray',
-        'LaserDisc', 'HD-DVD', 'HDTV', 'PDTV', 'TV', 'VHS', 'Mixed', 'Physical-Book');
+CREATE TYPE source_enum AS ENUM (
+    'CD',
+    'DVD5',
+    'DVD9',
+    'Vinyl',
+    'Web',
+    'Soundboard',
+    'SACD',
+    'DAT',
+    'Cassette',
+    'Blu-Ray',
+    'LaserDisc',
+    'HD-DVD',
+    'HDTV',
+    'PDTV',
+    'TV',
+    'VHS',
+    'Mixed',
+    'Physical-Book'
+);
 CREATE TABLE edition_groups (
     id SERIAL PRIMARY KEY,
     title_group INT NOT NULL,
@@ -156,18 +207,55 @@ CREATE TABLE edition_groups (
     created_by INT NOT NULL,
     description TEXT,
     distributor VARCHAR(255),
-    covers TEXT[] NOT NULL,
-    external_links TEXT[] NOT NULL,
+    covers TEXT [] NOT NULL,
+    external_links TEXT [] NOT NULL,
     language TEXT,
-    source source_enum NOT NULL, 
+    source source_enum NOT NULL,
     FOREIGN KEY (title_group) REFERENCES title_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE
+    SET NULL
 );
-
-CREATE TYPE audio_codec_enum AS ENUM ('mp2', 'mp3', 'aac', 'ac3', 'dts', 'flac', 'pcm', 'true-hd', 'opus', 'dsd');
-CREATE TYPE audio_bitrate_sampling_enum AS ENUM('192', '256', '320', 'APS (VBR)', 'V2 (VBR)', 'V1 (VBR)', 'APX (VBR)', 'V0 (VBR)',
-        'Lossless', '24bit Lossless', 'DSD64', 'DSD128', 'DSD256', 'DSD512', 'other');
-CREATE TYPE video_codec_enum AS ENUM('mpeg1', 'mpeg2', 'Xvid', 'divX', 'h264', 'h265', 'vc-1', 'vp9', 'BD50', 'UHD100');
+CREATE TYPE audio_codec_enum AS ENUM (
+    'mp2',
+    'mp3',
+    'aac',
+    'ac3',
+    'dts',
+    'flac',
+    'pcm',
+    'true-hd',
+    'opus',
+    'dsd'
+);
+CREATE TYPE audio_bitrate_sampling_enum AS ENUM(
+    '192',
+    '256',
+    '320',
+    'APS (VBR)',
+    'V2 (VBR)',
+    'V1 (VBR)',
+    'APX (VBR)',
+    'V0 (VBR)',
+    'Lossless',
+    '24bit Lossless',
+    'DSD64',
+    'DSD128',
+    'DSD256',
+    'DSD512',
+    'other'
+);
+CREATE TYPE video_codec_enum AS ENUM(
+    'mpeg1',
+    'mpeg2',
+    'Xvid',
+    'divX',
+    'h264',
+    'h265',
+    'vc-1',
+    'vp9',
+    'BD50',
+    'UHD100'
+);
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D');
 CREATE TABLE torrents (
     id SERIAL PRIMARY KEY,
@@ -175,40 +263,33 @@ CREATE TABLE torrents (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,
-    release_name VARCHAR(500), -- maybe change the size
-    release_group VARCHAR(30) NOT NULL, 
+    release_name VARCHAR(500),
+    -- maybe change the size
+    release_group VARCHAR(30) NOT NULL,
     description TEXT,
     file_amount_per_type JSONB NOT NULL,
     uploaded_as_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
-    file_list JSONB NOT NULL,  -- maybe change the size to the max length of a file name in a torrent
+    file_list JSONB NOT NULL,
+    -- maybe change the size to the max length of a file name in a torrent
     mediainfo TEXT NOT NULL,
     trumpable TEXT,
     staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
-    size BIGINT NOT NULL, -- in bytes
+    size BIGINT NOT NULL,
+    -- in bytes
     FOREIGN KEY (edition_group) REFERENCES edition_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
-    -- audio
-    duration INT NOT NULL, -- in seconds
-    audio_codec audio_codec_enum NOT NULL,
-    audio_bitrate INT NOT NULL, -- in kb/s, taken from mediainfo
-    audio_bitrate_sampling  audio_bitrate_sampling_enum,
-    audio_channels TEXT NOT NULL,
-    -- audio
-    -- video
-    video_codec video_codec_enum NOT NULL,
-    features features_enum[],
-    subtitle_languages VARCHAR(20)[]
-    -- video
-);
-
-CREATE TABLE series (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    tags VARCHAR(255)[],
-    covers TEXT[],
-    fanarts TEXT[],
-    banners TEXT[],
-    created_by INT,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE
+    SET NULL,
+        -- audio
+        duration INT NOT NULL,
+        -- in seconds
+        audio_codec audio_codec_enum NOT NULL,
+        audio_bitrate INT NOT NULL,
+        -- in kb/s, taken from mediainfo
+        audio_bitrate_sampling audio_bitrate_sampling_enum,
+        audio_channels TEXT NOT NULL,
+        -- audio
+        -- video
+        video_codec video_codec_enum NOT NULL,
+        features features_enum [],
+        subtitle_languages VARCHAR(20) [] -- video
 );
