@@ -22,7 +22,7 @@ pub struct MasterGroup {
     // pub name_aliases: Vec<String>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by: i32,
+    pub created_by_id: i32,
     // pub description: String,
     // pub original_language: String,
     // pub country_from: String,

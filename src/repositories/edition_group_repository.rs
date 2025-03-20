@@ -12,7 +12,7 @@ pub async fn create_edition_group(
     current_user: &User,
 ) -> Result<EditionGroup, Box<dyn Error>> {
     let create_title_group_query = r#"
-        INSERT INTO edition_groups (title_group, name, release_date, created_by, description, distributor, covers, external_links, language, source) 
+        INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, distributor, covers, external_links, language, source) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::source_enum)
         RETURNING *;
     "#;

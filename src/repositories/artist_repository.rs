@@ -13,7 +13,7 @@ pub async fn create_artist(
     current_user: &User,
 ) -> Result<Artist, Box<dyn Error>> {
     let create_artist_query = r#"
-        INSERT INTO artists (name, description, pictures, created_by) 
+        INSERT INTO artists (name, description, pictures, created_by_id) 
         VALUES ($1, $2, $3, $4)
         RETURNING *;
     "#;

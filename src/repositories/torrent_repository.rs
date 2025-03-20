@@ -16,7 +16,7 @@ pub async fn create_torrent(
 ) -> Result<Torrent, Box<dyn Error>> {
     let create_torrent_query = r#"
     INSERT INTO torrents (
-        edition_group, created_by, release_name, 
+        edition_group_id, created_by_id, release_name, 
         release_group, description, file_amount_per_type, uploaded_as_anonymous, 
         file_list, mediainfo, trumpable, staff_checked, size,
         duration, audio_codec, audio_bitrate, audio_bitrate_sampling,

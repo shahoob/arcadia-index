@@ -35,12 +35,12 @@ pub enum Source {
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct EditionGroup {
     pub id: i32,
-    pub title_group: i32,
+    pub title_group_id: i32,
     pub name: String,                // edition name, not title name
     pub release_date: NaiveDateTime, // public release
     pub created_at: NaiveDateTime,   // database entry creation
     pub updated_at: NaiveDateTime,
-    pub created_by: i32,
+    pub created_by_id: i32,
     pub description: Option<String>, // specific to the edition
     pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
     pub covers: Vec<String>,
