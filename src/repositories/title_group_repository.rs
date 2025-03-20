@@ -1,13 +1,11 @@
-use std::error::Error;
-
-use actix_web::web;
-
-use sqlx::PgPool;
-
 use crate::models::{
     title_group::{TitleGroup, UserCreatedTitleGroup},
     user::User,
 };
+use actix_web::web;
+use serde_json::Value;
+use sqlx::{PgPool, postgres::PgRow, types::JsonRawValue};
+use std::error::Error;
 
 pub async fn create_title_group(
     pool: &web::Data<PgPool>,
@@ -15,8 +13,8 @@ pub async fn create_title_group(
     current_user: &User,
 ) -> Result<TitleGroup, Box<dyn Error>> {
     let create_title_group_query = r#"
-        INSERT INTO title_groups (master_group,name,name_aliases,created_by,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::content_type_enum, $13, $14, $15)
+        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::category_enum, $12::content_type_enum, $13, $14, $15)
         RETURNING *;
     "#;
 
@@ -49,6 +47,53 @@ pub async fn create_title_group(
                 _ => e.to_string(),
             };
             Err(format!("could not create title group").into())
+        }
+    }
+}
+
+pub async fn find_title_group(
+    pool: &web::Data<PgPool>,
+    title_group_id: i32,
+) -> Result<Value, Box<dyn Error>> {
+    let title_group = sqlx::query!(r#"WITH torrent_data AS (
+    SELECT 
+        t.edition_group_id,
+        jsonb_agg(
+            to_jsonb(t) || jsonb_build_object('uploader', jsonb_build_object('id', u.id, 'username', u.username))
+        ) AS torrents
+    FROM torrents t
+    LEFT JOIN users u ON u.id = t.created_by_id
+    GROUP BY t.edition_group_id
+),
+edition_data AS (
+    SELECT 
+        eg.title_group_id,
+        jsonb_agg(
+            to_jsonb(eg) || jsonb_build_object('torrents', COALESCE(td.torrents, '[]'::jsonb))
+        ) AS edition_groups
+    FROM edition_groups eg
+    LEFT JOIN torrent_data td ON td.edition_group_id = eg.id
+    GROUP BY eg.title_group_id
+)
+SELECT jsonb_build_object(
+    'title_group', to_jsonb(tg),
+    'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb)
+)
+FROM title_groups tg
+LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
+WHERE tg.id = $1"#, title_group_id)
+        .fetch_one(pool.get_ref())
+        .await;
+
+    match title_group {
+        Ok(_) => Ok(title_group.unwrap().jsonb_build_object.unwrap()),
+        Err(e) => {
+            println!("{:#?}", e);
+            match e {
+                sqlx::Error::Database(db_error) => db_error.message().to_string(),
+                _ => e.to_string(),
+            };
+            Err(format!("could not find title group").into())
         }
     }
 }

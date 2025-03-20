@@ -12,7 +12,7 @@ pub async fn create_master_group(
     current_user: &User,
 ) -> Result<MasterGroup, Box<dyn Error>> {
     let create_master_group_query = r#"
-        INSERT INTO master_groups (name,created_by) 
+        INSERT INTO master_groups (name,created_by_id) 
         VALUES ($1, $2)
         RETURNING *;
     "#;

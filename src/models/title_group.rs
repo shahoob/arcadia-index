@@ -10,7 +10,7 @@ pub enum ContentType {
     #[sqlx(rename = "TV-Show")]
     TVShow,
     Music,
-    Game,
+    Software,
     Book,
     SiteRip,
 }
@@ -54,12 +54,12 @@ pub enum Category {
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct TitleGroup {
     pub id: i32,
-    pub master_group: Option<i32>, // only if master groups are needed for this type of content
+    pub master_group_id: Option<i32>, // only if master groups are needed for this type of content
     pub name: String,
     pub name_aliases: Vec<String>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by: i32,
+    pub created_by_id: i32,
     pub description: String,
     pub original_language: String,
     pub original_release_date: NaiveDateTime,
@@ -71,11 +71,12 @@ pub struct TitleGroup {
     // pub main_artists
     // pub artists_affiliated (multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: i32, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub category: Category, // ((movie: feature film, short film), (music: ep, album, compilation))
     pub content_type: ContentType, // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub public_ratings: Option<Json<Value>>, // {service: rating}
-    pub serie: Option<i32>,
+    pub serie_id: Option<i32>,
+    // pub edition_groups: Option<Vec<EditionGroup>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -114,7 +115,7 @@ pub struct UserCreatedTitleGroup {
     pub embedded_links: Option<Json<Value>>,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: i32, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub category: Category, // ((movie: feature film, short film), (music: ep, album, compilation))
     pub content_type: ContentType, // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub tagline: Option<String>,

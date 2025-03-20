@@ -9,7 +9,7 @@ pub struct Serie {
     pub description: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by: i32,
+    pub created_by_id: i32,
     pub covers: Vec<String>,
     pub fannarts: Vec<String>,
     pub banners: Vec<String>,

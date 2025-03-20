@@ -106,10 +106,10 @@ impl FromStr for Features {
 #[derive(Debug, Serialize, FromRow)]
 pub struct Torrent {
     pub id: i32,
-    pub edition_group: i32,
+    pub edition_group_id: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by: i32,
+    pub created_by_id: i32,
     pub release_name: Option<String>,
     pub release_group: String,
     pub description: Option<String>,       // specific to the torrent
