@@ -15,6 +15,40 @@ pub enum ContentType {
     SiteRip,
 }
 
+// this is not to store the genre, but the format
+#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
+#[sqlx(type_name = "category_enum")]
+pub enum Category {
+    //music
+    Ep,
+    Album, // includes "live album" as an "edition"
+    Single,
+    Soundtrack,
+    Anthology,
+    Compilation,
+    #[sqlx(rename = "Single")]
+    SingleCategory,
+    Remix,
+    Bootleg,
+    Mixtape,
+    ConcertRecording,
+    DjMix,
+    // movies
+    FeatureFilm,
+    ShortFilm,
+    // tv shows
+    // none ?
+    // software
+    Game,
+    Program,
+    // written documents (books and their derivatives)
+    Illustrated, // includes mangas, comics, visual novels
+    Periodical,  //includes newspapers, magazines
+    Book,        // hardcover, etc
+    Article,     // includes studies, theseis, essais, etc.
+    Manual,      // includes guides, music sheets, etc. for physical and digital products
+}
+
 // Every attribute is specific to the title,
 // no specific information should be entered about the editions or the torrents
 #[derive(Debug, Serialize, Deserialize, FromRow)]
