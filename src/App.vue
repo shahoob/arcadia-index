@@ -4,7 +4,9 @@
     <div class="navbar-container">
       <AppNavbar />
     </div>
-    <router-view></router-view>
+    <div id="view-container">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -24,5 +26,6 @@ export default {
 .navbar-container {
   width: 80%;
   margin-top: 10px;
+  margin-bottom: 20px;
 }
 </style>
