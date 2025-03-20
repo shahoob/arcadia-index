@@ -27,7 +27,7 @@ export default {
 
 <style scoped>
 .p-menubar {
-  background-color: #2c2c2c;
+  background-color: #181818;
   color: white;
   border: none;
 }
