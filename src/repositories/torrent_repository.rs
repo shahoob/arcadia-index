@@ -20,13 +20,13 @@ pub async fn create_torrent(
         release_group, description, file_amount_per_type, uploaded_as_anonymous, 
         file_list, mediainfo, trumpable, staff_checked, size,
         duration, audio_codec, audio_bitrate, audio_bitrate_sampling,
-        audio_channels, video_codec, features, subtitle_languages
+        audio_channels, video_codec, features, subtitle_languages, video_resolution, container
     ) VALUES (
         $1, $2, $3, 
         $4, $5, $6, $7, 
         $8, $9, $10, $11, $12,
         $13, $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
-        $17, $18::video_codec_enum, $19::features_enum[], $20
+        $17, $18::video_codec_enum, $19::features_enum[], $20, $21, $22
     ) RETURNING *;
     "#;
 
@@ -109,6 +109,8 @@ pub async fn create_torrent(
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
+        .bind(&*torrent_form.video_resolution)
+        .bind(&*torrent_form.container)
         .fetch_one(pool.get_ref())
         .await;
 

@@ -266,7 +266,7 @@ CREATE TABLE torrents (
     created_by_id INT NOT NULL,
     release_name VARCHAR(500),
     -- maybe change the size
-    release_group VARCHAR(30) NOT NULL,
+    release_group VARCHAR(30),
     description TEXT,
     file_amount_per_type JSONB NOT NULL,
     uploaded_as_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
@@ -275,22 +275,24 @@ CREATE TABLE torrents (
     mediainfo TEXT NOT NULL,
     trumpable TEXT,
     staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
+    container VARCHAR(4) NOT NULL,
     size BIGINT NOT NULL,
     -- in bytes
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
     SET NULL,
         -- audio
-        duration INT NOT NULL,
+        duration INT,
         -- in seconds
-        audio_codec audio_codec_enum NOT NULL,
-        audio_bitrate INT NOT NULL,
+        audio_codec audio_codec_enum,
+        audio_bitrate INT,
         -- in kb/s, taken from mediainfo
         audio_bitrate_sampling audio_bitrate_sampling_enum,
-        audio_channels TEXT NOT NULL,
+        audio_channels VARCHAR(5),
         -- audio
         -- video
-        video_codec video_codec_enum NOT NULL,
+        video_codec video_codec_enum,
         features features_enum [],
-        subtitle_languages VARCHAR(20) [] -- video
+        subtitle_languages VARCHAR(20) [],
+        video_resolution VARCHAR(6) -- video
 );

@@ -119,7 +119,8 @@ pub struct Torrent {
     pub mediainfo: String,
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
-    pub size: i64, // in bytes
+    pub container: String, // container of the main file (ex: if mkv movie and srt subs, mkv is the main)
+    pub size: i64,         // in bytes
     // ---- audio
     pub duration: i32, // in seconds
     pub audio_codec: AudioCodec,
@@ -131,7 +132,7 @@ pub struct Torrent {
     pub video_codec: VideoCodec,
     pub features: Vec<Features>,
     pub subtitle_languages: Vec<String>,
-    // ---- video
+    pub video_resolution: String, // ---- video
 }
 
 #[derive(Debug, MultipartForm, FromRow)]
@@ -142,6 +143,7 @@ pub struct UploadedTorrent {
     pub uploaded_as_anonymous: Text<bool>,
     pub mediainfo: Text<String>,
     pub torrent_file: Bytes,
+    pub container: Text<String>,
     // one of them should be given
     pub edition_group_id: Text<i32>,
     // pub edition_group: Option<UserCreatedEditionGroup>,
@@ -156,5 +158,5 @@ pub struct UploadedTorrent {
     pub video_codec: Text<VideoCodec>,
     pub features: Text<String>,
     pub subtitle_languages: Text<String>,
-    // ---- video
+    pub video_resolution: Text<String>, // ---- video
 }
