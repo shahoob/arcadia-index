@@ -1,7 +1,10 @@
 <template>
   <div id="app-container">
     <!-- Navbar -->
-    <div class="navbar-container">
+    <div
+      class="navbar-container"
+      v-if="['/login', '/register'].indexOf($router.currentRoute.value.path) < 0"
+    >
       <AppNavbar />
     </div>
     <div id="view-container">
