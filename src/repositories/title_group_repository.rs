@@ -4,7 +4,7 @@ use crate::models::{
 };
 use actix_web::web;
 use serde_json::Value;
-use sqlx::{PgPool, postgres::PgRow, types::JsonRawValue};
+use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_title_group(
