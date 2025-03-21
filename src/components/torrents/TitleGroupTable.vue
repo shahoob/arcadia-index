@@ -10,11 +10,14 @@
   >
     <Column field="name" header="Name" style="min-width: 200px">
       <template #body="slotProps">
-        {{ slotProps.data.video_codec }} / {{ slotProps.data.audio_codec }}
+        <span v-if="slotProps.data.video_codec">{{ slotProps.data.video_codec }} / </span>
+        {{ slotProps.data.container }} /
+        <span v-if="slotProps.data.video_resolution">{{ slotProps.data.video_resolution }} / </span>
+        <span v-if="slotProps.data.audio_codec">{{ slotProps.data.audio_codec }} / </span>
         <span v-for="feature in slotProps.data.features" :key="feature">
-          / <span class="feature">{{ feature }}</span></span
+          <span class="feature">{{ feature }} / </span></span
         >
-        / {{ slotProps.data.release_group }}
+        {{ slotProps.data.release_group ? slotProps.data.release_group : 'NoGrp' }}
       </template>
     </Column>
     <Column field="date" header="Uploaded" style="min-width: 200px">
@@ -22,13 +25,18 @@
         {{ timeAgo(slotProps.data.created_at) }}
       </template>
     </Column>
+    <Column field="actions" header="" style="min-width: 200px">
+      <template #body="slotProps"> <i class="pi pi-download" /> <i class="pi pi-flag" /></template>
+    </Column>
     <Column field="size" header="Size" style="min-width: 200px">
       <template #body="slotProps">
         {{ bytesToReadable(slotProps.data.size) }}
       </template>
     </Column>
     <template #groupheader="slotProps">
-      {{ getEditionGroup(slotProps.data.edition_group_id).name }}
+      {{ new Date(getEditionGroup(slotProps.data.edition_group_id).release_date).getFullYear() }} -
+      {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
+      {{ getEditionGroup(slotProps.data.edition_group_id).source }}
     </template>
   </DataTable>
 </template>

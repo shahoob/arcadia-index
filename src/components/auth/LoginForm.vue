@@ -43,7 +43,7 @@ export default {
       form: {
         username: '',
         password: '',
-        remember_me: '',
+        remember_me: false,
       },
     }
   },
