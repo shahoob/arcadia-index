@@ -1,13 +1,19 @@
 <template>
-  <Menubar :model="menuItems" class="p-menubar" />
+  <Menubar :model="menuItems" class="p-menubar">
+    <template #end>
+      <Button icon="pi pi-moon" @click="toggleDarkMode()" />
+    </template>
+  </Menubar>
 </template>
 
 <script lang="ts">
 import { ref } from 'vue'
 import Menubar from 'primevue/menubar'
+import { Button } from 'primevue'
 
 export default {
-  components: { Menubar },
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: { Menubar, Button },
   setup() {
     const menuItems = ref([
       { label: 'Torrents' },
@@ -21,6 +27,11 @@ export default {
     ])
 
     return { menuItems }
+  },
+  methods: {
+    toggleDarkMode() {
+      document.documentElement.classList.toggle('my-app-dark')
+    },
   },
 }
 </script>

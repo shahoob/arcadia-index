@@ -1,5 +1,6 @@
 <template>
   <DataTable
+    v-model:expandedRows="expandedRows"
     :value="edition_groups.flatMap((edition_group: Object) => edition_group.torrents)"
     rowGroupMode="subheader"
     groupRowsBy="edition_group_id"
@@ -8,7 +9,8 @@
     :sortOrder="1"
     tableStyle="min-width: 50rem"
   >
-    <Column field="name" header="Name" style="min-width: 200px">
+    <Column expander style="width: 5rem" />
+    <Column field="name" header="Name">
       <template #body="slotProps">
         <span v-if="slotProps.data.video_codec">{{ slotProps.data.video_codec }} / </span>
         {{ slotProps.data.container }} /
@@ -26,7 +28,10 @@
       </template>
     </Column>
     <Column field="actions" header="" style="min-width: 200px">
-      <template #body="slotProps"> <i class="pi pi-download" /> <i class="pi pi-flag" /></template>
+      <template #body="slotProps">
+        <i class="action pi pi-download" /> <i class="action pi pi-flag" />
+        <i class="action pi pi-link"
+      /></template>
     </Column>
     <Column field="size" header="Size" style="min-width: 200px">
       <template #body="slotProps">
@@ -38,6 +43,9 @@
       {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
       {{ getEditionGroup(slotProps.data.edition_group_id).source }}
     </template>
+    <template #expansion="slotProps">
+      <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
+    </template>
   </DataTable>
 </template>
 
@@ -45,11 +53,15 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { timeAgo, bytesToReadable } from '@/services/helpers'
+import DOMPurify from 'dompurify'
 
 export default {
   components: { DataTable, Column },
   props: {
     edition_groups: [],
+  },
+  data() {
+    return { expandedRows: [] }
   },
   methods: {
     timeAgo(date: string) {
@@ -57,6 +69,9 @@ export default {
     },
     bytesToReadable(bytes: Number) {
       return bytesToReadable(bytes)
+    },
+    purifyHtml(html: string) {
+      return DOMPurify.sanitize(html)
     },
   },
   computed: {
@@ -71,5 +86,12 @@ export default {
 <style scoped>
 .feature {
   font-weight: bold;
+}
+.action {
+  margin-right: 7px;
+}
+.mediainfo {
+  border: 2px dotted black;
+  padding: 5px;
 }
 </style>
