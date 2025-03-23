@@ -39,12 +39,40 @@
       </template>
     </Column>
     <template #groupheader="slotProps">
-      {{ new Date(getEditionGroup(slotProps.data.edition_group_id).release_date).getFullYear() }} -
-      {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
-      {{ getEditionGroup(slotProps.data.edition_group_id).source }}
+      <div class="edition-group-header">
+        {{ new Date(getEditionGroup(slotProps.data.edition_group_id).release_date).getFullYear() }}
+        - {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
+        {{ getEditionGroup(slotProps.data.edition_group_id).source }}
+      </div>
     </template>
     <template #expansion="slotProps">
-      <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
+      <Accordion :value="[]" multiple>
+        <AccordionPanel value="0">
+          <AccordionHeader>Mediainfo</AccordionHeader>
+          <AccordionContent>
+            <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
+          </AccordionContent>
+        </AccordionPanel>
+        <AccordionPanel v-if="slotProps.data.description" value="1">
+          <AccordionHeader>Description</AccordionHeader>
+          <AccordionContent>
+            <div>{{ slotProps.data.description }}</div>
+          </AccordionContent>
+        </AccordionPanel>
+        <AccordionPanel value="2">
+          <AccordionHeader>File List</AccordionHeader>
+          <AccordionContent>
+            <DataTable :value="slotProps.data.file_list.files" tableStyle="min-width: 50rem">
+              <Column field="name" :header="slotProps.data.file_list.parent_folder + '/'"></Column>
+              <Column field="size" header="Size">
+                <template #body="slotProps">
+                  {{ bytesToReadable(slotProps.data.size) }}
+                </template>
+              </Column>
+            </DataTable>
+          </AccordionContent>
+        </AccordionPanel>
+      </Accordion>
     </template>
   </DataTable>
 </template>
@@ -54,9 +82,13 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { timeAgo, bytesToReadable } from '@/services/helpers'
 import DOMPurify from 'dompurify'
+import Accordion from 'primevue/accordion'
+import AccordionPanel from 'primevue/accordionpanel'
+import AccordionHeader from 'primevue/accordionheader'
+import AccordionContent from 'primevue/accordioncontent'
 
 export default {
-  components: { DataTable, Column },
+  components: { DataTable, Column, AccordionPanel, AccordionHeader, AccordionContent, Accordion },
   props: {
     edition_groups: [],
   },
@@ -93,5 +125,8 @@ export default {
 .mediainfo {
   border: 2px dotted black;
   padding: 5px;
+}
+.edition-group-header {
+  color: rgb(189, 51, 51);
 }
 </style>
