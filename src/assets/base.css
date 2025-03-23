@@ -23,6 +23,9 @@
 
 /* semantic color variables for this project */
 :root {
+
+  --color-secondary: rgb(189, 51, 51);
+
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
