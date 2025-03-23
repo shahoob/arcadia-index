@@ -59,11 +59,20 @@
             <div>{{ slotProps.data.description }}</div>
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel value="2">
+        <AccordionPanel v-if="slotProps.data.screenshots" value="2">
+          <AccordionHeader>Screenshots</AccordionHeader>
+          <AccordionContent>
+            <div>{{ slotProps.data.screenshots }}</div>
+          </AccordionContent>
+        </AccordionPanel>
+        <AccordionPanel value="3">
           <AccordionHeader>File List</AccordionHeader>
           <AccordionContent>
             <DataTable :value="slotProps.data.file_list.files" tableStyle="min-width: 50rem">
-              <Column field="name" :header="slotProps.data.file_list.parent_folder + '/'"></Column>
+              <Column
+                field="name"
+                :header="(slotProps.data.file_list.parent_folder ?? '') + '/'"
+              ></Column>
               <Column field="size" header="Size">
                 <template #body="slotProps">
                   {{ bytesToReadable(slotProps.data.size) }}
@@ -127,6 +136,6 @@ export default {
   padding: 5px;
 }
 .edition-group-header {
-  color: rgb(189, 51, 51);
+  color: var(--color-secondary);
 }
 </style>

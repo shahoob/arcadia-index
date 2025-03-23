@@ -1,35 +1,64 @@
 <template>
-  <div>
+  <div id="title-group-view">
     <ContentContainer class="header">
-      <Galleria
-        :value="title_group.covers"
-        :numVisible="1"
-        :circular="true"
-        :showItemNavigators="false"
-        :showThumbnails="false"
-        :showIndicators="true"
-      >
-        <template #item="slotProps">
-          <Image class="title-group-view-cover" :src="slotProps.item" preview>
-            <template #previewicon>
-              <i class="pi pi-search"></i>
-            </template>
-            <!-- <template #image>
+      <div class="left">
+        <Galleria
+          :value="title_group.covers"
+          :numVisible="1"
+          :circular="true"
+          :showItemNavigators="false"
+          :showThumbnails="false"
+          :showIndicators="true"
+          class="carousel"
+        >
+          <template #item="slotProps">
+            <Image :src="slotProps.item" preview>
+              <template #previewicon>
+                <i class="pi pi-search"></i>
+              </template>
+              <!-- <template #image>
               <img :src="slotProps.item" alt="cover preview" />
             </template>
             <template #preview="slotProps">
               {{ slotProps }}
               <img :src="slotProps.item" :alt="slotProps" />
             </template> -->
-          </Image>
-        </template>
-      </Galleria>
-      <div class="textual-information">
-        <div class="title">{{ title_group.name }}</div>
-        <div class="tags">
-          <div class="tag" v-for="(tag, index) in title_group.tags" :key="tag">
-            {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
+            </Image>
+          </template>
+        </Galleria>
+        <div class="textual-information">
+          <div class="title">{{ title_group.name }}</div>
+          <div class="information-line">
+            <span class="item-title">Tags:</span>
+            <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
+              {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
+            </div>
           </div>
+          <div class="information-line">
+            <span class="item-title">Links:</span>
+            <div v-for="link in title_group.external_links" :key="link">
+              {{ link }}
+            </div>
+          </div>
+          <div class="information-line" v-if="title_group.name_aliases">
+            <span class="item-title">Aliases:</span>
+            <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
+              {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
+            </div>
+          </div>
+          <div class="information-line">
+            <span class="item-title">Original language:</span>
+            {{ title_group.original_language }}
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="affiliated_artists">
+          <AffiliatedArtist
+            v-for="affiliated_artist in affiliated_artists"
+            :key="affiliated_artist.artist.id"
+            :affiliated_artist="affiliated_artist"
+          />
         </div>
       </div>
     </ContentContainer>
@@ -45,20 +74,23 @@ import { getTitleGroup } from '@/services/api/torrentService'
 import TitleGroupTable from '@/components/torrents/TitleGroupTable.vue'
 import { Galleria } from 'primevue'
 import Image from 'primevue/image'
+import AffiliatedArtist from '@/components/torrents/AffiliatedArtist.vue'
 
 export default {
-  components: { ContentContainer, TitleGroupTable, Galleria, Image },
+  components: { ContentContainer, TitleGroupTable, Galleria, Image, AffiliatedArtist },
   setup() {},
   data() {
     return {
       title_group: {},
       edition_groups: [],
+      affiliated_artists: [],
     }
   },
   created() {
     getTitleGroup(this.$route.query.id?.toString()).then((data) => {
       this.title_group = data.title_group
       this.edition_groups = data.edition_groups
+      this.affiliated_artists = data.affiliated_artists
     })
   },
 }
@@ -68,25 +100,42 @@ export default {
 .header {
   margin-bottom: 20px;
   display: flex;
+  justify-content: space-between;
+}
+.left {
+  display: flex;
 }
 .p-galleria {
-  height: 20em;
+  height: 22em;
   border: none;
   margin-right: 20px;
 }
+
 .title {
   font-weight: bold;
   font-size: 2em;
 }
-.tags {
-  display: flex;
+.item-title {
+  font-weight: bold;
+  margin-right: 7px;
 }
-.tag {
+.information-line {
+  display: flex;
+  margin-top: 8px;
+}
+.information-line .item {
   margin-right: 5px;
+}
+.affiliated-artists {
+  margin-right: 0px;
+  margin-left: auto;
 }
 </style>
 <style>
-.title-group-view-cover img {
+#title-group-view .left img {
   height: 20em !important;
+}
+#title-group-view .p-galleria-indicator-list {
+  padding: 7px !important;
 }
 </style>
