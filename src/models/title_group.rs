@@ -87,12 +87,12 @@ pub struct SimilarTitleGroups {
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct AffiliatedArtist {
-    pub title_group: i32,
-    pub artist: i32,
+    pub title_group_id: i32,
+    pub artist_id: i32,
     pub status: String,
     pub nickname: Option<String>, // for example: name of the character the actor is playing
     pub created_at: NaiveDateTime,
-    pub created_by: i32,
+    pub created_by_id: i32,
 }
 
 #[derive(Debug, Deserialize)]

@@ -74,13 +74,25 @@ edition_data AS (
     FROM edition_groups eg
     LEFT JOIN torrent_data td ON td.edition_group_id = eg.id
     GROUP BY eg.title_group_id
+),
+artist_data AS (
+    SELECT 
+        aa.title_group_id,
+        jsonb_agg(
+            to_jsonb(aa) || jsonb_build_object('artist', to_jsonb(a))
+        ) AS affiliated_artists
+    FROM affiliated_artists aa
+    JOIN artists a ON a.id = aa.artist_id
+    GROUP BY aa.title_group_id
 )
 SELECT jsonb_build_object(
     'title_group', to_jsonb(tg),
-    'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb)
+    'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
+    'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb)
 )
 FROM title_groups tg
 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
+LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
 WHERE tg.id = $1"#, title_group_id)
         .fetch_one(pool.get_ref())
         .await;
