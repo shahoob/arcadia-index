@@ -45,7 +45,6 @@ pub struct EditionGroup {
     pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
     pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
-    pub language: Option<String>,    // (fallback to original language) (english, french, etc.)
     pub source: Source,
 }
 
@@ -57,7 +56,6 @@ pub struct UserCreatedEditionGroup {
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    pub language: Option<String>,
     pub source: Source,
     // one of them should be given
     pub title_group_id: Option<i32>,

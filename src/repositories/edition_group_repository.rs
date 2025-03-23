@@ -12,8 +12,8 @@ pub async fn create_edition_group(
     current_user: &User,
 ) -> Result<EditionGroup, Box<dyn Error>> {
     let create_title_group_query = r#"
-        INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, distributor, covers, external_links, language, source) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::source_enum)
+        INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, distributor, covers, external_links, source) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::source_enum)
         RETURNING *;
     "#;
 
@@ -26,7 +26,6 @@ pub async fn create_edition_group(
         .bind(&edition_group_form.distributor)
         .bind(&edition_group_form.covers)
         .bind(&edition_group_form.external_links)
-        .bind(&edition_group_form.language)
         .bind(&edition_group_form.source)
         .fetch_one(pool.get_ref())
         .await;

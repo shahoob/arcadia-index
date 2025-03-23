@@ -210,7 +210,6 @@ CREATE TABLE edition_groups (
     distributor VARCHAR(255),
     covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
-    language TEXT,
     source source_enum NOT NULL,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
@@ -264,6 +263,7 @@ CREATE TABLE torrents (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id INT NOT NULL,
+    language VARCHAR(15),
     release_name VARCHAR(500),
     -- maybe change the size
     release_group VARCHAR(30),
