@@ -168,8 +168,8 @@ CREATE TABLE similar_title_groups (
 CREATE TABLE affiliated_artists (
     title_group_id INT NOT NULL,
     artist_id INT NOT NULL,
-    status TEXT NOT NULL,
-    nickname TEXT,
+    status VARCHAR(20) NOT NULL,
+    nickname VARCHAR(255),
     created_by_id INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,

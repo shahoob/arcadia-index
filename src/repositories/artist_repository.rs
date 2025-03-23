@@ -58,7 +58,7 @@ pub async fn create_artists_affiliation(
         .collect();
 
     let query = format!(
-        "INSERT INTO affiliated_artists (title_group, artist, status, nickname, created_by) VALUES {} RETURNING *",
+        "INSERT INTO affiliated_artists (title_group_id, artist_id, status, nickname, created_by_id) VALUES {} RETURNING *",
         values.join(", ")
     );
 
