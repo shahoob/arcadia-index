@@ -119,6 +119,7 @@ pub struct Torrent {
     pub mediainfo: String,
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
+    pub language: Option<String>, // (fallback to original language) (english, french, etc.)
     pub container: String, // container of the main file (ex: if mkv movie and srt subs, mkv is the main)
     pub size: i64,         // in bytes
     // ---- audio
@@ -143,6 +144,7 @@ pub struct UploadedTorrent {
     pub uploaded_as_anonymous: Text<bool>,
     pub mediainfo: Text<String>,
     pub torrent_file: Bytes,
+    pub language: Text<Option<String>>, // (fallback to original language) (english, french, etc.)
     pub container: Text<String>,
     // one of them should be given
     pub edition_group_id: Text<i32>,
