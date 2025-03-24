@@ -90,14 +90,15 @@ CREATE TABLE similar_master_groups (
     FOREIGN KEY (group_2_id) REFERENCES master_groups(id) ON DELETE CASCADE
 );
 CREATE TABLE series (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     tags TEXT [],
     covers TEXT [],
-    fanarts TEXT [],
     banners TEXT [],
     created_by_id INT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TYPE content_type_enum AS ENUM (
@@ -151,12 +152,12 @@ CREATE TABLE title_groups (
     category category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
-    serie_id INT,
+    series_id BIGINT,
     FOREIGN KEY (master_group_id) REFERENCES master_groups(id) ON DELETE
     SET NULL,
         FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
     SET NULL,
-        FOREIGN KEY (serie_id) REFERENCES series(id) ON DELETE
+        FOREIGN KEY (series_id) REFERENCES series(id) ON DELETE
     SET NULL
 );
 CREATE TABLE similar_title_groups (

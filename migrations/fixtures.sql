@@ -4,15 +4,22 @@ VALUES
     ('waterbottle', 'user2@example.com', 'hashedpassword2', '192.168.1.2','https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg'),
     ('coolguy', 'user3@example.com', 'hashedpassword3', '192.168.1.3','https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg');
 
+INSERT INTO "series" (name,description,created_by_id,covers,banners,tags) VALUES
+    ('Astérix', 
+    'Asterix (French: Astérix or Astérix le Gaulois [asteʁiks lə ɡolwa], "Asterix the Gaul"; also known as Asterix and Obelix in some adaptations or The Adventures of Asterix) is a French comic album series about a Gaulish village which, thanks to a magic potion that enhances strength, resists the forces of Julius Caesar''s Roman Republic Army in a nonhistorical telling of the time after the Gallic Wars. Many adventures take the titular hero Asterix and his friend Obelix to Rome and beyond.',
+    1,
+    ARRAY['https://i.pinimg.com/originals/90/33/f2/9033f2694de66ceb2edae762f0f4547b.jpg'],NULL, ARRAY['adventure']);
+
 INSERT INTO master_groups (name, created_by_id)
 VALUES
     ('Master Group One', 1);
 
-INSERT INTO title_groups (master_group_id, name, created_by_id, description, original_language, original_release_date, tags, country_from, external_links, content_type, covers, category)
+INSERT INTO title_groups (master_group_id, name, created_by_id, description, original_language, original_release_date, tags, country_from, external_links, content_type, covers, category, series_id)
 VALUES
-    (NULL, 'Music Album 1', 1, 'An amazing album', 'English', '2020-01-01', ARRAY['rock', 'pop'], 'USA', ARRAY['https://example.com'], 'Music', ARRAY['https://archive.org/download/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5-14497733661_thumb500.jpg', 'https://archive.org/download/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da-41520333024_thumb500.jpg'], 'Album'),
-    (NULL, 'Movie 1', 2, 'A great movie', 'English', '2021-06-15', ARRAY['action', 'thriller'], 'UK', ARRAY['https://example.com'], 'Movie', ARRAY['https://image.tmdb.org/t/p/w780/qitnZcLP7C9DLRuPpmvZ7GiEjJN.jpg'], NULL),
-    (NULL, 'Les misérables', 2, 'Interesting book', 'French', '1862-03-31', ARRAY['novel', 'historical.fiction'], 'France', ARRAY['https://en.wikipedia.org/wiki/Les_Mis%C3%A9rables', 'https://openlibrary.org/books/OL14082552M/Les_mis%C3%A9rables'], 'Book', ARRAY['https://cdn.kobo.com/book-images/a6bdd3f5-ba60-4ad3-8f6b-5f1427021961/1200/1200/False/les-miserables-305.jpg','https://m.media-amazon.com/images/I/613FCU-5u-L._SL500_.jpg'], 'Book');
+    (NULL, 'Music Album 1', 1, 'An amazing album', 'English', '2020-01-01', ARRAY['rock', 'pop'], 'USA', ARRAY['https://example.com'], 'Music', ARRAY['https://archive.org/download/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5-14497733661_thumb500.jpg', 'https://archive.org/download/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da-41520333024_thumb500.jpg'], 'Album', NULL),
+    (NULL, 'Movie 1', 2, 'A great movie', 'English', '2021-06-15', ARRAY['action', 'thriller'], 'UK', ARRAY['https://example.com'], 'Movie', ARRAY['https://image.tmdb.org/t/p/w780/qitnZcLP7C9DLRuPpmvZ7GiEjJN.jpg'], NULL, NULL),
+    (NULL, 'Les misérables', 2, 'Interesting book', 'French', '1862-03-31', ARRAY['novel', 'historical.fiction'], 'France', ARRAY['https://en.wikipedia.org/wiki/Les_Mis%C3%A9rables', 'https://openlibrary.org/books/OL14082552M/Les_mis%C3%A9rables'], 'Book', ARRAY['https://cdn.kobo.com/book-images/a6bdd3f5-ba60-4ad3-8f6b-5f1427021961/1200/1200/False/les-miserables-305.jpg','https://m.media-amazon.com/images/I/613FCU-5u-L._SL500_.jpg'], 'Book', NULL),
+    (NULL, 'Astérix le gaulois', 2, 'first book of the series !', 'French', '1961-09-01', ARRAY['action'], 'France', ARRAY['https://wikipedia.org'], 'Book', ARRAY['https://media.senscritique.com/media/000017019153/source_big/Asterix_le_Gaulois_Asterix_tome_1.jpg','https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101654-T.jpg'], 'Illustrated', 1);
 
 INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links)
 VALUES
@@ -22,7 +29,8 @@ VALUES
     (2, 'Original Edition', '2020-02-01', 1, 'Movie original edition back in the days', 'DVD5', '{}', '{}'),
     (2, 'Director''s Cut', '2021-07-01', 2, 'Extended version', 'Blu-Ray', '{}', '{}'),
     (3, 'Original edition', '1862-03-31', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}'),
-    (3, 'Audiobook', '2005-01-01', 2, 'audiobook version', 'Web', '{}', '{}');
+    (3, 'Audiobook', '2005-01-01', 2, 'audiobook version', 'Web', '{}', '{}'),
+    (4, 'Original edition', '1961-09-01', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}');
 
 INSERT INTO torrents (edition_group_id, created_by_id, release_name, release_group, file_amount_per_type, file_list, mediainfo, container, size, audio_codec, audio_bitrate, video_codec, video_resolution, description)
 VALUES
@@ -39,16 +47,21 @@ VALUES
     'mkv', 4000000000, 'aac', 256, 'h264', '1080p', 'rip of my own blu-ray'),
     (5, 2, 'Movie_2021_DirectorsCut', NULL, '{"mkv": 1}'::jsonb, '["movie.mkv"]'::jsonb, 'Mediainfo data', 'mkv', 3000000000, 'aac', 256, 'h264', '720p', NULL),
     (6, 1, '', NULL, '{"pdf": 1}'::jsonb, '{"files": [{"name": "book.pdf","size": 18851309}]}'::jsonb, 'Mediainfo data', 'pdf', 500000000, NULL, NULL, NULL, NULL, 'scanned from my grandma''s book'),
-    (7, 1, '', NULL, '{"m4b": 1}'::jsonb, '{"files": [{"name": "book.m4b","size": 58851309}]}'::jsonb, 'Mediainfo data', 'm4b', 800000000, 'mp3', 320, NULL, NULL, 'ripped from youtube');
+    (7, 1, '', NULL, '{"m4b": 1}'::jsonb, '{"files": [{"name": "book.m4b","size": 58851309}]}'::jsonb, 'Mediainfo data', 'm4b', 800000000, 'mp3', 320, NULL, NULL, 'ripped from youtube'),
+    (8, 1, '', NULL, '{"pdf": 1}'::jsonb, '{"files": [{"name": "book.pdf","size": 18851309}]}'::jsonb, 'Mediainfo data', 'pdf', 500000000, NULL, NULL, NULL, NULL, 'scanned from my grandma''s book');
 
 
 INSERT INTO artists (name, description, pictures, created_by_id) 
 VALUES 
-    ('Victor Hugo', 'description of Victor Hugo', ARRAY['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Victor_Hugo_by_%C3%89tienne_Carjat_1876_-_full.jpg/440px-Victor_Hugo_by_%C3%89tienne_Carjat_1876_-_full.jpg'],1);
+    ('Victor Hugo', 'description of Victor Hugo', ARRAY['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Victor_Hugo_by_%C3%89tienne_Carjat_1876_-_full.jpg/440px-Victor_Hugo_by_%C3%89tienne_Carjat_1876_-_full.jpg'],1),
+    ('René Goscinny', 'description of René Goscinny', ARRAY['https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Ren%C3%A9_Goscinny.jpg/500px-Ren%C3%A9_Goscinny.jpg'],1),
+    ('Albert Uderzo', 'description of Albert Uderzo', ARRAY['https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Albert_Uderzo_2012.jpg/500px-Albert_Uderzo_2012.jpg'],1);
 
 INSERT INTO affiliated_artists (title_group_id, artist_id, status, nickname, created_by_id) 
 VALUES
-    (3, 1, 'Writer', NULL, 1);
+    (3, 1, 'Writer', NULL, 1),
+    (4, 2, 'Writer', NULL, 1),
+    (4, 3, 'Artist', NULL, 1);
 
 INSERT INTO "title_group_comments" ("content", "created_at", "updated_at", "created_by_id", "title_group_id", "refers_to_torrent_id", "answers_to_comment_id") VALUES 
     ('Great book, I really enjoyed it, thanks for the upload !', '2025-03-24 10:47:09.630279', '2025-03-24 10:47:09.630279', 1, 3, NULL, NULL),
