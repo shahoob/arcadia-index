@@ -94,9 +94,17 @@ comment_data AS (
     FROM title_group_comments c
     LEFT JOIN users u ON u.id = c.created_by_id
     GROUP BY c.title_group_id
+),
+series_data AS (
+    SELECT 
+        tg.id AS title_group_id,
+        jsonb_build_object('name', s.name, 'id', s.id) AS series
+    FROM title_groups tg
+    LEFT JOIN series s ON s.id = tg.series_id
 )
 SELECT jsonb_build_object(
     'title_group', to_jsonb(tg),
+    'series', COALESCE(sd.series, '{}'::jsonb),
     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
     'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb)
@@ -105,6 +113,7 @@ FROM title_groups tg
 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
 LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
 LEFT JOIN comment_data cd ON cd.title_group_id = tg.id
+LEFT JOIN series_data sd ON sd.title_group_id = tg.id
 WHERE tg.id = $1;"#, title_group_id)
         .fetch_one(pool.get_ref())
         .await;
