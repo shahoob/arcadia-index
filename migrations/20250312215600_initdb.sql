@@ -296,3 +296,18 @@ CREATE TABLE torrents (
         subtitle_languages VARCHAR(20) [],
         video_resolution VARCHAR(6) -- video
 );
+
+CREATE TABLE title_group_comments (
+    id BIGSERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_by_id INT NOT NULL,
+    title_group_id INT NOT NULL,
+    refers_to_torrent_id INT,
+    answers_to_comment_id BIGINT,
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (refers_to_torrent_id) REFERENCES torrents(id) ON DELETE SET NULL,
+    FOREIGN KEY (answers_to_comment_id) REFERENCES title_group_comments(id) ON DELETE SET NULL
+);

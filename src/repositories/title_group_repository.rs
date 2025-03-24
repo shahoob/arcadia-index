@@ -84,16 +84,28 @@ artist_data AS (
     FROM affiliated_artists aa
     JOIN artists a ON a.id = aa.artist_id
     GROUP BY aa.title_group_id
+),
+comment_data AS (
+    SELECT 
+        c.title_group_id,
+        jsonb_agg(
+            to_jsonb(c) || jsonb_build_object('created_by', jsonb_build_object('id', u.id, 'username', u.username))
+        ) AS title_group_comments
+    FROM title_group_comments c
+    LEFT JOIN users u ON u.id = c.created_by_id
+    GROUP BY c.title_group_id
 )
 SELECT jsonb_build_object(
     'title_group', to_jsonb(tg),
     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
-    'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb)
+    'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
+    'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb)
 )
 FROM title_groups tg
 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
 LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
-WHERE tg.id = $1"#, title_group_id)
+LEFT JOIN comment_data cd ON cd.title_group_id = tg.id
+WHERE tg.id = $1;"#, title_group_id)
         .fetch_one(pool.get_ref())
         .await;
 

@@ -6,6 +6,7 @@ use crate::handlers::{
     edition_group_handler::add_edition_group,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
+    title_group_comment_handler::add_title_group_comment,
     title_group_handler::{add_title_group, get_title_group},
     torrent_handler::upload_torrent,
 };
@@ -28,6 +29,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route(
                 "/affiliated-artists",
                 web::post().to(add_affiliated_artists),
+            )
+            .route(
+                "/title-group-comment",
+                web::post().to(add_title_group_comment),
             ),
     );
 }
