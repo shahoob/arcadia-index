@@ -6,6 +6,7 @@ use sqlx::prelude::FromRow;
 pub struct User {
     pub id: i32,
     pub username: String,
+    pub avatar: String,
     pub email: String,
     pub password_hash: String,
     pub registered_from_ip: String,

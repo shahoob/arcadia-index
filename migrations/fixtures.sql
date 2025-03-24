@@ -1,8 +1,8 @@
-INSERT INTO users (username, email, password_hash, registered_from_ip)
+INSERT INTO users (username, email, password_hash, registered_from_ip, avatar)
 VALUES
-    ('test', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1'),
-    ('user2', 'user2@example.com', 'hashedpassword2', '192.168.1.2'),
-    ('user3', 'user3@example.com', 'hashedpassword3', '192.168.1.3');
+    ('picolo', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1','https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg'),
+    ('waterbottle', 'user2@example.com', 'hashedpassword2', '192.168.1.2','https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg'),
+    ('coolguy', 'user3@example.com', 'hashedpassword3', '192.168.1.3','https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg');
 
 INSERT INTO master_groups (name, created_by_id)
 VALUES
@@ -50,6 +50,7 @@ INSERT INTO affiliated_artists (title_group_id, artist_id, status, nickname, cre
 VALUES
     (3, 1, 'Writer', NULL, 1);
 
-INSERT INTO "title_group_comments" ("id", "content", "created_at", "updated_at", "created_by_id", "title_group_id", "refers_to_torrent_id", "answers_to_comment_id") VALUES 
-    ('1', 'Great book, I really enjoyed it, thanks for the upload !', '2025-03-24 10:47:09.630279', '2025-03-24 10:47:09.630279', 1, 3, NULL, NULL),
-    ('2', 'Indeed ! +1', '2025-03-24 10:49:00.277003', '2025-03-24 10:49:00.277003', 1, 3, NULL, '1');
+INSERT INTO "title_group_comments" ("content", "created_at", "updated_at", "created_by_id", "title_group_id", "refers_to_torrent_id", "answers_to_comment_id") VALUES 
+    ('Great book, I really enjoyed it, thanks for the upload !', '2025-03-24 10:47:09.630279', '2025-03-24 10:47:09.630279', 1, 3, NULL, NULL),
+    ('Indeed ! +1', '2025-03-24 10:49:00.277003', '2025-03-24 10:49:00.277003', 2, 3, NULL, '1'),
+    ('Thanks for the scanned version, good to have the original one archived',NOW(),NOW(), 3, 3, 12, NULL);
