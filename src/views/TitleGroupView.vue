@@ -34,12 +34,6 @@
               {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
             </div>
           </div>
-          <div class="information-line">
-            <span class="item-title">Links:</span>
-            <div v-for="link in title_group.external_links" :key="link">
-              {{ link }}
-            </div>
-          </div>
           <div class="information-line" v-if="title_group.name_aliases">
             <span class="item-title">Aliases:</span>
             <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
@@ -49,6 +43,11 @@
           <div class="information-line">
             <span class="item-title">Original language:</span>
             {{ title_group.original_language }}
+          </div>
+          <div class="information-line">
+            <div v-for="link in title_group.external_links" :key="link">
+              <ExternalLink :link="link" />
+            </div>
           </div>
         </div>
       </div>
@@ -65,25 +64,37 @@
     <ContentContainer>
       <TitleGroupTable :edition_groups="edition_groups" />
     </ContentContainer>
+    <GeneralComments :comments="comments" />
   </div>
 </template>
 
 <script lang="ts">
+import GeneralComments from '@/components/community/GeneralComments.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { getTitleGroup } from '@/services/api/torrentService'
 import TitleGroupTable from '@/components/torrents/TitleGroupTable.vue'
 import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/torrents/AffiliatedArtist.vue'
+import ExternalLink from '@/components/torrents/ExternalLink.vue'
 
 export default {
-  components: { ContentContainer, TitleGroupTable, Galleria, Image, AffiliatedArtist },
+  components: {
+    ContentContainer,
+    TitleGroupTable,
+    Galleria,
+    Image,
+    AffiliatedArtist,
+    ExternalLink,
+    GeneralComments,
+  },
   setup() {},
   data() {
     return {
       title_group: {},
       edition_groups: [],
       affiliated_artists: [],
+      comments: [],
     }
   },
   created() {
@@ -91,6 +102,7 @@ export default {
       this.title_group = data.title_group
       this.edition_groups = data.edition_groups
       this.affiliated_artists = data.affiliated_artists
+      this.comments = data.title_group_comments
     })
   },
 }
@@ -110,7 +122,6 @@ export default {
   border: none;
   margin-right: 20px;
 }
-
 .title {
   font-weight: bold;
   font-size: 2em;
@@ -130,9 +141,12 @@ export default {
   margin-right: 0px;
   margin-left: auto;
 }
+.comments {
+  margin-top: 20px;
+}
 </style>
 <style>
-#title-group-view .left img {
+#title-group-view .left .p-galleria-content img {
   height: 20em !important;
 }
 #title-group-view .p-galleria-indicator-list {
