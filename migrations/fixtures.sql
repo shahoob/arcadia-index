@@ -12,7 +12,7 @@ INSERT INTO title_groups (master_group_id, name, created_by_id, description, ori
 VALUES
     (NULL, 'Music Album 1', 1, 'An amazing album', 'English', '2020-01-01', ARRAY['rock', 'pop'], 'USA', ARRAY['https://example.com'], 'Music', ARRAY['https://archive.org/download/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5-14497733661_thumb500.jpg', 'https://archive.org/download/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da-41520333024_thumb500.jpg'], 'Album'),
     (NULL, 'Movie 1', 2, 'A great movie', 'English', '2021-06-15', ARRAY['action', 'thriller'], 'UK', ARRAY['https://example.com'], 'Movie', ARRAY['https://image.tmdb.org/t/p/w780/qitnZcLP7C9DLRuPpmvZ7GiEjJN.jpg'], NULL),
-    (NULL, 'Les misérables', 2, 'Interesting book', 'French', '1862-03-31', ARRAY['novel', 'historical.fiction'], 'France', ARRAY['https://example.com'], 'Book', ARRAY['https://cdn.kobo.com/book-images/a6bdd3f5-ba60-4ad3-8f6b-5f1427021961/1200/1200/False/les-miserables-305.jpg','https://m.media-amazon.com/images/I/613FCU-5u-L._SL500_.jpg'], 'Book');
+    (NULL, 'Les misérables', 2, 'Interesting book', 'French', '1862-03-31', ARRAY['novel', 'historical.fiction'], 'France', ARRAY['https://en.wikipedia.org/wiki/Les_Mis%C3%A9rables', 'https://openlibrary.org/books/OL14082552M/Les_mis%C3%A9rables'], 'Book', ARRAY['https://cdn.kobo.com/book-images/a6bdd3f5-ba60-4ad3-8f6b-5f1427021961/1200/1200/False/les-miserables-305.jpg','https://m.media-amazon.com/images/I/613FCU-5u-L._SL500_.jpg'], 'Book');
 
 INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links)
 VALUES
@@ -49,3 +49,7 @@ VALUES
 INSERT INTO affiliated_artists (title_group_id, artist_id, status, nickname, created_by_id) 
 VALUES
     (3, 1, 'Writer', NULL, 1);
+
+INSERT INTO "title_group_comments" ("id", "content", "created_at", "updated_at", "created_by_id", "title_group_id", "refers_to_torrent_id", "answers_to_comment_id") VALUES 
+    ('1', 'Great book, I really enjoyed it, thanks for the upload !', '2025-03-24 10:47:09.630279', '2025-03-24 10:47:09.630279', 1, 3, NULL, NULL),
+    ('2', 'Indeed ! +1', '2025-03-24 10:49:00.277003', '2025-03-24 10:49:00.277003', 1, 3, NULL, '1');
