@@ -25,6 +25,7 @@
 :root {
 
   --color-secondary: rgb(189, 51, 51);
+  --color-background-primary: #2f2f2f;
 
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);

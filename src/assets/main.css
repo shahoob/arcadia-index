@@ -2,7 +2,7 @@
 
 body{
   margin: 0;
-  background-color: #2f2f2f; /* Dark theme */
+  background-color: var(--color-background-primary); /* Dark theme */
 }
 
 #app{
