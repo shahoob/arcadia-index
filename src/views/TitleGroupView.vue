@@ -148,6 +148,7 @@ export default {
 <style>
 #title-group-view .left .p-galleria-content img {
   height: 20em !important;
+  border-radius: 7px;
 }
 #title-group-view .p-galleria-indicator-list {
   padding: 7px !important;

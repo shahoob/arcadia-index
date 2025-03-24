@@ -34,5 +34,6 @@ export default {
 <style>
 .affiliated-artist img {
   height: 10em !important;
+  border-radius: 7px;
 }
 </style>

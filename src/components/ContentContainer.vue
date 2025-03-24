@@ -12,7 +12,7 @@ export default {
 
 <style scoped>
 .container {
-  padding: 20px;
+  padding: 7px;
   border-radius: 10px;
   background-color: rgb(29, 29, 29);
 }
