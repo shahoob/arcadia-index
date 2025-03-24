@@ -19,7 +19,38 @@ VALUES
     (NULL, 'Music Album 1', 1, 'An amazing album', 'English', '2020-01-01', ARRAY['rock', 'pop'], 'USA', ARRAY['https://example.com'], 'Music', ARRAY['https://archive.org/download/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5-14497733661_thumb500.jpg', 'https://archive.org/download/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da-41520333024_thumb500.jpg'], 'Album', NULL),
     (NULL, 'Movie 1', 2, 'A great movie', 'English', '2021-06-15', ARRAY['action', 'thriller'], 'UK', ARRAY['https://example.com'], 'Movie', ARRAY['https://image.tmdb.org/t/p/w780/qitnZcLP7C9DLRuPpmvZ7GiEjJN.jpg'], NULL, NULL),
     (NULL, 'Les misérables', 2, 'Interesting book', 'French', '1862-03-31', ARRAY['novel', 'historical.fiction'], 'France', ARRAY['https://en.wikipedia.org/wiki/Les_Mis%C3%A9rables', 'https://openlibrary.org/books/OL14082552M/Les_mis%C3%A9rables'], 'Book', ARRAY['https://cdn.kobo.com/book-images/a6bdd3f5-ba60-4ad3-8f6b-5f1427021961/1200/1200/False/les-miserables-305.jpg','https://m.media-amazon.com/images/I/613FCU-5u-L._SL500_.jpg'], 'Book', NULL),
-    (NULL, 'Astérix le gaulois', 2, 'first book of the series !', 'French', '1961-09-01', ARRAY['action'], 'France', ARRAY['https://wikipedia.org'], 'Book', ARRAY['https://media.senscritique.com/media/000017019153/source_big/Asterix_le_Gaulois_Asterix_tome_1.jpg','https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101654-T.jpg'], 'Illustrated', 1);
+    (NULL, 'Astérix le gaulois', 2, 'first book of the series !', 'French', '1961-09-01', ARRAY['action'], 'France', ARRAY['https://wikipedia.org'], 'Book', ARRAY['https://media.senscritique.com/media/000017019153/source_big/Asterix_le_Gaulois_Asterix_tome_1.jpg','https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101654-T.jpg'], 'Illustrated', 1),
+    (NULL, 'La Serpe d''or', 2, 'Astérix and Obélix travel to Lutetia.', 'French', '1962-10-01', 
+        ARRAY['action', 'comedy'], 'France', ARRAY['https://wikipedia.org/wiki/La_Serpe_d%27or'], 
+        'Book', 
+        ARRAY[
+            'https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101340-T.jpg'
+        ], 
+        'Illustrated', 1),
+
+    (NULL, 'Astérix et les Goths', 2, 'Astérix and Obélix encounter the Goths.', 'French', '1963-10-01', 
+        ARRAY['adventure', 'historical'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_et_les_Goths'], 
+        'Book', 
+        ARRAY[
+            'https://media.senscritique.com/media/000016957829/source_big/Asterix_et_les_Goths_Asterix_tome_3.jpg'
+        ], 
+        'Illustrated', 1),
+
+    (NULL, 'Astérix Gladiateur', 2, 'Astérix and Obélix become gladiators in Rome.', 'French', '1964-10-01', 
+        ARRAY['comedy', 'action'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_Gladiateur'], 
+        'Book', 
+        ARRAY[
+            'https://i.pinimg.com/originals/63/67/a9/6367a9a4f55bbc39d6876025830ac758.jpg'
+        ], 
+        'Illustrated', 1),
+
+    (NULL, 'Le Tour de Gaule d''Astérix', 2, 'Astérix and Obélix travel across Gaul.', 'French', '1965-10-01', 
+        ARRAY['adventure', 'comedy'], 'France', ARRAY['https://wikipedia.org/wiki/Le_Tour_de_Gaule_d%27Astérix'], 
+        'Book', 
+        ARRAY[
+            'https://media.senscritique.com/media/000011369244/source_big/Le_Tour_de_Gaule_d_Asterix_Asterix_tome_5.jpg'
+        ], 
+        'Illustrated', 1);
 
 INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links)
 VALUES
