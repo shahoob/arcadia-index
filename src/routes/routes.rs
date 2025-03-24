@@ -19,6 +19,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/login", web::post().to(login))
             // these routes should be protected
             // they are protected as soon as we access the user struct in the handler
+            // TODO: change this so all those routes are protected, even when the user provider isn't called
             .route("/invitation", web::post().to(send_invitation))
             .route("/master-group", web::post().to(add_master_group))
             .route("/title-group", web::post().to(add_title_group))
