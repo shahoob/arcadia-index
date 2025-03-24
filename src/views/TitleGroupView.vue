@@ -44,6 +44,10 @@
             <span class="item-title">Original language:</span>
             {{ title_group.original_language }}
           </div>
+          <div v-if="series" class="information-line series">
+            <span class="item-title">Series:</span>
+            <a :href="'/series?id=' + series.id">{{ series.name }}</a>
+          </div>
           <div class="information-line">
             <div v-for="link in title_group.external_links" :key="link">
               <ExternalLink :link="link" />
@@ -95,6 +99,7 @@ export default {
       edition_groups: [],
       affiliated_artists: [],
       comments: [],
+      series: null,
     }
   },
   created() {
@@ -103,6 +108,7 @@ export default {
       this.edition_groups = data.edition_groups
       this.affiliated_artists = data.affiliated_artists
       this.comments = data.title_group_comments
+      this.series = data.series.id ? data.series : null
     })
   },
 }
@@ -136,6 +142,9 @@ export default {
 }
 .information-line .item {
   margin-right: 5px;
+}
+.series a {
+  padding: 0px;
 }
 .affiliated-artists {
   margin-right: 0px;
