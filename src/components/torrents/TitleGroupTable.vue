@@ -10,7 +10,7 @@
     tableStyle="min-width: 50rem"
   >
     <Column expander style="width: 5rem" />
-    <Column field="name" header="Name">
+    <Column header="Name">
       <template #body="slotProps">
         <span v-if="slotProps.data.video_codec">{{ slotProps.data.video_codec }} / </span>
         {{ slotProps.data.container }} /
@@ -22,18 +22,18 @@
         <span v-if="slotProps.data.release_group">{{ slotProps.data.release_group }}</span>
       </template>
     </Column>
-    <Column field="date" header="Uploaded" style="min-width: 200px">
+    <Column header="Uploaded" style="min-width: 200px">
       <template #body="slotProps">
         {{ timeAgo(slotProps.data.created_at) }}
       </template>
     </Column>
-    <Column field="actions" header="" style="min-width: 200px">
+    <Column header="" style="min-width: 200px">
       <template #body="slotProps">
         <i class="action pi pi-download" /> <i class="action pi pi-flag" />
         <i class="action pi pi-link"
       /></template>
     </Column>
-    <Column field="size" header="Size" style="min-width: 200px">
+    <Column header="Size" style="min-width: 200px">
       <template #body="slotProps">
         {{ bytesToReadable(slotProps.data.size) }}
       </template>
