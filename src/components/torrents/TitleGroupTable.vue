@@ -19,7 +19,7 @@
         <span v-for="feature in slotProps.data.features" :key="feature">
           <span class="feature">{{ feature }} / </span></span
         >
-        {{ slotProps.data.release_group ? slotProps.data.release_group : 'NoGrp' }}
+        <span v-if="slotProps.data.release_group">{{ slotProps.data.release_group }}</span>
       </template>
     </Column>
     <Column field="date" header="Uploaded" style="min-width: 200px">
@@ -40,8 +40,34 @@
     </Column>
     <template #groupheader="slotProps">
       <div class="edition-group-header">
-        {{ new Date(getEditionGroup(slotProps.data.edition_group_id).release_date).getFullYear() }}
+        <span
+          class="date"
+          v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information"
+        >
+          {{
+            new Date(
+              getEditionGroup(slotProps.data.edition_group_id).additional_information.date_from,
+            )
+              .toISOString()
+              .split('T')[0]
+          }}
+          to
+        </span>
+        <span class="date">
+          {{
+            new Date(getEditionGroup(slotProps.data.edition_group_id).release_date)
+              .toISOString()
+              .split('T')[0]
+          }}
+        </span>
+
         - {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
+        <span v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information"
+          >{{ getEditionGroup(slotProps.data.edition_group_id).additional_information.first_item }}
+          to
+          {{ getEditionGroup(slotProps.data.edition_group_id).additional_information.last_item }}
+          /</span
+        >
         {{ getEditionGroup(slotProps.data.edition_group_id).source }}
       </div>
     </template>
@@ -100,6 +126,7 @@ export default {
   components: { DataTable, Column, AccordionPanel, AccordionHeader, AccordionContent, Accordion },
   props: {
     edition_groups: [],
+    title_group: {},
   },
   data() {
     return { expandedRows: [] }
@@ -137,5 +164,8 @@ export default {
 }
 .edition-group-header {
   color: var(--color-secondary);
+}
+.date {
+  font-weight: bold;
 }
 </style>

@@ -67,7 +67,7 @@
       </div>
     </ContentContainer>
     <ContentContainer>
-      <TitleGroupTable :edition_groups="edition_groups" />
+      <TitleGroupTable :edition_groups="edition_groups" :title_group="title_group" />
     </ContentContainer>
     <GeneralComments :comments="comments" />
   </div>
