@@ -48,6 +48,7 @@ pub async fn create_torrent(
     //     .collect::<Vec<String>>();
 
     let info = metainfo.info();
+    // TODO: torrent metadata extraction should be done on the client side
     let parent_folder = info.directory().map(|d| d.to_str().unwrap()).unwrap_or("");
     let files = info
         .files()

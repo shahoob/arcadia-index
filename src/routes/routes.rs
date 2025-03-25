@@ -10,6 +10,7 @@ use crate::handlers::{
     title_group_comment_handler::add_title_group_comment,
     title_group_handler::{add_title_group, get_title_group},
     torrent_handler::upload_torrent,
+    torrent_request_handler::add_torrent_request,
 };
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -36,6 +37,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 web::post().to(add_title_group_comment),
             )
             .route("/series", web::post().to(add_series))
-            .route("/series", web::get().to(get_series)),
+            .route("/series", web::get().to(get_series))
+            .route("/torrent-request", web::post().to(add_torrent_request)),
     );
 }

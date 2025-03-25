@@ -29,7 +29,8 @@ CREATE TABLE users (
     requests_voted BIGINT NOT NULL DEFAULT 0,
     average_seeding_time BIGINT NOT NULL DEFAULT 0,
     invited BIGINT NOT NULL DEFAULT 0,
-    invitations SMALLINT NOT NULL DEFAULT 0
+    invitations SMALLINT NOT NULL DEFAULT 0,
+    bonus_points INT NOT NULL DEFAULT 0
 );
 CREATE TABLE invitations (
     id SERIAL PRIMARY KEY,
@@ -313,4 +314,28 @@ CREATE TABLE title_group_comments (
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (refers_to_torrent_id) REFERENCES torrents(id) ON DELETE SET NULL,
     FOREIGN KEY (answers_to_comment_id) REFERENCES title_group_comments(id) ON DELETE SET NULL
+);
+CREATE TABLE torrent_requests (
+    id BIGSERIAL PRIMARY KEY,
+    title_group_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_by_id INT NOT NULL,
+    edition_name TEXT,
+    release_group VARCHAR(20),
+    description TEXT,
+    language VARCHAR(25),
+    container VARCHAR(5),
+    bounty_upload BIGINT NOT NULL,
+    bounty_bonus_points BIGINT NOT NULL,
+    -- Audio
+    audio_codec audio_codec_enum,
+    audio_channels VARCHAR(8),
+    -- Video
+    video_codec video_codec_enum,
+    features features_enum[],
+    subtitle_languages TEXT[],
+    video_resolution VARCHAR(6),
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );

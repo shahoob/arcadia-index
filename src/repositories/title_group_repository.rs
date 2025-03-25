@@ -65,6 +65,14 @@ pub async fn find_title_group(
     LEFT JOIN users u ON u.id = t.created_by_id
     GROUP BY t.edition_group_id
 ),
+torrent_request_data AS (
+    SELECT 
+        tr.title_group_id,
+        jsonb_agg(to_jsonb(tr)) AS torrent_requests
+    FROM torrent_requests tr
+    LEFT JOIN users u ON u.id = tr.created_by_id
+    GROUP BY tr.title_group_id
+),
 edition_data AS (
     SELECT 
         eg.title_group_id,
@@ -109,13 +117,15 @@ SELECT jsonb_build_object(
     'series', COALESCE(sd.series, '{}'::jsonb),
     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
-    'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb)
+    'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb),
+    'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
 )
 FROM title_groups tg
 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
 LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
 LEFT JOIN comment_data cd ON cd.title_group_id = tg.id
 LEFT JOIN series_data sd ON sd.title_group_id = tg.id
+LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
 WHERE tg.id = $1;"#, title_group_id)
         .fetch_one(pool.get_ref())
         .await;
