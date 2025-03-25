@@ -48,7 +48,42 @@ VALUES
             'https://media.senscritique.com/media/000011369244/source_big/Le_Tour_de_Gaule_d_Asterix_Asterix_tome_5.jpg'
         ], 
         'Illustrated', 1),
-    (NULL, 'Wikipedia', 2, '', 'Multi', '2001-01-01', ARRAY['instructional'], 'France', ARRAY['https://en.wikipedia.org/'], 'Collection', ARRAY['https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png'], NULL, NULL);
+    (NULL, 'Wikipedia', 2, '', 'Multi', '2001-01-01', ARRAY['instructional'], 'France', ARRAY['https://en.wikipedia.org/'], 'Collection', ARRAY['https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png'], NULL, NULL),
+        (NULL, 'Astérix et les Normands', 2, 'Astérix and Obélix encounter the Vikings (Normans).', 'French', '1966-10-01', 
+        ARRAY['adventure', 'comedy'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_et_les_Normands'], 
+        'Book', 
+        ARRAY[
+            'http://media.senscritique.com/media/000011417184/source_big/Asterix_et_les_Normands_Asterix_tome_9.jpg'
+        ], 
+        'Illustrated', 1),
+    (NULL, 'Astérix et le combat des chefs', 2, 'A challenge between village chiefs leads to a unique adventure.', 'French', '1967-10-01', 
+        ARRAY['comedy', 'action'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_et_le_Combat_des_chefs'], 
+        'Book', 
+        ARRAY[
+            'https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101395-T.jpg'
+        ], 
+        'Illustrated', 1),
+    (NULL, 'Astérix chez les Bretons', 2, 'Astérix and Obélix travel to Britain.', 'French', '1966-10-01', 
+        ARRAY['adventure', 'historical', 'comedy'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_chez_les_Bretons'], 
+        'Book', 
+        ARRAY[
+            'http://4.bp.blogspot.com/-AcmPdArdqtk/Uk7UC9rExaI/AAAAAAAAEH0/RqW6GMNg-Aw/s1600/1610.jpg'
+        ], 
+        'Illustrated', 1),
+    (NULL, 'Astérix et Cléopâtre', 2, 'Astérix and Obélix help Cléopâtre build a palace in Egypt.', 'French', '1965-10-01', 
+        ARRAY['adventure', 'historical', 'comedy'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_et_Cléopâtre'], 
+        'Book', 
+        ARRAY[
+            'https://cdn1.booknode.com/book_cover/1360/full/asterix-tome-6-asterix-et-cleopatre-1360354.jpg'
+        ], 
+        'Illustrated', 1),
+    (NULL, 'Astérix et les Légionnaires', 2, 'Astérix and Obélix join the Roman Legion.', 'French', '1967-10-01', 
+        ARRAY['comedy', 'action'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_et_les_Légionnaires'], 
+        'Book', 
+        ARRAY[
+            'https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101425-T.jpg'
+        ], 
+        'Illustrated', 1);
 
 INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links, additional_information)
 VALUES
