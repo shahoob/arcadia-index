@@ -60,11 +60,11 @@ VALUES
     (3, 'Original edition', '1862-03-31', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}', NULL),
     (3, 'Audiobook', '2005-01-01', 2, 'audiobook version', 'Web', '{}', '{}', NULL),
     (4, 'Original edition', '1961-09-01', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}', NULL),
-    (9, 'English version', '2021-01-01', 2, 'full dump of wikipedia'' English version', 'Web', '{}', '{}', NULL),
-    (9, 'French version', '2021-01-01', 2, 'full dump of wikipedia'' French version', 'Web', '{}', '{}', NULL),
-    (9, 'English version', '2025-01-01', 2, 'full dump of wikipedia'' English version', 'Web', '{}', '{}', NULL),
-    (9, 'English version', '2025-01-01', 2, 'partial dump of wikipedia'' English version', 'Web', '{}', '{}', '{"date_from": "2020-01-01", "first_item": "A", "last_item": "M"}'::jsonb),
-    (9, 'English version', '2025-01-01', 2, 'partial dump of wikipedia English version articles created in between 2020-01-01 and 2025-01-01, for the titles starting from N to Z' English version', 'Web', '{}', '{}', '{"date_from": "2020-01-01", "first_item": "N", "last_item": "Z"}'::jsonb);
+    (9, 'English version', '2021-01-01', 2, 'full dump of wikipedia''s English version', 'Web', '{}', '{}', NULL),
+    (9, 'French version', '2021-01-01', 2, 'full dump of wikipedia''s French version', 'Web', '{}', '{}', NULL),
+    (9, 'English version', '2025-01-01', 2, 'full dump of wikipedia''s English version', 'Web', '{}', '{}', NULL),
+    (9, 'English version', '2025-01-01', 2, 'partial dump of wikipedia''s English version', 'Web', '{}', '{}', '{"date_from": "2020-01-01", "first_item": "A", "last_item": "M"}'::jsonb),
+    (9, 'English version', '2025-01-01', 2, 'partial dump of wikipedia''s English version articles created in between 2020-01-01 and 2025-01-01, for the titles starting from N to Z', 'Web', '{}', '{}', '{"date_from": "2020-01-01", "first_item": "N", "last_item": "Z"}'::jsonb);
 
 INSERT INTO torrents (edition_group_id, created_by_id, release_name, release_group, file_amount_per_type, file_list, mediainfo, container, size, audio_codec, audio_bitrate, video_codec, video_resolution, description)
 VALUES
