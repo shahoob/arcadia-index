@@ -68,7 +68,7 @@ pub enum VideoCodec {
     DivX,
     #[sqlx(rename = "h264")]
     H264,
-    #[sqlx(rename = "H265")]
+    #[sqlx(rename = "h265")]
     H265,
     #[sqlx(rename = "vc-1")]
     Vc1,

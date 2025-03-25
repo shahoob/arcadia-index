@@ -141,3 +141,7 @@ INSERT INTO "title_group_comments" ("content", "created_at", "updated_at", "crea
     ('Great book, I really enjoyed it, thanks for the upload !', '2025-03-24 10:47:09.630279', '2025-03-24 10:47:09.630279', 1, 3, NULL, NULL),
     ('Indeed ! +1', '2025-03-24 10:49:00.277003', '2025-03-24 10:49:00.277003', 2, 3, NULL, '1'),
     ('Thanks for the scanned version, good to have the original one archived',NOW(),NOW(), 3, 3, 12, NULL);
+
+INSERT INTO "public"."torrent_requests" ("id", "title_group_id", "created_at", "updated_at", "created_by_id", "edition_name", "release_group", "description", "language", "container", "bounty_upload", "bounty_bonus_points", "audio_codec", "audio_channels", "video_codec", "features", "subtitle_languages", "video_resolution") VALUES 
+    ('1', 4, '2025-03-25 21:52:10.458757', '2025-03-25 21:52:10.458757', 1, 'original edition', 'flix', 'always wanted to see this one', 'English', 'MKV', '20000', '500', 'aac', '5.1', 'h265', '{HDR}', '["English","French"]', '2160p'),
+    ('2', 4, '2025-03-25 21:53:18.741246', '2025-03-25 21:53:18.741246', 1, 'original edition', 'flix', 'always wanted to see this one', 'English', 'MKV', '10000', '500', 'aac', '5.1', 'h264', '{Remux}', '["English","French"]', '1080p');

@@ -7,4 +7,5 @@ pub mod series;
 pub mod title_group;
 pub mod title_group_comment;
 pub mod torrent;
+pub mod torrent_request;
 pub mod user;
