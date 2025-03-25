@@ -107,7 +107,7 @@ CREATE TYPE content_type_enum AS ENUM (
     'Music',
     'Software',
     'Book',
-    'SiteRip'
+    'Collection'
 );
 CREATE TYPE category_enum AS ENUM (
     'Ep',
@@ -213,6 +213,7 @@ CREATE TABLE edition_groups (
     covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
     source source_enum NOT NULL,
+    additional_information JSONB,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
     SET NULL

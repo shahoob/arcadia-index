@@ -70,6 +70,7 @@ edition_data AS (
         eg.title_group_id,
         jsonb_agg(
             to_jsonb(eg) || jsonb_build_object('torrents', COALESCE(td.torrents, '[]'::jsonb))
+            ORDER BY eg.release_date
         ) AS edition_groups
     FROM edition_groups eg
     LEFT JOIN torrent_data td ON td.edition_group_id = eg.id
