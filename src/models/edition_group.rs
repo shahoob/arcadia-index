@@ -1,6 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::FromRow;
+use serde_json::Value;
+use sqlx::{prelude::FromRow, types::Json};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
@@ -36,8 +37,8 @@ pub enum Source {
 pub struct EditionGroup {
     pub id: i32,
     pub title_group_id: i32,
-    pub name: String,                // edition name, not title name
-    pub release_date: NaiveDateTime, // public release
+    pub name: String, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
+    pub release_date: NaiveDateTime, // public release, (also, for Collections, date of the last (chronologically) item included)
     pub created_at: NaiveDateTime,   // database entry creation
     pub updated_at: NaiveDateTime,
     pub created_by_id: i32,
@@ -46,6 +47,9 @@ pub struct EditionGroup {
     pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
     pub source: Source,
+    // this information will appea in the "title bar" of the edition
+    // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: numer/name of the last item)
+    pub additional_information: Option<Json<Value>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
@@ -57,6 +61,7 @@ pub struct UserCreatedEditionGroup {
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
     pub source: Source,
+    pub additional_information: Option<Json<Value>>,
     // one of them should be given
     pub title_group_id: Option<i32>,
     // pub title_group: Option<UserCreatedTitleGroup>,

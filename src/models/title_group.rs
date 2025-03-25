@@ -12,7 +12,9 @@ pub enum ContentType {
     Music,
     Software,
     Book,
-    SiteRip,
+    // aka SiteRip, but also includes packs of other content than website dumps (books, etc.)
+    // this allows users to group content (when possible), which lowers the load on the tracker and makes the upload process faster (1 announce instead of multiple)
+    Collection,
 }
 
 // this is not to store the genre, but the format

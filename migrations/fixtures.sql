@@ -27,7 +27,6 @@ VALUES
             'https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101340-T.jpg'
         ], 
         'Illustrated', 1),
-
     (NULL, 'Astérix et les Goths', 2, 'Astérix and Obélix encounter the Goths.', 'French', '1963-10-01', 
         ARRAY['adventure', 'historical'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_et_les_Goths'], 
         'Book', 
@@ -35,7 +34,6 @@ VALUES
             'https://media.senscritique.com/media/000016957829/source_big/Asterix_et_les_Goths_Asterix_tome_3.jpg'
         ], 
         'Illustrated', 1),
-
     (NULL, 'Astérix Gladiateur', 2, 'Astérix and Obélix become gladiators in Rome.', 'French', '1964-10-01', 
         ARRAY['comedy', 'action'], 'France', ARRAY['https://wikipedia.org/wiki/Astérix_Gladiateur'], 
         'Book', 
@@ -43,25 +41,30 @@ VALUES
             'https://i.pinimg.com/originals/63/67/a9/6367a9a4f55bbc39d6876025830ac758.jpg'
         ], 
         'Illustrated', 1),
-
     (NULL, 'Le Tour de Gaule d''Astérix', 2, 'Astérix and Obélix travel across Gaul.', 'French', '1965-10-01', 
         ARRAY['adventure', 'comedy'], 'France', ARRAY['https://wikipedia.org/wiki/Le_Tour_de_Gaule_d%27Astérix'], 
         'Book', 
         ARRAY[
             'https://media.senscritique.com/media/000011369244/source_big/Le_Tour_de_Gaule_d_Asterix_Asterix_tome_5.jpg'
         ], 
-        'Illustrated', 1);
+        'Illustrated', 1),
+    (NULL, 'Wikipedia', 2, '', 'Multi', '2001-01-01', ARRAY['instructional'], 'France', ARRAY['https://en.wikipedia.org/'], 'Collection', ARRAY['https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png'], NULL, NULL);
 
-INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links)
+INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links, additional_information)
 VALUES
-    (1, 'Original Edition', '2020-02-01', 1, 'Original edition, nothing specific', 'CD', '{}', '{}'),
-    (1, 'Original Edition', '2020-02-01', 1, 'Original edition, nothing specific', 'Web', '{}', '{}'),
-    (1, 'Deluxe Edition', '2020-02-01', 1, 'Deluxe edition, additional tracks 3 and 4', 'Web', '{}', '{}'),
-    (2, 'Original Edition', '2020-02-01', 1, 'Movie original edition back in the days', 'DVD5', '{}', '{}'),
-    (2, 'Director''s Cut', '2021-07-01', 2, 'Extended version', 'Blu-Ray', '{}', '{}'),
-    (3, 'Original edition', '1862-03-31', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}'),
-    (3, 'Audiobook', '2005-01-01', 2, 'audiobook version', 'Web', '{}', '{}'),
-    (4, 'Original edition', '1961-09-01', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}');
+    (1, 'Original Edition', '2020-02-01', 1, 'Original edition, nothing specific', 'CD', '{}', '{}', NULL),
+    (1, 'Original Edition', '2020-02-01', 1, 'Original edition, nothing specific', 'Web', '{}', '{}', NULL),
+    (1, 'Deluxe Edition', '2020-02-01', 1, 'Deluxe edition, additional tracks 3 and 4', 'Web', '{}', '{}', NULL),
+    (2, 'Original Edition', '2020-02-01', 1, 'Movie original edition back in the days', 'DVD5', '{}', '{}', NULL),
+    (2, 'Director''s Cut', '2021-07-01', 2, 'Extended version', 'Blu-Ray', '{}', '{}', NULL),
+    (3, 'Original edition', '1862-03-31', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}', NULL),
+    (3, 'Audiobook', '2005-01-01', 2, 'audiobook version', 'Web', '{}', '{}', NULL),
+    (4, 'Original edition', '1961-09-01', 2, 'the original edition of the book', 'Physical-Book', '{}', '{}', NULL),
+    (9, 'English version', '2021-01-01', 2, 'full dump of wikipedia'' English version', 'Web', '{}', '{}', NULL),
+    (9, 'French version', '2021-01-01', 2, 'full dump of wikipedia'' French version', 'Web', '{}', '{}', NULL),
+    (9, 'English version', '2025-01-01', 2, 'full dump of wikipedia'' English version', 'Web', '{}', '{}', NULL),
+    (9, 'English version', '2025-01-01', 2, 'partial dump of wikipedia'' English version', 'Web', '{}', '{}', '{"date_from": "2020-01-01", "first_item": "A", "last_item": "M"}'::jsonb),
+    (9, 'English version', '2025-01-01', 2, 'partial dump of wikipedia English version articles created in between 2020-01-01 and 2025-01-01, for the titles starting from N to Z' English version', 'Web', '{}', '{}', '{"date_from": "2020-01-01", "first_item": "N", "last_item": "Z"}'::jsonb);
 
 INSERT INTO torrents (edition_group_id, created_by_id, release_name, release_group, file_amount_per_type, file_list, mediainfo, container, size, audio_codec, audio_bitrate, video_codec, video_resolution, description)
 VALUES
@@ -79,7 +82,12 @@ VALUES
     (5, 2, 'Movie_2021_DirectorsCut', NULL, '{"mkv": 1}'::jsonb, '["movie.mkv"]'::jsonb, 'Mediainfo data', 'mkv', 3000000000, 'aac', 256, 'h264', '720p', NULL),
     (6, 1, '', NULL, '{"pdf": 1}'::jsonb, '{"files": [{"name": "book.pdf","size": 18851309}]}'::jsonb, 'Mediainfo data', 'pdf', 500000000, NULL, NULL, NULL, NULL, 'scanned from my grandma''s book'),
     (7, 1, '', NULL, '{"m4b": 1}'::jsonb, '{"files": [{"name": "book.m4b","size": 58851309}]}'::jsonb, 'Mediainfo data', 'm4b', 800000000, 'mp3', 320, NULL, NULL, 'ripped from youtube'),
-    (8, 1, '', NULL, '{"pdf": 1}'::jsonb, '{"files": [{"name": "book.pdf","size": 18851309}]}'::jsonb, 'Mediainfo data', 'pdf', 500000000, NULL, NULL, NULL, NULL, 'scanned from my grandma''s book');
+    (8, 1, '', NULL, '{"pdf": 1}'::jsonb, '{"files": [{"name": "book.pdf","size": 18851309}]}'::jsonb, 'Mediainfo data', 'pdf', 500000000, NULL, NULL, NULL, NULL, 'scanned from my grandma''s book'),
+    (9, 1, '', NULL, '{"zip": 1}'::jsonb, '{"files": [{"name": "dump.zip","size": 80000000}]}'::jsonb, 'Mediainfo data', 'zip', 800000000, NULL, NULL, NULL, NULL, 'downloaded from the oficial wikipedia archive project'),
+    (10, 1, '', NULL, '{"zip": 1}'::jsonb, '{"files": [{"name": "dump.zip","size": 81000000}]}'::jsonb, 'Mediainfo data', 'zip', 810000000, NULL, NULL, NULL, NULL, 'downloaded from the oficial wikipedia archive project'),
+    (11, 1, '', NULL, '{"zip": 1}'::jsonb, '{"files": [{"name": "dump.zip","size": 100000000}]}'::jsonb, 'Mediainfo data', 'zip', 1000000000, NULL, NULL, NULL, NULL, 'downloaded from the oficial wikipedia archive project'),
+    (12, 1, '', NULL, '{"zip": 1}'::jsonb, '{"files": [{"name": "dump.zip","size": 100000000}]}'::jsonb, 'Mediainfo data', 'zip', 1000000000, NULL, NULL, NULL, NULL, 'downloaded from the oficial wikipedia archive project'),
+    (13, 1, '', NULL, '{"zip": 1}'::jsonb, '{"files": [{"name": "dump.zip","size": 100000000}]}'::jsonb, 'Mediainfo data', 'zip', 1000000000, NULL, NULL, NULL, NULL, 'downloaded from the oficial wikipedia archive project');
 
 
 INSERT INTO artists (name, description, pictures, created_by_id) 
