@@ -89,7 +89,8 @@ comment_data AS (
     SELECT 
         c.title_group_id,
         jsonb_agg(
-            to_jsonb(c) || jsonb_build_object('created_by', jsonb_build_object('id', u.id, 'username', u.username, 'avatar', u.avatar))
+            to_jsonb(c) || jsonb_build_object('created_by', jsonb_build_object('id', u.id, 'username', u.username, 'avatar', u.avatar)) 
+            ORDER BY c.created_at
         ) AS title_group_comments
     FROM title_group_comments c
     LEFT JOIN users u ON u.id = c.created_by_id
