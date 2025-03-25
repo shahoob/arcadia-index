@@ -69,6 +69,10 @@
     <ContentContainer>
       <TitleGroupTable :edition_groups="edition_groups" :title_group="title_group" />
     </ContentContainer>
+    <ContentContainer class="description">
+      <!-- TODO: add bbcode interpreter : https://github.com/JiLiZART/bbob -->
+      {{ title_group.description }}
+    </ContentContainer>
     <GeneralComments :comments="comments" />
   </div>
 </template>
@@ -150,6 +154,9 @@ export default {
 .affiliated-artists {
   margin-right: 0px;
   margin-left: auto;
+}
+.description {
+  margin-top: 20px;
 }
 .comments {
   margin-top: 20px;

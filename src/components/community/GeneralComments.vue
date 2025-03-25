@@ -3,10 +3,7 @@
     <GeneralComment v-for="comment in comments" :key="comment.id" :comment="comment" />
   </div>
   <div class="new-comment">
-    <FloatLabel style="width: 100%" variant="in">
-      <Textarea v-model="new_comment.content" rows="5" style="width: 100%" autoResize />
-      <label for="in_label">New comment</label>
-    </FloatLabel>
+    <BBCodeEditor @value-change="newCommentUpdated" label="New comment" />
     <Button
       type="button"
       label="Post"
@@ -20,11 +17,12 @@
 
 <script lang="ts">
 import GeneralComment from './GeneralComment.vue'
-import { FloatLabel, Textarea, Button } from 'primevue'
+import { Button } from 'primevue'
 import { postTitleGroupComment } from '@/services/api/commentService'
+import BBCodeEditor from './BBCodeEditor.vue'
 export default {
   // eslint-disable-next-line vue/no-reserved-component-names
-  components: { GeneralComment, FloatLabel, Textarea, Button },
+  components: { GeneralComment, BBCodeEditor, Button },
   props: {
     comments: [],
   },
@@ -39,6 +37,9 @@ export default {
     }
   },
   methods: {
+    newCommentUpdated(content: string) {
+      this.new_comment.content = content
+    },
     sendComment() {
       this.sending_comment = true
       this.new_comment.title_group_id = parseInt(this.$route.query.id)
