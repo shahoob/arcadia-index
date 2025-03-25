@@ -1,7 +1,7 @@
 <template>
   <!-- TODO: use skeletons while the data is loading -->
   <div id="title-group-view">
-    <ContentContainer class="header">
+    <ContentContainer class="header" v-if="title_group">
       <div class="left">
         <Galleria
           :value="title_group.covers"
@@ -17,18 +17,16 @@
               <template #previewicon>
                 <i class="pi pi-search"></i>
               </template>
-              <!-- <template #image>
-              <img :src="slotProps.item" alt="cover preview" />
-            </template>
-            <template #preview="slotProps">
-              {{ slotProps }}
-              <img :src="slotProps.item" :alt="slotProps" />
-            </template> -->
             </Image>
           </template>
         </Galleria>
         <div class="textual-information">
-          <div class="title">{{ title_group.name }}</div>
+          <div class="title">
+            {{ title_group.name }}
+            <span class="title-metadata"
+              >({{ title_group.original_release_date.substring(0, 4) }})</span
+            >
+          </div>
           <div class="information-line">
             <span class="item-title">Tags:</span>
             <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
@@ -66,10 +64,20 @@
         </div>
       </div>
     </ContentContainer>
+    <div class="actions">
+      <i v-tooltip.top="'Subscribe'" class="pi pi-bell" />
+      <i v-tooltip.top="'Bookmark'" class="pi pi-bookmark" />
+      <i v-tooltip.top="'Edit'" class="pi pi-pen-to-square" />
+      <i v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
+      <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
+    </div>
     <ContentContainer>
       <TitleGroupTable :edition_groups="edition_groups" :title_group="title_group" />
     </ContentContainer>
-    <ContentContainer class="description">
+    <ContentContainer>
+      <TorrentRequestsTable :torrent_requests="torrent_requests" :title_group="title_group" />
+    </ContentContainer>
+    <ContentContainer class="description" v-if="title_group">
       <!-- TODO: add bbcode interpreter : https://github.com/JiLiZART/bbob -->
       {{ title_group.description }}
     </ContentContainer>
@@ -86,6 +94,7 @@ import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/torrents/AffiliatedArtist.vue'
 import ExternalLink from '@/components/torrents/ExternalLink.vue'
+import TorrentRequestsTable from '@/components/torrents/TorrentRequestsTable.vue'
 
 export default {
   components: {
@@ -96,15 +105,17 @@ export default {
     AffiliatedArtist,
     ExternalLink,
     GeneralComments,
+    TorrentRequestsTable,
   },
   setup() {},
   data() {
     return {
-      title_group: {},
+      title_group: null,
       edition_groups: [],
       affiliated_artists: [],
       comments: [],
       series: null,
+      torrent_requests: [],
     }
   },
   created() {
@@ -114,6 +125,7 @@ export default {
       this.affiliated_artists = data.affiliated_artists
       this.comments = data.title_group_comments
       this.series = data.series.id ? data.series : null
+      this.torrent_requests = data.torrent_requests
     })
   },
 }
@@ -154,6 +166,15 @@ export default {
 .affiliated-artists {
   margin-right: 0px;
   margin-left: auto;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.actions i {
+  margin: 0px 0.5em;
+  cursor: pointer;
 }
 .description {
   margin-top: 20px;
