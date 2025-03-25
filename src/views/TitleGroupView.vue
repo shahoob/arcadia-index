@@ -75,7 +75,7 @@
       <TitleGroupTable :edition_groups="edition_groups" :title_group="title_group" />
     </ContentContainer>
     <ContentContainer>
-      <!-- TODO: Make it foldable (folded by default, hidden if no request) -->
+      <!-- TODO: Make it foldable and add title to the table (folded by default, hidden if no request) -->
       <TorrentRequestsTable :torrent_requests="torrent_requests" :title_group="title_group" />
     </ContentContainer>
     <ContentContainer class="description" v-if="title_group">
