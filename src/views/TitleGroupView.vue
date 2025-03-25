@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: use skeletons while the data is loading -->
   <div id="title-group-view">
     <ContentContainer class="header">
       <div class="left">

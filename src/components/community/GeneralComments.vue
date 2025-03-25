@@ -2,14 +2,70 @@
   <div class="comments">
     <GeneralComment v-for="comment in comments" :key="comment.id" :comment="comment" />
   </div>
+  <div class="new-comment">
+    <FloatLabel style="width: 100%" variant="in">
+      <Textarea v-model="new_comment.content" rows="5" style="width: 100%" autoResize />
+      <label for="in_label">New comment</label>
+    </FloatLabel>
+    <Button
+      type="button"
+      label="Post"
+      icon="pi pi-send"
+      :loading="sending_comment"
+      @click="sendComment"
+      class="post-button"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import GeneralComment from './GeneralComment.vue'
+import { FloatLabel, Textarea, Button } from 'primevue'
+import { postTitleGroupComment } from '@/services/api/commentService'
 export default {
-  components: { GeneralComment },
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: { GeneralComment, FloatLabel, Textarea, Button },
   props: {
-    comments: {},
+    comments: [],
+  },
+  data() {
+    return {
+      new_comment: {
+        content: '',
+        refers_to_torrent_id: null,
+        answers_to_comment_id: null,
+      },
+      sending_comment: false,
+    }
+  },
+  methods: {
+    sendComment() {
+      this.sending_comment = true
+      this.new_comment.title_group_id = parseInt(this.$route.query.id)
+      postTitleGroupComment(this.new_comment).then((data) => {
+        this.new_comment.content = ''
+        this.new_comment.refers_to_torrent_id = null
+        this.new_comment.answers_to_comment_id = null
+        // TODO: when logging in, get the user info, keep it in the store (and localstorage) and fill this info
+        data.created_by = {}
+        // TODO: don't mutate the prop
+        this.comments.push(data)
+        this.sending_comment = false
+      })
+    },
   },
 }
 </script>
+<style scoped>
+.new-comment {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  align-items: flex-end;
+}
+.post-button {
+  width: 5em;
+  margin-top: 5px;
+}
+</style>
