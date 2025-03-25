@@ -91,7 +91,7 @@ pub async fn login(pool: web::Data<PgPool>, user_login: web::Json<Login>) -> Htt
             if !user_login.remember_me {
                 expiration_date = expiration_date + Duration::hours(1);
             } else {
-                expiration_date = expiration_date + Duration::days(365);
+                expiration_date = expiration_date + Duration::days(30);
             }
             let user_claims = Claims {
                 sub: user.id,
@@ -105,7 +105,8 @@ pub async fn login(pool: web::Data<PgPool>, user_login: web::Json<Login>) -> Htt
             .unwrap();
 
             HttpResponse::Ok().json(serde_json::json!(serde_json::json!({
-                "token": token
+                "token": token,
+                "user": {"username": user.username, "id": user.id, "avatar": user.avatar}
             })))
         }
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
