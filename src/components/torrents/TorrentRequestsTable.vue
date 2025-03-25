@@ -1,7 +1,7 @@
 <template>
   <DataTable :value="torrent_requests">
     <Column header="Requirements">
-      <!-- Add more details -->
+      <!-- TODO: Add more details -->
       <template #body="slotProps">
         <span v-if="slotProps.data.video_codec">{{ slotProps.data.video_codec }} /</span>
         {{ slotProps.data.container }}
