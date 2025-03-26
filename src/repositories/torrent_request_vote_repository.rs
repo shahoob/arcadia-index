@@ -17,6 +17,8 @@ pub async fn create_torrent_request_vote(
     if current_user.uploaded - torrent_request_vote.bounty_upload < 0 {
         return Err(format!("you do not have enough upload to put this bounty").into());
     }
+    // TODO config: check if the bounties are above the minimum set in the config
+    // TODO config: check if the user's ratio stays above the minimum ratio set in the config (after the uploaded amount changes)
 
     let create_torrent_request_vote_query = r#"
 WITH inserted_vote AS (
