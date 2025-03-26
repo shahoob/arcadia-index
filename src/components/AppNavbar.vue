@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     toggleDarkMode() {
-      document.documentElement.classList.toggle('my-app-dark')
+      document.documentElement.classList.toggle('dark-theme')
     },
   },
 }

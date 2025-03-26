@@ -21,6 +21,10 @@ export default {
   components: {
     AppNavbar,
   },
+  setup() {
+    // enable dark mode by default
+    document.documentElement.classList.add('dark-theme')
+  },
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <DataTable :value="torrent_requests">
+  <DataTable :value="torrent_requests" size="small">
     <Column header="Requirements">
       <!-- TODO: Add more details -->
       <template #body="slotProps">

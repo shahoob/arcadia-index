@@ -8,6 +8,7 @@
     sortField="representative.name"
     :sortOrder="1"
     tableStyle="min-width: 50rem"
+    size="small"
   >
     <Column expander style="width: 5rem" />
     <Column header="Name">
@@ -72,7 +73,7 @@
       </div>
     </template>
     <template #expansion="slotProps">
-      <Accordion :value="[]" multiple>
+      <Accordion :value="[]" multiple class="dense-accordion">
         <AccordionPanel value="0">
           <AccordionHeader>Mediainfo</AccordionHeader>
           <AccordionContent>
