@@ -74,7 +74,7 @@
     <ContentContainer>
       <TitleGroupTable :edition_groups="edition_groups" :title_group="title_group" />
     </ContentContainer>
-    <ContentContainer>
+    <ContentContainer class="torrent-requests">
       <!-- TODO: Make it foldable and add title to the table (folded by default, hidden if no request) -->
       <TorrentRequestsTable :torrent_requests="torrent_requests" :title_group="title_group" />
     </ContentContainer>
@@ -176,6 +176,9 @@ export default {
 .actions i {
   margin: 0px 0.5em;
   cursor: pointer;
+}
+.torrent-requests {
+  margin-top: 20px;
 }
 .description {
   margin-top: 20px;
