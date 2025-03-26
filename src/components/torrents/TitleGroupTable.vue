@@ -11,33 +11,46 @@
     size="small"
   >
     <Column expander style="width: 5rem" />
-    <Column header="Name">
+    <Column header="Properties" style="min-width: 300px">
       <template #body="slotProps">
-        <span v-if="slotProps.data.video_codec">{{ slotProps.data.video_codec }} / </span>
-        {{ slotProps.data.container }} /
-        <span v-if="slotProps.data.video_resolution">{{ slotProps.data.video_resolution }} / </span>
-        <span v-if="slotProps.data.audio_codec">{{ slotProps.data.audio_codec }} / </span>
+        {{ slotProps.data.container }}
+        <span v-if="slotProps.data.video_codec">/ {{ slotProps.data.video_codec }} </span>
+        <span v-if="slotProps.data.video_resolution">/ {{ slotProps.data.video_resolution }} </span>
+        <span v-if="slotProps.data.audio_codec">/ {{ slotProps.data.audio_codec }} </span>
         <span v-for="feature in slotProps.data.features" :key="feature">
-          <span class="feature">{{ feature }} / </span></span
+          <span class="feature">/ {{ feature }} </span></span
         >
-        <span v-if="slotProps.data.release_group">{{ slotProps.data.release_group }}</span>
+        <span v-if="slotProps.data.release_group">/ {{ slotProps.data.release_group }}</span>
       </template>
     </Column>
-    <Column header="Uploaded" style="min-width: 200px">
+    <Column header="Uploaded">
       <template #body="slotProps">
         {{ timeAgo(slotProps.data.created_at) }}
       </template>
     </Column>
-    <Column header="" style="min-width: 200px">
+    <Column header="">
       <template #body="slotProps">
         <i class="action pi pi-download" /> <i class="action pi pi-flag" />
         <i class="action pi pi-link"
       /></template>
     </Column>
-    <Column header="Size" style="min-width: 200px">
+    <Column header="Size">
       <template #body="slotProps">
         {{ bytesToReadable(slotProps.data.size) }}
       </template>
+    </Column>
+    <!-- TODO: replace with real data from the tracker -->
+    <Column style="width: 2.5em">
+      <template #header><i class="pi pi-replay" v-tooltip.top="'Completed'" /></template>
+      <template #body>10</template>
+    </Column>
+    <Column style="width: 2.5em">
+      <template #header><i class="pi pi-arrow-up" v-tooltip.top="'Seeders'" /></template>
+      <template #body><span style="color: green">5</span></template>
+    </Column>
+    <Column style="width: 2.5em">
+      <template #header><i class="pi pi-arrow-down" v-tooltip.top="'Leechers'" /></template>
+      <template #body>0</template>
     </Column>
     <template #groupheader="slotProps">
       <div class="edition-group-header">
