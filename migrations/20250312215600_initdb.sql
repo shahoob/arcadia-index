@@ -7,9 +7,9 @@ CREATE TABLE users (
     registered_from_ip VARCHAR(15) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description TEXT NOT NULL DEFAULT '',
-    uploaded BIGINT NOT NULL DEFAULT 1,
-    -- 1 byte uploaded
-    downloaded BIGINT NOT NULL DEFAULT 0,
+    uploaded BIGINT NOT NULL DEFAULT 0,
+    -- 1 byte downloaded
+    downloaded BIGINT NOT NULL DEFAULT 1,
     ratio FLOAT NOT NULL DEFAULT 0.0,
     required_ratio FLOAT NOT NULL DEFAULT 0.0,
     last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,7 +30,7 @@ CREATE TABLE users (
     average_seeding_time BIGINT NOT NULL DEFAULT 0,
     invited BIGINT NOT NULL DEFAULT 0,
     invitations SMALLINT NOT NULL DEFAULT 0,
-    bonus_points INT NOT NULL DEFAULT 0
+    bonus_points BIGINT NOT NULL DEFAULT 0
 );
 CREATE TABLE invitations (
     id SERIAL PRIMARY KEY,
@@ -337,5 +337,15 @@ CREATE TABLE torrent_requests (
     subtitle_languages TEXT[],
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE torrent_request_votes(
+    id BIGSERIAL PRIMARY KEY,
+    torrent_request_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_by_id INT NOT NULL,
+    bounty_upload BIGINT NOT NULL DEFAULT 0,
+    bounty_bonus_points BIGINT NOT NULL DEFAULT 0,
+    FOREIGN KEY (torrent_request_id) REFERENCES torrent_requests(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );

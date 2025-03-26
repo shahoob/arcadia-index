@@ -8,4 +8,5 @@ pub mod title_group;
 pub mod title_group_comment;
 pub mod torrent;
 pub mod torrent_request;
+pub mod torrent_request_vote;
 pub mod user;
