@@ -1,8 +1,8 @@
-INSERT INTO users (username, email, password_hash, registered_from_ip, avatar)
+INSERT INTO users (username, email, password_hash, registered_from_ip, avatar, uploaded, bonus_points)
 VALUES
-    ('picolo', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1','https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg'),
-    ('waterbottle', 'user2@example.com', 'hashedpassword2', '192.168.1.2','https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg'),
-    ('coolguy', 'user3@example.com', 'hashedpassword3', '192.168.1.3','https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg');
+    ('picolo', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1','https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg',10000, 1000000000),
+    ('waterbottle', 'user2@example.com', 'hashedpassword2', '192.168.1.2','https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg',0,0),
+    ('coolguy', 'user3@example.com', 'hashedpassword3', '192.168.1.3','https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg',0,0);
 
 INSERT INTO "series" (name,description,created_by_id,covers,banners,tags) VALUES
     ('Astérix', 
@@ -142,6 +142,6 @@ INSERT INTO "title_group_comments" ("content", "created_at", "updated_at", "crea
     ('Indeed ! +1', '2025-03-24 10:49:00.277003', '2025-03-24 10:49:00.277003', 2, 3, NULL, '1'),
     ('Thanks for the scanned version, good to have the original one archived',NOW(),NOW(), 3, 3, 12, NULL);
 
-INSERT INTO "public"."torrent_requests" ("id", "title_group_id", "created_at", "updated_at", "created_by_id", "edition_name", "release_group", "description", "language", "container", "bounty_upload", "bounty_bonus_points", "audio_codec", "audio_channels", "video_codec", "features", "subtitle_languages", "video_resolution") VALUES 
-    ('1', 4, '2025-03-25 21:52:10.458757', '2025-03-25 21:52:10.458757', 1, 'original edition', 'flix', 'always wanted to see this one', 'English', 'MKV', '20000', '500', 'aac', '5.1', 'h265', '{HDR}', '["English","French"]', '2160p'),
-    ('2', 4, '2025-03-25 21:53:18.741246', '2025-03-25 21:53:18.741246', 1, 'original edition', 'flix', 'always wanted to see this one', 'English', 'MKV', '10000', '500', 'aac', '5.1', 'h264', '{Remux}', '["English","French"]', '1080p');
+INSERT INTO "torrent_requests" ("id", "title_group_id", "created_at", "updated_at", "created_by_id", "edition_name", "release_group", "description", "language", "container", "bounty_upload", "bounty_bonus_points", "audio_codec", "audio_channels", "video_codec", "features", "subtitle_languages", "video_resolution") VALUES 
+    ('1', 4, '2025-03-25 21:52:10.458757', '2025-03-25 21:52:10.458757', 1, 'original edition', 'flix', 'always wanted to see this one', 'English', 'MKV', '20000', '500', 'aac', '5.1', 'h265', '{HDR}', ARRAY['English','French'], '2160p'),
+    ('2', 4, '2025-03-25 21:53:18.741246', '2025-03-25 21:53:18.741246', 1, 'original edition', 'flix', 'always wanted to see this one', 'English', 'MKV', '10000', '500', 'aac', '5.1', 'h264', '{Remux}', ARRAY['English','French'], '1080p');

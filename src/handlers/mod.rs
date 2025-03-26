@@ -8,4 +8,5 @@ pub mod title_group_comment_handler;
 pub mod title_group_handler;
 pub mod torrent_handler;
 pub mod torrent_request_handler;
+pub mod torrent_request_vote_handler;
 pub mod user_handler;
