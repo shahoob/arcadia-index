@@ -121,7 +121,10 @@ impl FromRequest for User {
                         {
                             let user_id = token_data.claims.sub;
 
-                            let query = "SELECT * FROM users WHERE id = $1";
+                            let query = "UPDATE users 
+                            SET last_seen = NOW() 
+                            WHERE id = $1 
+                            RETURNING *;";
                             let user = sqlx::query_as::<_, User>(query)
                                 .bind(user_id)
                                 .fetch_one(pool.get_ref())

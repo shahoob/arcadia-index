@@ -12,6 +12,7 @@ use crate::handlers::{
     torrent_handler::upload_torrent,
     torrent_request_handler::add_torrent_request,
     torrent_request_vote_handler::add_torrent_request_vote,
+    user_handler::{get_me, get_user},
 };
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -22,6 +23,8 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             // these routes should be protected
             // they are protected as soon as we access the user struct in the handler
             // TODO: change this so all those routes are protected, even when the user provider isn't called
+            .route("/user", web::get().to(get_user))
+            .route("/me", web::get().to(get_me))
             .route("/invitation", web::post().to(send_invitation))
             .route("/master-group", web::post().to(add_master_group))
             .route("/title-group", web::post().to(add_title_group))
