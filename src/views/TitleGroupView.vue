@@ -65,7 +65,13 @@
       </div>
     </ContentContainer>
     <div class="actions">
-      <i v-tooltip.top="'Subscribe'" class="pi pi-bell" />
+      <i
+        v-if="title_group.is_subscribed"
+        v-tooltip.top="'Unsubscribe'"
+        @click="unsubscribe"
+        class="pi pi-bell-slash"
+      />
+      <i v-else v-tooltip.top="'Subscribe'" @click="subscribe" class="pi pi-bell" />
       <i v-tooltip.top="'Bookmark'" class="pi pi-bookmark" />
       <i v-tooltip.top="'Edit'" class="pi pi-pen-to-square" />
       <i v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
@@ -109,6 +115,7 @@ import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
+import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
 
 export default {
   components: {
@@ -129,12 +136,28 @@ export default {
   data() {
     return {
       title_group: null,
+      subscription_loading: false,
     }
   },
   created() {
     getTitleGroup(this.$route.query.id?.toString()).then((data) => {
       this.title_group = data
     })
+  },
+  methods: {
+    subscribe() {
+      subscribeToItem(this.$route.query.id, 'title_group').then(() => {
+        this.title_group.is_subscribed = true
+        // TODO : create a toast to let the user know it worked
+        // the toast object/function should be gloablly accessible with $
+        // this.$toast.show('success', 'Success!', 'Operation was successful.')
+      })
+    },
+    unsubscribe() {
+      unsubscribeToItem(this.$route.query.id, 'title_group').then(() => {
+        this.title_group.is_subscribed = false
+      })
+    },
   },
 }
 </script>
