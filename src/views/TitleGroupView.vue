@@ -1,7 +1,7 @@
 <template>
   <!-- TODO: use skeletons while the data is loading -->
-  <div id="title-group-view">
-    <ContentContainer class="header" v-if="title_group">
+  <div id="title-group-view" v-if="title_group">
+    <ContentContainer class="header">
       <div class="left">
         <Galleria
           :value="title_group.covers"
@@ -43,9 +43,9 @@
             <span class="item-title">Original language:</span>
             {{ title_group.original_language }}
           </div>
-          <div v-if="series" class="information-line series">
+          <div v-if="title_group.series" class="information-line series">
             <span class="item-title">Series:</span>
-            <a :href="'/series?id=' + series.id">{{ series.name }}</a>
+            <a :href="'/series?id=' + title_group.series.id">{{ title_group.series.name }}</a>
           </div>
           <div class="information-line">
             <div v-for="link in title_group.external_links" :key="link">
@@ -57,7 +57,7 @@
       <div class="right">
         <div class="affiliated_artists">
           <AffiliatedArtist
-            v-for="affiliated_artist in affiliated_artists"
+            v-for="affiliated_artist in title_group.affiliated_artists"
             :key="affiliated_artist.artist.id"
             :affiliated_artist="affiliated_artist"
           />
@@ -72,17 +72,20 @@
       <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
     </div>
     <ContentContainer>
-      <TitleGroupTable :edition_groups="edition_groups" :title_group="title_group" />
+      <TitleGroupTable :title_group="title_group" />
     </ContentContainer>
     <ContentContainer class="torrent-requests">
       <!-- TODO: Make it foldable and add title to the table (folded by default, hidden if no request) -->
-      <TorrentRequestsTable :torrent_requests="torrent_requests" :title_group="title_group" />
+      <TorrentRequestsTable
+        :torrent_requests="title_group.torrent_requests"
+        :title_group="title_group"
+      />
     </ContentContainer>
     <ContentContainer class="description" v-if="title_group">
       <!-- TODO: add bbcode interpreter : https://github.com/JiLiZART/bbob -->
       {{ title_group.description }}
     </ContentContainer>
-    <GeneralComments :comments="comments" />
+    <GeneralComments :comments="title_group.comments" />
   </div>
 </template>
 
@@ -112,21 +115,11 @@ export default {
   data() {
     return {
       title_group: null,
-      edition_groups: [],
-      affiliated_artists: [],
-      comments: [],
-      series: null,
-      torrent_requests: [],
     }
   },
   created() {
     getTitleGroup(this.$route.query.id?.toString()).then((data) => {
-      this.title_group = data.title_group
-      this.edition_groups = data.edition_groups
-      this.affiliated_artists = data.affiliated_artists
-      this.comments = data.title_group_comments
-      this.series = data.series.id ? data.series : null
-      this.torrent_requests = data.torrent_requests
+      this.title_group = data
     })
   },
 }

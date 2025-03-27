@@ -1,7 +1,7 @@
 <template>
   <DataTable
     v-model:expandedRows="expandedRows"
-    :value="edition_groups.flatMap((edition_group: Object) => edition_group.torrents)"
+    :value="title_group.edition_groups.flatMap((edition_group: Object) => edition_group.torrents)"
     rowGroupMode="subheader"
     groupRowsBy="edition_group_id"
     sortMode="single"
@@ -139,7 +139,6 @@ import AccordionContent from 'primevue/accordioncontent'
 export default {
   components: { DataTable, Column, AccordionPanel, AccordionHeader, AccordionContent, Accordion },
   props: {
-    edition_groups: [],
     title_group: {},
   },
   data() {
@@ -159,7 +158,7 @@ export default {
   computed: {
     getEditionGroup() {
       return (id: Number) => {
-        return this.edition_groups.find((group: Object) => group.id === id)
+        return this.title_group.edition_groups.find((group: Object) => group.id === id)
       }
     },
   },
