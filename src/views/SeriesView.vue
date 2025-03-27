@@ -13,10 +13,17 @@
       </div>
     </ContentContainer>
     <ContentContainer class="title-groups">
-      <TitleGroupPreview
+      <TitleGroupPreviewCoverOnly
         v-for="title_group in title_groups"
         :key="title_group.id"
         :title_group="title_group"
+        v-if="title_group_preview_mode == 'cover-only'"
+      />
+      <TitleGroupPreviewTable
+        v-for="title_group in title_groups"
+        :key="title_group.id"
+        :title_group="title_group"
+        v-if="title_group_preview_mode == 'table'"
       />
     </ContentContainer>
   </div>
@@ -25,13 +32,15 @@
 import { getSeries } from '@/services/api/seriesService'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { Image } from 'primevue'
-import TitleGroupPreview from '@/components/torrents/TitleGroupPreview.vue'
+import TitleGroupPreviewCoverOnly from '@/components/torrents/TitleGroupPreviewCoverOnly.vue'
+import TitleGroupPreviewTable from '@/components/torrents/TitleGroupPreviewTable.vue'
 export default {
-  components: { ContentContainer, Image, TitleGroupPreview },
+  components: { ContentContainer, Image, TitleGroupPreviewCoverOnly, TitleGroupPreviewTable },
   data() {
     return {
       series: null,
       title_groups: [],
+      title_group_preview_mode: 'table', // TODO: make a select button to switch from cover-only to table
     }
   },
   created() {

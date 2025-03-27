@@ -1,5 +1,5 @@
 <template>
-  <div class="title-group-preview">
+  <div class="title-group-preview-cover-only">
     <a :href="'/title-group?id=' + title_group.id">
       <img
         class="title-group-cover"
@@ -24,11 +24,11 @@ export default {
 </script>
 
 <style>
-.title-group-preview .title-group-cover {
+.title-group-preview-cover-only .title-group-cover {
   height: 20em;
   border-radius: 7px;
 }
-.title-group-preview a:hover {
+.title-group-preview-cover-only a:hover {
   background-color: transparent;
 }
 </style>

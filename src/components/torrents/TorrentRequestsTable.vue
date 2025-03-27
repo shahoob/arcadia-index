@@ -3,8 +3,9 @@
     <Column header="Requirements">
       <!-- TODO: Add more details -->
       <template #body="slotProps">
-        <span v-if="slotProps.data.video_codec">{{ slotProps.data.video_codec }} /</span>
-        {{ slotProps.data.container }}
+        <span v-if="slotProps.data.container">{{ slotProps.data.container }}</span>
+        <span v-else>Any Container</span>
+        <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }} </span>
       </template>
     </Column>
     <Column field="edition_name" header="Edition"></Column>
