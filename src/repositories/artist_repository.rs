@@ -103,19 +103,17 @@ pub async fn find_artist_publications(
     WHERE aa.artist_id = $1
 )
 SELECT json_agg(
-    json_build_object(
-        'title_group', row_to_json(tg.*),
+    to_jsonb(tg) || jsonb_build_object(
         'edition_groups', (
-            SELECT json_agg(
-                json_build_object(
-                    'edition_group', row_to_json(eg.*),
+            SELECT COALESCE(jsonb_agg(
+                to_jsonb(eg) || jsonb_build_object(
                     'torrents', (
-                        SELECT json_agg(row_to_json(t.*))
+                        SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
                         FROM torrents t
                         WHERE t.edition_group_id = eg.id
                     )
                 )
-            )
+            ), '[]'::jsonb)
             FROM edition_groups eg
             WHERE eg.title_group_id = tg.id
         )
