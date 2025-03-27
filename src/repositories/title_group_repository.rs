@@ -53,7 +53,7 @@ pub async fn create_title_group(
 
 pub async fn find_title_group(
     pool: &web::Data<PgPool>,
-    title_group_id: i32,
+    title_group_id: i64,
 ) -> Result<Value, Box<dyn Error>> {
     let title_group = sqlx::query!(r#"WITH torrent_data AS (
     SELECT 

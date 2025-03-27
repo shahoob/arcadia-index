@@ -55,7 +55,7 @@ pub enum Category {
 // no specific information should be entered about the editions or the torrents
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct TitleGroup {
-    pub id: i32,
+    pub id: i64,
     pub master_group_id: Option<i32>, // only if master groups are needed for this type of content
     pub name: String,
     pub name_aliases: Vec<String>,
@@ -83,13 +83,13 @@ pub struct TitleGroup {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SimilarTitleGroups {
-    pub group_1: i32,
-    pub group_2: i32,
+    pub group_1: i64,
+    pub group_2: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct AffiliatedArtist {
-    pub title_group_id: i32,
+    pub title_group_id: i64,
     pub artist_id: i32,
     pub status: String,
     pub nickname: Option<String>, // for example: name of the character the actor is playing
@@ -99,7 +99,7 @@ pub struct AffiliatedArtist {
 
 #[derive(Debug, Deserialize)]
 pub struct UserCreatedAffiliatedArtist {
-    pub title_group_id: i32,
+    pub title_group_id: i64,
     pub artist_id: i32,
     pub status: String,
     pub nickname: Option<String>,

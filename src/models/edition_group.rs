@@ -36,7 +36,7 @@ pub enum Source {
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct EditionGroup {
     pub id: i32,
-    pub title_group_id: i32,
+    pub title_group_id: i64,
     pub name: String, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
     pub release_date: NaiveDateTime, // public release, (also, for Collections, date of the last (chronologically) item included)
     pub created_at: NaiveDateTime,   // database entry creation
@@ -63,6 +63,6 @@ pub struct UserCreatedEditionGroup {
     pub source: Source,
     pub additional_information: Option<Json<Value>>,
     // one of them should be given
-    pub title_group_id: Option<i32>,
+    pub title_group_id: Option<i64>,
     // pub title_group: Option<UserCreatedTitleGroup>,
 }
