@@ -12,20 +12,20 @@
         <div class="description">{{ series.description }}</div>
       </div>
     </ContentContainer>
-    <ContentContainer class="title-groups">
+    <ContentContainer v-if="title_group_preview_mode == 'cover-only'" class="title-groups">
       <TitleGroupPreviewCoverOnly
         v-for="title_group in title_groups"
         :key="title_group.id"
         :title_group="title_group"
-        v-if="title_group_preview_mode == 'cover-only'"
-      />
-      <TitleGroupPreviewTable
-        v-for="title_group in title_groups"
-        :key="title_group.id"
-        :title_group="title_group"
-        v-if="title_group_preview_mode == 'table'"
       />
     </ContentContainer>
+    <TitleGroupPreviewTable
+      v-for="title_group in title_groups"
+      :key="title_group.id"
+      :title_group="title_group"
+      v-if="title_group_preview_mode == 'table'"
+      class="preview-table"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -69,6 +69,9 @@ export default {
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
+}
+.preview-table {
+  margin-bottom: 15px;
 }
 </style>
 <style>
