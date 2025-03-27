@@ -27,10 +27,10 @@ body{
 
 a:hover{
   background-color: transparent !important;
-  color: var(--color-secondary);
+  /* color: var(--color-primary); */
 }
 a{
-  color: var(--color-primary);
+  color: var(--color-secondary);
   text-decoration: none;
 }
 

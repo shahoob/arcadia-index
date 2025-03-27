@@ -1,6 +1,5 @@
 <template>
   <div id="app-container">
-    <!-- Navbar -->
     <div
       class="navbar-container"
       v-if="['/login', '/register'].indexOf($router.currentRoute.value.path) < 0"
@@ -21,11 +20,11 @@ export default {
   components: {
     AppNavbar,
   },
-  setup() {
-    // enable dark mode by default
-    document.documentElement.classList.add('dark-theme')
-  },
 }
+</script>
+<script setup lang="ts">
+// enable dark mode by default
+document.documentElement.classList.add('dark-theme')
 </script>
 
 <style>
