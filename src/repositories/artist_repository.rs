@@ -101,6 +101,19 @@ pub async fn find_artist_publications(
     FROM title_groups tg
     JOIN affiliated_artists aa ON aa.title_group_id = tg.id
     WHERE aa.artist_id = $1
+),
+torrent_request_data AS (
+    SELECT 
+        tr.title_group_id,
+        jsonb_agg(
+            to_jsonb(tr) || jsonb_build_object(
+                'created_by', jsonb_build_object('id', u.id, 'username', u.username)
+            )
+        ) AS torrent_requests
+    FROM torrent_requests tr
+    LEFT JOIN users u ON u.id = tr.created_by_id
+    WHERE tr.title_group_id IN (SELECT id FROM artist_title_groups)
+    GROUP BY tr.title_group_id
 )
 SELECT json_agg(
     to_jsonb(tg) || jsonb_build_object(
@@ -116,10 +129,12 @@ SELECT json_agg(
             ), '[]'::jsonb)
             FROM edition_groups eg
             WHERE eg.title_group_id = tg.id
-        )
+        ),
+        'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
     )
 ) AS artist_content
-FROM artist_title_groups tg;"#,
+FROM artist_title_groups tg
+LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id;"#,
         artist_id
     )
     .fetch_one(pool.get_ref())
