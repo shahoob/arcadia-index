@@ -49,7 +49,23 @@ pub async fn find_series(
         r#"WITH title_group_data AS (
     SELECT 
         tg.series_id,
-        jsonb_agg(to_jsonb(tg)) AS title_groups
+        jsonb_agg(
+            to_jsonb(tg) || jsonb_build_object(
+                'edition_groups', (
+                    SELECT COALESCE(jsonb_agg(
+                        to_jsonb(eg) || jsonb_build_object(
+                            'torrents', (
+                                SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
+                                FROM torrents t
+                                WHERE t.edition_group_id = eg.id
+                            )
+                        )
+                    ), '[]'::jsonb)
+                    FROM edition_groups eg
+                    WHERE eg.title_group_id = tg.id
+                )
+            )
+        ) AS title_groups
     FROM title_groups tg
     WHERE tg.series_id = $1
     GROUP BY tg.series_id
