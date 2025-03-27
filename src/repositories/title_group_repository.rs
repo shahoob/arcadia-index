@@ -112,14 +112,14 @@ series_data AS (
     FROM title_groups tg
     LEFT JOIN series s ON s.id = tg.series_id
 )
-SELECT jsonb_build_object(
-    'title_group', to_jsonb(tg),
+SELECT 
+    to_jsonb(tg) || jsonb_build_object(
     'series', COALESCE(sd.series, '{}'::jsonb),
     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
     'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb),
     'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
-)
+) AS title_group_data
 FROM title_groups tg
 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
 LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
@@ -131,7 +131,7 @@ WHERE tg.id = $1;"#, title_group_id)
         .await;
 
     match title_group {
-        Ok(_) => Ok(title_group.unwrap().jsonb_build_object.unwrap()),
+        Ok(_) => Ok(title_group.unwrap().title_group_data.unwrap()),
         Err(e) => {
             println!("{:#?}", e);
             match e {
