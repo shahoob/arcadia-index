@@ -17,25 +17,13 @@ pub async fn create_title_group_comment(
         RETURNING *;
     "#;
 
-    let torrent_id = if title_group_comment.refers_to_torrent_id.is_some() {
-        title_group_comment.refers_to_torrent_id
-    } else {
-        None
-    };
-
-    let title_group_comment_id = if title_group_comment.answers_to_comment_id.is_some() {
-        title_group_comment.answers_to_comment_id
-    } else {
-        None
-    };
-
     let created_title_group_comment =
         sqlx::query_as::<_, TitleGroupComment>(create_title_group_comment_query)
             .bind(&title_group_comment.content)
             .bind(&title_group_comment.title_group_id)
             .bind(&current_user.id)
-            .bind(torrent_id)
-            .bind(title_group_comment_id)
+            .bind(&title_group_comment.refers_to_torrent_id)
+            .bind(&title_group_comment.answers_to_comment_id)
             .fetch_one(pool.get_ref())
             .await;
 
