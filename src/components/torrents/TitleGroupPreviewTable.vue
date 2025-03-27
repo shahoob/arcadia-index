@@ -10,7 +10,7 @@
     </Image>
     <div class="right">
       <div class="title">
-        {{ title_group.name }}
+        <a :href="'/title-group?id=' + title_group.id">{{ title_group.name }}</a>
         <span class="year">({{ title_group.original_release_date.substring(0, 4) }})</span>
       </div>
       <TitleGroupTable
@@ -50,6 +50,7 @@ export default {
 }
 .year {
   font-size: 0.8em;
+  margin-left: 5px;
 }
 .table {
   width: 100%;

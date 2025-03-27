@@ -176,7 +176,7 @@ export default {
   padding: 5px;
 }
 .edition-group-header {
-  color: var(--color-secondary);
+  color: var(--color-primary);
 }
 .date {
   font-weight: bold;
