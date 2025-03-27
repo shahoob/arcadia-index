@@ -9,6 +9,14 @@ use sqlx::PgPool;
 use std::error::Error;
 use std::str::FromStr;
 
+use super::notification_repository::notify_users;
+
+#[derive(sqlx::FromRow)]
+struct MinimalTitleGroupInfo {
+    id: i64,
+    name: String,
+}
+
 pub async fn create_torrent(
     pool: &web::Data<PgPool>,
     torrent_form: &UploadedTorrent,
@@ -120,7 +128,30 @@ pub async fn create_torrent(
     // TODO: edit the torrent file with proper flags, remove announce url and store it to the disk
 
     match uploaded_torrent {
-        Ok(_) => Ok(uploaded_torrent.unwrap()),
+        Ok(_) => Ok({
+            let title_group_info: MinimalTitleGroupInfo = sqlx::query_as!(
+                MinimalTitleGroupInfo,
+                "SELECT title_groups.id, title_groups.name 
+        FROM edition_groups 
+        JOIN title_groups ON edition_groups.title_group_id = title_groups.id 
+        WHERE edition_groups.id = $1",
+                &torrent_form.edition_group_id.0
+            )
+            .fetch_one(&***pool)
+            .await?;
+            let _ = notify_users(
+                pool,
+                &"torrent_uploaded",
+                &title_group_info.id,
+                &"New torrent uploaded subscribed title group",
+                &format!(
+                    "New torrent uploaded in title group \"{}\"",
+                    title_group_info.name
+                ),
+            )
+            .await;
+            uploaded_torrent.unwrap()
+        }),
         Err(e) => {
             println!("{:#?}", e);
             match e {

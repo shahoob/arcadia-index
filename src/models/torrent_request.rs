@@ -7,7 +7,7 @@ use super::torrent::{AudioCodec, Features, VideoCodec};
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct TorrentRequest {
     pub id: i64,
-    pub title_group_id: i32,
+    pub title_group_id: i64,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub created_by_id: i32,
@@ -30,7 +30,7 @@ pub struct TorrentRequest {
 }
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct UserCreatedTorrentRequest {
-    pub title_group_id: i32,
+    pub title_group_id: i64,
     pub edition_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,

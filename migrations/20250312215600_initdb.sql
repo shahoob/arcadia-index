@@ -134,7 +134,7 @@ CREATE TYPE category_enum AS ENUM (
     'Manual'
 );
 CREATE TABLE title_groups (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     master_group_id INT,
     name TEXT NOT NULL,
     name_aliases TEXT [],
@@ -162,8 +162,8 @@ CREATE TABLE title_groups (
     SET NULL
 );
 CREATE TABLE similar_title_groups (
-    group_1_id INT NOT NULL,
-    group_2_id INT NOT NULL,
+    group_1_id BIGINT NOT NULL,
+    group_2_id BIGINT NOT NULL,
     PRIMARY KEY (group_1_id, group_2_id),
     FOREIGN KEY (group_1_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2_id) REFERENCES title_groups(id) ON DELETE CASCADE
@@ -173,7 +173,7 @@ CREATE TABLE affiliated_artists (
     artist_id INT NOT NULL,
     status VARCHAR(20) NOT NULL,
     nickname VARCHAR(255),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
@@ -203,7 +203,7 @@ CREATE TYPE source_enum AS ENUM (
 );
 CREATE TABLE edition_groups (
     id SERIAL PRIMARY KEY,
-    title_group_id INT NOT NULL,
+    title_group_id BIGINT NOT NULL,
     name TEXT NOT NULL,
     release_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -307,7 +307,7 @@ CREATE TABLE title_group_comments (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id INT NOT NULL,
-    title_group_id INT NOT NULL,
+    title_group_id BIGINT NOT NULL,
     refers_to_torrent_id INT,
     answers_to_comment_id BIGINT,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -317,7 +317,7 @@ CREATE TABLE title_group_comments (
 );
 CREATE TABLE torrent_requests (
     id BIGSERIAL PRIMARY KEY,
-    title_group_id INT NOT NULL,
+    title_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id INT NOT NULL,
@@ -348,4 +348,28 @@ CREATE TABLE torrent_request_votes(
     bounty_bonus_points BIGINT NOT NULL DEFAULT 0,
     FOREIGN KEY (torrent_request_id) REFERENCES torrent_requests(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE title_group_subscriptions (
+    id BIGSERIAL PRIMARY KEY,
+    title_group_id BIGINT NOT NULL,
+    subscribed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    subscriber_id INT NOT NULL,
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL
+);
+CREATE TYPE notification_item_enum AS ENUM (
+    'TitleGroup',
+    'Artist', 
+    'Collage'
+);
+CREATE TABLE notifications (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    receiver INT NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    notification_type notification_item_enum NOT NULL,
+    item_id BIGINT,
+    read_status BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (receiver) REFERENCES users(id) ON DELETE CASCADE
 );

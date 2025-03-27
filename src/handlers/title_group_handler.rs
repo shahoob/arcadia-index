@@ -26,7 +26,7 @@ pub async fn get_title_group(
     query: web::Query<HashMap<String, String>>,
 ) -> HttpResponse {
     let title_group_id = query.get("id").expect("id not found in query");
-    match find_title_group(&pool, title_group_id.parse::<i32>().unwrap()).await {
+    match find_title_group(&pool, title_group_id.parse::<i64>().unwrap()).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
