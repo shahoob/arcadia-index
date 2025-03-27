@@ -7,7 +7,7 @@ use crate::handlers::{
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
     series_handler::{add_series, get_series},
-    subscriptions_handler::add_subscription,
+    subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
     title_group_handler::{add_title_group, get_title_group},
     torrent_handler::upload_torrent,
@@ -49,6 +49,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 "/torrent-request-vote",
                 web::post().to(add_torrent_request_vote),
             )
-            .route("/subscription", web::post().to(add_subscription)),
+            .route("/subscription", web::post().to(add_subscription))
+            .route("/subscription", web::delete().to(remove_subscription)),
     );
 }

@@ -39,3 +39,40 @@ pub async fn create_subscription(
         }
     }
 }
+
+pub async fn delete_subscription(
+    pool: &web::Data<sqlx::PgPool>,
+    item_id: &i64,
+    item: &str,
+    current_user: &User,
+) -> Result<bool, Box<dyn std::error::Error>> {
+    let result: Result<PgQueryResult, sqlx::Error>;
+    match item {
+        "title_group" => {
+            let query = r#"
+                DELETE FROM title_group_subscriptions
+                WHERE title_group_id = $1 AND subscriber_id = $2;
+            "#;
+
+            result = sqlx::query(query)
+                .bind(&item_id)
+                .bind(&current_user.id)
+                .execute(pool.get_ref())
+                .await;
+        }
+        _ => {
+            return Err(format!("this kind of subscription is not supported").into());
+        }
+    }
+
+    match result {
+        Ok(_) => Ok(true),
+        Err(e) => {
+            println!("{:#?}", e);
+            Err(format!(
+                "could not unsubscribe, maybe the subscription doesn't exist or isn't yours"
+            )
+            .into())
+        }
+    }
+}

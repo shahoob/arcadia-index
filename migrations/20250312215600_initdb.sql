@@ -355,7 +355,8 @@ CREATE TABLE title_group_subscriptions (
     subscribed_at TIMESTAMP NOT NULL DEFAULT NOW(),
     subscriber_id INT NOT NULL,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE (title_group_id, subscriber_id)
 );
 CREATE TYPE notification_item_enum AS ENUM (
     'TitleGroup',

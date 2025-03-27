@@ -54,6 +54,7 @@ pub async fn create_title_group(
 pub async fn find_title_group(
     pool: &web::Data<PgPool>,
     title_group_id: i64,
+    current_user: &User,
 ) -> Result<Value, Box<dyn Error>> {
     let title_group = sqlx::query!(r#"WITH torrent_data AS (
     SELECT 
@@ -111,6 +112,17 @@ series_data AS (
         jsonb_build_object('name', s.name, 'id', s.id) AS series
     FROM title_groups tg
     LEFT JOIN series s ON s.id = tg.series_id
+),
+subscription_data AS (
+    SELECT 
+        id, 
+        EXISTS(
+            SELECT 1 
+            FROM title_group_subscriptions tgs 
+            WHERE tgs.title_group_id = tg.id 
+              AND tgs.subscriber_id = $1
+        ) AS is_subscribed
+    FROM title_groups tg
 )
 SELECT 
     to_jsonb(tg) || jsonb_build_object(
@@ -118,7 +130,8 @@ SELECT
     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
     'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb),
-    'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
+    'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb),
+    'is_subscribed', COALESCE(sud.is_subscribed, false)
 ) AS title_group_data
 FROM title_groups tg
 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
@@ -126,7 +139,8 @@ LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
 LEFT JOIN comment_data cd ON cd.title_group_id = tg.id
 LEFT JOIN series_data sd ON sd.title_group_id = tg.id
 LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
-WHERE tg.id = $1;"#, title_group_id)
+LEFT JOIN subscription_data sud ON sud.id = tg.id
+WHERE tg.id = $2;"#, current_user.id, title_group_id)
         .fetch_one(pool.get_ref())
         .await;
 
