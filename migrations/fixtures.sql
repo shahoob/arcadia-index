@@ -135,7 +135,16 @@ INSERT INTO affiliated_artists (title_group_id, artist_id, status, nickname, cre
 VALUES
     (3, 1, 'Writer', NULL, 1),
     (4, 2, 'Writer', NULL, 1),
-    (4, 3, 'Artist', NULL, 1);
+    (4, 3, 'Artist', NULL, 1),
+    (5, 2, 'Writer', NULL, 1),
+    (6, 2, 'Writer', NULL, 1),
+    (7, 2, 'Writer', NULL, 1),
+    (8, 2, 'Writer', NULL, 1),
+    (10, 2, 'Writer', NULL, 1),
+    (11, 2, 'Writer', NULL, 1),
+    (12, 2, 'Writer', NULL, 1),
+    (13, 2, 'Writer', NULL, 1),
+    (14, 2, 'Writer', NULL, 1);
 
 INSERT INTO "title_group_comments" ("content", "created_at", "updated_at", "created_by_id", "title_group_id", "refers_to_torrent_id", "answers_to_comment_id") VALUES 
     ('Great book, I really enjoyed it, thanks for the upload !', '2025-03-24 10:47:09.630279', '2025-03-24 10:47:09.630279', 1, 3, NULL, NULL),

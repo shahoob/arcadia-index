@@ -4,6 +4,7 @@ use crate::models::{
     user::User,
 };
 use actix_web::web;
+use serde_json::Value;
 use sqlx::PgPool;
 use std::error::Error;
 
@@ -87,4 +88,54 @@ pub async fn create_artists_affiliation(
     // match affiliated_artists {
     //     Err(e) => {}
     // }
+}
+
+pub async fn find_artist_publications(
+    pool: &web::Data<PgPool>,
+    artist_id: &i32,
+) -> Result<Value, Box<dyn Error>> {
+    // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
+    let artist_publications = sqlx::query!(
+        r#"WITH artist_title_groups AS (
+    SELECT DISTINCT tg.*
+    FROM title_groups tg
+    JOIN affiliated_artists aa ON aa.title_group_id = tg.id
+    WHERE aa.artist_id = $1
+)
+SELECT json_agg(
+    json_build_object(
+        'title_group', row_to_json(tg.*),
+        'edition_groups', (
+            SELECT json_agg(
+                json_build_object(
+                    'edition_group', row_to_json(eg.*),
+                    'torrents', (
+                        SELECT json_agg(row_to_json(t.*))
+                        FROM torrents t
+                        WHERE t.edition_group_id = eg.id
+                    )
+                )
+            )
+            FROM edition_groups eg
+            WHERE eg.title_group_id = tg.id
+        )
+    )
+) AS artist_content
+FROM artist_title_groups tg;"#,
+        artist_id
+    )
+    .fetch_one(pool.get_ref())
+    .await;
+
+    match artist_publications {
+        Ok(_) => Ok(artist_publications.unwrap().artist_content.unwrap()),
+        Err(e) => {
+            println!("{:#?}", e);
+            match e {
+                sqlx::Error::Database(db_error) => db_error.message().to_string(),
+                _ => e.to_string(),
+            };
+            Err(format!("could not create artist").into())
+        }
+    }
 }
