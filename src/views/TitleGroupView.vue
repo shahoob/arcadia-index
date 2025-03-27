@@ -71,16 +71,22 @@
       <i v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
       <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
     </div>
-    <ContentContainer>
-      <TitleGroupTable :title_group="title_group" />
-    </ContentContainer>
-    <ContentContainer class="torrent-requests">
-      <!-- TODO: Make it foldable and add title to the table (folded by default, hidden if no request) -->
-      <TorrentRequestsTable
-        :torrent_requests="title_group.torrent_requests"
-        :title_group="title_group"
-      />
-    </ContentContainer>
+    <TitleGroupTable :title_group="title_group" />
+    <Accordion
+      v-if="title_group.torrent_requests.length != 0"
+      value="0"
+      class="torrent-requests dense-accordion"
+    >
+      <AccordionPanel value="0">
+        <AccordionHeader>Requests ({{ title_group.torrent_requests.length }})</AccordionHeader>
+        <AccordionContent>
+          <TorrentRequestsTable
+            :torrent_requests="title_group.torrent_requests"
+            :title_group="title_group"
+          />
+        </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
     <ContentContainer class="description" v-if="title_group">
       <!-- TODO: add bbcode interpreter : https://github.com/JiLiZART/bbob -->
       {{ title_group.description }}
@@ -99,6 +105,10 @@ import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/torrents/AffiliatedArtist.vue'
 import ExternalLink from '@/components/torrents/ExternalLink.vue'
 import TorrentRequestsTable from '@/components/torrents/TorrentRequestsTable.vue'
+import Accordion from 'primevue/accordion'
+import AccordionPanel from 'primevue/accordionpanel'
+import AccordionHeader from 'primevue/accordionheader'
+import AccordionContent from 'primevue/accordioncontent'
 
 export default {
   components: {
@@ -110,6 +120,10 @@ export default {
     ExternalLink,
     GeneralComments,
     TorrentRequestsTable,
+    Accordion,
+    AccordionContent,
+    AccordionHeader,
+    AccordionPanel,
   },
   setup() {},
   data() {

@@ -57,7 +57,7 @@ export default {
   padding: 7px;
 }
 .username {
-  color: var(--color-secondary);
+  color: var(--color-primary);
 }
 .time-ago {
   font-size: 0.8em;

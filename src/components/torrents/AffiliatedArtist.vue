@@ -27,7 +27,8 @@ export default {
 }
 .status {
   font-size: 0.8em;
-  color: var(--color-secondary);
+  color: var(--color-primary);
+  font-weight: bold;
 }
 </style>
 

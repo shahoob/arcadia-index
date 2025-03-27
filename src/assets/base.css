@@ -24,7 +24,8 @@
 /* semantic color variables for this project */
 :root {
 
-  --color-secondary: rgb(189, 51, 51);
+  --color-primary: rgb(189, 51, 51);
+  --color-secondary: rgb(91, 51, 209);
   --color-background-primary: #2f2f2f;
 
   --color-background: var(--vt-c-white);

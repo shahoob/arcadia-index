@@ -25,12 +25,19 @@ body{
   width: 70%;
 }
 
-a,
-.green {
+a:hover{
+  background-color: transparent !important;
+  color: var(--color-secondary);
+}
+a{
+  color: var(--color-primary);
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+}
+
+.p-datatable-table,
+.p-accordionpanel{
+  border-radius: 7px;
+  overflow: hidden;
 }
 
 .dense-accordion .p-accordionheader{
