@@ -1,6 +1,6 @@
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
@@ -49,6 +49,8 @@ pub enum Category {
     Book,        // hardcover, etc
     Article,     // includes studies, theseis, essais, etc.
     Manual,      // includes guides, music sheets, etc. for physical and digital products
+    // should be used as little as possible
+    Other,
 }
 
 // Every attribute is specific to the title,
@@ -127,4 +129,28 @@ pub struct UserCreatedTitleGroup {
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i32>,
     // pub master_group: Option<UserCreatedMasterGroup>,
+}
+
+pub fn create_default_title_group() -> UserCreatedTitleGroup {
+    UserCreatedTitleGroup {
+        name: String::from("Untitled"),
+        name_aliases: Vec::new(),
+        description: String::from("No description provided"),
+        original_language: String::from("English"),
+        country_from: String::from("Unknown"),
+        covers: None,
+        external_links: Vec::new(),
+        embedded_links: Some(Json(json!({}))),
+        category: Category::Other,
+        content_type: ContentType::Book,
+        tags: Vec::new(),
+        tagline: None,
+        original_release_date: NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d")
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap(),
+        affiliated_artists: Vec::new(),
+        serie: None,
+        master_group_id: None,
+    }
 }
