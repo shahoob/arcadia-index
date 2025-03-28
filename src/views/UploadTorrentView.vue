@@ -9,10 +9,16 @@
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
-    <Accordion value="" class="upload-step-accordion">
-      <AccordionPanel value="0">
+    <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
+      <AccordionPanel value="0" :disabled="uploadStep < 2">
         <AccordionHeader>Edition group</AccordionHeader>
-        <AccordionContent> Edition groupo </AccordionContent>
+        <AccordionContent> <CreateOrSelectEditionGroup /> </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
+    <Accordion value="" class="upload-step-accordion">
+      <AccordionPanel value="0" :disabled="uploadStep < 3">
+        <AccordionHeader>Torrent</AccordionHeader>
+        <AccordionContent>Torrent</AccordionContent>
       </AccordionPanel>
     </Accordion>
   </div>
@@ -23,10 +29,12 @@ import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import CreateOrSelectTitleGroup from '@/components/torrents/CreateOrSelectTitleGroup.vue'
+import CreateOrSelectEditionGroup from '@/components/torrents/CreateOrSelectEditionGroup.vue'
 
 export default {
   components: {
     CreateOrSelectTitleGroup,
+    CreateOrSelectEditionGroup,
     Accordion,
     AccordionContent,
     AccordionHeader,
@@ -35,6 +43,8 @@ export default {
   data() {
     return {
       titleGroupAccordionValue: '0',
+      editionGroupAccordionValue: '',
+      uploadStep: 1,
       titleGroup: {},
       torrentForm: {},
     }
@@ -42,8 +52,9 @@ export default {
   methods: {
     titleGroupDone(titleGroup: object) {
       this.titleGroup = titleGroup
-      console.log(this.titleGroupAccordionValue)
       this.titleGroupAccordionValue = ''
+      this.editionGroupAccordionValue = '0'
+      this.uploadStep = 2
     },
   },
 }

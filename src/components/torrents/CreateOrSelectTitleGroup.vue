@@ -63,7 +63,12 @@
             <InputText name="openlibrary_id" v-model="external_database_ids.openlibrary" />
             <label for="openlibrary_id">Open Library id</label>
             <InputIcon
-              class="pi pi-search cursor-pointer"
+              :class="{
+                pi: true,
+                'pi-search': !gettingExternalDatabaseData,
+                'pi-hourglass': gettingExternalDatabaseData,
+                'cursor-pointer': true,
+              }"
               @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"
             />
           </IconField>
@@ -224,24 +229,33 @@ export default {
         imdb: '',
         musicbrainz: '',
       },
+      gettingExternalDatabaseData: false,
       creatingTitleGroup: false,
     }
   },
   methods: {
     getExternalDatabaseData(item_id: string | Number, database: string) {
+      this.gettingExternalDatabaseData = true
       getExternalDatabaseData(item_id, database).then((data) => {
+        data.original_release_date = new Date(data.original_release_date)
         this.titleGroupForm = data
         this.step = 3
+        this.gettingExternalDatabaseData = false
       })
     },
     validateTitleGroup() {
+      // TODO : form validation : https://primevue.org/forms/#validateon
       if (this.action == 'select') {
         // TODO: get existing editions
         this.$emit('done', { id: this.titleGroupId })
       } else {
         this.creatingTitleGroup = true
         const formattedTitleGroupForm = JSON.parse(JSON.stringify(this.titleGroupForm))
-        formattedTitleGroupForm.tags = formattedTitleGroupForm.tags.split(',')
+        formattedTitleGroupForm.tags =
+          formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
+        // otherwise there is a json parse error, last char is "Z"
+        formattedTitleGroupForm.original_release_date =
+          formattedTitleGroupForm.original_release_date.slice(0, -1)
         createTitleGroup(formattedTitleGroupForm).then((data) => {
           this.creatingTitleGroup = false
           this.$emit('done', data)
