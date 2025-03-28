@@ -6,6 +6,7 @@ use crate::handlers::{
     edition_group_handler::add_edition_group,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
+    scrapers::open_library::get_open_library_data,
     series_handler::{add_series, get_series},
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
@@ -50,6 +51,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 web::post().to(add_torrent_request_vote),
             )
             .route("/subscription", web::post().to(add_subscription))
-            .route("/subscription", web::delete().to(remove_subscription)),
+            .route("/subscription", web::delete().to(remove_subscription))
+            .route(
+                "/external_db/open_library",
+                web::get().to(get_open_library_data),
+            ),
     );
 }

@@ -131,7 +131,8 @@ CREATE TYPE category_enum AS ENUM (
     'Periodical',
     'Book',
     'Article',
-    'Manual'
+    'Manual',
+    'Other'
 );
 CREATE TABLE title_groups (
     id BIGSERIAL PRIMARY KEY,
