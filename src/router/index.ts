@@ -30,6 +30,11 @@ const router = createRouter({
       component: () => import('../views/SeriesView.vue'),
     },
     {
+      path: '/upload',
+      name: 'UploadTorrent',
+      component: () => import('../views/UploadTorrentView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
