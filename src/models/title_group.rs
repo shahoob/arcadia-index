@@ -79,7 +79,7 @@ pub struct TitleGroup {
     pub content_type: ContentType, // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub public_ratings: Option<Json<Value>>, // {service: rating}
-    pub serie_id: Option<i32>,
+    pub series_id: Option<i32>,
     // pub edition_groups: Option<Vec<EditionGroup>>,
 }
 
@@ -125,7 +125,7 @@ pub struct UserCreatedTitleGroup {
     pub tagline: Option<String>,
     pub original_release_date: NaiveDateTime,
     pub affiliated_artists: Vec<Json<Value>>,
-    pub serie: Option<i32>,
+    pub series_id: Option<i32>,
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i32>,
     // pub master_group: Option<UserCreatedMasterGroup>,
@@ -136,10 +136,10 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         name: String::from("Untitled"),
         name_aliases: Vec::new(),
         description: String::from("No description provided"),
-        original_language: String::from("English"),
+        original_language: String::from("Unknown"),
         country_from: String::from("Unknown"),
-        covers: None,
-        external_links: Vec::new(),
+        covers: Some(vec!["".to_string()]),
+        external_links: vec!["".to_string()],
         embedded_links: Some(Json(json!({}))),
         category: Category::Other,
         content_type: ContentType::Book,
@@ -150,7 +150,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
             .and_hms_opt(0, 0, 0)
             .unwrap(),
         affiliated_artists: Vec::new(),
-        serie: None,
+        series_id: None,
         master_group_id: None,
     }
 }
