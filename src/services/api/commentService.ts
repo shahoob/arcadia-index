@@ -2,8 +2,7 @@ import api from './api.ts'
 
 export const postTitleGroupComment = async (comment: object) => {
   try {
-    const response = await api.post('/title-group-comment', comment)
-    return response.data
+    return (await api.post('/title-group-comment', comment)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error

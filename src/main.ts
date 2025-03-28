@@ -17,7 +17,7 @@ const CustomThemePreset = definePreset(Aura, {
   semantic: {
     primary: {
       200: '#BD3333',
-      300: '#BD3333', //primary
+      300: '#5fe1ab', //primary
       400: '#876ED0', //secondary
       500: '#BD3333',
       600: '#BD3333',
