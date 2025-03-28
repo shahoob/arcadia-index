@@ -50,17 +50,42 @@
             <label for="imdb_id">IMDB id</label>
           </FloatLabel>
         </div>
-        or
-        <span
-          class="cursor-pointer"
-          style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
-          @click="(step = 3) && (manualCreation = true)"
-          >create the title group manually</span
-        >
+        <div class="external_db_inputs" v-if="createForm.content_type.name == 'Music'">
+          <FloatLabel>
+            <InputText name="musicbrainz_id" />
+            <label for="musicbrainz_id">Musicbrainz id</label>
+          </FloatLabel>
+          or
+          <FloatLabel>
+            <InputText name="discogs_id" />
+            <label for="discogs_id">Discogs id</label>
+          </FloatLabel>
+        </div>
+        <div class="external_db_inputs" v-if="createForm.content_type.name == 'Book'">
+          <FloatLabel>
+            <IconField>
+              <InputText name="openlibrary_id" v-model="external_database_ids.openlibrary" />
+              <label for="openlibrary_id">Open Library id</label>
+              <InputIcon
+                class="pi pi-search cursor-pointer"
+                @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"
+              />
+            </IconField>
+          </FloatLabel>
+        </div>
+        <div v-if="step == 2">
+          or
+          <span
+            class="cursor-pointer"
+            style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
+            @click="(step = 3) && (manualCreation = true)"
+            >create the title group manually</span
+          >
+        </div>
       </div>
       <div v-if="step > 2">
         <FloatLabel>
-          <InputText name="name" />
+          <InputText v-model="createForm.name" name="name" />
           <label for="name">Name</label>
         </FloatLabel>
         <FloatLabel>
@@ -84,6 +109,19 @@
           />
           <label for="original_language">Original language</label>
         </FloatLabel>
+        <div class="external_links">
+          <label>External Links</label>
+          <div v-for="(link, index) in createForm.external_links" :key="index">
+            <InputText :id="`external-link-${index}`" v-model="createForm.external_links[index]" />
+            <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
+            <Button
+              v-if="createForm.external_links.length != 0"
+              @click="removeLink(index)"
+              icon="pi pi-minus"
+              size="small"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </ContentContainer>
@@ -96,16 +134,32 @@ import ContentContainer from '../ContentContainer.vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
+import Button from 'primevue/button'
+import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
+import InputIcon from 'primevue/inputicon'
+import IconField from 'primevue/iconfield'
+import { create } from 'domain'
 
 export default {
-  components: { InputNumber, FloatLabel, ContentContainer, InputText, Textarea, Select },
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: {
+    Button,
+    InputNumber,
+    FloatLabel,
+    ContentContainer,
+    InputText,
+    Textarea,
+    Select,
+    InputIcon,
+    IconField,
+  },
   props: {},
   data() {
     return {
       action: 'create', // create | select
       step: 1,
       manualCreation: false,
-      createForm: { description: '', original_language: '', content_type: '' },
+      createForm: { description: '', original_language: '', content_type: '', external_links: [] },
       selectableLanguages: [{ name: 'English' }, { name: 'French' }],
       selectableContentTypes: [
         { name: 'Movie' },
@@ -114,7 +168,28 @@ export default {
         { name: 'Software' },
         { name: 'Book' },
       ],
+      external_database_ids: {
+        openlibrary: '',
+        tmdb: '',
+        imdb: '',
+        musicbrainz: '',
+      },
     }
+  },
+  methods: {
+    getExternalDatabaseData(item_id: string | Number, database: string) {
+      getExternalDatabaseData(item_id, database).then((data) => {
+        data.content_type = { name: data.content_type }
+        this.createForm = data
+        this.step = 3
+      })
+    },
+    addLink() {
+      this.createForm.external_links.push('')
+    },
+    removeLink(index: Number) {
+      this.createForm.external_links.splice(index, 1)
+    },
   },
 }
 </script>
@@ -130,7 +205,7 @@ export default {
   cursor: pointer;
 }
 .description {
-  width: 50%;
+  width: 100%;
   height: 10em;
 }
 .p-floatlabel {
@@ -142,6 +217,7 @@ export default {
 .external_db_inputs_wrapper {
   display: flex;
   align-items: center;
+  margin-bottom: 55px;
 }
 .external_db_inputs {
   display: flex;
@@ -150,5 +226,12 @@ export default {
 }
 .external_db_inputs .p-floatlabel {
   margin: 0px 10px;
+}
+.external_links .p-component {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+.external_links input {
+  width: 400px;
 }
 </style>
