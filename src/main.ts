@@ -9,13 +9,29 @@ import router from './router'
 import 'primeicons/primeicons.css'
 import './assets/main.css'
 import Tooltip from 'primevue/tooltip'
+import { definePreset } from '@primeuix/themes'
 
 const app = createApp(App)
+
+const CustomThemePreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+      200: '#BD3333',
+      300: '#BD3333', //primary
+      400: '#876ED0', //secondary
+      500: '#BD3333',
+      600: '#BD3333',
+      700: '#BD3333',
+      800: '#BD3333',
+      900: '#BD3333',
+    },
+  },
+})
 
 app.use(createPinia())
 app.use(PrimeVue, {
   theme: {
-    preset: Aura,
+    preset: CustomThemePreset,
     options: {
       darkModeSelector: '.dark-theme',
     },
