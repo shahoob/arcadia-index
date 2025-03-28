@@ -4,8 +4,7 @@ export const getExternalDatabaseData = async (item_id: string | Number, database
   try {
     switch (database) {
       case 'openlibrary': {
-        const response = await api.get('external_db/open_library?id=' + item_id)
-        return response.data
+        return (await api.get('external_db/open_library?id=' + item_id)).data
       }
       default:
         return {}

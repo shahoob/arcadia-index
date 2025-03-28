@@ -1,136 +1,175 @@
 <template>
-  <ContentContainer>
-    <div class="title" v-if="action == 'select'">
-      Select title group <span class="alternative" @click="action = 'create'">(or create one)</span>
-    </div>
-    <div class="title" v-if="action == 'create'">
-      Create a new title group
-      <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
-    </div>
-    <div id="select-title-group" v-if="action == 'select'">
-      <FloatLabel>
-        <InputNumber name="id" :format="false" />
-        <label for="id">Title group id</label>
-      </FloatLabel>
-    </div>
-    <div id="create-title-group" v-if="action == 'create'">
-      <div>
+  <div class="title" v-if="action == 'select'">
+    Select title group <span class="alternative" @click="action = 'create'">(or create one)</span>
+  </div>
+  <div class="title" v-if="action == 'create'">
+    Create a new title group
+    <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
+  </div>
+  <div id="select-title-group" v-if="action == 'select'">
+    <FloatLabel>
+      <InputNumber v-model="titleGroupId" name="id" :format="false" />
+      <label for="id">Title group id</label>
+    </FloatLabel>
+  </div>
+  <div id="create-title-group" v-if="action == 'create'">
+    <FloatLabel>
+      <Select
+        v-model="titleGroupForm.content_type"
+        inputId="content_type"
+        :options="selectableContentTypes"
+        class="select"
+        @update:modelValue="(step = 2) && (manualCreation = false)"
+      />
+      <label for="content_type">Content type</label>
+    </FloatLabel>
+    <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Movie'">
         <FloatLabel>
-          <Select
-            v-model="createForm.content_type"
-            inputId="content_type"
-            :options="selectableContentTypes"
-            optionLabel="name"
-            class="select"
-            @update:modelValue="step = 2"
-          />
-          <label for="content_type">Content type</label>
+          <InputText name="tmdb_id" />
+          <label for="tmdb_id">TMDB id</label>
+        </FloatLabel>
+        or
+        <FloatLabel>
+          <InputText name="imdb_id" />
+          <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external_db_inputs_wrapper" v-if="step > 1 && !manualCreation">
-        <div class="external_db_inputs" v-if="createForm.content_type.name == 'Movie'">
-          <FloatLabel>
-            <InputText name="tmdb_id" />
-            <label for="tmdb_id">TMDB id</label>
-          </FloatLabel>
-          or
-          <FloatLabel>
-            <InputText name="imdb_id" />
-            <label for="imdb_id">IMDB id</label>
-          </FloatLabel>
-        </div>
-        <div class="external_db_inputs" v-if="createForm.content_type.name == 'TV Show'">
-          <FloatLabel>
-            <InputText name="tvdb_id" />
-            <label for="tvdb_id">TVDB id</label>
-          </FloatLabel>
-          or
-          <FloatLabel>
-            <InputText name="imdb_id" />
-            <label for="imdb_id">IMDB id</label>
-          </FloatLabel>
-        </div>
-        <div class="external_db_inputs" v-if="createForm.content_type.name == 'Music'">
-          <FloatLabel>
-            <InputText name="musicbrainz_id" />
-            <label for="musicbrainz_id">Musicbrainz id</label>
-          </FloatLabel>
-          or
-          <FloatLabel>
-            <InputText name="discogs_id" />
-            <label for="discogs_id">Discogs id</label>
-          </FloatLabel>
-        </div>
-        <div class="external_db_inputs" v-if="createForm.content_type.name == 'Book'">
-          <FloatLabel>
-            <IconField>
-              <InputText name="openlibrary_id" v-model="external_database_ids.openlibrary" />
-              <label for="openlibrary_id">Open Library id</label>
-              <InputIcon
-                class="pi pi-search cursor-pointer"
-                @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"
-              />
-            </IconField>
-          </FloatLabel>
-        </div>
-        <div v-if="step == 2">
-          or
-          <span
-            class="cursor-pointer"
-            style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
-            @click="(step = 3) && (manualCreation = true)"
-            >create the title group manually</span
-          >
-        </div>
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'TV Show'">
+        <FloatLabel>
+          <InputText name="tvdb_id" />
+          <label for="tvdb_id">TVDB id</label>
+        </FloatLabel>
+        or
+        <FloatLabel>
+          <InputText name="imdb_id" />
+          <label for="imdb_id">IMDB id</label>
+        </FloatLabel>
       </div>
-      <div v-if="step > 2">
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Music'">
         <FloatLabel>
-          <InputText v-model="createForm.name" name="name" />
-          <label for="name">Name</label>
+          <InputText name="musicbrainz_id" />
+          <label for="musicbrainz_id">Musicbrainz id</label>
         </FloatLabel>
+        or
         <FloatLabel>
-          <Textarea
-            v-model="createForm.description"
-            name="description"
-            class="description"
-            autoResize
-            rows="5"
-          />
-          <label for="description">Description</label>
+          <InputText name="discogs_id" />
+          <label for="discogs_id">Discogs id</label>
         </FloatLabel>
+      </div>
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Book'">
         <FloatLabel>
-          <Select
-            v-model="createForm.original_language"
-            inputId="original_language"
-            :options="selectableLanguages"
-            optionLabel="name"
-            class="select"
-            filter
-          />
-          <label for="original_language">Original language</label>
-        </FloatLabel>
-        <div class="external_links">
-          <label>External Links</label>
-          <div v-for="(link, index) in createForm.external_links" :key="index">
-            <InputText :id="`external-link-${index}`" v-model="createForm.external_links[index]" />
-            <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
-            <Button
-              v-if="createForm.external_links.length != 0"
-              @click="removeLink(index)"
-              icon="pi pi-minus"
-              size="small"
+          <IconField>
+            <InputText name="openlibrary_id" v-model="external_database_ids.openlibrary" />
+            <label for="openlibrary_id">Open Library id</label>
+            <InputIcon
+              class="pi pi-search cursor-pointer"
+              @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"
             />
-          </div>
+          </IconField>
+        </FloatLabel>
+      </div>
+      <div v-if="step == 2">
+        or
+        <span
+          class="cursor-pointer"
+          style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
+          @click="(step = 3) && (manualCreation = true)"
+          >create the title group manually</span
+        >
+      </div>
+    </div>
+    <div v-if="step > 2">
+      <FloatLabel>
+        <Select
+          v-model="titleGroupForm.category"
+          inputId="category"
+          :options="selectableCategories[titleGroupForm.content_type]"
+          class="select"
+        />
+        <label for="category">Category</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText v-model="titleGroupForm.name" name="name" />
+        <label for="name">Name</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText v-model="titleGroupForm.tags" name="tags" />
+        <label for="tags">Tags (comma separated)</label>
+      </FloatLabel>
+      <FloatLabel>
+        <Textarea
+          v-model="titleGroupForm.description"
+          name="description"
+          class="description"
+          autoResize
+          rows="5"
+        />
+        <label for="description">Description</label>
+      </FloatLabel>
+      <FloatLabel>
+        <Select
+          v-model="titleGroupForm.original_language"
+          inputId="original_language"
+          :options="selectableLanguages"
+          class="select"
+          filter
+        />
+        <label for="original_language">Original language</label>
+      </FloatLabel>
+      <div>
+        <label for="original_release_date" class="block">Original realease date</label>
+        <DatePicker
+          v-model="titleGroupForm.original_release_date"
+          showIcon
+          :showOnFocus="false"
+          inputId="original_release_date"
+        />
+      </div>
+      <div class="covers input-list">
+        <label>Covers</label>
+        <div v-for="(link, index) in titleGroupForm.covers" :key="index">
+          <InputText v-model="titleGroupForm.covers[index]" />
+          <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
+          <Button
+            v-if="titleGroupForm.covers.length != 0"
+            @click="removeCover(index)"
+            icon="pi pi-minus"
+            size="small"
+          />
+        </div>
+      </div>
+      <div class="external-links input-list">
+        <label>External Links</label>
+        <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
+          <InputText v-model="titleGroupForm.external_links[index]" />
+          <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
+          <Button
+            v-if="titleGroupForm.external_links.length != 0"
+            @click="removeLink(index)"
+            icon="pi pi-minus"
+            size="small"
+          />
         </div>
       </div>
     </div>
-  </ContentContainer>
+  </div>
+  <div class="flex justify-content-center">
+    <Button
+      v-if="step == 3 || action == 'select'"
+      label="Validate title group"
+      @click="validateTitleGroup"
+      icon="pi pi-check"
+      size="small"
+      class="validate-button"
+      :loading="creatingTitleGroup"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
-import ContentContainer from '../ContentContainer.vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
@@ -138,17 +177,20 @@ import Button from 'primevue/button'
 import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
-import { create } from 'domain'
+import DatePicker from 'primevue/datepicker'
+import { createTitleGroup } from '@/services/api/torrentService'
 
 export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
   components: {
+    DatePicker,
+    // eslint-disable-next-line vue/no-reserved-component-names
     Button,
     InputNumber,
     FloatLabel,
-    ContentContainer,
     InputText,
+    // eslint-disable-next-line vue/no-reserved-component-names
     Textarea,
+    // eslint-disable-next-line vue/no-reserved-component-names
     Select,
     InputIcon,
     IconField,
@@ -156,40 +198,73 @@ export default {
   props: {},
   data() {
     return {
-      action: 'create', // create | select
+      action: 'select', // create | select
+      titleGroupId: '',
       step: 1,
       manualCreation: false,
-      createForm: { description: '', original_language: '', content_type: '', external_links: [] },
-      selectableLanguages: [{ name: 'English' }, { name: 'French' }],
-      selectableContentTypes: [
-        { name: 'Movie' },
-        { name: 'TV Show' },
-        { name: 'Music' },
-        { name: 'Software' },
-        { name: 'Book' },
-      ],
+      titleGroupForm: {
+        name: '',
+        description: '',
+        original_language: '',
+        original_release_date: null,
+        content_type: '',
+        covers: [''],
+        external_links: [''],
+        category: '',
+        tags: '',
+      },
+      selectableLanguages: ['English', 'French'],
+      selectableContentTypes: ['Movie', 'TV Show', 'Music', 'Software', 'Book'],
+      selectableCategories: {
+        Book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
+      },
       external_database_ids: {
         openlibrary: '',
         tmdb: '',
         imdb: '',
         musicbrainz: '',
       },
+      creatingTitleGroup: false,
     }
   },
   methods: {
     getExternalDatabaseData(item_id: string | Number, database: string) {
       getExternalDatabaseData(item_id, database).then((data) => {
-        data.content_type = { name: data.content_type }
-        this.createForm = data
+        this.titleGroupForm = data
         this.step = 3
       })
     },
+    validateTitleGroup() {
+      if (this.action == 'select') {
+        // TODO: get existing editions
+        this.$emit('done', { id: this.titleGroupId })
+      } else {
+        this.creatingTitleGroup = true
+        const formattedTitleGroupForm = JSON.parse(JSON.stringify(this.titleGroupForm))
+        formattedTitleGroupForm.tags = formattedTitleGroupForm.tags.split(',')
+        createTitleGroup(formattedTitleGroupForm).then((data) => {
+          this.creatingTitleGroup = false
+          this.$emit('done', data)
+        })
+      }
+    },
     addLink() {
-      this.createForm.external_links.push('')
+      this.titleGroupForm.external_links.push('')
     },
     removeLink(index: Number) {
-      this.createForm.external_links.splice(index, 1)
+      this.titleGroupForm.external_links.splice(index, 1)
     },
+    addCover() {
+      this.titleGroupForm.covers.push('')
+    },
+    removeCover(index: Number) {
+      this.titleGroupForm.covers.splice(index, 1)
+    },
+  },
+  created() {
+    if (this.$route.query.title_group_id) {
+      this.titleGroupId = this.$route.query.title_group_id.toString()
+    }
   },
 }
 </script>
@@ -214,24 +289,30 @@ export default {
 .select {
   width: 200px;
 }
-.external_db_inputs_wrapper {
+.external-db-inputs-wrapper {
   display: flex;
   align-items: center;
   margin-bottom: 55px;
 }
-.external_db_inputs {
+.external-db-inputs {
   display: flex;
   align-items: center;
   margin-left: -10px;
 }
-.external_db_inputs .p-floatlabel {
+.external-db-inputs .p-floatlabel {
   margin: 0px 10px;
 }
-.external_links .p-component {
+.input-list {
+  margin-top: 15px;
+}
+.input-list .p-component {
   margin-right: 5px;
   margin-bottom: 5px;
 }
-.external_links input {
+.input-list input {
   width: 400px;
+}
+.validate-button {
+  margin-top: 20px;
 }
 </style>
