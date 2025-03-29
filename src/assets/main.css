@@ -47,6 +47,12 @@ a{
   padding-top: 1em;
 }
 
+.pre-style {
+  font-family: monospace !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: break-word !important;
+}
+
 
 @media (hover: hover) {
   a:hover {

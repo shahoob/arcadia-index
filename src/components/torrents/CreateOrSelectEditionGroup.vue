@@ -1,20 +1,44 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    Select edition group <span class="alternative" @click="action = 'create'">(or create one)</span>
+    Select edition <span class="alternative" @click="action = 'create'">(or create one)</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    Create a new edition group
+    Create a new edition
     <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
   </div>
-  <div id="select-title-group" v-if="action == 'select'">edition selector</div>
+  <div id="select-edition-group" v-if="action == 'select'">
+    <FloatLabel>
+      <Select
+        v-model="selected_edition_group"
+        inputId="edition_group"
+        :options="existing_edition_groups"
+        size="small"
+        class="select"
+      >
+        <template #option="slotProps">
+          <div>
+            {{ slotProps.option.name }} / {{ slotProps.option.source }} /
+            {{ slotProps.option.release_date.substring(0, 10) }}
+          </div>
+        </template>
+        <template #value="slotProps" v-if="selected_edition_group.id">
+          <div>
+            {{ slotProps.value.name }} / {{ slotProps.value.source }} /
+            {{ slotProps.value.release_date.substring(0, 10) }}
+          </div>
+        </template>
+      </Select>
+      <label for="edition_group">Edition</label>
+    </FloatLabel>
+  </div>
   <div v-if="action == 'create'">
     <div v-if="step > 0">
       <FloatLabel>
-        <InputText v-model="editionGroupForm.name" name="name" />
+        <InputText size="small" v-model="editionGroupForm.name" name="name" />
         <label for="name">Name</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="editionGroupForm.distributor" name="distributor" />
+        <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
         <label for="distributor">Distributor</label>
       </FloatLabel>
       <FloatLabel>
@@ -27,26 +51,6 @@
         />
         <label for="description">Description</label>
       </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="editionGroupForm.language"
-          inputId="language"
-          :options="selectableLanguages"
-          class="select"
-          filter
-        />
-        <label for="language">Language</label>
-      </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="editionGroupForm.country_from"
-          inputId="country_from"
-          :options="selectableCountries"
-          class="select"
-          filter
-        />
-        <label for="country_from">Country from</label>
-      </FloatLabel>
       <div>
         <label for="release_date" class="block">Realease date</label>
         <DatePicker
@@ -54,13 +58,14 @@
           showIcon
           :showOnFocus="false"
           inputId="release_date"
+          size="small"
           dateFormat="yy-mm-dd"
         />
       </div>
       <div class="covers input-list">
         <label>Covers</label>
         <div v-for="(link, index) in editionGroupForm.covers" :key="index">
-          <InputText v-model="editionGroupForm.covers[index]" />
+          <InputText size="small" v-model="editionGroupForm.covers[index]" />
           <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
           <Button
             v-if="editionGroupForm.covers.length != 0"
@@ -73,7 +78,7 @@
       <div class="external-links input-list">
         <label>External Links</label>
         <div v-for="(link, index) in editionGroupForm.external_links" :key="index">
-          <InputText v-model="editionGroupForm.external_links[index]" />
+          <InputText size="small" v-model="editionGroupForm.external_links[index]" />
           <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
           <Button
             v-if="editionGroupForm.external_links.length != 0"
@@ -88,7 +93,7 @@
   <div class="flex justify-content-center">
     <Button
       v-if="step == 3 || action == 'select'"
-      label="Validate edition group"
+      label="Validate edition"
       @click="validateEditionGroup"
       icon="pi pi-check"
       size="small"
@@ -109,7 +114,7 @@ import { getExternalDatabaseData } from '@/services/api/externalDatabasesService
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import DatePicker from 'primevue/datepicker'
-import { createTitleGroup } from '@/services/api/torrentService'
+import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
 
 export default {
   components: {
@@ -130,7 +135,6 @@ export default {
   data() {
     return {
       action: 'select', // create | select
-      titleGroupId: '',
       step: 1,
       manualCreation: false,
       editionGroupForm: {
@@ -139,15 +143,15 @@ export default {
         external_links: [''],
         covers: [''],
         release_date: null,
-        country_from: '',
         title_group_id: 0,
         source: '',
         distributor: '',
         additional_information: {},
       },
+      existing_edition_groups: [],
+      selected_edition_group: {},
+      titleGroupId: '',
       editionGroupId: '',
-      selectableLanguages: ['English', 'French'],
-      selectableCountries: ['USA', 'France', 'UK', 'Germany'],
       creatingEditionGroup: false,
     }
   },
@@ -155,8 +159,7 @@ export default {
     validateEditionGroup() {
       // TODO : form validation : https://primevue.org/forms/#validateon
       if (this.action == 'select') {
-        // TODO: get existing editions
-        this.$emit('done', { id: this.editionGroupId })
+        this.$emit('done', this.selected_edition_group)
       } else {
         this.creatingEditionGroup = true
         const formattededitionGroupForm = JSON.parse(JSON.stringify(this.editionGroupForm))
@@ -188,6 +191,11 @@ export default {
     if (this.$route.query.edition_group_id) {
       this.editionGroupId = this.$route.query.edition_group_id.toString()
     }
+    if (this.$route.query.title_group_id) {
+      getTitleGroupLite(this.$route.query.title_group_id.toString()).then((data) => {
+        this.existing_edition_groups = data.edition_groups
+      })
+    }
   },
 }
 </script>
@@ -210,7 +218,7 @@ export default {
   margin-bottom: 30px;
 }
 .select {
-  width: 200px;
+  width: 400px;
 }
 .external-db-inputs-wrapper {
   display: flex;
