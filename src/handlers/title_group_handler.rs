@@ -5,7 +5,9 @@ use sqlx::PgPool;
 
 use crate::{
     models::{title_group::UserCreatedTitleGroup, user::User},
-    repositories::title_group_repository::{create_title_group, find_title_group},
+    repositories::title_group_repository::{
+        create_title_group, find_lite_title_group_info, find_title_group,
+    },
 };
 
 pub async fn add_title_group(
@@ -28,6 +30,19 @@ pub async fn get_title_group(
 ) -> HttpResponse {
     let title_group_id = query.get("id").expect("id not found in query");
     match find_title_group(&pool, title_group_id.parse::<i64>().unwrap(), &current_user).await {
+        Ok(title_group) => HttpResponse::Ok().json(title_group),
+        Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
+            "error": err.to_string()
+        })),
+    }
+}
+
+pub async fn get_lite_title_group_info(
+    pool: web::Data<PgPool>,
+    query: web::Query<HashMap<String, String>>,
+) -> HttpResponse {
+    let title_group_id = query.get("id").expect("id not found in query");
+    match find_lite_title_group_info(&pool, title_group_id.parse::<i64>().unwrap()).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()

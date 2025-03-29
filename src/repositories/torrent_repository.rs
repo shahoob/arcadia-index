@@ -12,7 +12,7 @@ use std::str::FromStr;
 use super::notification_repository::notify_users;
 
 #[derive(sqlx::FromRow)]
-struct MinimalTitleGroupInfo {
+struct LiteTitleGroupInfo {
     id: i64,
     name: String,
 }
@@ -129,8 +129,8 @@ pub async fn create_torrent(
 
     match uploaded_torrent {
         Ok(_) => Ok({
-            let title_group_info: MinimalTitleGroupInfo = sqlx::query_as!(
-                MinimalTitleGroupInfo,
+            let title_group_info: LiteTitleGroupInfo = sqlx::query_as!(
+                LiteTitleGroupInfo,
                 "SELECT title_groups.id, title_groups.name 
         FROM edition_groups 
         JOIN title_groups ON edition_groups.title_group_id = title_groups.id 

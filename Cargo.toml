@@ -24,5 +24,6 @@ bip_metainfo = "0.12.0"
 serde_bytes = "0.11"
 actix-multipart = "0.7.2"
 reqwest = { version = "0.12", features = ["json"] }
+actix-cors = "0.7.1"
 # serde_postgres = "0.2.0"
 # utoipa = "5"
