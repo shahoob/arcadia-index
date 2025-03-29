@@ -1,15 +1,15 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    Select title group <span class="alternative" @click="action = 'create'">(or create one)</span>
+    Select title <span class="alternative" @click="action = 'create'">(or create one)</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    Create a new title group
+    Create a new title
     <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
   </div>
   <div id="select-title-group" v-if="action == 'select'">
     <FloatLabel>
-      <InputNumber v-model="titleGroupId" name="id" :format="false" />
-      <label for="id">Title group id</label>
+      <InputNumber size="small" v-model="titleGroupId" name="id" :format="false" />
+      <label for="id">Title id</label>
     </FloatLabel>
   </div>
   <div id="create-title-group" v-if="action == 'create'">
@@ -19,6 +19,7 @@
         inputId="content_type"
         :options="selectableContentTypes"
         class="select"
+        size="small"
         @update:modelValue="(step = 2) && (manualCreation = false)"
       />
       <label for="content_type">Content type</label>
@@ -26,41 +27,45 @@
     <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Movie'">
         <FloatLabel>
-          <InputText name="tmdb_id" />
+          <InputText size="small" name="tmdb_id" />
           <label for="tmdb_id">TMDB id</label>
         </FloatLabel>
         or
         <FloatLabel>
-          <InputText name="imdb_id" />
+          <InputText size="small" name="imdb_id" />
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'TV Show'">
         <FloatLabel>
-          <InputText name="tvdb_id" />
+          <InputText size="small" name="tvdb_id" />
           <label for="tvdb_id">TVDB id</label>
         </FloatLabel>
         or
         <FloatLabel>
-          <InputText name="imdb_id" />
+          <InputText size="small" name="imdb_id" />
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Music'">
         <FloatLabel>
-          <InputText name="musicbrainz_id" />
+          <InputText size="small" name="musicbrainz_id" />
           <label for="musicbrainz_id">Musicbrainz id</label>
         </FloatLabel>
         or
         <FloatLabel>
-          <InputText name="discogs_id" />
+          <InputText size="small" name="discogs_id" />
           <label for="discogs_id">Discogs id</label>
         </FloatLabel>
       </div>
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Book'">
         <FloatLabel>
           <IconField>
-            <InputText name="openlibrary_id" v-model="external_database_ids.openlibrary" />
+            <InputText
+              size="small"
+              name="openlibrary_id"
+              v-model="external_database_ids.openlibrary"
+            />
             <label for="openlibrary_id">Open Library id</label>
             <InputIcon
               :class="{
@@ -80,7 +85,7 @@
           class="cursor-pointer"
           style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
           @click="(step = 3) && (manualCreation = true)"
-          >create the title group manually</span
+          >create the title manually</span
         >
       </div>
     </div>
@@ -90,16 +95,17 @@
           v-model="titleGroupForm.category"
           inputId="category"
           :options="selectableCategories[titleGroupForm.content_type]"
+          size="small"
           class="select"
         />
         <label for="category">Category</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="titleGroupForm.name" name="name" />
+        <InputText size="small" v-model="titleGroupForm.name" name="name" />
         <label for="name">Name</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="titleGroupForm.tags" name="tags" />
+        <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
         <label for="tags">Tags (comma separated)</label>
       </FloatLabel>
       <FloatLabel>
@@ -118,6 +124,7 @@
           inputId="original_language"
           :options="selectableLanguages"
           class="select"
+          size="small"
           filter
         />
         <label for="original_language">Original language</label>
@@ -129,12 +136,13 @@
           showIcon
           :showOnFocus="false"
           inputId="original_release_date"
+          size="small"
         />
       </div>
       <div class="covers input-list">
         <label>Covers</label>
         <div v-for="(link, index) in titleGroupForm.covers" :key="index">
-          <InputText v-model="titleGroupForm.covers[index]" />
+          <InputText size="small" v-model="titleGroupForm.covers[index]" />
           <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
           <Button
             v-if="titleGroupForm.covers.length != 0"
@@ -147,7 +155,7 @@
       <div class="external-links input-list">
         <label>External Links</label>
         <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
-          <InputText v-model="titleGroupForm.external_links[index]" />
+          <InputText size="small" v-model="titleGroupForm.external_links[index]" />
           <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
           <Button
             v-if="titleGroupForm.external_links.length != 0"
@@ -162,7 +170,7 @@
   <div class="flex justify-content-center">
     <Button
       v-if="step == 3 || action == 'select'"
-      label="Validate title group"
+      label="Validate title"
       @click="validateTitleGroup"
       icon="pi pi-check"
       size="small"
@@ -237,8 +245,11 @@ export default {
     getExternalDatabaseData(item_id: string | Number, database: string) {
       this.gettingExternalDatabaseData = true
       getExternalDatabaseData(item_id, database).then((data) => {
-        data.original_release_date = new Date(data.original_release_date)
-        this.titleGroupForm = data
+        data.title_group.original_release_date = new Date(data.title_group.original_release_date)
+        this.titleGroupForm = data.title_group
+        if (data.edition_group) {
+          this.$emit('gotEditionData', data.edition_group)
+        }
         this.step = 3
         this.gettingExternalDatabaseData = false
       })

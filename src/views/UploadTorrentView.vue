@@ -3,7 +3,7 @@
     <div class="title">Upload torrent</div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0">
-        <AccordionHeader>Title group</AccordionHeader>
+        <AccordionHeader>Title</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectTitleGroup @done="titleGroupDone" />
         </AccordionContent>
@@ -11,14 +11,16 @@
     </Accordion>
     <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep < 2">
-        <AccordionHeader>Edition group</AccordionHeader>
-        <AccordionContent> <CreateOrSelectEditionGroup /> </AccordionContent>
+        <AccordionHeader>Edition</AccordionHeader>
+        <AccordionContent>
+          <CreateOrSelectEditionGroup @done="editionGroupDone" />
+        </AccordionContent>
       </AccordionPanel>
     </Accordion>
-    <Accordion value="" class="upload-step-accordion">
+    <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep < 3">
         <AccordionHeader>Torrent</AccordionHeader>
-        <AccordionContent>Torrent</AccordionContent>
+        <AccordionContent><CreateTorrent /></AccordionContent>
       </AccordionPanel>
     </Accordion>
   </div>
@@ -30,6 +32,7 @@ import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import CreateOrSelectTitleGroup from '@/components/torrents/CreateOrSelectTitleGroup.vue'
 import CreateOrSelectEditionGroup from '@/components/torrents/CreateOrSelectEditionGroup.vue'
+import CreateTorrent from '@/components/torrents/CreateTorrent.vue'
 
 export default {
   components: {
@@ -39,14 +42,18 @@ export default {
     AccordionContent,
     AccordionHeader,
     AccordionPanel,
+    CreateTorrent,
   },
   data() {
     return {
       titleGroupAccordionValue: '0',
       editionGroupAccordionValue: '',
+      torrentAccordionValue: '',
       uploadStep: 1,
       titleGroup: {},
-      torrentForm: {},
+      torrentForm: {
+        edition_group_id: 0,
+      },
     }
   },
   methods: {
@@ -55,6 +62,12 @@ export default {
       this.titleGroupAccordionValue = ''
       this.editionGroupAccordionValue = '0'
       this.uploadStep = 2
+    },
+    editionGroupDone(editionGroup: object) {
+      this.torrentForm.edition_group_id = editionGroup.id
+      this.editionGroupAccordionValue = ''
+      this.torrentAccordionValue = '0'
+      this.uploadStep = 3
     },
   },
 }
