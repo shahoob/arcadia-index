@@ -18,8 +18,15 @@ export const getTitleGroupLite = async (id: string | Number) => {
 }
 export const createTitleGroup = async (titleGroup: object) => {
   try {
-    const response = await api.post('/title-group', titleGroup)
-    return response.data
+    return (await api.post('/title-group', titleGroup)).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}
+export const createEditionGroup = async (editionGroup: object) => {
+  try {
+    return (await api.post('/edition-group', editionGroup)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error

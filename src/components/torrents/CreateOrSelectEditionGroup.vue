@@ -11,7 +11,7 @@
       <Select
         v-model="selected_edition_group"
         inputId="edition_group"
-        :options="existing_edition_groups"
+        :options="titleGroup.edition_groups"
         size="small"
         class="select"
       >
@@ -40,6 +40,16 @@
       <FloatLabel>
         <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
         <label for="distributor">Distributor</label>
+      </FloatLabel>
+      <FloatLabel>
+        <Select
+          v-model="editionGroupForm.source"
+          inputId="source"
+          :options="selectableSources[titleGroup.content_type]"
+          class="select"
+          size="small"
+        />
+        <label for="source">Source</label>
       </FloatLabel>
       <FloatLabel>
         <Textarea
@@ -92,7 +102,6 @@
   </div>
   <div class="flex justify-content-center">
     <Button
-      v-if="step == 3 || action == 'select'"
       label="Validate edition"
       @click="validateEditionGroup"
       icon="pi pi-check"
@@ -110,11 +119,11 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import DatePicker from 'primevue/datepicker'
-import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
+import { createEditionGroup, getTitleGroupLite } from '@/services/api/torrentService'
+import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
   components: {
@@ -131,7 +140,6 @@ export default {
     InputIcon,
     IconField,
   },
-  props: {},
   data() {
     return {
       action: 'select', // create | select
@@ -148,9 +156,11 @@ export default {
         distributor: '',
         additional_information: {},
       },
-      existing_edition_groups: [],
+      selectableSources: {
+        Book: ['Web', 'PhysicalBook'],
+      },
+      titleGroup: { edition_groups: [] },
       selected_edition_group: {},
-      titleGroupId: '',
       editionGroupId: '',
       creatingEditionGroup: false,
     }
@@ -163,12 +173,9 @@ export default {
       } else {
         this.creatingEditionGroup = true
         const formattededitionGroupForm = JSON.parse(JSON.stringify(this.editionGroupForm))
-        formattededitionGroupForm.tags =
-          formattededitionGroupForm.tags == '' ? [] : formattededitionGroupForm.tags.split(',')
         // otherwise there is a json parse error, last char is "Z"
-        formattededitionGroupForm.original_release_date =
-          formattededitionGroupForm.original_release_date.slice(0, -1)
-        createTitleGroup(formattededitionGroupForm).then((data) => {
+        formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
+        createEditionGroup(formattededitionGroupForm).then((data) => {
           this.creatingEditionGroup = false
           this.$emit('done', data)
         })
@@ -188,13 +195,10 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.edition_group_id) {
-      this.editionGroupId = this.$route.query.edition_group_id.toString()
-    }
-    if (this.$route.query.title_group_id) {
-      getTitleGroupLite(this.$route.query.title_group_id.toString()).then((data) => {
-        this.existing_edition_groups = data.edition_groups
-      })
+    const titleGroupStore = useTitleGroupStore()
+    if (titleGroupStore.id) {
+      this.titleGroup = titleGroupStore
+      this.editionGroupForm.title_group_id = titleGroupStore.id
     }
   },
 }
