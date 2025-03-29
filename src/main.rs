@@ -3,6 +3,7 @@ mod models;
 mod repositories;
 mod routes;
 
+use actix_cors::Cors;
 use actix_web::{App, HttpServer, web::Data};
 use dotenv;
 use sqlx::postgres::PgPoolOptions;
@@ -26,7 +27,11 @@ async fn main() -> std::io::Result<()> {
     println!("Server running at http://{}:{}", host, port);
 
     HttpServer::new(move || {
-        App::new().app_data(Data::new(pool.clone())).configure(init) // Initialize routes
+        let cors = Cors::permissive();
+        App::new()
+            .wrap(cors)
+            .app_data(Data::new(pool.clone()))
+            .configure(init) // Initialize routes
     })
     .bind(format!("{}:{}", host, port))?
     .run()

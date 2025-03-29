@@ -49,5 +49,5 @@ pub async fn get_open_library_data(query: web::Query<HashMap<String, String>>) -
             return HttpResponse::InternalServerError().body("Failed to fetch data");
         }
     }
-    HttpResponse::Ok().json(serde_json::json!(title_group))
+    HttpResponse::Ok().json(serde_json::json!({"title_group": title_group}))
 }

@@ -156,3 +156,42 @@ WHERE tg.id = $2;"#, current_user.id, title_group_id)
         }
     }
 }
+pub async fn find_lite_title_group_info(
+    pool: &web::Data<PgPool>,
+    title_group_id: i64,
+) -> Result<Value, Box<dyn Error>> {
+    let title_group = sqlx::query!(
+        r#"SELECT jsonb_build_object(
+    'id', tg.id, 'content_type', tg.content_type, 'name', tg.name,
+    'edition_groups', COALESCE(jsonb_agg(
+        jsonb_build_object(
+            'id', eg.id,
+            'name', eg.name,
+            'release_date', eg.release_date,
+            'distributor', eg.distributor,
+            'source', eg.source,
+            'additional_information', eg.additional_information
+        )
+    ), '[]'::jsonb)
+)
+FROM title_groups tg
+LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
+WHERE tg.id = $1
+GROUP BY tg.id;"#,
+        title_group_id
+    )
+    .fetch_one(pool.get_ref())
+    .await;
+
+    match title_group {
+        Ok(_) => Ok(title_group.unwrap().jsonb_build_object.unwrap()),
+        Err(e) => {
+            println!("{:#?}", e);
+            match e {
+                sqlx::Error::Database(db_error) => db_error.message().to_string(),
+                _ => e.to_string(),
+            };
+            Err(format!("could not find title group").into())
+        }
+    }
+}
