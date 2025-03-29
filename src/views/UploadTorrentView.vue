@@ -13,14 +13,14 @@
       <AccordionPanel value="0" :disabled="uploadStep < 2">
         <AccordionHeader>Edition</AccordionHeader>
         <AccordionContent>
-          <CreateOrSelectEditionGroup @done="editionGroupDone" />
+          <CreateOrSelectEditionGroup v-if="uploadStep > 1" @done="editionGroupDone" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep < 3">
         <AccordionHeader>Torrent</AccordionHeader>
-        <AccordionContent><CreateTorrent /></AccordionContent>
+        <AccordionContent><CreateTorrent v-if="uploadStep > 2" /></AccordionContent>
       </AccordionPanel>
     </Accordion>
   </div>
@@ -50,21 +50,18 @@ export default {
       editionGroupAccordionValue: '',
       torrentAccordionValue: '',
       uploadStep: 1,
-      titleGroup: {},
-      torrentForm: {
-        edition_group_id: 0,
-      },
+      editionGroup: {},
     }
   },
+  created() {},
   methods: {
-    titleGroupDone(titleGroup: object) {
-      this.titleGroup = titleGroup
+    titleGroupDone() {
       this.titleGroupAccordionValue = ''
       this.editionGroupAccordionValue = '0'
       this.uploadStep = 2
     },
     editionGroupDone(editionGroup: object) {
-      this.torrentForm.edition_group_id = editionGroup.id
+      this.editionGroup = editionGroup
       this.editionGroupAccordionValue = ''
       this.torrentAccordionValue = '0'
       this.uploadStep = 3

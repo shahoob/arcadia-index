@@ -9,7 +9,7 @@
   <div id="select-title-group" v-if="action == 'select'">
     <FloatLabel>
       <InputNumber size="small" v-model="titleGroupId" name="id" :format="false" />
-      <label for="id">Title id</label>
+      <label for="id">Title group id</label>
     </FloatLabel>
   </div>
   <div id="create-title-group" v-if="action == 'create'">
@@ -191,7 +191,8 @@ import { getExternalDatabaseData } from '@/services/api/externalDatabasesService
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import DatePicker from 'primevue/datepicker'
-import { createTitleGroup } from '@/services/api/torrentService'
+import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
+import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
   components: {
@@ -241,6 +242,10 @@ export default {
       creatingTitleGroup: false,
     }
   },
+  setup() {
+    const titleGroupStore = useTitleGroupStore()
+    return { titleGroupStore }
+  },
   methods: {
     getExternalDatabaseData(item_id: string | Number, database: string) {
       this.gettingExternalDatabaseData = true
@@ -254,11 +259,18 @@ export default {
         this.gettingExternalDatabaseData = false
       })
     },
-    validateTitleGroup() {
+    async validateTitleGroup() {
       // TODO : form validation : https://primevue.org/forms/#validateon
       if (this.action == 'select') {
-        // TODO: get existing editions
-        this.$emit('done', { id: this.titleGroupId })
+        this.creatingTitleGroup = true
+        if (!this.titleGroupStore.id) {
+          const titleGroupLite = await getTitleGroupLite(this.titleGroupId)
+          this.titleGroupStore.id = titleGroupLite.id
+          this.titleGroupStore.edition_groups = titleGroupLite.edition_groups
+          this.titleGroupStore.content_type = titleGroupLite.content_type
+        }
+        this.$emit('done')
+        this.creatingTitleGroup = false
       } else {
         this.creatingTitleGroup = true
         const formattedTitleGroupForm = JSON.parse(JSON.stringify(this.titleGroupForm))
@@ -287,8 +299,8 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.title_group_id) {
-      this.titleGroupId = this.$route.query.title_group_id.toString()
+    if (this.titleGroupStore.id) {
+      this.titleGroupId = this.titleGroupStore.id.toString()
     }
   },
 }

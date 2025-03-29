@@ -74,7 +74,7 @@
       <i v-else v-tooltip.top="'Subscribe'" @click="subscribe" class="pi pi-bell" />
       <i v-tooltip.top="'Bookmark'" class="pi pi-bookmark" />
       <i v-tooltip.top="'Edit'" class="pi pi-pen-to-square" />
-      <i v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
+      <i @click="uploadTorrent" v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
       <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
     </div>
     <TitleGroupTable :title_group="title_group" />
@@ -116,6 +116,7 @@ import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
+import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
   components: {
@@ -145,6 +146,13 @@ export default {
     })
   },
   methods: {
+    uploadTorrent() {
+      const titleGroupStore = useTitleGroupStore()
+      titleGroupStore.id = this.title_group.id
+      titleGroupStore.edition_groups = this.title_group.edition_groups
+      titleGroupStore.content_type = this.title_group.content_type
+      this.$router.push({ path: '/upload' })
+    },
     subscribe() {
       subscribeToItem(this.$route.query.id, 'title_group').then(() => {
         this.title_group.is_subscribed = true
@@ -202,11 +210,13 @@ export default {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  cursor: pointer;
 }
 .actions i {
   margin: 0px 0.5em;
-  cursor: pointer;
+  color: white;
 }
+
 .torrent-requests {
   margin-top: 20px;
 }
