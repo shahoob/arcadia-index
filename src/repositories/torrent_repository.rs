@@ -89,7 +89,7 @@ pub async fn create_torrent(
         .bind(&current_user.id)
         .bind(&*torrent_form.release_name.0)
         .bind(&*torrent_form.release_group.0)
-        .bind(&torrent_form.description.0)
+        .bind(torrent_form.description.as_deref())
         .bind(&file_amount_per_type)
         .bind(&torrent_form.uploaded_as_anonymous.0)
         .bind(&file_list)
@@ -97,31 +97,35 @@ pub async fn create_torrent(
         .bind(&trumpable)
         .bind(&false)
         .bind(&size)
-        .bind(&*torrent_form.duration)
-        .bind(&*torrent_form.audio_codec)
-        .bind(&*torrent_form.audio_bitrate)
-        .bind(&*torrent_form.audio_bitrate_sampling)
-        .bind(&*torrent_form.audio_channels)
-        .bind(&*torrent_form.video_codec)
-        .bind(
-            &torrent_form
+        .bind(torrent_form.duration.as_deref())
+        .bind(torrent_form.audio_codec.as_deref())
+        .bind(torrent_form.audio_bitrate.as_deref())
+        .bind(torrent_form.audio_bitrate_sampling.as_deref())
+        .bind(torrent_form.audio_channels.as_deref())
+        .bind(torrent_form.video_codec.as_deref())
+        .bind(if torrent_form.features.is_empty() {
+            Vec::new()
+        } else {
+            torrent_form
                 .features
                 .0
                 .split(',')
                 .map(|f| Features::from_str(f).ok().unwrap())
-                .collect::<Vec<Features>>(),
-        )
-        .bind(
-            &torrent_form
+                .collect::<Vec<Features>>()
+        })
+        .bind(if torrent_form.subtitle_languages.is_empty() {
+            Vec::new()
+        } else {
+            torrent_form
                 .subtitle_languages
                 .0
                 .split(',')
                 .map(|f| f.trim())
-                .collect::<Vec<&str>>(),
-        )
-        .bind(&*torrent_form.video_resolution)
+                .collect::<Vec<&str>>()
+        })
+        .bind(torrent_form.video_resolution.as_deref())
         .bind(&*torrent_form.container)
-        .bind(&*torrent_form.language)
+        .bind(torrent_form.language.as_deref())
         .fetch_one(pool.get_ref())
         .await;
 
