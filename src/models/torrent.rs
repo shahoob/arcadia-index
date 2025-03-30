@@ -123,42 +123,42 @@ pub struct Torrent {
     pub container: String, // container of the main file (ex: if mkv movie and srt subs, mkv is the main)
     pub size: i64,         // in bytes
     // ---- audio
-    pub duration: i32, // in seconds
-    pub audio_codec: AudioCodec,
-    pub audio_bitrate: i32, // in kb/s
-    pub audio_bitrate_sampling: AudioBitrateSampling,
-    pub audio_channels: String,
+    pub duration: Option<i32>, // in seconds
+    pub audio_codec: Option<AudioCodec>,
+    pub audio_bitrate: Option<i32>, // in kb/s
+    pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
+    pub audio_channels: Option<String>,
     // ---- audio
     // ---- video
-    pub video_codec: VideoCodec,
-    pub features: Vec<Features>,
-    pub subtitle_languages: Vec<String>,
-    pub video_resolution: String, // ---- video
+    pub video_codec: Option<VideoCodec>,
+    pub features: Option<Vec<Features>>,
+    pub subtitle_languages: Option<Vec<String>>,
+    pub video_resolution: Option<String>, // ---- video
 }
 
 #[derive(Debug, MultipartForm, FromRow)]
 pub struct UploadedTorrent {
     pub release_name: Text<String>,
     pub release_group: Text<String>,
-    pub description: Text<Option<String>>, // specific to the torrent
+    pub description: Option<Text<String>>, // specific to the torrent
     pub uploaded_as_anonymous: Text<bool>,
     pub mediainfo: Text<String>,
     pub torrent_file: Bytes,
-    pub language: Text<Option<String>>, // (fallback to original language) (english, french, etc.)
+    pub language: Option<Text<String>>, // (fallback to original language) (english, french, etc.)
     pub container: Text<String>,
     // one of them should be given
     pub edition_group_id: Text<i32>,
     // pub edition_group: Option<UserCreatedEditionGroup>,
     // ---- audio
-    pub duration: Text<i32>, // in seconds
-    pub audio_codec: Text<AudioCodec>,
-    pub audio_bitrate: Text<i32>, // in kb/s
-    pub audio_channels: Text<String>,
-    pub audio_bitrate_sampling: Text<AudioBitrateSampling>,
+    pub duration: Option<Text<i32>>, // in seconds
+    pub audio_codec: Option<Text<AudioCodec>>,
+    pub audio_bitrate: Option<Text<i32>>, // in kb/s
+    pub audio_channels: Option<Text<String>>,
+    pub audio_bitrate_sampling: Option<Text<AudioBitrateSampling>>,
     // ---- audio
     // ---- video
-    pub video_codec: Text<VideoCodec>,
+    pub video_codec: Option<Text<VideoCodec>>,
     pub features: Text<String>,
     pub subtitle_languages: Text<String>,
-    pub video_resolution: Text<String>, // ---- video
+    pub video_resolution: Option<Text<String>>, // ---- video
 }
