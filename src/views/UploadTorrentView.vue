@@ -33,6 +33,7 @@ import AccordionContent from 'primevue/accordioncontent'
 import CreateOrSelectTitleGroup from '@/components/torrents/CreateOrSelectTitleGroup.vue'
 import CreateOrSelectEditionGroup from '@/components/torrents/CreateOrSelectEditionGroup.vue'
 import CreateTorrent from '@/components/torrents/CreateTorrent.vue'
+import { useEditionGroupStore } from '@/stores/editionGroup'
 
 export default {
   components: {
@@ -62,6 +63,8 @@ export default {
     },
     editionGroupDone(editionGroup: object) {
       this.editionGroup = editionGroup
+      const editionGroupStore = useEditionGroupStore()
+      editionGroupStore.id = editionGroup.id
       this.editionGroupAccordionValue = ''
       this.torrentAccordionValue = '0'
       this.uploadStep = 3

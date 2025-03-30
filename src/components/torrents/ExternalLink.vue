@@ -9,7 +9,6 @@ export default {
   },
   methods: {
     getLinkLogo() {
-      console.log(this.link)
       if (this.link.includes('wikipedia.org')) {
         return 'wikipedia.png'
       }
