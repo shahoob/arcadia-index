@@ -29,7 +29,7 @@
       </template>
     </Column>
     <Column header="">
-      <template #body="slotProps">
+      <template #body>
         <i class="action pi pi-download" /> <i class="action pi pi-flag" />
         <i class="action pi pi-link"
       /></template>
@@ -56,7 +56,7 @@
       <div class="edition-group-header">
         <span
           class="date"
-          v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information"
+          v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information?.date_from"
         >
           {{
             new Date(
@@ -76,7 +76,8 @@
         </span>
 
         - {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
-        <span v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information"
+        <span
+          v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information?.first_item"
           >{{ getEditionGroup(slotProps.data.edition_group_id).additional_information.first_item }}
           to
           {{ getEditionGroup(slotProps.data.edition_group_id).additional_information.last_item }}

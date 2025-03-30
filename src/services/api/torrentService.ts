@@ -32,3 +32,23 @@ export const createEditionGroup = async (editionGroup: object) => {
     throw error
   }
 }
+export const uploadTorrent = async (torrentForm: object) => {
+  try {
+    const formData = new FormData()
+    for (const [key, value] of Object.entries(torrentForm)) {
+      if (value != null) {
+        formData.append(key, value)
+      }
+    }
+    return (
+      await api.post('/torrent', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+    ).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}

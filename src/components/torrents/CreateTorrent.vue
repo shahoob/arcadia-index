@@ -30,6 +30,16 @@
         <label for="description">Description</label>
       </FloatLabel>
       <FloatLabel>
+        <Select
+          v-model="torrentForm.language"
+          inputId="language"
+          :options="selectableLanguages"
+          class="select"
+          size="small"
+        />
+        <label for="language">Language</label>
+      </FloatLabel>
+      <FloatLabel>
         <InputText v-model="torrentForm.container" size="small" name="container" />
         <label for="container">Container</label>
       </FloatLabel>
@@ -61,7 +71,18 @@
         <InputText v-model="torrentForm.audio_bitrate" size="small" name="audio_bitrate" />
         <label for="audio_codec">Audio bitrate (in kb/s)</label>
       </FloatLabel>
-      <FileUpload ref="torrentFile" accept="*" chooseLabel="Torrent file"> </FileUpload>
+      <FileUpload
+        ref="torrentFile"
+        accept="application/x-bittorrent"
+        chooseLabel="Torrent file"
+        :showCancelButton="false"
+        :showUploadButton="false"
+        @select="onFileSelect"
+      >
+        <template #content="{ files }">{{
+          files.length != 0 ? files[0].name : 'Select a file'
+        }}</template>
+      </FileUpload>
       <div class="flex align-items-center">
         <Checkbox v-model="torrentForm.uploaded_as_anonymous" name="anonymous" binary />
         <label for="anonymous" style="margin-left: 5px"> Upload as anonymous</label>
@@ -75,7 +96,7 @@
       icon="pi pi-check"
       size="small"
       class="validate-button"
-      :loading="creatingTorrent"
+      :loading="uploadingTorrent"
     />
   </div>
 </template>
@@ -92,6 +113,10 @@ import IconField from 'primevue/iconfield'
 import Checkbox from 'primevue/checkbox'
 import FileUpload from 'primevue/fileupload'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
+import { ref } from 'vue'
+import { useTitleGroupStore } from '@/stores/titleGroup'
+import { useEditionGroupStore } from '@/stores/editionGroup'
+import { uploadTorrent } from '@/services/api/torrentService'
 
 export default {
   components: {
@@ -114,10 +139,22 @@ export default {
     return {
       step: 1,
       torrentForm: {
+        edition_group_id: '',
         release_name: '',
         release_group: '',
         mediainfo: '',
         description: '',
+        language: null,
+        container: '',
+        video_codec: null,
+        duration: null,
+        audio_codec: null,
+        audio_bitrate: null,
+        subtitle_languages: '',
+        features: '',
+        audio_channels: null,
+        audio_bitrate_sampling: null,
+        torrent_file: null,
         uploaded_as_anonymous: false,
       },
       selectableVideoCodecs: [
@@ -146,10 +183,19 @@ export default {
         'Dsd',
       ],
       selectableLanguages: ['English', 'French'],
-      creatingTorrent: false,
+      uploadingTorrent: false,
     }
   },
   methods: {
+    onFileSelect(event) {
+      if (event.files && event.files.length > 0) {
+        // keep a single file
+        const torrentFile = event.files[event.files.length - 1]
+        this.$refs.torrentFile.clear()
+        this.$refs.torrentFile.files = [torrentFile]
+        this.torrentForm.torrent_file = torrentFile
+      }
+    },
     mediainfoUpdated() {
       const mediainfoExtractedInfo = getFileInfo(this.torrentForm.mediainfo)
       console.log(mediainfoExtractedInfo)
@@ -158,18 +204,22 @@ export default {
     validateTorrent() {
       // TODO : form validation : https://primevue.org/forms/#validateon
 
-      this.creatingTorrent = true
+      this.uploadingTorrent = true
       // const formattedTitleGroupForm = JSON.parse(JSON.stringify(this.titleGroupForm))
       // formattedTitleGroupForm.tags =
       //   formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
       // // otherwise there is a json parse error, last char is "Z"
       // formattedTitleGroupForm.original_release_date =
       //   formattedTitleGroupForm.original_release_date.slice(0, -1)
-      // createTitleGroup(formattedTitleGroupForm).then((data) => {
-      //   this.creatingTitleGroup = false
-      //   this.$emit('done', data)
-      // })
+      uploadTorrent(this.torrentForm).then((data) => {
+        this.uploadingTorrent = false
+        this.$emit('done', data)
+      })
     },
+  },
+  created() {
+    const editionGroupStore = useEditionGroupStore()
+    this.torrentForm.edition_group_id = editionGroupStore.id
   },
 }
 </script>
@@ -184,7 +234,18 @@ export default {
 .select {
   width: 200px;
 }
+.file-upload {
+  max-width: 300px;
+}
 .validate-button {
   margin-top: 20px;
+}
+</style>
+<style>
+#create-torrent {
+  .p-fileupload {
+    max-width: 300px;
+    margin-bottom: 15px;
+  }
 }
 </style>
