@@ -143,11 +143,11 @@ CREATE TABLE title_groups (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id INT NOT NULL,
     description TEXT NOT NULL,
-    original_language TEXT NOT NULL,
+    original_language TEXT,
     original_release_date TIMESTAMP NOT NULL,
     tagline TEXT,
     tags VARCHAR(50) [] NOT NULL,
-    country_from TEXT NOT NULL,
+    country_from TEXT,
     covers TEXT [],
     external_links TEXT [] NOT NULL,
     embedded_links JSONB,
@@ -170,7 +170,7 @@ CREATE TABLE similar_title_groups (
     FOREIGN KEY (group_2_id) REFERENCES title_groups(id) ON DELETE CASCADE
 );
 CREATE TABLE affiliated_artists (
-    title_group_id INT NOT NULL,
+    title_group_id BIGINT NOT NULL,
     artist_id INT NOT NULL,
     status VARCHAR(20) NOT NULL,
     nickname VARCHAR(255),
@@ -261,7 +261,7 @@ CREATE TYPE video_codec_enum AS ENUM(
     'BD50',
     'UHD100'
 );
-CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D');
+CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id SERIAL PRIMARY KEY,
     edition_group_id INT NOT NULL,
@@ -280,7 +280,7 @@ CREATE TABLE torrents (
     mediainfo TEXT NOT NULL,
     trumpable TEXT,
     staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
-    container VARCHAR(4) NOT NULL,
+    container VARCHAR(8) NOT NULL,
     size BIGINT NOT NULL,
     -- in bytes
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
@@ -326,7 +326,7 @@ CREATE TABLE torrent_requests (
     release_group VARCHAR(20),
     description TEXT,
     language VARCHAR(25),
-    container VARCHAR(5),
+    container VARCHAR(8),
     bounty_upload BIGINT NOT NULL,
     bounty_bonus_points BIGINT NOT NULL,
     -- Audio
