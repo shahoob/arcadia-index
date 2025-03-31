@@ -157,7 +157,12 @@ export default {
         additional_information: {},
       },
       selectableSources: {
-        Book: ['Web', 'PhysicalBook'],
+        Book: ['Web', 'CD', 'PhysicalBook'],
+        Music: ['Web', 'CD', 'Vinyl'],
+        Movie: ['Web', 'BluRay'],
+        Software: ['Web'],
+        'TV-Show': ['Web', 'BluRay', 'DVD9'],
+        Collection: ['Web'],
       },
       titleGroup: { edition_groups: [] },
       selected_edition_group: {},

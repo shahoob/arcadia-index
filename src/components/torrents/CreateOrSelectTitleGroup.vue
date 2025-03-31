@@ -129,6 +129,17 @@
         />
         <label for="original_language">Original language</label>
       </FloatLabel>
+      <FloatLabel>
+        <Select
+          v-model="titleGroupForm.country_from"
+          inputId="country_from"
+          :options="selectableCountries"
+          class="select"
+          size="small"
+          filter
+        />
+        <label for="country_from">Country from</label>
+      </FloatLabel>
       <div>
         <label for="original_release_date" class="block">Original realease date</label>
         <DatePicker
@@ -225,12 +236,20 @@ export default {
         covers: [''],
         external_links: [''],
         category: '',
+        country_from: '',
+        name_aliases: [],
+        affiliated_artists: [],
         tags: '',
       },
       selectableLanguages: ['English', 'French'],
-      selectableContentTypes: ['Movie', 'TV Show', 'Music', 'Software', 'Book'],
+      selectableCountries: ['France', 'UK', 'USA'],
+      selectableContentTypes: ['Movie', 'TVShow', 'Music', 'Software', 'Book', 'Collection'],
       selectableCategories: {
         Book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
+        Music: ['Single', 'Album', 'Ep'],
+        Movie: ['FeatureFilm', 'ShortFilm'],
+        Software: ['Program', 'Game'],
+        Collection: ['Other'],
       },
       external_database_ids: {
         openlibrary: '',
@@ -281,6 +300,8 @@ export default {
           formattedTitleGroupForm.original_release_date.slice(0, -1)
         createTitleGroup(formattedTitleGroupForm).then((data) => {
           this.creatingTitleGroup = false
+          this.titleGroupStore.id = data.id
+          this.titleGroupStore.content_type = data.content_type
           this.$emit('done', data)
         })
       }

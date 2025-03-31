@@ -67,10 +67,10 @@
         />
         <label for="audio_coded">Audio codec</label>
       </FloatLabel>
-      <FloatLabel>
+      <!-- <FloatLabel>
         <InputText v-model="torrentForm.audio_bitrate" size="small" name="audio_bitrate" />
         <label for="audio_codec">Audio bitrate (in kb/s)</label>
-      </FloatLabel>
+      </FloatLabel> -->
       <FileUpload
         ref="torrentFile"
         accept="application/x-bittorrent"
@@ -113,8 +113,6 @@ import IconField from 'primevue/iconfield'
 import Checkbox from 'primevue/checkbox'
 import FileUpload from 'primevue/fileupload'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
-import { ref } from 'vue'
-import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
 

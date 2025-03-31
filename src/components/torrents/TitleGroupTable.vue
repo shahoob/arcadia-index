@@ -13,14 +13,15 @@
     <Column expander style="width: 5rem" />
     <Column header="Properties" style="min-width: 300px">
       <template #body="slotProps">
-        {{ slotProps.data.container }}
+        <!-- {{ slotProps.data.container }}
         <span v-if="slotProps.data.video_codec">/ {{ slotProps.data.video_codec }} </span>
         <span v-if="slotProps.data.video_resolution">/ {{ slotProps.data.video_resolution }} </span>
         <span v-if="slotProps.data.audio_codec">/ {{ slotProps.data.audio_codec }} </span>
         <span v-for="feature in slotProps.data.features" :key="feature">
           <span class="feature">/ {{ feature }} </span></span
         >
-        <span v-if="slotProps.data.release_group">/ {{ slotProps.data.release_group }}</span>
+        <span v-if="slotProps.data.release_group">/ {{ slotProps.data.release_group }}</span> -->
+        {{ getTorrentSlug(slotProps.data) }}
       </template>
     </Column>
     <Column header="Uploaded">
@@ -31,8 +32,9 @@
     <Column header="">
       <template #body>
         <i class="action pi pi-download" /> <i class="action pi pi-flag" />
-        <i class="action pi pi-link"
-      /></template>
+        <i class="action pi pi-link" />
+        <i class="action pi pi-pen-to-square" />
+      </template>
     </Column>
     <Column header="Size">
       <template #body="slotProps">
@@ -54,36 +56,7 @@
     </Column>
     <template #groupheader="slotProps">
       <div class="edition-group-header">
-        <span
-          class="date"
-          v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information?.date_from"
-        >
-          {{
-            new Date(
-              getEditionGroup(slotProps.data.edition_group_id).additional_information.date_from,
-            )
-              .toISOString()
-              .split('T')[0]
-          }}
-          to
-        </span>
-        <span class="date">
-          {{
-            new Date(getEditionGroup(slotProps.data.edition_group_id).release_date)
-              .toISOString()
-              .split('T')[0]
-          }}
-        </span>
-
-        - {{ getEditionGroup(slotProps.data.edition_group_id).name }} /
-        <span
-          v-if="getEditionGroup(slotProps.data.edition_group_id).additional_information?.first_item"
-          >{{ getEditionGroup(slotProps.data.edition_group_id).additional_information.first_item }}
-          to
-          {{ getEditionGroup(slotProps.data.edition_group_id).additional_information.last_item }}
-          /</span
-        >
-        {{ getEditionGroup(slotProps.data.edition_group_id).source }}
+        {{ getEditionGroupSlug(slotProps.data.edition_group_id) }}
       </div>
     </template>
     <template #expansion="slotProps">
@@ -130,7 +103,7 @@
 <script lang="ts">
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { timeAgo, bytesToReadable } from '@/services/helpers'
+import { timeAgo, bytesToReadable, getEditionGroupSlug, getTorrentSlug } from '@/services/helpers'
 import DOMPurify from 'dompurify'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
@@ -157,9 +130,16 @@ export default {
     },
   },
   computed: {
-    getEditionGroup() {
+    getEditionGroupSlug() {
       return (id: Number) => {
-        return this.title_group.edition_groups.find((group: Object) => group.id === id)
+        return getEditionGroupSlug(
+          this.title_group.edition_groups.find((group: Object) => group.id === id),
+        )
+      }
+    },
+    getTorrentSlug() {
+      return (torrent) => {
+        return getTorrentSlug(torrent)
       }
     },
   },
