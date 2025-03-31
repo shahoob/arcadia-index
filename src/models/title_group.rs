@@ -65,18 +65,18 @@ pub struct TitleGroup {
     pub updated_at: NaiveDateTime,
     pub created_by_id: i32,
     pub description: String,
-    pub original_language: String,
+    pub original_language: Option<String>,
     pub original_release_date: NaiveDateTime,
     pub tagline: Option<String>, // catchy sentence that represents the general idea of the title
-    pub country_from: String,
+    pub country_from: Option<String>,
     pub covers: Option<Vec<String>>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
     pub embedded_links: Option<Json<Value>>, // {name: link} (trailer, preview, etc.)
     // pub main_artists
     // pub artists_affiliated (multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: Category, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub content_type: ContentType, // movies, tv shows, books, games, etc
+    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,  // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub public_ratings: Option<Json<Value>>, // {service: rating}
     pub series_id: Option<i32>,
@@ -112,15 +112,15 @@ pub struct UserCreatedTitleGroup {
     pub name: String,
     pub name_aliases: Vec<String>,
     pub description: String,
-    pub original_language: String,
-    pub country_from: String,
+    pub original_language: Option<String>,
+    pub country_from: Option<String>,
     pub covers: Option<Vec<String>>,
     pub external_links: Vec<String>,
     pub embedded_links: Option<Json<Value>>,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: Category, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub content_type: ContentType, // movies, tv shows, books, games, etc
+    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,  // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub tagline: Option<String>,
     pub original_release_date: NaiveDateTime,
@@ -136,12 +136,12 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         name: String::from("Untitled"),
         name_aliases: Vec::new(),
         description: String::from("No description provided"),
-        original_language: String::from("Unknown"),
-        country_from: String::from("Unknown"),
+        original_language: None,
+        country_from: None,
         covers: Some(vec!["".to_string()]),
         external_links: vec!["".to_string()],
         embedded_links: Some(Json(json!({}))),
-        category: Category::Other,
+        category: None,
         content_type: ContentType::Book,
         tags: Vec::new(),
         tagline: None,

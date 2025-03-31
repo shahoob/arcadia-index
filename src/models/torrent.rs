@@ -87,6 +87,8 @@ pub enum Features {
     Remux,
     #[sqlx(rename = "3D")]
     ThreeD,
+    Booklet,
+    Cue,
 }
 impl FromStr for Features {
     type Err = ();

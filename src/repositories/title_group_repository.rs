@@ -61,6 +61,7 @@ pub async fn find_title_group(
         t.edition_group_id,
         jsonb_agg(
             to_jsonb(t) || jsonb_build_object('uploader', jsonb_build_object('id', u.id, 'username', u.username))
+            ORDER BY t.size DESC
         ) AS torrents
     FROM torrents t
     LEFT JOIN users u ON u.id = t.created_by_id
@@ -163,16 +164,19 @@ pub async fn find_lite_title_group_info(
     let title_group = sqlx::query!(
         r#"SELECT jsonb_build_object(
     'id', tg.id, 'content_type', tg.content_type, 'name', tg.name,
-    'edition_groups', COALESCE(jsonb_agg(
-        jsonb_build_object(
-            'id', eg.id,
-            'name', eg.name,
-            'release_date', eg.release_date,
-            'distributor', eg.distributor,
-            'source', eg.source,
-            'additional_information', eg.additional_information
-        )
-    ), '[]'::jsonb)
+    'edition_groups', COALESCE(
+        jsonb_agg(
+            jsonb_build_object(
+                'id', eg.id,
+                'name', eg.name,
+                'release_date', eg.release_date,
+                'distributor', eg.distributor,
+                'source', eg.source,
+                'additional_information', eg.additional_information
+            )
+        ) FILTER (WHERE eg.id IS NOT NULL), 
+        '[]'::jsonb
+    )
 )
 FROM title_groups tg
 LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id

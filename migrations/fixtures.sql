@@ -16,7 +16,7 @@ VALUES
 
 INSERT INTO title_groups (master_group_id, name, created_by_id, description, original_language, original_release_date, tags, country_from, external_links, content_type, covers, category, series_id)
 VALUES
-    (NULL, 'Music Album 1', 1, 'An amazing album', 'English', '2020-01-01', ARRAY['rock', 'pop'], 'USA', ARRAY['https://example.com'], 'Music', ARRAY['https://archive.org/download/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5/mbid-813d33df-ee11-4508-9bf7-98fcee7134b5-14497733661_thumb500.jpg', 'https://archive.org/download/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da/mbid-c706dd61-a402-45d7-a9aa-f6b6916c76da-41520333024_thumb500.jpg'], 'Album', NULL),
+    (NULL, 'Love Me Do / P.S. I Love You', 1, 'An amazing album', 'English', '1962-01-01', ARRAY['rock', 'pop', 'beat'], 'UK', ARRAY['http://www.discogs.com/release/1789539-The-Beatles-Love-Me-Do','https://musicbrainz.org/release-group/5db85281-934d-36e5-865c-1922ad82a948'], 'Music', ARRAY['https://ia803406.us.archive.org/16/items/mbid-20e0bad7-bfbf-4f18-b0b3-8549dfcef6f3/mbid-20e0bad7-bfbf-4f18-b0b3-8549dfcef6f3-2190513301.jpg'], 'Single', NULL),
     (NULL, 'Movie 1', 2, 'A great movie', 'English', '2021-06-15', ARRAY['action', 'thriller'], 'UK', ARRAY['https://example.com'], 'Movie', ARRAY['https://image.tmdb.org/t/p/w780/qitnZcLP7C9DLRuPpmvZ7GiEjJN.jpg'], NULL, NULL),
     (NULL, 'Les misérables', 2, 'Interesting book', 'French', '1862-03-31', ARRAY['novel', 'historical.fiction'], 'France', ARRAY['https://en.wikipedia.org/wiki/Les_Mis%C3%A9rables', 'https://openlibrary.org/books/OL14082552M/Les_mis%C3%A9rables'], 'Book', ARRAY['https://cdn.kobo.com/book-images/a6bdd3f5-ba60-4ad3-8f6b-5f1427021961/1200/1200/False/les-miserables-305.jpg','https://m.media-amazon.com/images/I/613FCU-5u-L._SL500_.jpg'], 'Book', NULL),
     (NULL, 'Astérix le gaulois', 2, 'first book of the series !', 'French', '1961-09-01', ARRAY['action'], 'France', ARRAY['https://wikipedia.org'], 'Book', ARRAY['https://media.senscritique.com/media/000017019153/source_big/Asterix_le_Gaulois_Asterix_tome_1.jpg','https://www.hachette.fr/sites/default/files/images/livres/couv/9782012101654-T.jpg'], 'Illustrated', 1),
@@ -87,8 +87,8 @@ VALUES
 
 INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, source, covers, external_links, additional_information)
 VALUES
-    (1, 'Original Edition', '2020-02-01', 1, 'Original edition, nothing specific', 'CD', '{}', '{}', NULL),
-    (1, 'Original Edition', '2020-02-01', 1, 'Original edition, nothing specific', 'Web', '{}', '{}', NULL),
+    (1, 'red label Parlophone single ', '1962-02-01', 1, 'Red label with silver print. Catalog number with 45 prefix. These labels have “PARLOPHONE” in large stylized letters at the top and the Parlophone £ logo at 3 o’clock. ', 'Vinyl', '{}', ARRAY['https://musicbrainz.org/release/20e0bad7-bfbf-4f18-b0b3-8549dfcef6f3'], NULL),
+    (1, 'CDRX 4949', '1992-04-25', 1, 'CD edition reissue', 'CD', '{}', ARRAY['https://musicbrainz.org/release/21dea919-7d43-3c9c-a58d-9229f2e45558'], NULL),
     (1, 'Deluxe Edition', '2020-02-01', 1, 'Deluxe edition, additional tracks 3 and 4', 'Web', '{}', '{}', NULL),
     (2, 'Original Edition', '2020-02-01', 1, 'Movie original edition back in the days', 'DVD5', '{}', '{}', NULL),
     (2, 'Director''s Cut', '2021-07-01', 2, 'Extended version', 'Blu-Ray', '{}', '{}', NULL),
