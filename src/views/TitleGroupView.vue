@@ -33,7 +33,7 @@
               {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
             </div>
           </div>
-          <div class="information-line" v-if="title_group.name_aliases">
+          <div class="information-line" v-if="title_group.name_aliases.length != 0">
             <span class="item-title">Aliases:</span>
             <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
               {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
@@ -43,13 +43,17 @@
             <span class="item-title">Original language:</span>
             {{ title_group.original_language }}
           </div>
-          <div v-if="title_group.series" class="information-line series">
+          <div class="information-line">
+            <span class="item-title">Country from:</span>
+            {{ title_group.country_from }}
+          </div>
+          <div v-if="title_group.series.id" class="information-line series">
             <span class="item-title">Series:</span>
             <a :href="'/series?id=' + title_group.series.id">{{ title_group.series.name }}</a>
           </div>
-          <div class="information-line">
+          <div class="information-line link-logos">
             <div v-for="link in title_group.external_links" :key="link">
-              <ExternalLink :link="link" />
+              <ExternalLink :link="link" class="link-logo" />
             </div>
           </div>
         </div>
@@ -65,17 +69,31 @@
       </div>
     </ContentContainer>
     <div class="actions">
-      <i
-        v-if="title_group.is_subscribed"
-        v-tooltip.top="'Unsubscribe'"
-        @click="unsubscribe"
-        class="pi pi-bell-slash"
-      />
-      <i v-else v-tooltip.top="'Subscribe'" @click="subscribe" class="pi pi-bell" />
-      <i v-tooltip.top="'Bookmark'" class="pi pi-bookmark" />
-      <i v-tooltip.top="'Edit'" class="pi pi-pen-to-square" />
-      <i @click="uploadTorrent" v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
-      <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
+      <div>
+        <i
+          v-if="title_group.is_subscribed"
+          v-tooltip.top="'Unsubscribe'"
+          @click="unsubscribe"
+          class="pi pi-bell-slash"
+        />
+        <i v-else v-tooltip.top="'Subscribe'" @click="subscribe" class="pi pi-bell" />
+        <i v-tooltip.top="'Bookmark'" class="pi pi-bookmark" />
+      </div>
+      <div>
+        <i v-tooltip.top="'Edit'" class="pi pi-pen-to-square" />
+        <i @click="uploadTorrent" v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
+        <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
+      </div>
+      <FloatLabel class="sort-by-select" variant="on">
+        <Select
+          v-model="sortBy"
+          inputId="sort_by"
+          :options="selectableSortingOptions"
+          class="select"
+          size="small"
+        />
+        <label for="sort_by">Sort by</label>
+      </FloatLabel>
     </div>
     <TitleGroupTable :title_group="title_group" />
     <Accordion
@@ -95,9 +113,18 @@
     </Accordion>
     <ContentContainer class="description" v-if="title_group">
       <!-- TODO: add bbcode interpreter : https://github.com/JiLiZART/bbob -->
-      {{ title_group.description }}
+      <span class="title">Description</span>
+      <div class="title-group-description">
+        {{ title_group.description }}
+      </div>
+      <div v-for="edition_group in title_group.edition_groups" :key="edition_group.id">
+        <div v-if="edition_group.description" class="edition-description">
+          <div class="edition-group-slug">{{ getEditionGroupSlug(edition_group) }}</div>
+          {{ edition_group.description }}
+        </div>
+      </div>
     </ContentContainer>
-    <GeneralComments :comments="title_group.comments" />
+    <GeneralComments :comments="title_group.title_group_comments" />
   </div>
 </template>
 
@@ -117,6 +144,9 @@ import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import { getEditionGroupSlug } from '@/services/helpers'
+import FloatLabel from 'primevue/floatlabel'
+import Select from 'primevue/select'
 
 export default {
   components: {
@@ -124,6 +154,8 @@ export default {
     TitleGroupTable,
     Galleria,
     Image,
+    FloatLabel,
+    Select,
     AffiliatedArtist,
     ExternalLink,
     GeneralComments,
@@ -138,12 +170,21 @@ export default {
     return {
       title_group: null,
       subscription_loading: false,
+      sortBy: 'Edition',
+      selectableSortingOptions: ['Edition', 'Size', 'Seeders', 'Completed', 'Uploaded at'],
     }
   },
   created() {
     getTitleGroup(this.$route.query.id?.toString()).then((data) => {
       this.title_group = data
     })
+  },
+  computed: {
+    getEditionGroupSlug() {
+      return (edition_group) => {
+        return getEditionGroupSlug(edition_group)
+      }
+    },
   },
   methods: {
     uploadTorrent() {
@@ -202,26 +243,50 @@ export default {
 .series a {
   padding: 0px;
 }
+.link-logos {
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+}
+.link-logo {
+  margin-right: 7px;
+}
 .affiliated-artists {
   margin-right: 0px;
   margin-left: auto;
 }
 .actions {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
-  cursor: pointer;
 }
 .actions i {
   margin: 0px 0.5em;
   color: white;
+  cursor: pointer;
 }
-
+.sort-by-select {
+}
 .torrent-requests {
   margin-top: 20px;
 }
 .description {
   margin-top: 20px;
+}
+.description .title {
+  font-size: 1.2em;
+}
+.title-group-description {
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+.edition-description {
+  margin-top: 15px;
+}
+.edition-description .edition-group-slug {
+  color: var(--color-primary);
+  margin-bottom: 5px;
 }
 .comments {
   margin-top: 20px;

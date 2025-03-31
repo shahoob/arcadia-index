@@ -20,7 +20,9 @@
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep < 3">
         <AccordionHeader>Torrent</AccordionHeader>
-        <AccordionContent><CreateTorrent v-if="uploadStep > 2" /></AccordionContent>
+        <AccordionContent
+          ><CreateTorrent v-if="uploadStep > 2" @done="torrentDone"
+        /></AccordionContent>
       </AccordionPanel>
     </Accordion>
   </div>
@@ -34,6 +36,7 @@ import CreateOrSelectTitleGroup from '@/components/torrents/CreateOrSelectTitleG
 import CreateOrSelectEditionGroup from '@/components/torrents/CreateOrSelectEditionGroup.vue'
 import CreateTorrent from '@/components/torrents/CreateTorrent.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
+import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
   components: {
@@ -68,6 +71,9 @@ export default {
       this.editionGroupAccordionValue = ''
       this.torrentAccordionValue = '0'
       this.uploadStep = 3
+    },
+    torrentDone(torrent) {
+      this.$router.push('/title-group?id=' + useTitleGroupStore().id + '&torrentId=' + torrent.id)
     },
   },
 }
