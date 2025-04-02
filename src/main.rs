@@ -6,10 +6,9 @@ mod routes;
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web::Data};
 use dotenv;
+use routes::init;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
-
-use routes::routes::init;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
