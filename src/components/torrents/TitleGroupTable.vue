@@ -9,8 +9,9 @@
     :sortOrder="1"
     tableStyle="min-width: 50rem"
     size="small"
+    :pt="{ rowGroupHeaderCell: { colspan: 8 } }"
   >
-    <Column expander style="width: 5rem" />
+    <Column expander style="width: 1em" />
     <Column header="Properties" style="min-width: 300px">
       <template #body="slotProps">
         <!-- {{ slotProps.data.container }}
