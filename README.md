@@ -8,6 +8,8 @@ This is the client (frontend) of the Arcadia project.
   </a>
 </p>
 
+For contributions see [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## Screenshots
 
 Here are some examples of what type of content can be hosted with Arcadia, and how it can look like.
