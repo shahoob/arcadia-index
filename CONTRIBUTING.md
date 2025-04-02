@@ -10,6 +10,7 @@ It (will) also contain some scripts that are meant to be run on a regular basis 
 - [sqlx-cli](https://github.com/launchbadge/sqlx/blob/main/sqlx-cli/README.md)
 - [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - [docker](https://docs.docker.com/desktop/setup/install)
+- [insomnia](https://github.com/Kong/insomnia/)
 
 ### Env
 Copy `.env` to `.env.local`
