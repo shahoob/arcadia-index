@@ -58,3 +58,10 @@ export const getTorrentSlug = (torrent) => {
 
   return slug
 }
+export const getFeatures = (contentType) => {
+  if (contentType == 'Book' || contentType == 'Music') {
+    return ['Cue', 'Booklet']
+  } else {
+    return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
+  }
+}

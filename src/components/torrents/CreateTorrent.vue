@@ -11,14 +11,16 @@
       <label for="mediainfo">Mediainfo</label>
     </FloatLabel>
     <div v-if="step > 1">
-      <FloatLabel>
-        <InputText v-model="torrentForm.release_name" size="small" name="release_name" />
-        <label for="release_name">Release name</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText v-model="torrentForm.release_group" size="small" name="release_group" />
-        <label for="release_group">Release group</label>
-      </FloatLabel>
+      <div class="line">
+        <FloatLabel class="release-name">
+          <InputText v-model="torrentForm.release_name" size="small" name="release_name" />
+          <label for="release_name">Release name</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputText v-model="torrentForm.release_group" size="small" name="release_group" />
+          <label for="release_group">Release group</label>
+        </FloatLabel>
+      </div>
       <FloatLabel>
         <Textarea
           v-model="torrentForm.description"
@@ -29,6 +31,43 @@
         />
         <label for="description">Description</label>
       </FloatLabel>
+
+      <div class="line">
+        <FloatLabel>
+          <InputText v-model="torrentForm.container" size="small" name="container" />
+          <label for="container">Container</label>
+        </FloatLabel>
+        <FloatLabel>
+          <Select
+            v-model="torrentForm.video_codec"
+            inputId="video_coded"
+            :options="selectableVideoCodecs"
+            class="select"
+            size="small"
+          />
+          <label for="video_coded">Video codec</label>
+        </FloatLabel>
+        <FloatLabel>
+          <Select
+            v-model="torrentForm.video_resolution"
+            inputId="video_resolution"
+            :options="selectableVideoResolutions"
+            class="select"
+            size="small"
+          />
+          <label for="video_resolution">Video resolution</label>
+        </FloatLabel>
+        <FloatLabel>
+          <Select
+            v-model="torrentForm.audio_codec"
+            inputId="audio_coded"
+            :options="selectableAudioCodecs"
+            class="select"
+            size="small"
+          />
+          <label for="audio_coded">Audio codec</label>
+        </FloatLabel>
+      </div>
       <FloatLabel>
         <Select
           v-model="torrentForm.language"
@@ -40,32 +79,18 @@
         <label for="language">Language</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="torrentForm.container" size="small" name="container" />
-        <label for="container">Container</label>
-      </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="torrentForm.video_codec"
-          inputId="video_coded"
-          :options="selectableVideoCodecs"
-          class="select"
+        <MultiSelect
+          v-model="torrentForm.features"
+          display="chip"
+          :options="selectableFeatures"
+          filter
           size="small"
         />
-        <label for="video_coded">Video codec</label>
+        <label for="features">Features</label>
       </FloatLabel>
       <FloatLabel>
         <InputText v-model="torrentForm.duration" size="small" name="duration" />
         <label for="duration">Duration (total, in seconds)</label>
-      </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="torrentForm.audio_codec"
-          inputId="audio_coded"
-          :options="selectableAudioCodecs"
-          class="select"
-          size="small"
-        />
-        <label for="audio_coded">Audio codec</label>
       </FloatLabel>
       <!-- <FloatLabel>
         <InputText v-model="torrentForm.audio_bitrate" size="small" name="audio_bitrate" />
@@ -112,14 +137,18 @@ import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import Checkbox from 'primevue/checkbox'
 import FileUpload from 'primevue/fileupload'
+import MultiSelect from 'primevue/multiselect'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
+import { getFeatures } from '@/services/helpers'
+import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
   components: {
     // eslint-disable-next-line vue/no-reserved-component-names
     Button,
+    MultiSelect,
     FileUpload,
     InputNumber,
     FloatLabel,
@@ -145,6 +174,7 @@ export default {
         language: null,
         container: '',
         video_codec: null,
+        video_resolution: null,
         duration: null,
         audio_codec: null,
         audio_bitrate: null,
@@ -155,6 +185,7 @@ export default {
         torrent_file: null,
         uploaded_as_anonymous: false,
       },
+      // TODO : move all the selectable* arrays to an helper function
       selectableVideoCodecs: [
         'Mpeg1',
         'Mpeg2',
@@ -167,6 +198,7 @@ export default {
         'BD50',
         'UHD100',
       ],
+      selectableVideoResolutions: ['2160p', '1440p', '1080p', '720p', 'SD'],
       selectableAudioCodecs: [
         'Aac',
         'Opus',
@@ -215,6 +247,11 @@ export default {
       })
     },
   },
+  computed: {
+    selectableFeatures() {
+      return getFeatures(useTitleGroupStore().content_type)
+    },
+  },
   created() {
     const editionGroupStore = useEditionGroupStore()
     this.torrentForm.edition_group_id = editionGroupStore.id
@@ -228,6 +265,19 @@ export default {
 }
 .p-floatlabel {
   margin-bottom: 30px;
+}
+.line {
+  display: flex;
+  align-items: center;
+  .p-floatlabel {
+    margin-right: 15px;
+  }
+}
+.release-name {
+  width: 100%;
+  input {
+    width: 100%;
+  }
 }
 .select {
   width: 200px;
