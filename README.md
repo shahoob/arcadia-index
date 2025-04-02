@@ -1,6 +1,12 @@
 # arcadia-index
 Arcadia's backend
 
+<p align="center">
+  <a href="https://discord.gg/amYWVk7pS3">
+    <img src="https://img.shields.io/badge/Discord-Chat-5865F2?logo=discord&logoColor=white" alt="Join Our Discord">
+  </a>
+</p>
+
 arcadia-index is composed of two components:
 - The postgres database
 - The web server
