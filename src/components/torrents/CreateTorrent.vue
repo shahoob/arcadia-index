@@ -232,8 +232,6 @@ export default {
       this.step = 2
     },
     validateTorrent() {
-      // TODO : form validation : https://primevue.org/forms/#validateon
-
       this.uploadingTorrent = true
       // const formattedTitleGroupForm = JSON.parse(JSON.stringify(this.titleGroupForm))
       // formattedTitleGroupForm.tags =

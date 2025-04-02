@@ -1,7 +1,6 @@
 import { uniq, compact } from 'lodash-es'
 import { AUDIO_OPTION, VIDEO_OPTION } from '../utils'
 
-// TODO: extract more information
 export default class MediainfoConverter {
   convert(info) {
     const source = this.extractSource(info)

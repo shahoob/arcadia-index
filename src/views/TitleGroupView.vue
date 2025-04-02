@@ -112,7 +112,6 @@
       </AccordionPanel>
     </Accordion>
     <ContentContainer class="description" v-if="title_group">
-      <!-- TODO: add bbcode interpreter : https://github.com/JiLiZART/bbob -->
       <span class="title">Description</span>
       <div class="title-group-description">
         {{ title_group.description }}
@@ -197,9 +196,6 @@ export default {
     subscribe() {
       subscribeToItem(this.$route.query.id, 'title_group').then(() => {
         this.title_group.is_subscribed = true
-        // TODO : create a toast to let the user know it worked
-        // the toast object/function should be gloablly accessible with $
-        // this.$toast.show('success', 'Success!', 'Operation was successful.')
       })
     },
     unsubscribe() {

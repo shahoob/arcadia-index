@@ -172,7 +172,6 @@ export default {
   },
   methods: {
     validateEditionGroup() {
-      // TODO : form validation : https://primevue.org/forms/#validateon
       if (this.action == 'select') {
         this.$emit('done', this.selected_edition_group)
       } else {

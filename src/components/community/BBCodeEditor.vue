@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: add bbcode shortcuts (buttons that insert bbcode snippets) -->
   <FloatLabel style="width: 100%" variant="in">
     <Textarea
       v-model="content"
