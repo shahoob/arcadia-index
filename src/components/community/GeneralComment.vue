@@ -21,7 +21,6 @@
 
 <script lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
-// TODO : make helpers globally accessible with $, so they can be called in the vue template directly
 import { timeAgo } from '@/services/helpers'
 export default {
   components: { ContentContainer },

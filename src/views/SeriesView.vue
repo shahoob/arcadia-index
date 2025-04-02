@@ -1,7 +1,6 @@
 <template>
   <div id="series-view" v-if="series">
     <ContentContainer class="header">
-      <!-- TODO: implement carousel for multiple covers -->
       <Image class="series-covers" :src="series.covers[0]" preview>
         <template #previewicon>
           <i class="pi pi-search"></i>

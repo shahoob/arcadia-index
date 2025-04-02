@@ -279,7 +279,6 @@ export default {
       })
     },
     async validateTitleGroup() {
-      // TODO : form validation : https://primevue.org/forms/#validateon
       if (this.action == 'select') {
         this.creatingTitleGroup = true
         if (!this.titleGroupStore.id) {
