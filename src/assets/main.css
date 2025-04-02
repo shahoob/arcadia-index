@@ -39,6 +39,9 @@ a{
   border-radius: 7px;
   overflow: hidden;
 }
+/* .p-datatable-row-group-header td{
+  width: 100% !important;
+} */
 
 .dense-accordion .p-accordionheader{
   padding: 0.5em;
