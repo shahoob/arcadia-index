@@ -10,6 +10,8 @@ use routes::init;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 
+use arcadia_index::Arcadia;
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env.local").ok();
@@ -29,7 +31,7 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::permissive();
         App::new()
             .wrap(cors)
-            .app_data(Data::new(pool.clone()))
+            .app_data(Data::new(Arcadia { pool: pool.clone() }))
             .configure(init) // Initialize routes
     })
     .bind(format!("{}:{}", host, port))?
