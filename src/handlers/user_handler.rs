@@ -19,5 +19,5 @@ pub async fn get_user(arc: web::Data<Arcadia>, query: web::Query<GetUserQuery>) 
 pub async fn get_me(current_user: User) -> HttpResponse {
     let mut current_user = current_user;
     current_user.password_hash = String::from("");
-    HttpResponse::Created().json(serde_json::json!(current_user))
+    HttpResponse::Ok().json(serde_json::json!(current_user))
 }
