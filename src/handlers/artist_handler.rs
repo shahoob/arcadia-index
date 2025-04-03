@@ -42,7 +42,7 @@ pub struct GetArtistPublicationsQuery {
 }
 
 pub async fn get_artist_publications(
-    query: web::Query<GetArtistPublications>,
+    query: web::Query<GetArtistPublicationsQuery>,
     pool: web::Data<PgPool>,
 ) -> HttpResponse {
     match find_artist_publications(&pool, &query.id).await {
