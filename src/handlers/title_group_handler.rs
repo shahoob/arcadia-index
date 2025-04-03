@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use actix_web::{HttpResponse, web};
+use serde::Deserialize;
 use sqlx::PgPool;
 
 use crate::{
@@ -23,13 +22,17 @@ pub async fn add_title_group(
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GetTitleGroupQuery {
+    id: i64,
+}
+
 pub async fn get_title_group(
     pool: web::Data<PgPool>,
-    query: web::Query<HashMap<String, String>>,
+    query: web::Query<GetTitleGroupQuery>,
     current_user: User,
 ) -> HttpResponse {
-    let title_group_id = query.get("id").expect("id not found in query");
-    match find_title_group(&pool, title_group_id.parse::<i64>().unwrap(), &current_user).await {
+    match find_title_group(&pool, query.id, &current_user).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
@@ -37,12 +40,13 @@ pub async fn get_title_group(
     }
 }
 
+pub type GetLiteTitleGroupInfoQuery = GetTitleGroupQuery;
+
 pub async fn get_lite_title_group_info(
     pool: web::Data<PgPool>,
-    query: web::Query<HashMap<String, String>>,
+    query: web::Query<GetLiteTitleGroupInfoQuery>,
 ) -> HttpResponse {
-    let title_group_id = query.get("id").expect("id not found in query");
-    match find_lite_title_group_info(&pool, title_group_id.parse::<i64>().unwrap()).await {
+    match find_lite_title_group_info(&pool, query.id).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
