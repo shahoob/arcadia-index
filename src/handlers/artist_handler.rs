@@ -37,7 +37,7 @@ pub async fn add_affiliated_artists(
 }
 
 #[derive(Debug, Deserialize)]
-pub struct GetArtistPublications {
+pub struct GetArtistPublicationsQuery {
     id: i32,
 }
 
