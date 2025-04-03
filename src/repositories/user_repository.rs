@@ -7,15 +7,16 @@ pub async fn find_user_by_username(
     pool: &web::Data<PgPool>,
     username: &str,
 ) -> Result<User, Box<dyn Error>> {
-    let query = r#"
-        SELECT * FROM users
-        WHERE username = $1
-    "#;
-
-    let result = sqlx::query_as::<_, User>(query)
-        .bind(username)
-        .fetch_one(pool.get_ref())
-        .await;
+    let result = sqlx::query_as!(
+        User,
+        r#"
+            SELECT * FROM users
+            WHERE username = $1
+        "#,
+        username
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match result {
         Ok(_) => Ok(result.unwrap()),
@@ -32,15 +33,46 @@ pub async fn find_user_by_id(
     pool: &web::Data<PgPool>,
     id: &i64,
 ) -> Result<PublicUser, Box<dyn Error>> {
-    let query = r#"
-        SELECT * FROM users
-        WHERE id = $1
-    "#;
-
-    let result = sqlx::query_as::<_, PublicUser>(query)
-        .bind(id)
-        .fetch_one(pool.get_ref())
-        .await;
+    // TODO: use id BIGINT PRIMARY KEY GENERATED ALWAYS AS DEFAULT
+    let result = sqlx::query_as!(
+        PublicUser,
+        r#"
+            SELECT
+                id,
+                username,
+                avatar,
+                created_at,
+                description,
+                uploaded,
+                downloaded,
+                ratio,
+                required_ratio,
+                last_seen,
+                class,
+                forum_posts,
+                forum_threads,
+                group_comments,
+                torrent_comments,
+                request_comments,
+                artist_comments,
+                seeding,
+                leeching,
+                snatched,
+                seeding_size,
+                requests_filled,
+                collages_started,
+                requests_voted,
+                average_seeding_time,
+                invited,
+                invitations,
+                bonus_points
+            FROM users
+            WHERE id = $1
+        "#,
+        *id as i32
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match result {
         Ok(_) => Ok(result.unwrap()),
