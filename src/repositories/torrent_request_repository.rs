@@ -2,12 +2,11 @@ use crate::models::{
     torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
     user::User,
 };
-use actix_web::web;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_torrent_request(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     torrent_request: &UserCreatedTorrentRequest,
     current_user: &User,
 ) -> Result<TorrentRequest, Box<dyn Error>> {
@@ -38,7 +37,7 @@ pub async fn create_torrent_request(
         .bind(&torrent_request.video_resolution)
         .bind(&torrent_request.bounty_upload)
         .bind(&torrent_request.bounty_bonus_points)
-        .fetch_one(pool.get_ref())
+        .fetch_one(pool)
         .await;
 
     match created_torrent_request {

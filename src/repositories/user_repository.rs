@@ -1,12 +1,8 @@
 use crate::models::user::{PublicUser, User};
-use actix_web::web;
 use sqlx::PgPool;
 use std::error::Error;
 
-pub async fn find_user_by_username(
-    pool: &web::Data<PgPool>,
-    username: &str,
-) -> Result<User, Box<dyn Error>> {
+pub async fn find_user_by_username(pool: &PgPool, username: &str) -> Result<User, Box<dyn Error>> {
     let result = sqlx::query_as!(
         User,
         r#"
@@ -15,7 +11,7 @@ pub async fn find_user_by_username(
         "#,
         username
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match result {
@@ -29,10 +25,7 @@ pub async fn find_user_by_username(
         }
     }
 }
-pub async fn find_user_by_id(
-    pool: &web::Data<PgPool>,
-    id: &i64,
-) -> Result<PublicUser, Box<dyn Error>> {
+pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser, Box<dyn Error>> {
     // TODO: use id BIGINT PRIMARY KEY GENERATED ALWAYS AS DEFAULT
     let result = sqlx::query_as!(
         PublicUser,
@@ -71,7 +64,7 @@ pub async fn find_user_by_id(
         "#,
         *id as i32
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match result {

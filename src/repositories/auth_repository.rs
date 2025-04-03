@@ -13,7 +13,7 @@ use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 use std::{env, error::Error};
 
 pub async fn create_user(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     user: &Register,
     from_ip: IpNetwork,
     password_hash: &str,
@@ -32,7 +32,7 @@ pub async fn create_user(
         password_hash,
         from_ip
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match registered_user {
@@ -47,7 +47,7 @@ pub async fn create_user(
                     registered_user.id,
                     invitation.id
                 )
-                .execute(pool.get_ref())
+                .execute(pool)
                 .await;
             }
 
@@ -63,10 +63,7 @@ pub async fn create_user(
     }
 }
 
-pub async fn find_user_with_password(
-    pool: &web::Data<PgPool>,
-    user: &Login,
-) -> Result<User, Box<dyn Error>> {
+pub async fn find_user_with_password(pool: &PgPool, user: &Login) -> Result<User, Box<dyn Error>> {
     let result = sqlx::query_as!(
         User,
         r#"
@@ -75,7 +72,7 @@ pub async fn find_user_with_password(
         "#,
         user.username
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match result {

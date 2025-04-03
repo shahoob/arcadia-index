@@ -1,9 +1,8 @@
-use actix_web::web;
 use sqlx::{PgPool, postgres::PgQueryResult};
 use std::error::Error;
 
 pub async fn notify_users(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     event: &str,
     item_id: &i64,
     title: &str,
@@ -32,7 +31,7 @@ pub async fn notify_users(
                 title,
                 message
             )
-            .execute(pool.get_ref())
+            .execute(pool)
             .await;
         }
         _ => {
