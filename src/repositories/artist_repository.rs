@@ -3,13 +3,12 @@ use crate::models::{
     title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
     user::User,
 };
-use actix_web::web;
 use serde_json::Value;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_artist(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     artist: &UserCreatedArtist,
     current_user: &User,
 ) -> Result<Artist, Box<dyn Error>> {
@@ -25,7 +24,7 @@ pub async fn create_artist(
         artist.pictures.as_deref(),
         current_user.id
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match created_artist {
@@ -42,7 +41,7 @@ pub async fn create_artist(
 }
 
 pub async fn create_artists_affiliation(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     artists: &Vec<UserCreatedAffiliatedArtist>,
     current_user: &User,
 ) -> Result<Vec<AffiliatedArtist>, Box<dyn Error>> {
@@ -74,7 +73,7 @@ pub async fn create_artists_affiliation(
             .bind(current_user.id);
     }
 
-    match q.fetch_all(pool.as_ref()).await {
+    match q.fetch_all(pool).await {
         Ok(affiliated_artists) => Ok(affiliated_artists),
         Err(e) => {
             println!("{:#?}", e);
@@ -92,7 +91,7 @@ pub async fn create_artists_affiliation(
 }
 
 pub async fn find_artist_publications(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     artist_id: &i32,
 ) -> Result<Value, Box<dyn Error>> {
     // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
@@ -138,7 +137,7 @@ FROM artist_title_groups tg
 LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id;"#,
         artist_id
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match artist_publications {
