@@ -10,7 +10,7 @@ use routes::init;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 
-use arcadia_index::Arcadia;
+use arcadia_index::{Arcadia, OpenSignups};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -27,11 +27,20 @@ async fn main() -> std::io::Result<()> {
     let port = env::var("ACTIX_PORT").unwrap_or_else(|_| "8080".to_string());
     println!("Server running at http://{}:{}", host, port);
 
+    let open_signups = if env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true" {
+        OpenSignups::Enabled
+    } else {
+        OpenSignups::Disabled
+    };
+
     HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
             .wrap(cors)
-            .app_data(Data::new(Arcadia { pool: pool.clone() }))
+            .app_data(Data::new(Arcadia {
+                pool: pool.clone(),
+                open_signups,
+            }))
             .configure(init) // Initialize routes
     })
     .bind(format!("{}:{}", host, port))?

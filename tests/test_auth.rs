@@ -2,23 +2,21 @@ use actix_http::Request;
 use actix_web::{
     App, Error,
     dev::{Service, ServiceResponse},
-    http::{
-        StatusCode,
-        header::{self, ContentType, HeaderValue},
-    },
+    http::{StatusCode, header::HeaderValue},
     test, web,
 };
-use arcadia_index::Arcadia;
+use arcadia_index::{Arcadia, OpenSignups};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 async fn create_test_app(
     pool: PgPool,
+    open_signups: OpenSignups,
 ) -> impl Service<Request, Response = ServiceResponse, Error = Error> {
     // TODO: CORS?
     test::init_service(
         App::new()
-            .app_data(web::Data::new(Arcadia { pool }))
+            .app_data(web::Data::new(Arcadia { pool, open_signups }))
             .configure(arcadia_index::routes::init),
     )
     .await
@@ -41,12 +39,7 @@ struct RegisterResponse {
 
 #[sqlx::test]
 async fn test_open_registration(pool: PgPool) {
-    // TODO: rework to include signup config as app state
-    if std::env::var("ARCADIA_OPEN_SIGNUPS").unwrap() != "true" {
-        return;
-    }
-
-    let service = create_test_app(pool).await;
+    let service = create_test_app(pool, OpenSignups::Enabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -82,12 +75,7 @@ async fn test_open_registration(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_failures(pool: PgPool) {
-    // TODO: rework to include signup config as app state
-    if std::env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true" {
-        return;
-    }
-
-    let service = create_test_app(pool).await;
+    let service = create_test_app(pool, OpenSignups::Disabled).await;
 
     // No key specified.  Should fail.
     let req = test::TestRequest::post()
@@ -134,12 +122,7 @@ async fn test_closed_registration_failures(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_success(pool: PgPool) {
-    // TODO: rework to include signup config as app state
-    if std::env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true" {
-        return;
-    }
-
-    let service = create_test_app(pool).await;
+    let service = create_test_app(pool, OpenSignups::Disabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -192,7 +175,7 @@ async fn test_closed_registration_success(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user"))]
 async fn test_login_success(pool: PgPool) {
-    let service = create_test_app(pool).await;
+    let service = create_test_app(pool, OpenSignups::Disabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
