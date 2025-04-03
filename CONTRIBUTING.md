@@ -39,3 +39,5 @@ You can also hop on the [discord server](https://discord.gg/amYWVk7pS3) to chat 
 ### Finding contributions to make
 
 Arcadia-client has a [board](https://github.com/orgs/Arcadia-Solutions/projects/2/views/1) to track the existing issues and features that need to be worked on. Feel free to claim one that isn't claimed yet before starting to work on it.
+
+To claim a github issue, simply leave a comment on it saying that you are working on it.
