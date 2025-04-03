@@ -8,6 +8,7 @@ use actix_web::{
     },
     test, web,
 };
+use arcadia_index::Arcadia;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
@@ -17,7 +18,7 @@ async fn create_test_app(
     // TODO: CORS?
     test::init_service(
         App::new()
-            .app_data(web::Data::new(pool))
+            .app_data(web::Data::new(Arcadia { pool }))
             .configure(arcadia_index::routes::init),
     )
     .await
