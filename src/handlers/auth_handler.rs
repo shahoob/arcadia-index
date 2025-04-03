@@ -16,19 +16,25 @@ use argon2::{
 use chrono::Duration;
 use chrono::prelude::Utc;
 use jsonwebtoken::{EncodingKey, Header, encode};
+use serde::Deserialize;
 use sqlx::PgPool;
-use std::{collections::HashMap, env, net::IpAddr};
+use std::{env, net::IpAddr};
+
+#[derive(Debug, Deserialize)]
+pub struct RegisterQuery {
+    invitation_key: Option<String>,
+}
 
 pub async fn register(
     new_user: web::Json<Register>,
     pool: web::Data<PgPool>,
     req: HttpRequest,
-    query: web::Query<HashMap<String, String>>,
+    query: web::Query<RegisterQuery>,
 ) -> HttpResponse {
     let invitation: Invitation;
     let open_signups = env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true";
     if !open_signups {
-        let Some(invitation_key) = query.get("invitation_key") else {
+        let Some(invitation_key) = &query.invitation_key else {
             return HttpResponse::InternalServerError().json(serde_json::json!({
                 "error": "invitation key not found in query"
             }));
