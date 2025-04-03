@@ -2,13 +2,12 @@ use crate::models::{
     title_group::{TitleGroup, UserCreatedTitleGroup},
     user::User,
 };
-use actix_web::web;
 use serde_json::Value;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_title_group(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     title_group_form: &UserCreatedTitleGroup,
     current_user: &User,
 ) -> Result<TitleGroup, Box<dyn Error>> {
@@ -35,7 +34,7 @@ pub async fn create_title_group(
         .bind(&title_group_form.tags)
         .bind(&title_group_form.tagline)
         // .bind(&title_group_form.public_ratings)
-        .fetch_one(pool.get_ref())
+        .fetch_one(pool)
         .await;
 
     match created_title_group {
@@ -52,7 +51,7 @@ pub async fn create_title_group(
 }
 
 pub async fn find_title_group(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     title_group_id: i64,
     current_user: &User,
 ) -> Result<Value, Box<dyn Error>> {
@@ -142,7 +141,7 @@ LEFT JOIN series_data sd ON sd.title_group_id = tg.id
 LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
 LEFT JOIN subscription_data sud ON sud.id = tg.id
 WHERE tg.id = $2;"#, current_user.id, title_group_id)
-        .fetch_one(pool.get_ref())
+        .fetch_one(pool)
         .await;
 
     match title_group {
@@ -158,7 +157,7 @@ WHERE tg.id = $2;"#, current_user.id, title_group_id)
     }
 }
 pub async fn find_lite_title_group_info(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     title_group_id: i64,
 ) -> Result<Value, Box<dyn Error>> {
     let title_group = sqlx::query!(
@@ -184,7 +183,7 @@ WHERE tg.id = $1
 GROUP BY tg.id;"#,
         title_group_id
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match title_group {

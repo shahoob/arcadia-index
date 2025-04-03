@@ -2,12 +2,11 @@ use crate::models::{
     title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
     user::User,
 };
-use actix_web::web;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_title_group_comment(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     title_group_comment: &UserCreatedTitleGroupComment,
     current_user: &User,
 ) -> Result<TitleGroupComment, Box<dyn Error>> {
@@ -24,7 +23,7 @@ pub async fn create_title_group_comment(
             .bind(&current_user.id)
             .bind(&title_group_comment.refers_to_torrent_id)
             .bind(&title_group_comment.answers_to_comment_id)
-            .fetch_one(pool.get_ref())
+            .fetch_one(pool)
             .await;
 
     match created_title_group_comment {

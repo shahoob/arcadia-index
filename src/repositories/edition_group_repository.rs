@@ -2,12 +2,11 @@ use crate::models::{
     edition_group::{EditionGroup, UserCreatedEditionGroup},
     user::User,
 };
-use actix_web::web;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_edition_group(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     edition_group_form: &UserCreatedEditionGroup,
     current_user: &User,
 ) -> Result<EditionGroup, Box<dyn Error>> {
@@ -28,7 +27,7 @@ pub async fn create_edition_group(
         .bind(&edition_group_form.external_links)
         .bind(&edition_group_form.source)
         .bind(&edition_group_form.additional_information)
-        .fetch_one(pool.get_ref())
+        .fetch_one(pool)
         .await;
 
     match created_edition_group {

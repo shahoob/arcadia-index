@@ -2,12 +2,11 @@ use crate::models::{
     torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
     user::User,
 };
-use actix_web::web;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_torrent_request_vote(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     torrent_request_vote: &UserCreatedTorrentRequestVote,
     current_user: &User,
 ) -> Result<TorrentRequestVote, Box<dyn Error>> {
@@ -51,7 +50,7 @@ FROM inserted_vote;"#;
             .bind(&current_user.id)
             .bind(&torrent_request_vote.bounty_upload)
             .bind(&torrent_request_vote.bounty_bonus_points)
-            .fetch_one(pool.get_ref())
+            .fetch_one(pool)
             .await;
 
     match created_torrent_request_vote {
