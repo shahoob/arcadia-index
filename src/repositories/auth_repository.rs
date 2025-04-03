@@ -9,45 +9,46 @@ use argon2::{
 };
 use futures::future::BoxFuture;
 use jsonwebtoken::{DecodingKey, Validation, decode};
-use sqlx::PgPool;
-use std::net::IpAddr;
+use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 use std::{env, error::Error};
 
 pub async fn create_user(
     pool: &web::Data<PgPool>,
     user: &Register,
-    from_ip: &IpAddr,
+    from_ip: IpNetwork,
     password_hash: &str,
     invitation: &Invitation,
     open_signups: &bool,
 ) -> Result<User, Box<dyn Error>> {
-    let create_user_query = r#"
-        INSERT INTO users (username, email, password_hash, registered_from_ip) 
-        VALUES ($1, $2, $3, $4::inet)
-        RETURNING *
-    "#;
-
-    let registered_user = sqlx::query_as::<_, User>(create_user_query)
-        .bind(&user.username)
-        .bind(&user.email)
-        .bind(password_hash)
-        .bind(from_ip.to_string())
-        .fetch_one(pool.get_ref())
-        .await;
+    let registered_user = sqlx::query_as!(
+        User,
+        r#"
+            INSERT INTO users (username, email, password_hash, registered_from_ip)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        "#,
+        &user.username,
+        &user.email,
+        password_hash,
+        from_ip
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match registered_user {
         Ok(_) => {
             let registered_user = registered_user.unwrap();
             if !*open_signups {
-                let assign_invitation_query = r#"
-                UPDATE invitations SET receiver_id = $1 WHERE id = $2;
-                "#;
-
-                let result = sqlx::query(assign_invitation_query)
-                    .bind(&registered_user.id)
-                    .bind(&invitation.id)
-                    .execute(pool.get_ref())
-                    .await;
+                // TODO: check this properly
+                let _ = sqlx::query!(
+                    r#"
+                    UPDATE invitations SET receiver_id = $1 WHERE id = $2;
+                    "#,
+                    registered_user.id,
+                    invitation.id
+                )
+                .execute(pool.get_ref())
+                .await;
             }
 
             Ok(registered_user)
@@ -66,11 +67,6 @@ pub async fn find_user_with_password(
     pool: &web::Data<PgPool>,
     user: &Login,
 ) -> Result<User, Box<dyn Error>> {
-    let query = r#"
-        SELECT * FROM users
-        WHERE username = $1
-    "#;
-
     let result = sqlx::query_as!(
         User,
         r#"
@@ -127,17 +123,19 @@ impl FromRequest for User {
                         {
                             let user_id = token_data.claims.sub;
 
-                            let query = "UPDATE users 
-                            SET last_seen = NOW() 
-                            WHERE id = $1 
-                            RETURNING *;";
-                            let user = sqlx::query_as::<_, User>(query)
-                                .bind(user_id)
-                                .fetch_one(pool.get_ref())
-                                .await
-                                .map_err(|e| {
-                                    actix_web::error::ErrorInternalServerError(e.to_string())
-                                });
+                            let user = sqlx::query_as!(
+                                User,
+                                r#"
+                                    UPDATE users
+                                    SET last_seen = NOW()
+                                    WHERE id = $1
+                                    RETURNING *
+                                "#,
+                                user_id
+                            )
+                            .fetch_one(pool.get_ref())
+                            .await
+                            .map_err(|e| actix_web::error::ErrorInternalServerError(e.to_string()));
 
                             return user.map_err(|_| {
                                 actix_web::error::ErrorUnauthorized("User not found")

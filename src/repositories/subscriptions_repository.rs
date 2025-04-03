@@ -12,15 +12,16 @@ pub async fn create_subscription(
     let result: Result<PgQueryResult, sqlx::Error>;
     match item {
         "title_group" => {
-            let query = r#"
-            INSERT INTO title_group_subscriptions (title_group_id, subscriber_id) 
-            VALUES ($1, $2);
-        "#;
-            result = sqlx::query(query)
-                .bind(&item_id)
-                .bind(&current_user.id)
-                .execute(pool.get_ref())
-                .await;
+            result = sqlx::query!(
+                r#"
+                    INSERT INTO title_group_subscriptions (title_group_id, subscriber_id)
+                    VALUES ($1, $2)
+                "#,
+                item_id,
+                current_user.id
+            )
+            .execute(pool.get_ref())
+            .await;
         }
         _ => {
             return Err(format!("this kind of subscription is not supported").into());
@@ -49,16 +50,16 @@ pub async fn delete_subscription(
     let result: Result<PgQueryResult, sqlx::Error>;
     match item {
         "title_group" => {
-            let query = r#"
-                DELETE FROM title_group_subscriptions
-                WHERE title_group_id = $1 AND subscriber_id = $2;
-            "#;
-
-            result = sqlx::query(query)
-                .bind(&item_id)
-                .bind(&current_user.id)
-                .execute(pool.get_ref())
-                .await;
+            result = sqlx::query!(
+                r#"
+                    DELETE FROM title_group_subscriptions
+                    WHERE title_group_id = $1 AND subscriber_id = $2;
+                "#,
+                item_id,
+                current_user.id
+            )
+            .execute(pool.get_ref())
+            .await;
         }
         _ => {
             return Err(format!("this kind of subscription is not supported").into());

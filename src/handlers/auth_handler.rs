@@ -17,8 +17,8 @@ use chrono::Duration;
 use chrono::prelude::Utc;
 use jsonwebtoken::{EncodingKey, Header, encode};
 use serde::Deserialize;
-use sqlx::PgPool;
-use std::{env, net::IpAddr};
+use sqlx::{PgPool, types::ipnetwork::IpNetwork};
+use std::env;
 
 #[derive(Debug, Deserialize)]
 pub struct RegisterQuery {
@@ -58,10 +58,10 @@ pub async fn register(
         invitation = Invitation::default();
     }
 
-    let client_ip: IpAddr = req
+    let client_ip = req
         .connection_info()
         .realip_remote_addr()
-        .and_then(|ip| ip.parse().ok())
+        .and_then(|ip| ip.parse::<IpNetwork>().ok())
         .unwrap();
 
     let salt = SaltString::generate(&mut OsRng);
@@ -78,7 +78,7 @@ pub async fn register(
     match create_user(
         &pool,
         &new_user,
-        &client_ip,
+        client_ip,
         &password_hash,
         &invitation,
         &open_signups,
