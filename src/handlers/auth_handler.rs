@@ -1,4 +1,5 @@
 use crate::{
+    Arcadia,
     models::{
         invitation::Invitation,
         user::{Claims, Login, Register},
@@ -17,7 +18,7 @@ use chrono::Duration;
 use chrono::prelude::Utc;
 use jsonwebtoken::{EncodingKey, Header, encode};
 use serde::Deserialize;
-use sqlx::{PgPool, types::ipnetwork::IpNetwork};
+use sqlx::types::ipnetwork::IpNetwork;
 use std::env;
 
 #[derive(Debug, Deserialize)]
@@ -27,7 +28,7 @@ pub struct RegisterQuery {
 
 pub async fn register(
     new_user: web::Json<Register>,
-    pool: web::Data<PgPool>,
+    arc: web::Data<Arcadia>,
     req: HttpRequest,
     query: web::Query<RegisterQuery>,
 ) -> HttpResponse {
@@ -39,7 +40,7 @@ pub async fn register(
                 "error": "invitation key not found in query"
             }));
         };
-        match does_invitation_exist(&pool, &invitation_key).await {
+        match does_invitation_exist(&arc.pool, &invitation_key).await {
             Ok(invitation_found) => {
                 if invitation_found.receiver_id.is_some() {
                     return HttpResponse::InternalServerError().json(serde_json::json!({
@@ -76,7 +77,7 @@ pub async fn register(
         .to_string();
 
     match create_user(
-        &pool,
+        &arc.pool,
         &new_user,
         client_ip,
         &password_hash,
@@ -92,8 +93,8 @@ pub async fn register(
     }
 }
 
-pub async fn login(pool: web::Data<PgPool>, user_login: web::Json<Login>) -> HttpResponse {
-    match find_user_with_password(&pool, &user_login).await {
+pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> HttpResponse {
+    match find_user_with_password(&arc.pool, &user_login).await {
         Ok(user) => {
             let mut expiration_date = Utc::now();
             if !user_login.remember_me {

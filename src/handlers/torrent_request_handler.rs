@@ -1,16 +1,16 @@
 use crate::{
+    Arcadia,
     models::{torrent_request::UserCreatedTorrentRequest, user::User},
     repositories::torrent_request_repository::create_torrent_request,
 };
 use actix_web::{HttpResponse, web};
-use sqlx::PgPool;
 
 pub async fn add_torrent_request(
     torrent_request: web::Json<UserCreatedTorrentRequest>,
-    pool: web::Data<PgPool>,
+    arc: web::Data<Arcadia>,
     current_user: User,
 ) -> HttpResponse {
-    match create_torrent_request(&pool, &torrent_request, &current_user).await {
+    match create_torrent_request(&arc.pool, &torrent_request, &current_user).await {
         Ok(created_torrent_request) => {
             HttpResponse::Created().json(serde_json::json!(created_torrent_request))
         }

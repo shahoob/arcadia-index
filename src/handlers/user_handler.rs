@@ -1,15 +1,14 @@
-use crate::{models::user::User, repositories::user_repository::find_user_by_id};
+use crate::{Arcadia, models::user::User, repositories::user_repository::find_user_by_id};
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
-use sqlx::PgPool;
 
 #[derive(Debug, Deserialize)]
 pub struct GetUserQuery {
     id: i64,
 }
 
-pub async fn get_user(pool: web::Data<PgPool>, query: web::Query<GetUserQuery>) -> HttpResponse {
-    match find_user_by_id(&pool, &query.id).await {
+pub async fn get_user(arc: web::Data<Arcadia>, query: web::Query<GetUserQuery>) -> HttpResponse {
+    match find_user_by_id(&arc.pool, &query.id).await {
         Ok(user) => HttpResponse::Created().json(serde_json::json!(user)),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
