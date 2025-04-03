@@ -6,7 +6,7 @@ use sqlx::prelude::FromRow;
 pub struct User {
     pub id: i32,
     pub username: String,
-    pub avatar: String,
+    pub avatar: Option<String>,
     pub email: String,
     pub password_hash: String,
     pub registered_from_ip: String,
@@ -62,7 +62,7 @@ pub struct Claims {
 pub struct PublicUser {
     pub id: i32,
     pub username: String,
-    pub avatar: String,
+    pub avatar: Option<String>,
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
