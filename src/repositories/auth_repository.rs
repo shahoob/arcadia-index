@@ -71,10 +71,16 @@ pub async fn find_user_with_password(
         WHERE username = $1
     "#;
 
-    let result = sqlx::query_as::<_, User>(query)
-        .bind(&user.username)
-        .fetch_one(pool.get_ref())
-        .await;
+    let result = sqlx::query_as!(
+        User,
+        r#"
+            SELECT * FROM users
+            WHERE username = $1
+        "#,
+        user.username
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match result {
         Ok(_) => {
