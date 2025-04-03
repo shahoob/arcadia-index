@@ -55,15 +55,16 @@ pub async fn create_invitation(
     }
 }
 
-pub async fn does_invitation_exist(
+pub async fn does_unexpired_invitation_exist(
     pool: &PgPool,
     invitation_key: &str,
 ) -> Result<Invitation, Box<dyn Error>> {
-    // TODO: test and handle expiration
     let invitation = sqlx::query_as!(
         Invitation,
         r#"
-           SELECT * FROM invitations WHERE invitation_key = $1
+           SELECT * FROM invitations
+           WHERE invitation_key = $1
+           AND expires_at > CURRENT_TIMESTAMP
         "#,
         invitation_key
     )

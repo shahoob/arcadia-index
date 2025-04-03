@@ -6,7 +6,7 @@ use crate::{
     },
     repositories::{
         auth_repository::{create_user, find_user_with_password},
-        invitation_repository::does_invitation_exist,
+        invitation_repository::does_unexpired_invitation_exist,
     },
 };
 use actix_web::{HttpRequest, HttpResponse, web};
@@ -39,7 +39,7 @@ pub async fn register(
                 "error": "invitation key not found in query"
             }));
         };
-        match does_invitation_exist(&arc.pool, &invitation_key).await {
+        match does_unexpired_invitation_exist(&arc.pool, &invitation_key).await {
             Ok(invitation_found) => {
                 if invitation_found.receiver_id.is_some() {
                     return HttpResponse::InternalServerError().json(serde_json::json!({
