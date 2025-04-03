@@ -1,8 +1,8 @@
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
-use sqlx::PgPool;
 
 use crate::{
+    Arcadia,
     models::{title_group::UserCreatedTitleGroup, user::User},
     repositories::title_group_repository::{
         create_title_group, find_lite_title_group_info, find_title_group,
@@ -11,10 +11,10 @@ use crate::{
 
 pub async fn add_title_group(
     form: web::Json<UserCreatedTitleGroup>,
-    pool: web::Data<PgPool>,
+    arc: web::Data<Arcadia>,
     current_user: User,
 ) -> HttpResponse {
-    match create_title_group(&pool, &form, &current_user).await {
+    match create_title_group(&arc.pool, &form, &current_user).await {
         Ok(title_group) => HttpResponse::Created().json(serde_json::json!(title_group)),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
@@ -28,11 +28,11 @@ pub struct GetTitleGroupQuery {
 }
 
 pub async fn get_title_group(
-    pool: web::Data<PgPool>,
+    arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupQuery>,
     current_user: User,
 ) -> HttpResponse {
-    match find_title_group(&pool, query.id, &current_user).await {
+    match find_title_group(&arc.pool, query.id, &current_user).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
@@ -43,10 +43,10 @@ pub async fn get_title_group(
 pub type GetLiteTitleGroupInfoQuery = GetTitleGroupQuery;
 
 pub async fn get_lite_title_group_info(
-    pool: web::Data<PgPool>,
+    arc: web::Data<Arcadia>,
     query: web::Query<GetLiteTitleGroupInfoQuery>,
 ) -> HttpResponse {
-    match find_lite_title_group_info(&pool, query.id).await {
+    match find_lite_title_group_info(&arc.pool, query.id).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()
