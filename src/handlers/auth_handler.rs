@@ -33,8 +33,7 @@ pub async fn register(
     query: web::Query<RegisterQuery>,
 ) -> HttpResponse {
     let invitation: Invitation;
-    let open_signups = env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true";
-    if !open_signups {
+    if !arc.is_open_signups() {
         let Some(invitation_key) = &query.invitation_key else {
             return HttpResponse::InternalServerError().json(serde_json::json!({
                 "error": "invitation key not found in query"
@@ -82,7 +81,7 @@ pub async fn register(
         client_ip,
         &password_hash,
         &invitation,
-        &open_signups,
+        &arc.is_open_signups(),
     )
     .await
     {
