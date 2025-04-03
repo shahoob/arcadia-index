@@ -1,6 +1,9 @@
-use crate::models::{
-    invitation::Invitation,
-    user::{Claims, Login, Register, User},
+use crate::{
+    Arcadia,
+    models::{
+        invitation::Invitation,
+        user::{Claims, Login, Register, User},
+    },
 };
 use actix_web::{FromRequest, HttpRequest, dev::Payload, web};
 use argon2::{
@@ -104,7 +107,8 @@ impl FromRequest for User {
     type Future = BoxFuture<'static, Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
-        let pool = req.app_data::<web::Data<PgPool>>().unwrap().clone();
+        // let pool = req.app_data::<web::Data<PgPool>>().unwrap().clone();
+        let pool = req.app_data::<web::Data<Arcadia>>().unwrap().pool.clone();
         let auth_header = req.headers().get("Authorization").cloned();
 
         Box::pin(async move {
@@ -130,7 +134,7 @@ impl FromRequest for User {
                                 "#,
                                 user_id
                             )
-                            .fetch_one(pool.get_ref())
+                            .fetch_one(&pool)
                             .await
                             .map_err(|e| actix_web::error::ErrorInternalServerError(e.to_string()));
 
