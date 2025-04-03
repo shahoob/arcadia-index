@@ -1,10 +1,9 @@
-use std::collections::HashMap;
-
 use crate::{
     models::{series::UserCreatedSeries, user::User},
     repositories::series_repository::{create_series, find_series},
 };
 use actix_web::{HttpResponse, web};
+use serde::Deserialize;
 use sqlx::PgPool;
 
 pub async fn add_series(
@@ -20,12 +19,16 @@ pub async fn add_series(
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GetSeriesQuery {
+    id: i64,
+}
+
 pub async fn get_series(
     pool: web::Data<PgPool>,
-    query: web::Query<HashMap<String, String>>,
+    query: web::Query<GetSeriesQuery>,
 ) -> HttpResponse {
-    let series_id = query.get("id").expect("id not found in query");
-    match find_series(&pool, &series_id.parse::<i64>().unwrap()).await {
+    match find_series(&pool, &query.id).await {
         Ok(title_group) => HttpResponse::Ok().json(title_group),
         Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
             "error": err.to_string()

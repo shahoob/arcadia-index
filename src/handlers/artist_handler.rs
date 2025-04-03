@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::{
     models::{artist::UserCreatedArtist, title_group::UserCreatedAffiliatedArtist, user::User},
     repositories::artist_repository::{
@@ -7,6 +5,7 @@ use crate::{
     },
 };
 use actix_web::{HttpResponse, web};
+use serde::Deserialize;
 use sqlx::PgPool;
 
 pub async fn add_artist(
@@ -37,12 +36,16 @@ pub async fn add_affiliated_artists(
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GetArtistPublications {
+    id: i32,
+}
+
 pub async fn get_artist_publications(
-    query: web::Query<HashMap<String, String>>,
+    query: web::Query<GetArtistPublications>,
     pool: web::Data<PgPool>,
 ) -> HttpResponse {
-    let artist_id = query.get("id").expect("id not found in query");
-    match find_artist_publications(&pool, &artist_id.parse::<i32>().unwrap()).await {
+    match find_artist_publications(&pool, &query.id).await {
         Ok(artist_publications) => {
             HttpResponse::Created().json(serde_json::json!(artist_publications))
         }
