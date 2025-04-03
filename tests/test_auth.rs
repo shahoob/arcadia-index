@@ -173,6 +173,31 @@ async fn test_closed_registration_success(pool: PgPool) {
     assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
 }
 
+#[sqlx::test(fixtures("with_test_user", "with_expired_test_user_invite"))]
+async fn test_closed_registration_expired_failure(pool: PgPool) {
+    let service = create_test_app(pool, OpenSignups::Disabled).await;
+
+    let req = test::TestRequest::post()
+        .insert_header(("X-Forwarded-For", "10.10.4.88"))
+        .uri("/api/register?invitation_key=valid_key")
+        .set_json(RegisterRequest {
+            username: "test_user2",
+            password: "test_password2",
+            password_verify: "test_password2",
+            email: "newuser@testdomain.com",
+        })
+        .to_request();
+
+    let resp = test::call_service(&service, req).await;
+
+    // TODO: change to FORBIDDEN
+    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    assert_eq!(
+        resp.headers().get("Content-Type"),
+        Some(&HeaderValue::from_static("application/json"))
+    );
+}
+
 #[sqlx::test(fixtures("with_test_user"))]
 async fn test_login_success(pool: PgPool) {
     let service = create_test_app(pool, OpenSignups::Disabled).await;
