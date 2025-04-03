@@ -2,7 +2,6 @@ use crate::models::{
     torrent::{Features, Torrent, UploadedTorrent},
     user::User,
 };
-use actix_web::web;
 use bip_metainfo::Metainfo;
 use serde_json::json;
 use sqlx::PgPool;
@@ -18,7 +17,7 @@ struct LiteTitleGroupInfo {
 }
 
 pub async fn create_torrent(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     torrent_form: &UploadedTorrent,
     current_user: &User,
 ) -> Result<Torrent, Box<dyn Error>> {
@@ -126,7 +125,7 @@ pub async fn create_torrent(
         .bind(torrent_form.video_resolution.as_deref())
         .bind(&*torrent_form.container)
         .bind(torrent_form.language.as_deref())
-        .fetch_one(pool.get_ref())
+        .fetch_one(pool)
         .await;
 
     // TODO: edit the torrent file with proper flags, remove announce url and store it to the disk
@@ -141,7 +140,7 @@ pub async fn create_torrent(
         WHERE edition_groups.id = $1",
                 &torrent_form.edition_group_id.0
             )
-            .fetch_one(&***pool)
+            .fetch_one(pool)
             .await?;
             let _ = notify_users(
                 pool,

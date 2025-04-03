@@ -1,10 +1,9 @@
 use crate::models::user::User;
-use actix_web::web;
 use sqlx::{PgPool, postgres::PgQueryResult};
 use std::error::Error;
 
 pub async fn create_subscription(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     item_id: &i64,
     item: &str,
     current_user: &User,
@@ -20,7 +19,7 @@ pub async fn create_subscription(
                 item_id,
                 current_user.id
             )
-            .execute(pool.get_ref())
+            .execute(pool)
             .await;
         }
         _ => {
@@ -42,7 +41,7 @@ pub async fn create_subscription(
 }
 
 pub async fn delete_subscription(
-    pool: &web::Data<sqlx::PgPool>,
+    pool: &PgPool,
     item_id: &i64,
     item: &str,
     current_user: &User,
@@ -58,7 +57,7 @@ pub async fn delete_subscription(
                 item_id,
                 current_user.id
             )
-            .execute(pool.get_ref())
+            .execute(pool)
             .await;
         }
         _ => {

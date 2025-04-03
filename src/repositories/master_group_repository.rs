@@ -2,12 +2,11 @@ use crate::models::{
     master_group::{MasterGroup, UserCreatedMasterGroup},
     user::User,
 };
-use actix_web::web;
 use sqlx::PgPool;
 use std::error::Error;
 
 pub async fn create_master_group(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     master_group_form: &UserCreatedMasterGroup,
     current_user: &User,
 ) -> Result<MasterGroup, Box<dyn Error>> {
@@ -29,7 +28,7 @@ pub async fn create_master_group(
         // .bind(&master_group_form.fan_arts)
         // .bind(&master_group_form.category)
         // .bind(&master_group_form.tags)
-        .fetch_one(pool.get_ref())
+        .fetch_one(pool)
         .await;
 
     match created_master_group {

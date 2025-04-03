@@ -1,6 +1,5 @@
 use std::error::Error;
 
-use actix_web::web;
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
@@ -13,7 +12,7 @@ use crate::models::{
 };
 
 pub async fn create_invitation(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     invitation: &SentInvitation,
     current_user: &User,
 ) -> Result<Invitation, Box<dyn Error>> {
@@ -40,7 +39,7 @@ pub async fn create_invitation(
         current_user.id,
         invitation.receiver_email
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match sent_invitation {
@@ -57,7 +56,7 @@ pub async fn create_invitation(
 }
 
 pub async fn does_invitation_exist(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     invitation_key: &str,
 ) -> Result<Invitation, Box<dyn Error>> {
     // TODO: test and handle expiration
@@ -68,7 +67,7 @@ pub async fn does_invitation_exist(
         "#,
         invitation_key
     )
-    .fetch_one(pool.get_ref())
+    .fetch_one(pool)
     .await;
 
     match invitation {
@@ -85,7 +84,7 @@ pub async fn does_invitation_exist(
 }
 
 pub async fn set_invitations_available(
-    pool: &web::Data<PgPool>,
+    pool: &PgPool,
     amount: i16,
     current_user: &User,
 ) -> Result<(), Box<dyn Error>> {
@@ -97,7 +96,7 @@ pub async fn set_invitations_available(
         amount,
         current_user.id
     )
-    .execute(pool.get_ref())
+    .execute(pool)
     .await;
 
     match result {
