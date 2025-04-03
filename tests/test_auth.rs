@@ -198,6 +198,19 @@ async fn test_closed_registration_expired_failure(pool: PgPool) {
     );
 }
 
+#[derive(PartialEq, Deserialize)]
+struct UserResponse {
+    username: String,
+    id: i64,
+    avatar: Option<String>,
+}
+
+#[derive(PartialEq, Deserialize)]
+struct LoginResponse {
+    token: String,
+    user: UserResponse,
+}
+
 #[sqlx::test(fixtures("with_test_user"))]
 async fn test_login_success(pool: PgPool) {
     let service = create_test_app(pool, OpenSignups::Disabled).await;
@@ -220,22 +233,61 @@ async fn test_login_success(pool: PgPool) {
         Some(&HeaderValue::from_static("application/json"))
     );
 
-    #[derive(PartialEq, Deserialize)]
-    struct UserResponse {
-        username: String,
-        id: i64,
-        avatar: Option<String>,
-    }
+    let user = test::read_body_json::<LoginResponse, _>(resp).await;
 
-    #[derive(PartialEq, Deserialize)]
-    struct LoginResponse {
-        token: String,
-        user: UserResponse,
-    }
+    assert!(!user.token.is_empty());
+    assert_eq!(user.user.username, "test_user");
+    assert!(user.user.avatar.is_none());
+}
+
+#[sqlx::test(fixtures("with_test_user"))]
+async fn test_authorized_endpoint_after_login(pool: PgPool) {
+    let service = create_test_app(pool, OpenSignups::Disabled).await;
+
+    let req = test::TestRequest::post()
+        .insert_header(("X-Forwarded-For", "10.10.4.88"))
+        .uri("/api/login")
+        .set_json(serde_json::json!({
+            "username": "test_user",
+            "password": "test_password",
+            "remember_me": true,
+        }))
+        .to_request();
+
+    let resp = test::call_service(&service, req).await;
+
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(
+        resp.headers().get("Content-Type"),
+        Some(&HeaderValue::from_static("application/json"))
+    );
 
     let user = test::read_body_json::<LoginResponse, _>(resp).await;
 
     assert!(!user.token.is_empty());
     assert_eq!(user.user.username, "test_user");
     assert!(user.user.avatar.is_none());
+
+    let req = test::TestRequest::get()
+        .insert_header(("X-Forwarded-For", "10.10.4.88"))
+        .insert_header(("Authorization", format!("Bearer {}", user.token)))
+        .uri("/api/me")
+        .to_request();
+
+    let resp = test::call_service(&service, req).await;
+
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(
+        resp.headers().get("Content-Type"),
+        Some(&HeaderValue::from_static("application/json"))
+    );
+
+    #[derive(PartialEq, Deserialize)]
+    struct MeResponse {
+        username: String,
+    }
+
+    let user = test::read_body_json::<MeResponse, _>(resp).await;
+
+    assert_eq!(user.username, "test_user");
 }
