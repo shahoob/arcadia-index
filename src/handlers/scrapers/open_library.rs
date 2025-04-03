@@ -1,12 +1,17 @@
 use actix_web::{HttpResponse, web};
 use chrono::NaiveDate;
+use serde::Deserialize;
 use serde_json::Value;
-use std::collections::HashMap;
 
 use crate::models::title_group::{ContentType, create_default_title_group};
 
-pub async fn get_open_library_data(query: web::Query<HashMap<String, String>>) -> HttpResponse {
-    let open_library_id = query.get("id").expect("id not found in query");
+#[derive(Debug, Deserialize)]
+pub struct GetOpenLibraryQuery {
+    id: String,
+}
+
+pub async fn get_open_library_data(query: web::Query<GetOpenLibraryQuery>) -> HttpResponse {
+    let open_library_id = &query.id;
     //TODO: check if there is an entry in the db with this open_library_id
     let mut title_group = create_default_title_group();
     title_group.external_links = vec![format!("https://openlibrary.org/works/{}", open_library_id)];
