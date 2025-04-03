@@ -28,9 +28,11 @@ pub async fn register(
     let invitation: Invitation;
     let open_signups = env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true";
     if !open_signups {
-        let invitation_key = query
-            .get("invitation_key")
-            .expect("invitation key not found in query");
+        let Some(invitation_key) = query.get("invitation_key") else {
+            return HttpResponse::InternalServerError().json(serde_json::json!({
+                "error": "invitation key not found in query"
+            }));
+        };
         match does_invitation_exist(&pool, &invitation_key).await {
             Ok(invitation_found) => {
                 if invitation_found.receiver_id.is_some() {
