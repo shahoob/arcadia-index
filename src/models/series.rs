@@ -20,6 +20,6 @@ pub struct UserCreatedSeries {
     pub name: String,
     pub description: String,
     pub covers: Vec<String>,
-    pub banners: Option<Vec<String>>,
+    pub banners: Vec<String>,
     pub tags: Vec<String>,
 }

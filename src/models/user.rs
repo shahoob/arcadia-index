@@ -1,6 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
+use sqlx::types::ipnetwork::IpNetwork;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
@@ -9,7 +10,7 @@ pub struct User {
     pub avatar: Option<String>,
     pub email: String,
     pub password_hash: String,
-    pub registered_from_ip: String,
+    pub registered_from_ip: IpNetwork,
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,

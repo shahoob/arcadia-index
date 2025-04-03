@@ -13,19 +13,20 @@ pub async fn create_artist(
     artist: &UserCreatedArtist,
     current_user: &User,
 ) -> Result<Artist, Box<dyn Error>> {
-    let create_artist_query = r#"
-        INSERT INTO artists (name, description, pictures, created_by_id) 
-        VALUES ($1, $2, $3, $4)
-        RETURNING *;
-    "#;
-
-    let created_artist = sqlx::query_as::<_, Artist>(create_artist_query)
-        .bind(&artist.name)
-        .bind(&artist.description)
-        .bind(&artist.pictures)
-        .bind(&current_user.id)
-        .fetch_one(pool.get_ref())
-        .await;
+    let created_artist = sqlx::query_as!(
+        Artist,
+        r#"
+            INSERT INTO artists (name, description, pictures, created_by_id)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        "#,
+        artist.name,
+        artist.description,
+        artist.pictures.as_deref(),
+        current_user.id
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match created_artist {
         Ok(_) => Ok(created_artist.unwrap()),

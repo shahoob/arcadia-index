@@ -17,17 +17,9 @@ pub async fn create_invitation(
     invitation: &SentInvitation,
     current_user: &User,
 ) -> Result<Invitation, Box<dyn Error>> {
-    let create_invite_query = r#"
-        INSERT INTO invitations (message, invitation_key, sender_id, receiver_email, expires_at) 
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING *
-    "#;
-
-    // TODO: make this duration configurable
-    let expires_at = chrono::Utc::now() + chrono::Duration::days(3);
-
     let invitation_key: String = Alphanumeric.sample_string(&mut rng(), 50);
 
+    // TODO: make this properly atomic with a db transaction
     match set_invitations_available(pool, current_user.invitations - 1, current_user).await {
         Ok(_) => {}
         Err(_) => {
@@ -35,14 +27,21 @@ pub async fn create_invitation(
         }
     }
 
-    let sent_invitation = sqlx::query_as::<_, Invitation>(create_invite_query)
-        .bind(&invitation.message)
-        .bind(&invitation_key)
-        .bind(&current_user.id)
-        .bind(&invitation.receiver_email)
-        .bind(&expires_at)
-        .fetch_one(pool.get_ref())
-        .await;
+    // TODO: make invitation expiration configurable
+    let sent_invitation = sqlx::query_as!(
+        Invitation,
+        r#"
+            INSERT INTO invitations (message, invitation_key, sender_id, receiver_email, expires_at)
+            VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP + INTERVAL '3 days')
+            RETURNING *
+        "#,
+        invitation.message,
+        invitation_key,
+        current_user.id,
+        invitation.receiver_email
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match sent_invitation {
         Ok(_) => Ok(sent_invitation.unwrap()),
@@ -61,14 +60,16 @@ pub async fn does_invitation_exist(
     pool: &web::Data<PgPool>,
     invitation_key: &str,
 ) -> Result<Invitation, Box<dyn Error>> {
-    let query = r#"
-       SELECT * FROM invitations WHERE invitation_key = $1;
-    "#;
-
-    let invitation = sqlx::query_as::<_, Invitation>(query)
-        .bind(&invitation_key)
-        .fetch_one(pool.get_ref())
-        .await;
+    // TODO: test and handle expiration
+    let invitation = sqlx::query_as!(
+        Invitation,
+        r#"
+           SELECT * FROM invitations WHERE invitation_key = $1
+        "#,
+        invitation_key
+    )
+    .fetch_one(pool.get_ref())
+    .await;
 
     match invitation {
         Ok(_) => Ok(invitation.unwrap()),
@@ -88,15 +89,16 @@ pub async fn set_invitations_available(
     amount: i16,
     current_user: &User,
 ) -> Result<(), Box<dyn Error>> {
-    let set_invitation_amount_query = r#"
-       UPDATE users SET invitations = $1 WHERE id = $2;
-    "#;
-
-    let result = sqlx::query(set_invitation_amount_query)
-        .bind(&amount)
-        .bind(&current_user.id)
-        .execute(pool.get_ref())
-        .await;
+    let result = sqlx::query!(
+        r#"
+           UPDATE users SET invitations = $1
+           WHERE id = $2
+        "#,
+        amount,
+        current_user.id
+    )
+    .execute(pool.get_ref())
+    .await;
 
     match result {
         Ok(_) => Ok(()),

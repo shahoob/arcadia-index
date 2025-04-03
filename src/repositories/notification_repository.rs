@@ -12,32 +12,28 @@ pub async fn notify_users(
     let result: Result<PgQueryResult, sqlx::Error>;
     match event {
         "torrent_uploaded" => {
-            let query = r#"WITH subscriber_ids AS (
-        SELECT subscriber_id AS user_id 
-        FROM title_group_subscriptions 
-        WHERE title_group_id = $1
-        )
-        INSERT INTO notifications (
-            receiver, 
-            title, 
-            message, 
-            notification_type, 
-            item_id
-        )
-        SELECT 
-            user_id, 
-            $2, 
-            $3, 
-            'TitleGroup'::notification_item_enum, 
-            $1
-        FROM subscriber_ids;
-            "#;
-            result = sqlx::query(query)
-                .bind(item_id)
-                .bind(title)
-                .bind(message)
-                .execute(pool.get_ref())
-                .await;
+            result = sqlx::query!(
+                r#"
+                    WITH subscriber_ids AS (
+                        SELECT subscriber_id AS user_id
+                        FROM title_group_subscriptions
+                        WHERE title_group_id = $1
+                    )
+                    INSERT INTO notifications (receiver, title, message, notification_type, item_id)
+                    SELECT
+                        user_id,
+                        $2,
+                        $3,
+                        'TitleGroup'::notification_item_enum,
+                        $1
+                    FROM subscriber_ids
+                "#,
+                item_id,
+                title,
+                message
+            )
+            .execute(pool.get_ref())
+            .await;
         }
         _ => {
             return Err(format!("this kind of notification is not supported").into());
