@@ -1,5 +1,5 @@
 use crate::{
-    Arcadia,
+    Arcadia, Error, Result,
     models::{
         invitation::Invitation,
         user::{Claims, Login, Register, User},
@@ -13,7 +13,7 @@ use argon2::{
 use futures::future::BoxFuture;
 use jsonwebtoken::{DecodingKey, Validation, decode};
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
-use std::{env, error::Error};
+use std::env;
 
 pub async fn create_user(
     pool: &PgPool,
@@ -22,7 +22,7 @@ pub async fn create_user(
     password_hash: &str,
     invitation: &Invitation,
     open_signups: &bool,
-) -> Result<User, Box<dyn Error>> {
+) -> Result<User> {
     let registered_user = sqlx::query_as!(
         User,
         r#"
@@ -36,75 +36,51 @@ pub async fn create_user(
         from_ip
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(Error::CouldNotCreateUser)?;
 
-    match registered_user {
-        Ok(_) => {
-            let registered_user = registered_user.unwrap();
-            if !*open_signups {
-                // TODO: check this properly
-                let _ = sqlx::query!(
-                    r#"
-                    UPDATE invitations SET receiver_id = $1 WHERE id = $2;
-                    "#,
-                    registered_user.id,
-                    invitation.id
-                )
-                .execute(pool)
-                .await;
-            }
-
-            Ok(registered_user)
-        }
-        Err(e) => {
-            let error_message = match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("Failed to create user: {}", error_message).into())
-        }
+    if !*open_signups {
+        // TODO: check this properly
+        let _ = sqlx::query!(
+            r#"
+            UPDATE invitations SET receiver_id = $1 WHERE id = $2;
+            "#,
+            registered_user.id,
+            invitation.id
+        )
+        .execute(pool)
+        .await;
     }
+
+    Ok(registered_user)
 }
 
-pub async fn find_user_with_password(pool: &PgPool, user: &Login) -> Result<User, Box<dyn Error>> {
-    let result = sqlx::query_as!(
+pub async fn find_user_with_password(pool: &PgPool, login: &Login) -> Result<User> {
+    let user = sqlx::query_as!(
         User,
         r#"
             SELECT * FROM users
             WHERE username = $1
         "#,
-        user.username
+        login.username
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(|_| Error::WrongUsernameOrPassword)?;
 
-    match result {
-        Ok(_) => {
-            let result = result.unwrap();
-            let parsed_hash = PasswordHash::new(&result.password_hash);
-            if Argon2::default()
-                .verify_password(user.password.as_bytes(), &parsed_hash.unwrap())
-                .is_ok()
-            {
-                Ok(result)
-            } else {
-                Err("wrong username or password".into())
-            }
-        }
-        Err(e) => {
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("User not found").into())
-        }
-    }
+    let parsed_hash = PasswordHash::new(&user.password_hash);
+
+    Argon2::default()
+        .verify_password(login.password.as_bytes(), &parsed_hash.unwrap())
+        .map_err(|_| Error::WrongUsernameOrPassword)?;
+
+    Ok(user)
 }
 
 // user provider, which also acts as the auth system
 impl FromRequest for User {
     type Error = actix_web::Error;
-    type Future = BoxFuture<'static, Result<Self, Self::Error>>;
+    type Future = BoxFuture<'static, std::result::Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
         // let pool = req.app_data::<web::Data<PgPool>>().unwrap().clone();

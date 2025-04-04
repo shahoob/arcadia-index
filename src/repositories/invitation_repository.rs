@@ -1,30 +1,26 @@
-use std::error::Error;
-
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
 };
 use sqlx::PgPool;
 
-use crate::models::{
-    invitation::{Invitation, SentInvitation},
-    user::User,
+use crate::{
+    Error, Result,
+    models::{
+        invitation::{Invitation, SentInvitation},
+        user::User,
+    },
 };
 
 pub async fn create_invitation(
     pool: &PgPool,
     invitation: &SentInvitation,
     current_user: &User,
-) -> Result<Invitation, Box<dyn Error>> {
+) -> Result<Invitation> {
     let invitation_key: String = Alphanumeric.sample_string(&mut rng(), 50);
 
     // TODO: make this properly atomic with a db transaction
-    match set_invitations_available(pool, current_user.invitations - 1, current_user).await {
-        Ok(_) => {}
-        Err(_) => {
-            return Err(format!("could not remove invite from counter").into());
-        }
-    }
+    let _ = set_invitations_available(pool, current_user.invitations - 1, current_user).await;
 
     // TODO: make invitation expiration configurable
     let sent_invitation = sqlx::query_as!(
@@ -40,25 +36,16 @@ pub async fn create_invitation(
         invitation.receiver_email
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(Error::CouldNotCreateInvitation)?;
 
-    match sent_invitation {
-        Ok(_) => Ok(sent_invitation.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not send invite").into())
-        }
-    }
+    Ok(sent_invitation)
 }
 
 pub async fn does_unexpired_invitation_exist(
     pool: &PgPool,
     invitation_key: &str,
-) -> Result<Invitation, Box<dyn Error>> {
+) -> Result<Invitation> {
     let invitation = sqlx::query_as!(
         Invitation,
         r#"
@@ -69,27 +56,18 @@ pub async fn does_unexpired_invitation_exist(
         invitation_key
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(|_| Error::InvitationKeyInvalid)?;
 
-    match invitation {
-        Ok(_) => Ok(invitation.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("invitation not found").into())
-        }
-    }
+    Ok(invitation)
 }
 
 pub async fn set_invitations_available(
     pool: &PgPool,
     amount: i16,
     current_user: &User,
-) -> Result<(), Box<dyn Error>> {
-    let result = sqlx::query!(
+) -> Result<()> {
+    sqlx::query!(
         r#"
            UPDATE users SET invitations = $1
            WHERE id = $2
@@ -98,17 +76,7 @@ pub async fn set_invitations_available(
         current_user.id
     )
     .execute(pool)
-    .await;
+    .await?;
 
-    match result {
-        Ok(_) => Ok(()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not set invitation amount").into())
-        }
-    }
+    Ok(())
 }
