@@ -1,5 +1,5 @@
 use crate::{
-    Arcadia,
+    Arcadia, Error, Result,
     models::{
         invitation::Invitation,
         user::{Claims, Login, Register},
@@ -38,28 +38,19 @@ pub async fn register(
     arc: web::Data<Arcadia>,
     req: HttpRequest,
     query: web::Query<RegisterQuery>,
-) -> HttpResponse {
+) -> Result<HttpResponse> {
     let invitation: Invitation;
     if !arc.is_open_signups() {
-        let Some(invitation_key) = &query.invitation_key else {
-            return HttpResponse::InternalServerError().json(serde_json::json!({
-                "error": "invitation key not found in query"
-            }));
-        };
-        match does_unexpired_invitation_exist(&arc.pool, &invitation_key).await {
-            Ok(invitation_found) => {
-                if invitation_found.receiver_id.is_some() {
-                    return HttpResponse::InternalServerError().json(serde_json::json!({
-                        "error": "invitation already used"
-                    }));
-                }
-                invitation = invitation_found
-            }
-            Err(err) => {
-                return HttpResponse::InternalServerError().json(serde_json::json!({
-                    "error": err.to_string()
-                }));
-            }
+        let invitation_key = query
+            .invitation_key
+            .as_ref()
+            .ok_or(Error::InvitationKeyRequired)?;
+
+        invitation = does_unexpired_invitation_exist(&arc.pool, invitation_key).await?;
+
+        // TODO: push check to db
+        if invitation.receiver_id.is_some() {
+            return Err(Error::InvitationKeyAlreadyUsed);
         }
     } else {
         invitation = Invitation::default();
@@ -82,7 +73,7 @@ pub async fn register(
         .unwrap()
         .to_string();
 
-    match create_user(
+    let user = create_user(
         &arc.pool,
         &new_user,
         client_ip,
@@ -90,42 +81,35 @@ pub async fn register(
         &invitation,
         &arc.is_open_signups(),
     )
-    .await
-    {
-        Ok(user) => HttpResponse::Created().json(serde_json::json!(user)),
-        Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": err.to_string()
-        })),
-    }
+    .await?;
+
+    Ok(HttpResponse::Created().json(serde_json::json!(user)))
 }
 
-pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> HttpResponse {
-    match find_user_with_password(&arc.pool, &user_login).await {
-        Ok(user) => {
-            let mut expiration_date = Utc::now();
-            if !user_login.remember_me {
-                expiration_date = expiration_date + Duration::hours(1);
-            } else {
-                expiration_date = expiration_date + Duration::days(30);
-            }
-            let user_claims = Claims {
-                sub: user.id,
-                exp: expiration_date.timestamp() as usize,
-            };
-            let token = encode(
-                &Header::default(),
-                &user_claims,
-                &EncodingKey::from_secret(env::var("JWT_SECRET").unwrap().as_bytes()),
-            )
-            .unwrap();
+pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Result<HttpResponse> {
+    let user = find_user_with_password(&arc.pool, &user_login).await?;
 
-            HttpResponse::Ok().json(serde_json::json!(serde_json::json!({
-                "token": token,
-                "user": {"username": user.username, "id": user.id, "avatar": user.avatar}
-            })))
-        }
-        Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": err.to_string()
-        })),
+    let mut expiration_date = Utc::now();
+    if !user_login.remember_me {
+        expiration_date += Duration::hours(1);
+    } else {
+        expiration_date += Duration::days(30);
     }
+
+    let user_claims = Claims {
+        sub: user.id,
+        exp: expiration_date.timestamp() as usize,
+    };
+
+    let token = encode(
+        &Header::default(),
+        &user_claims,
+        &EncodingKey::from_secret(env::var("JWT_SECRET").unwrap().as_bytes()),
+    )
+    .unwrap();
+
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "token": token,
+        "user": {"username": user.username, "id": user.id, "avatar": user.avatar}
+    })))
 }

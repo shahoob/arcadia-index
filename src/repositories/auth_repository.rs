@@ -83,45 +83,43 @@ impl FromRequest for User {
     type Future = BoxFuture<'static, std::result::Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
-        // let pool = req.app_data::<web::Data<PgPool>>().unwrap().clone();
         let pool = req.app_data::<web::Data<Arcadia>>().unwrap().pool.clone();
         let auth_header = req.headers().get("Authorization").cloned();
 
         Box::pin(async move {
-            if let Some(auth_value) = auth_header {
-                if let Ok(auth_str) = auth_value.to_str() {
-                    if auth_str.starts_with("Bearer ") {
-                        let token = &auth_str[7..];
-                        let decoding_key =
-                            DecodingKey::from_secret(env::var("JWT_SECRET").unwrap().as_ref());
-                        let validation = Validation::default();
+            let auth_value =
+                auth_header.ok_or(actix_web::error::ErrorUnauthorized("authentication error"))?;
 
-                        if let Ok(token_data) = decode::<Claims>(token, &decoding_key, &validation)
-                        {
-                            let user_id = token_data.claims.sub;
+            let auth_str = auth_value
+                .to_str()
+                .map_err(|_| actix_web::error::ErrorUnauthorized("authentication error"))?;
 
-                            let user = sqlx::query_as!(
-                                User,
-                                r#"
-                                    UPDATE users
-                                    SET last_seen = NOW()
-                                    WHERE id = $1
-                                    RETURNING *
-                                "#,
-                                user_id
-                            )
-                            .fetch_one(&pool)
-                            .await
-                            .map_err(|e| actix_web::error::ErrorInternalServerError(e.to_string()));
+            let token = auth_str
+                .strip_prefix("Bearer ")
+                .ok_or(actix_web::error::ErrorUnauthorized("authentication error"))?;
 
-                            return user.map_err(|_| {
-                                actix_web::error::ErrorUnauthorized("User not found")
-                            });
-                        }
-                    }
-                }
-            }
-            Err(actix_web::error::ErrorUnauthorized("authentication error"))
+            let decoding_key = DecodingKey::from_secret(env::var("JWT_SECRET").unwrap().as_ref());
+
+            let validation = Validation::default();
+
+            let token_data = decode::<Claims>(token, &decoding_key, &validation)
+                .map_err(|_| actix_web::error::ErrorUnauthorized("authentication error"))?;
+
+            let user = sqlx::query_as!(
+                User,
+                r#"
+                    UPDATE users
+                    SET last_seen = NOW()
+                    WHERE id = $1
+                    RETURNING *
+                "#,
+                token_data.claims.sub
+            )
+            .fetch_one(&pool)
+            .await
+            .map_err(|e| actix_web::error::ErrorInternalServerError(e.to_string()))?;
+
+            Ok(user)
         })
     }
 }

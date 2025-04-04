@@ -74,6 +74,15 @@ pub enum Error {
     #[error("invalid invitation key")]
     InvitationKeyInvalid,
 
+    #[error("invitation key required")]
+    InvitationKeyRequired,
+
+    #[error("invitation key already used")]
+    InvitationKeyAlreadyUsed,
+
+    #[error("no invitations available")]
+    NoInvitationsAvailable,
+
     #[error("user '{0}' not found")]
     UserNotFound(String),
 
@@ -97,3 +106,16 @@ pub enum Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+impl actix_web::ResponseError for Error {
+    #[inline]
+    fn status_code(&self) -> actix_web::http::StatusCode {
+        actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+    }
+
+    fn error_response(&self) -> actix_web::HttpResponse {
+        actix_web::HttpResponse::build(self.status_code()).json(serde_json::json!({
+            "error": format!("{self}"),
+        }))
+    }
+}
