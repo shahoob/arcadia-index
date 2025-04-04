@@ -90,24 +90,26 @@
       </div>
     </div>
     <div v-if="step > 2">
-      <FloatLabel>
-        <Select
-          v-model="titleGroupForm.category"
-          inputId="category"
-          :options="selectableCategories[titleGroupForm.content_type]"
-          size="small"
-          class="select"
-        />
-        <label for="category">Category</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText size="small" v-model="titleGroupForm.name" name="name" />
-        <label for="name">Name</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
-        <label for="tags">Tags (comma separated)</label>
-      </FloatLabel>
+      <div class="line">
+        <FloatLabel class="name">
+          <InputText size="small" v-model="titleGroupForm.name" name="name" />
+          <label for="name">Name</label>
+        </FloatLabel>
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.category"
+            inputId="category"
+            :options="selectableCategories[titleGroupForm.content_type]"
+            size="small"
+            class="select"
+          />
+          <label for="category">Category</label>
+        </FloatLabel>
+        <FloatLabel class="tags">
+          <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
+          <label for="tags">Tags (comma separated)</label>
+        </FloatLabel>
+      </div>
       <FloatLabel>
         <Textarea
           v-model="titleGroupForm.description"
@@ -118,28 +120,30 @@
         />
         <label for="description">Description</label>
       </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="titleGroupForm.original_language"
-          inputId="original_language"
-          :options="selectableLanguages"
-          class="select"
-          size="small"
-          filter
-        />
-        <label for="original_language">Original language</label>
-      </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="titleGroupForm.country_from"
-          inputId="country_from"
-          :options="selectableCountries"
-          class="select"
-          size="small"
-          filter
-        />
-        <label for="country_from">Country from</label>
-      </FloatLabel>
+      <div class="line">
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.original_language"
+            inputId="original_language"
+            :options="selectableLanguages"
+            class="select"
+            size="small"
+            filter
+          />
+          <label for="original_language">Original language</label>
+        </FloatLabel>
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.country_from"
+            inputId="country_from"
+            :options="selectableCountries"
+            class="select"
+            size="small"
+            filter
+          />
+          <label for="country_from">Country from</label>
+        </FloatLabel>
+      </div>
       <div>
         <label for="original_release_date" class="block">Original realease date</label>
         <DatePicker
@@ -345,6 +349,18 @@ export default {
 }
 .select {
   width: 200px;
+}
+.name {
+  width: 50%;
+  input {
+    width: 100%;
+  }
+}
+.tags {
+  width: 50%;
+  input {
+    width: 100%;
+  }
 }
 .external-db-inputs-wrapper {
   display: flex;

@@ -56,6 +56,14 @@ a{
   overflow-wrap: break-word !important;
 }
 
+.line {
+  display: flex;
+  align-items: center;
+  .p-floatlabel {
+    margin-right: 15px;
+  }
+}
+
 
 @media (hover: hover) {
   a:hover {

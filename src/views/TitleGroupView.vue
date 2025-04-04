@@ -33,7 +33,10 @@
               {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
             </div>
           </div>
-          <div class="information-line" v-if="title_group.name_aliases.length != 0">
+          <div
+            class="information-line"
+            v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
+          >
             <span class="item-title">Aliases:</span>
             <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
               {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>

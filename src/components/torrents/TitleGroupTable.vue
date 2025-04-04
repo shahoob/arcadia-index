@@ -14,14 +14,6 @@
     <Column expander style="width: 1em" />
     <Column header="Properties" style="min-width: 300px">
       <template #body="slotProps">
-        <!-- {{ slotProps.data.container }}
-        <span v-if="slotProps.data.video_codec">/ {{ slotProps.data.video_codec }} </span>
-        <span v-if="slotProps.data.video_resolution">/ {{ slotProps.data.video_resolution }} </span>
-        <span v-if="slotProps.data.audio_codec">/ {{ slotProps.data.audio_codec }} </span>
-        <span v-for="feature in slotProps.data.features" :key="feature">
-          <span class="feature">/ {{ feature }} </span></span
-        >
-        <span v-if="slotProps.data.release_group">/ {{ slotProps.data.release_group }}</span> -->
         {{ getTorrentSlug(slotProps.data) }}
       </template>
     </Column>
