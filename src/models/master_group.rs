@@ -17,12 +17,12 @@ use sqlx::prelude::FromRow;
 // or adding some sort of cache/search engine on top, that has the data deserialized
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct MasterGroup {
-    pub id: i32,
+    pub id: i64,
     pub name: Option<String>,
     // pub name_aliases: Vec<String>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     // pub description: String,
     // pub original_language: String,
     // pub country_from: String,
@@ -35,8 +35,8 @@ pub struct MasterGroup {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SimilarMasterGroups {
-    pub group_1: i32,
-    pub group_2: i32,
+    pub group_1_id: i64,
+    pub group_2_id: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]

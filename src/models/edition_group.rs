@@ -35,13 +35,13 @@ pub enum Source {
 // Every attribute is specific to the edition, no information should be entered about the torrents or the title
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct EditionGroup {
-    pub id: i32,
+    pub id: i64,
     pub title_group_id: i64,
     pub name: String, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
     pub release_date: NaiveDateTime, // public release, (also, for Collections, date of the last (chronologically) item included)
     pub created_at: NaiveDateTime,   // database entry creation
     pub updated_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     pub description: Option<String>, // specific to the edition
     pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
     pub covers: Vec<String>,

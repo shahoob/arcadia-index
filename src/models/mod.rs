@@ -1,3 +1,4 @@
+pub mod api_doc;
 pub mod artist;
 pub mod collage;
 pub mod edition_group;

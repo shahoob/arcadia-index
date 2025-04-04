@@ -14,7 +14,7 @@ pub enum NotificationItem {
 pub struct Notification {
     pub id: i64,
     pub created_at: NaiveDateTime,
-    pub receiver: i32,
+    pub receiver_id: i64,
     pub title: String,
     pub message: String,
     pub item: NotificationItem,

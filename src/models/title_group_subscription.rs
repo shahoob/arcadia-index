@@ -6,6 +6,6 @@ use sqlx::prelude::FromRow;
 pub struct TitleGroupSubscription {
     pub id: i64,
     pub subscribed_at: NaiveDateTime,
-    pub subscriber_id: i32,
+    pub subscriber_id: i64,
     pub title_group_id: i64,
 }

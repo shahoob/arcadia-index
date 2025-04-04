@@ -26,6 +26,13 @@ pub struct RegisterQuery {
     invitation_key: Option<String>,
 }
 
+// #[utoipa::path(
+//     get,
+//     path = "/api/register",
+//     responses(
+//         (status = 200, description = "Successfully registered the user", body = Register),
+//     )
+// )]
 pub async fn register(
     new_user: web::Json<Register>,
     arc: web::Data<Arcadia>,
