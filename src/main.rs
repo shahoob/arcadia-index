@@ -5,12 +5,13 @@ mod routes;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web::Data};
+use arcadia_index::{Arcadia, OpenSignups};
 use dotenv;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
-
-use arcadia_index::{Arcadia, OpenSignups};
+// use utoipa_actix_web::AppExt;
+// use utoipa_swagger_ui::SwaggerUi;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -42,6 +43,11 @@ async fn main() -> std::io::Result<()> {
                 open_signups,
             }))
             .configure(init) // Initialize routes
+        // .into_utoipa_app()
+        // .openapi_service(|api| {
+        //     SwaggerUi::new("/swagger-ui/{_:.*}").url("/api/openapi.json", api)
+        // })
+        // .into_app()
     })
     .bind(format!("{}:{}", host, port))?
     .run()

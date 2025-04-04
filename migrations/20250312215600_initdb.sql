@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     username VARCHAR(20) UNIQUE NOT NULL,
     avatar TEXT,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -33,22 +33,22 @@ CREATE TABLE users (
     bonus_points BIGINT NOT NULL DEFAULT 0
 );
 CREATE TABLE invitations (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMP NOT NULL,
     invitation_key VARCHAR(50) NOT NULL,
     message TEXT NOT NULL,
-    sender_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    sender_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     receiver_email VARCHAR(255) NOT NULL,
-    receiver_id INT REFERENCES users(id) ON DELETE
+    receiver_id BIGINT REFERENCES users(id) ON DELETE
     SET NULL
 );
 CREATE TABLE artists (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     pictures TEXT [],
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
     edition_groups_amount INT NOT NULL DEFAULT 0,
@@ -59,19 +59,19 @@ CREATE TABLE artists (
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TABLE similar_artists (
-    artist_1_id INT NOT NULL,
-    artist_2_id INT NOT NULL,
+    artist_1_id BIGINT NOT NULL,
+    artist_2_id BIGINT NOT NULL,
     PRIMARY KEY (artist_1_id, artist_2_id),
     FOREIGN KEY (artist_1_id) REFERENCES artists(id) ON DELETE CASCADE,
     FOREIGN KEY (artist_2_id) REFERENCES artists(id) ON DELETE CASCADE
 );
 CREATE TABLE master_groups (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255),
     -- name_aliases VARCHAR(255)[],
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     -- description TEXT NOT NULL,
     -- original_language VARCHAR(50) NOT NULL,
     -- country_from VARCHAR(50) NOT NULL,
@@ -84,8 +84,8 @@ CREATE TABLE master_groups (
     SET NULL
 );
 CREATE TABLE similar_master_groups (
-    group_1_id INT NOT NULL,
-    group_2_id INT NOT NULL,
+    group_1_id BIGINT NOT NULL,
+    group_2_id BIGINT NOT NULL,
     PRIMARY KEY (group_1_id, group_2_id),
     FOREIGN KEY (group_1_id) REFERENCES master_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2_id) REFERENCES master_groups(id) ON DELETE CASCADE
@@ -97,7 +97,7 @@ CREATE TABLE series (
     tags TEXT [] NOT NULL,
     covers TEXT [] NOT NULL,
     banners TEXT [] NOT NULL,
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
@@ -136,12 +136,12 @@ CREATE TYPE category_enum AS ENUM (
 );
 CREATE TABLE title_groups (
     id BIGSERIAL PRIMARY KEY,
-    master_group_id INT,
+    master_group_id BIGINT,
     name TEXT NOT NULL,
     name_aliases TEXT [],
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     description TEXT NOT NULL,
     original_language TEXT,
     original_release_date TIMESTAMP NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE similar_title_groups (
 );
 CREATE TABLE affiliated_artists (
     title_group_id BIGINT NOT NULL,
-    artist_id INT NOT NULL,
+    artist_id BIGINT NOT NULL,
     status VARCHAR(20) NOT NULL,
     nickname VARCHAR(255),
     created_by_id BIGINT NOT NULL,
@@ -203,13 +203,13 @@ CREATE TYPE source_enum AS ENUM (
     'Physical-Book'
 );
 CREATE TABLE edition_groups (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
     name TEXT NOT NULL,
     release_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     description TEXT,
     distributor VARCHAR(255),
     covers TEXT [] NOT NULL,
@@ -263,11 +263,11 @@ CREATE TYPE video_codec_enum AS ENUM(
 );
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
-    id SERIAL PRIMARY KEY,
-    edition_group_id INT NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    edition_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     language VARCHAR(15),
     release_name VARCHAR(500),
     -- maybe change the size
@@ -307,9 +307,9 @@ CREATE TABLE title_group_comments (
     content TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     title_group_id BIGINT NOT NULL,
-    refers_to_torrent_id INT,
+    refers_to_torrent_id BIGINT,
     answers_to_comment_id BIGINT,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
@@ -321,7 +321,7 @@ CREATE TABLE torrent_requests (
     title_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     edition_name TEXT,
     release_group VARCHAR(20),
     description TEXT,
@@ -344,7 +344,7 @@ CREATE TABLE torrent_request_votes(
     id BIGSERIAL PRIMARY KEY,
     torrent_request_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    created_by_id INT NOT NULL,
+    created_by_id BIGINT NOT NULL,
     bounty_upload BIGINT NOT NULL DEFAULT 0,
     bounty_bonus_points BIGINT NOT NULL DEFAULT 0,
     FOREIGN KEY (torrent_request_id) REFERENCES torrent_requests(id) ON DELETE CASCADE,
@@ -354,7 +354,7 @@ CREATE TABLE title_group_subscriptions (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
     subscribed_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    subscriber_id INT NOT NULL,
+    subscriber_id BIGINT NOT NULL,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL,
     UNIQUE (title_group_id, subscriber_id)
@@ -367,7 +367,7 @@ CREATE TYPE notification_item_enum AS ENUM (
 CREATE TABLE notifications (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    receiver INT NOT NULL,
+    receiver BIGINT NOT NULL,
     title TEXT NOT NULL,
     message TEXT NOT NULL,
     notification_type notification_item_enum NOT NULL,

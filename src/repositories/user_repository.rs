@@ -26,7 +26,6 @@ pub async fn find_user_by_username(pool: &PgPool, username: &str) -> Result<User
     }
 }
 pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser, Box<dyn Error>> {
-    // TODO: use id BIGINT PRIMARY KEY GENERATED ALWAYS AS DEFAULT
     let result = sqlx::query_as!(
         PublicUser,
         r#"
@@ -62,7 +61,7 @@ pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser, Box<
             FROM users
             WHERE id = $1
         "#,
-        *id as i32
+        *id as i64
     )
     .fetch_one(pool)
     .await;

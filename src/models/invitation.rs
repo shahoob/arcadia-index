@@ -4,14 +4,14 @@ use sqlx::prelude::FromRow;
 
 #[derive(Debug, Serialize, Deserialize, FromRow, Default)]
 pub struct Invitation {
-    pub id: i32,
+    pub id: i64,
     pub created_at: NaiveDateTime,
     pub expires_at: NaiveDateTime,
     pub message: String,
     pub invitation_key: String,
-    pub sender_id: i32,
+    pub sender_id: i64,
     pub receiver_email: String,
-    pub receiver_id: Option<i32>,
+    pub receiver_id: Option<i64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

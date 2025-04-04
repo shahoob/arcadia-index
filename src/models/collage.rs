@@ -4,9 +4,9 @@ use sqlx::prelude::FromRow;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct Collage {
-    pub id: i32,
+    pub id: i64,
     pub created_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     pub name: String,
     pub cover: String,
     pub description: String,

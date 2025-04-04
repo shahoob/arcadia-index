@@ -4,10 +4,10 @@ use sqlx::prelude::FromRow;
 
 #[derive(Debug, Deserialize, Serialize, FromRow)]
 pub struct Artist {
-    pub id: i32,
+    pub id: i64,
     pub name: String,
     pub created_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     pub description: String,
     pub pictures: Option<Vec<String>>,
     pub title_groups_amount: i32,
@@ -20,8 +20,8 @@ pub struct Artist {
 
 #[derive(Debug, Deserialize, Serialize, FromRow)]
 pub struct SimilarArtists {
-    pub artist_1: i32,
-    pub artist_2: i32,
+    pub artist_1_id: i64,
+    pub artist_2_id: i64,
 }
 
 #[derive(Debug, Deserialize, FromRow)]

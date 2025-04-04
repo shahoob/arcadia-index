@@ -58,12 +58,12 @@ pub enum Category {
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct TitleGroup {
     pub id: i64,
-    pub master_group_id: Option<i32>, // only if master groups are needed for this type of content
+    pub master_group_id: Option<i64>, // only if master groups are needed for this type of content
     pub name: String,
     pub name_aliases: Vec<String>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     pub description: String,
     pub original_language: Option<String>,
     pub original_release_date: NaiveDateTime,
@@ -79,7 +79,7 @@ pub struct TitleGroup {
     pub content_type: ContentType,  // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub public_ratings: Option<Json<Value>>, // {service: rating}
-    pub series_id: Option<i32>,
+    pub series_id: Option<i64>,
     // pub edition_groups: Option<Vec<EditionGroup>>,
 }
 
@@ -92,17 +92,17 @@ pub struct SimilarTitleGroups {
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct AffiliatedArtist {
     pub title_group_id: i64,
-    pub artist_id: i32,
+    pub artist_id: i64,
     pub status: String,
     pub nickname: Option<String>, // for example: name of the character the actor is playing
     pub created_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct UserCreatedAffiliatedArtist {
     pub title_group_id: i64,
-    pub artist_id: i32,
+    pub artist_id: i64,
     pub status: String,
     pub nickname: Option<String>,
 }
@@ -125,9 +125,9 @@ pub struct UserCreatedTitleGroup {
     pub tagline: Option<String>,
     pub original_release_date: NaiveDateTime,
     pub affiliated_artists: Vec<Json<Value>>,
-    pub series_id: Option<i32>,
+    pub series_id: Option<i64>,
     // one of them should be given, if master groups are required for this type of content
-    pub master_group_id: Option<i32>,
+    pub master_group_id: Option<i64>,
     // pub master_group: Option<UserCreatedMasterGroup>,
 }
 

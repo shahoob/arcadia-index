@@ -107,11 +107,11 @@ impl FromStr for Features {
 
 #[derive(Debug, Serialize, FromRow)]
 pub struct Torrent {
-    pub id: i32,
-    pub edition_group_id: i32,
+    pub id: i64,
+    pub edition_group_id: i64,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     pub release_name: Option<String>,
     pub release_group: String,
     pub description: Option<String>,       // specific to the torrent
@@ -149,7 +149,7 @@ pub struct UploadedTorrent {
     pub language: Option<Text<String>>, // (fallback to original language) (english, french, etc.)
     pub container: Text<String>,
     // one of them should be given
-    pub edition_group_id: Text<i32>,
+    pub edition_group_id: Text<i64>,
     // pub edition_group: Option<UserCreatedEditionGroup>,
     // ---- audio
     pub duration: Option<Text<i32>>, // in seconds

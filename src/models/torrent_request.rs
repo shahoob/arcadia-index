@@ -10,7 +10,7 @@ pub struct TorrentRequest {
     pub title_group_id: i64,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub created_by_id: i32,
+    pub created_by_id: i64,
     pub edition_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,

@@ -92,7 +92,7 @@ pub async fn create_artists_affiliation(
 
 pub async fn find_artist_publications(
     pool: &PgPool,
-    artist_id: &i32,
+    artist_id: &i64,
 ) -> Result<Value, Box<dyn Error>> {
     // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
     let artist_publications = sqlx::query!(

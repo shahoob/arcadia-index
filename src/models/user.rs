@@ -2,10 +2,11 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use sqlx::types::ipnetwork::IpNetwork;
+// use utoipa::ToSchema;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
-    pub id: i32,
+    pub id: i64,
     pub username: String,
     pub avatar: Option<String>,
     pub email: String,
@@ -55,13 +56,13 @@ pub struct Login {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: i32,
+    pub sub: i64,
     pub exp: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct PublicUser {
-    pub id: i32,
+    pub id: i64,
     pub username: String,
     pub avatar: Option<String>,
     pub created_at: NaiveDateTime,
