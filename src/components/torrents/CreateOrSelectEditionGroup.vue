@@ -13,18 +13,20 @@
         inputId="edition_group"
         :options="titleGroup.edition_groups"
         size="small"
-        class="select"
+        class="select-existing-edition"
       >
         <template #option="slotProps">
           <div>
-            {{ slotProps.option.name }} / {{ slotProps.option.source }} /
-            {{ slotProps.option.release_date.substring(0, 10) }}
+            <!-- {{ slotProps.option.name }} / {{ slotProps.option.source }} /
+            {{ slotProps.option.release_date.substring(0, 10) }} -->
+            {{ getEditionGroupSlug(slotProps.option) }}
           </div>
         </template>
         <template #value="slotProps" v-if="selected_edition_group.id">
           <div>
-            {{ slotProps.value.name }} / {{ slotProps.value.source }} /
-            {{ slotProps.value.release_date.substring(0, 10) }}
+            <!-- {{ slotProps.value.name }} / {{ slotProps.value.source }} /
+            {{ slotProps.value.release_date.substring(0, 10) }} -->
+            {{ getEditionGroupSlug(slotProps.value) }}
           </div>
         </template>
       </Select>
@@ -33,24 +35,26 @@
   </div>
   <div v-if="action == 'create'">
     <div v-if="step > 0">
-      <FloatLabel>
-        <InputText size="small" v-model="editionGroupForm.name" name="name" />
-        <label for="name">Name</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
-        <label for="distributor">Distributor</label>
-      </FloatLabel>
-      <FloatLabel>
-        <Select
-          v-model="editionGroupForm.source"
-          inputId="source"
-          :options="selectableSources[titleGroup.content_type]"
-          class="select"
-          size="small"
-        />
-        <label for="source">Source</label>
-      </FloatLabel>
+      <div class="line">
+        <FloatLabel>
+          <InputText size="small" v-model="editionGroupForm.name" name="name" />
+          <label for="name">Name</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
+          <label for="distributor">Distributor</label>
+        </FloatLabel>
+        <FloatLabel>
+          <Select
+            v-model="editionGroupForm.source"
+            inputId="source"
+            :options="selectableSources[titleGroup.content_type]"
+            class="select-source"
+            size="small"
+          />
+          <label for="source">Source</label>
+        </FloatLabel>
+      </div>
       <FloatLabel>
         <Textarea
           v-model="editionGroupForm.description"
@@ -124,6 +128,7 @@ import IconField from 'primevue/iconfield'
 import DatePicker from 'primevue/datepicker'
 import { createEditionGroup, getTitleGroupLite } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import { getEditionGroupSlug } from '@/services/helpers'
 
 export default {
   components: {
@@ -171,6 +176,9 @@ export default {
     }
   },
   methods: {
+    getEditionGroupSlug(editionGroup) {
+      return getEditionGroupSlug(editionGroup)
+    },
     validateEditionGroup() {
       if (this.action == 'select') {
         this.$emit('done', this.selected_edition_group)
@@ -225,8 +233,11 @@ export default {
 .p-floatlabel {
   margin-bottom: 30px;
 }
-.select {
-  width: 400px;
+.select-existing-edition {
+  width: 500px;
+}
+.select-source {
+  width: 150px;
 }
 .external-db-inputs-wrapper {
   display: flex;

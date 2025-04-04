@@ -264,13 +264,6 @@ export default {
 .p-floatlabel {
   margin-bottom: 30px;
 }
-.line {
-  display: flex;
-  align-items: center;
-  .p-floatlabel {
-    margin-right: 15px;
-  }
-}
 .release-name {
   width: 100%;
   input {
