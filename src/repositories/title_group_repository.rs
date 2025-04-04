@@ -1,16 +1,18 @@
-use crate::models::{
-    title_group::{TitleGroup, UserCreatedTitleGroup},
-    user::User,
+use crate::{
+    Error, Result,
+    models::{
+        title_group::{TitleGroup, UserCreatedTitleGroup},
+        user::User,
+    },
 };
 use serde_json::Value;
 use sqlx::PgPool;
-use std::error::Error;
 
 pub async fn create_title_group(
     pool: &PgPool,
     title_group_form: &UserCreatedTitleGroup,
     current_user: &User,
-) -> Result<TitleGroup, Box<dyn Error>> {
+) -> Result<TitleGroup> {
     let create_title_group_query = r#"
         INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::category_enum, $12::content_type_enum, $13, $14, $15)
@@ -35,26 +37,17 @@ pub async fn create_title_group(
         .bind(&title_group_form.tagline)
         // .bind(&title_group_form.public_ratings)
         .fetch_one(pool)
-        .await;
+        .await
+        .map_err(Error::CouldNotCreateTitleGroup)?;
 
-    match created_title_group {
-        Ok(_) => Ok(created_title_group.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create title group").into())
-        }
-    }
+    Ok(created_title_group)
 }
 
 pub async fn find_title_group(
     pool: &PgPool,
     title_group_id: i64,
     current_user: &User,
-) -> Result<Value, Box<dyn Error>> {
+) -> Result<Value> {
     let title_group = sqlx::query!(r#"WITH torrent_data AS (
     SELECT 
         t.edition_group_id,
@@ -142,24 +135,11 @@ LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
 LEFT JOIN subscription_data sud ON sud.id = tg.id
 WHERE tg.id = $2;"#, current_user.id, title_group_id)
         .fetch_one(pool)
-        .await;
+        .await?;
 
-    match title_group {
-        Ok(_) => Ok(title_group.unwrap().title_group_data.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not find title group").into())
-        }
-    }
+    Ok(title_group.title_group_data.unwrap())
 }
-pub async fn find_lite_title_group_info(
-    pool: &PgPool,
-    title_group_id: i64,
-) -> Result<Value, Box<dyn Error>> {
+pub async fn find_lite_title_group_info(pool: &PgPool, title_group_id: i64) -> Result<Value> {
     let title_group = sqlx::query!(
         r#"SELECT jsonb_build_object(
     'id', tg.id, 'content_type', tg.content_type, 'name', tg.name,
@@ -184,17 +164,7 @@ GROUP BY tg.id;"#,
         title_group_id
     )
     .fetch_one(pool)
-    .await;
+    .await?;
 
-    match title_group {
-        Ok(_) => Ok(title_group.unwrap().jsonb_build_object.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not find title group").into())
-        }
-    }
+    Ok(title_group.jsonb_build_object.unwrap())
 }
