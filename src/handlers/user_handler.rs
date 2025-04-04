@@ -1,4 +1,4 @@
-use crate::{Arcadia, models::user::User, repositories::user_repository::find_user_by_id};
+use crate::{Arcadia, Result, models::user::User, repositories::user_repository::find_user_by_id};
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
 
@@ -7,17 +7,16 @@ pub struct GetUserQuery {
     id: i64,
 }
 
-pub async fn get_user(arc: web::Data<Arcadia>, query: web::Query<GetUserQuery>) -> HttpResponse {
-    match find_user_by_id(&arc.pool, &query.id).await {
-        Ok(user) => HttpResponse::Created().json(serde_json::json!(user)),
-        Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": err.to_string()
-        })),
-    }
+pub async fn get_user(
+    arc: web::Data<Arcadia>,
+    query: web::Query<GetUserQuery>,
+) -> Result<HttpResponse> {
+    let user = find_user_by_id(&arc.pool, &query.id).await?;
+
+    Ok(HttpResponse::Created().json(user))
 }
 
-pub async fn get_me(current_user: User) -> HttpResponse {
-    let mut current_user = current_user;
+pub async fn get_me(mut current_user: User) -> HttpResponse {
     current_user.password_hash = String::from("");
-    HttpResponse::Ok().json(serde_json::json!(current_user))
+    HttpResponse::Ok().json(current_user)
 }
