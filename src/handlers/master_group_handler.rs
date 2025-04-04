@@ -1,5 +1,5 @@
 use crate::{
-    Arcadia,
+    Arcadia, Result,
     models::{master_group::UserCreatedMasterGroup, user::User},
     repositories::master_group_repository::create_master_group,
 };
@@ -9,11 +9,8 @@ pub async fn add_master_group(
     form: web::Json<UserCreatedMasterGroup>,
     arc: web::Data<Arcadia>,
     current_user: User,
-) -> HttpResponse {
-    match create_master_group(&arc.pool, &form, &current_user).await {
-        Ok(master_group) => HttpResponse::Created().json(serde_json::json!(master_group)),
-        Err(err) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": err.to_string()
-        })),
-    }
+) -> Result<HttpResponse> {
+    let master_group = create_master_group(&arc.pool, &form, &current_user).await?;
+
+    Ok(HttpResponse::Created().json(master_group))
 }
