@@ -1,22 +1,24 @@
-use crate::models::{
-    edition_group::{EditionGroup, UserCreatedEditionGroup},
-    user::User,
+use crate::{
+    Error, Result,
+    models::{
+        edition_group::{EditionGroup, UserCreatedEditionGroup},
+        user::User,
+    },
 };
 use sqlx::PgPool;
-use std::error::Error;
 
 pub async fn create_edition_group(
     pool: &PgPool,
     edition_group_form: &UserCreatedEditionGroup,
     current_user: &User,
-) -> Result<EditionGroup, Box<dyn Error>> {
-    let create_title_group_query = r#"
+) -> Result<EditionGroup> {
+    const CREATE_EDITION_GROUPS_QUERY: &str = r#"
         INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, distributor, covers, external_links, source, additional_information) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::source_enum, $10)
         RETURNING *;
     "#;
 
-    let created_edition_group = sqlx::query_as::<_, EditionGroup>(create_title_group_query)
+    let created_edition_group = sqlx::query_as::<_, EditionGroup>(CREATE_EDITION_GROUPS_QUERY)
         .bind(&edition_group_form.title_group_id)
         .bind(&edition_group_form.name)
         .bind(&edition_group_form.release_date)
@@ -28,17 +30,8 @@ pub async fn create_edition_group(
         .bind(&edition_group_form.source)
         .bind(&edition_group_form.additional_information)
         .fetch_one(pool)
-        .await;
+        .await
+        .map_err(Error::CouldNotCreateEditionGroup)?;
 
-    match created_edition_group {
-        Ok(_) => Ok(created_edition_group.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create edition group").into())
-        }
-    }
+    Ok(created_edition_group)
 }

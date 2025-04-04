@@ -1,16 +1,18 @@
-use crate::models::{
-    series::{Series, UserCreatedSeries},
-    user::User,
+use crate::{
+    Error, Result,
+    models::{
+        series::{Series, UserCreatedSeries},
+        user::User,
+    },
 };
 use serde_json::Value;
 use sqlx::PgPool;
-use std::error::Error;
 
 pub async fn create_series(
     pool: &PgPool,
     series: &UserCreatedSeries,
     current_user: &User,
-) -> Result<Series, Box<dyn Error>> {
+) -> Result<Series> {
     let created_series = sqlx::query_as!(
         Series,
         r#"
@@ -26,22 +28,13 @@ pub async fn create_series(
         &series.tags
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(Error::CouldNotCreateSeries)?;
 
-    match created_series {
-        Ok(_) => Ok(created_series.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create serie").into())
-        }
-    }
+    Ok(created_series)
 }
 
-pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value, Box<dyn Error>> {
+pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value> {
     let found_series = sqlx::query!(
         r#"
             WITH title_group_data AS (
@@ -79,17 +72,8 @@ pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value, Box<dy
         series_id
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(|_| Error::SeriesWithIdNotFound(*series_id))?;
 
-    match found_series {
-        Ok(series) => Ok(series.series_and_groups.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("an error occured while looking for the series").into())
-        }
-    }
+    Ok(found_series.series_and_groups.unwrap())
 }

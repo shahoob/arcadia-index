@@ -1,11 +1,13 @@
-use crate::models::{
-    torrent::{Features, Torrent, UploadedTorrent},
-    user::User,
+use crate::{
+    Error, Result,
+    models::{
+        torrent::{Features, Torrent, UploadedTorrent},
+        user::User,
+    },
 };
 use bip_metainfo::Metainfo;
 use serde_json::json;
 use sqlx::PgPool;
-use std::error::Error;
 use std::str::FromStr;
 
 use super::notification_repository::notify_users;
@@ -20,7 +22,7 @@ pub async fn create_torrent(
     pool: &PgPool,
     torrent_form: &UploadedTorrent,
     current_user: &User,
-) -> Result<Torrent, Box<dyn Error>> {
+) -> Result<Torrent> {
     let create_torrent_query = r#"
     INSERT INTO torrents (
         edition_group_id, created_by_id, release_name, 
@@ -126,42 +128,35 @@ pub async fn create_torrent(
         .bind(&*torrent_form.container)
         .bind(torrent_form.language.as_deref())
         .fetch_one(pool)
-        .await;
+        .await
+        .map_err(Error::CouldNotCreateTorrent)?;
 
     // TODO: edit the torrent file with proper flags, remove announce url and store it to the disk
 
-    match uploaded_torrent {
-        Ok(_) => Ok({
-            let title_group_info: LiteTitleGroupInfo = sqlx::query_as!(
-                LiteTitleGroupInfo,
-                "SELECT title_groups.id, title_groups.name 
-        FROM edition_groups 
-        JOIN title_groups ON edition_groups.title_group_id = title_groups.id 
-        WHERE edition_groups.id = $1",
-                &torrent_form.edition_group_id.0
-            )
-            .fetch_one(pool)
-            .await?;
-            let _ = notify_users(
-                pool,
-                &"torrent_uploaded",
-                &title_group_info.id,
-                &"New torrent uploaded subscribed title group",
-                &format!(
-                    "New torrent uploaded in title group \"{}\"",
-                    title_group_info.name
-                ),
-            )
-            .await;
-            uploaded_torrent.unwrap()
-        }),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create torrent").into())
-        }
-    }
+    let title_group_info = sqlx::query_as!(
+        LiteTitleGroupInfo,
+        r#"
+            SELECT title_groups.id, title_groups.name
+            FROM edition_groups
+            JOIN title_groups ON edition_groups.title_group_id = title_groups.id
+            WHERE edition_groups.id = $1
+        "#,
+        torrent_form.edition_group_id.0
+    )
+    .fetch_one(pool)
+    .await?;
+
+    let _ = notify_users(
+        pool,
+        &"torrent_uploaded",
+        &title_group_info.id,
+        &"New torrent uploaded subscribed title group",
+        &format!(
+            "New torrent uploaded in title group \"{}\"",
+            title_group_info.name
+        ),
+    )
+    .await;
+
+    Ok(uploaded_torrent)
 }

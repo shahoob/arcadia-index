@@ -4,8 +4,7 @@ mod repositories;
 mod routes;
 
 use actix_cors::Cors;
-use actix_web::{App, HttpServer, web::Data};
-use arcadia_index::{Arcadia, OpenSignups};
+use actix_web::{App, HttpServer, middleware, web::Data};
 use dotenv;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
@@ -13,9 +12,13 @@ use std::env;
 // use utoipa_actix_web::AppExt;
 // use utoipa_swagger_ui::SwaggerUi;
 
+use arcadia_index::{Arcadia, Error, OpenSignups, Result};
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env.local").ok();
+
+    env_logger::init_from_env(env_logger::Env::default().default_filter_or("debug"));
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = PgPoolOptions::new()
@@ -37,6 +40,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
+            .wrap(middleware::Logger::default())
             .wrap(cors)
             .app_data(Data::new(Arcadia {
                 pool: pool.clone(),

@@ -1,17 +1,19 @@
-use crate::models::{
-    artist::{Artist, UserCreatedArtist},
-    title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
-    user::User,
+use crate::{
+    Error, Result,
+    models::{
+        artist::{Artist, UserCreatedArtist},
+        title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
+        user::User,
+    },
 };
 use serde_json::Value;
 use sqlx::PgPool;
-use std::error::Error;
 
 pub async fn create_artist(
     pool: &PgPool,
     artist: &UserCreatedArtist,
     current_user: &User,
-) -> Result<Artist, Box<dyn Error>> {
+) -> Result<Artist> {
     let created_artist = sqlx::query_as!(
         Artist,
         r#"
@@ -25,26 +27,17 @@ pub async fn create_artist(
         current_user.id
     )
     .fetch_one(pool)
-    .await;
+    .await
+    .map_err(Error::CouldNotCreateArtist)?;
 
-    match created_artist {
-        Ok(_) => Ok(created_artist.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create artist").into())
-        }
-    }
+    Ok(created_artist)
 }
 
 pub async fn create_artists_affiliation(
     pool: &PgPool,
     artists: &Vec<UserCreatedAffiliatedArtist>,
     current_user: &User,
-) -> Result<Vec<AffiliatedArtist>, Box<dyn Error>> {
+) -> Result<Vec<AffiliatedArtist>> {
     let values: Vec<String> = (0..artists.len())
         .map(|i| {
             format!(
@@ -73,82 +66,62 @@ pub async fn create_artists_affiliation(
             .bind(current_user.id);
     }
 
-    match q.fetch_all(pool).await {
-        Ok(affiliated_artists) => Ok(affiliated_artists),
-        Err(e) => {
-            println!("{:#?}", e);
-            let error_message = match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create artist: {}", error_message).into()) // Return the error properly
-        }
-    }
+    let affiliated_artists = q
+        .fetch_all(pool)
+        .await
+        .map_err(Error::CouldNotCreateArtistAffiliation)?;
 
-    // match affiliated_artists {
-    //     Err(e) => {}
-    // }
+    Ok(affiliated_artists)
 }
 
-pub async fn find_artist_publications(
-    pool: &PgPool,
-    artist_id: &i64,
-) -> Result<Value, Box<dyn Error>> {
+pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<Value> {
     // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
     let artist_publications = sqlx::query!(
-        r#"WITH artist_title_groups AS (
-    SELECT DISTINCT tg.*
-    FROM title_groups tg
-    JOIN affiliated_artists aa ON aa.title_group_id = tg.id
-    WHERE aa.artist_id = $1
-),
-torrent_request_data AS (
-    SELECT 
-        tr.title_group_id,
-        jsonb_agg(
-            to_jsonb(tr) || jsonb_build_object(
-                'created_by', jsonb_build_object('id', u.id, 'username', u.username)
+        r#"
+            WITH artist_title_groups AS (
+                SELECT DISTINCT tg.*
+                FROM title_groups tg
+                JOIN affiliated_artists aa ON aa.title_group_id = tg.id
+                WHERE aa.artist_id = $1
+            ),
+            torrent_request_data AS (
+                SELECT
+                    tr.title_group_id,
+                    jsonb_agg(
+                        to_jsonb(tr) || jsonb_build_object(
+                            'created_by', jsonb_build_object('id', u.id, 'username', u.username)
+                        )
+                    ) AS torrent_requests
+                FROM torrent_requests tr
+                LEFT JOIN users u ON u.id = tr.created_by_id
+                WHERE tr.title_group_id IN (SELECT id FROM artist_title_groups)
+                GROUP BY tr.title_group_id
             )
-        ) AS torrent_requests
-    FROM torrent_requests tr
-    LEFT JOIN users u ON u.id = tr.created_by_id
-    WHERE tr.title_group_id IN (SELECT id FROM artist_title_groups)
-    GROUP BY tr.title_group_id
-)
-SELECT json_agg(
-    to_jsonb(tg) || jsonb_build_object(
-        'edition_groups', (
-            SELECT COALESCE(jsonb_agg(
-                to_jsonb(eg) || jsonb_build_object(
-                    'torrents', (
-                        SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
-                        FROM torrents t
-                        WHERE t.edition_group_id = eg.id
-                    )
+            SELECT json_agg(
+                to_jsonb(tg) || jsonb_build_object(
+                    'edition_groups', (
+                        SELECT COALESCE(jsonb_agg(
+                            to_jsonb(eg) || jsonb_build_object(
+                                'torrents', (
+                                    SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
+                                    FROM torrents t
+                                    WHERE t.edition_group_id = eg.id
+                                )
+                            )
+                        ), '[]'::jsonb)
+                        FROM edition_groups eg
+                        WHERE eg.title_group_id = tg.id
+                    ),
+                    'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
                 )
-            ), '[]'::jsonb)
-            FROM edition_groups eg
-            WHERE eg.title_group_id = tg.id
-        ),
-        'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
-    )
-) AS artist_content
-FROM artist_title_groups tg
-LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id;"#,
+            ) AS artist_content
+            FROM artist_title_groups tg
+            LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
+        "#,
         artist_id
     )
     .fetch_one(pool)
-    .await;
+    .await?;
 
-    match artist_publications {
-        Ok(_) => Ok(artist_publications.unwrap().artist_content.unwrap()),
-        Err(e) => {
-            println!("{:#?}", e);
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("could not create artist").into())
-        }
-    }
+    Ok(artist_publications.artist_content.unwrap())
 }

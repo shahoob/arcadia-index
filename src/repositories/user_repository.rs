@@ -1,9 +1,11 @@
-use crate::models::user::{PublicUser, User};
+use crate::{
+    Error, Result,
+    models::user::{PublicUser, User},
+};
 use sqlx::PgPool;
-use std::error::Error;
 
-pub async fn find_user_by_username(pool: &PgPool, username: &str) -> Result<User, Box<dyn Error>> {
-    let result = sqlx::query_as!(
+pub async fn find_user_by_username(pool: &PgPool, username: &str) -> Result<User> {
+    sqlx::query_as!(
         User,
         r#"
             SELECT * FROM users
@@ -12,21 +14,12 @@ pub async fn find_user_by_username(pool: &PgPool, username: &str) -> Result<User
         username
     )
     .fetch_one(pool)
-    .await;
-
-    match result {
-        Ok(_) => Ok(result.unwrap()),
-        Err(e) => {
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("User not found").into())
-        }
-    }
+    .await
+    .map_err(|_| Error::UserNotFound(username.into()))
 }
-pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser, Box<dyn Error>> {
-    let result = sqlx::query_as!(
+
+pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
+    sqlx::query_as!(
         PublicUser,
         r#"
             SELECT
@@ -64,16 +57,6 @@ pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser, Box<
         *id as i64
     )
     .fetch_one(pool)
-    .await;
-
-    match result {
-        Ok(_) => Ok(result.unwrap()),
-        Err(e) => {
-            match e {
-                sqlx::Error::Database(db_error) => db_error.message().to_string(),
-                _ => e.to_string(),
-            };
-            Err(format!("User not found").into())
-        }
-    }
+    .await
+    .map_err(|_| Error::UserWithIdNotFound(*id))
 }
