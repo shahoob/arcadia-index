@@ -27,8 +27,20 @@
     <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Movie'">
         <FloatLabel>
-          <InputText size="small" name="tmdb_id" />
+          <InputText
+            size="small"
+            name="tmdb_id"
+            v-model="external_database_ids.tmdb" />
           <label for="tmdb_id">TMDB id</label>
+          <InputIcon
+            :class="{
+              pi: true,
+              'pi-search': !gettingExternalDatabaseData,
+              'pi-hourglass': gettingExternalDatabaseData,
+              'cursor-pointer': true,
+            }"
+            @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/movie')"
+          />
         </FloatLabel>
         or
         <FloatLabel>
@@ -36,10 +48,27 @@
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'TV Show'">
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'TVShow'">
         <FloatLabel>
           <InputText size="small" name="tvdb_id" />
           <label for="tvdb_id">TVDB id</label>
+        </FloatLabel>
+        or
+        <FloatLabel>
+          <InputText
+            size="small"
+            name="tmdb_id"
+            v-model="external_database_ids.tmdb" />
+          <label for="tvdb_id">TMDB id</label>
+          <InputIcon
+            :class="{
+              pi: true,
+              'pi-search': !gettingExternalDatabaseData,
+              'pi-hourglass': gettingExternalDatabaseData,
+              'cursor-pointer': true,
+            }"
+            @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/tv')"
+          />
         </FloatLabel>
         or
         <FloatLabel>
@@ -145,7 +174,7 @@
         </FloatLabel>
       </div>
       <div>
-        <label for="original_release_date" class="block">Original realease date</label>
+        <label for="original_release_date" class="block">Original release date</label>
         <DatePicker
           v-model="titleGroupForm.original_release_date"
           showIcon
