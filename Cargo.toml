@@ -29,7 +29,6 @@ actix-cors = "0.7.1"
 actix-http = "3.10.0"
 env_logger = "0.11.8"
 thiserror = "2.0.12"
-# not working yet : https://github.com/juhaku/utoipa/issues/1361
-# utoipa = { version = "5", features = ["actix_extras"] }
-# utoipa-swagger-ui = { version = "9.0.0", features = ["actix-web"] }
-# utoipa-actix-web = "0.1.2"
+utoipa = { version = "5", features = ["actix_extras"] }
+utoipa-swagger-ui = { version = "9.0.1", features = ["actix-web"] }
+utoipa-actix-web = "0.1.2"

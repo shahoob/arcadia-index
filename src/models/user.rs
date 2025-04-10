@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use sqlx::types::ipnetwork::IpNetwork;
-// use utoipa::ToSchema;
+use utoipa::ToSchema;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
@@ -39,7 +39,7 @@ pub struct User {
     pub bonus_points: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct Register {
     pub username: String,
     pub password: String,
@@ -47,7 +47,7 @@ pub struct Register {
     pub email: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct Login {
     pub username: String,
     pub password: String,

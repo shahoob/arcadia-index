@@ -20,19 +20,20 @@ use jsonwebtoken::{EncodingKey, Header, encode};
 use serde::Deserialize;
 use sqlx::types::ipnetwork::IpNetwork;
 use std::env;
+use utoipa::ToSchema;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 pub struct RegisterQuery {
     invitation_key: Option<String>,
 }
 
-// #[utoipa::path(
-//     get,
-//     path = "/api/register",
-//     responses(
-//         (status = 200, description = "Successfully registered the user", body = Register),
-//     )
-// )]
+#[utoipa::path(
+    get,
+    path = "/api/register",
+    responses(
+        (status = 200, description = "Successfully registered the user", body = Register),
+    )
+)]
 pub async fn register(
     new_user: web::Json<Register>,
     arc: web::Data<Arcadia>,
@@ -86,6 +87,13 @@ pub async fn register(
     Ok(HttpResponse::Created().json(serde_json::json!(user)))
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/login",
+    responses(
+        (status = 200, description = "Successfully logged in", body = Login),
+    )
+)]
 pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Result<HttpResponse> {
     let user = find_user_with_password(&arc.pool, &user_login).await?;
 
