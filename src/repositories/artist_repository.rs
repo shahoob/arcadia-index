@@ -78,50 +78,54 @@ pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<
     // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
     let artist_publications = sqlx::query!(
         r#"
-            WITH artist_title_groups AS (
-                SELECT DISTINCT tg.*
-                FROM title_groups tg
-                JOIN affiliated_artists aa ON aa.title_group_id = tg.id
-                WHERE aa.artist_id = $1
-            ),
-            torrent_request_data AS (
+            WITH artist_group_data AS (
                 SELECT
-                    tr.title_group_id,
+                    aa.artist_id,
                     jsonb_agg(
-                        to_jsonb(tr) || jsonb_build_object(
-                            'created_by', jsonb_build_object('id', u.id, 'username', u.username)
-                        )
-                    ) AS torrent_requests
-                FROM torrent_requests tr
-                LEFT JOIN users u ON u.id = tr.created_by_id
-                WHERE tr.title_group_id IN (SELECT id FROM artist_title_groups)
-                GROUP BY tr.title_group_id
-            )
-            SELECT json_agg(
-                to_jsonb(tg) || jsonb_build_object(
-                    'edition_groups', (
-                        SELECT COALESCE(jsonb_agg(
-                            to_jsonb(eg) || jsonb_build_object(
-                                'torrents', (
-                                    SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
-                                    FROM torrents t
-                                    WHERE t.edition_group_id = eg.id
-                                )
+                        to_jsonb(tg) || jsonb_build_object(
+                            'edition_groups', (
+                                SELECT COALESCE(jsonb_agg(
+                                    to_jsonb(eg) || jsonb_build_object(
+                                        'torrents', (
+                                            SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
+                                            FROM torrents t
+                                            WHERE t.edition_group_id = eg.id
+                                        )
+                                    )
+                                ), '[]'::jsonb)
+                                FROM edition_groups eg
+                                WHERE eg.title_group_id = tg.id
                             )
-                        ), '[]'::jsonb)
-                        FROM edition_groups eg
-                        WHERE eg.title_group_id = tg.id
-                    ),
-                    'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb)
-                )
-            ) AS artist_content
-            FROM artist_title_groups tg
-            LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
+                        )
+                    ) AS title_groups
+                FROM affiliated_artists aa
+                JOIN title_groups tg ON aa.title_group_id = tg.id
+                WHERE aa.artist_id = $1
+                GROUP BY aa.artist_id
+            ),
+            artist_torrent_requests AS (
+                SELECT
+                    aa.artist_id,
+                    COALESCE(jsonb_agg(to_jsonb(tr)), '[]'::jsonb) AS torrent_requests
+                FROM affiliated_artists aa
+                JOIN torrent_requests tr ON aa.title_group_id = tr.title_group_id
+                WHERE aa.artist_id = $1
+                GROUP BY aa.artist_id
+            )
+            SELECT jsonb_build_object(
+                'artist', to_jsonb(a),
+                'title_groups', COALESCE(agd.title_groups, '[]'::jsonb),
+                'torrent_requests', COALESCE(atr.torrent_requests, '[]'::jsonb)
+            ) AS artist_data
+            FROM artists a
+            LEFT JOIN artist_group_data agd ON agd.artist_id = a.id
+            LEFT JOIN artist_torrent_requests atr ON atr.artist_id = a.id
+            WHERE a.id = $1;
         "#,
         artist_id
     )
     .fetch_one(pool)
     .await?;
 
-    Ok(artist_publications.artist_content.unwrap())
+    Ok(artist_publications.artist_data.unwrap())
 }
