@@ -7,6 +7,7 @@ use crate::{
 };
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
+use utoipa::{IntoParams, ToSchema};
 
 pub async fn add_artist(
     artist: web::Json<UserCreatedArtist>,
@@ -28,11 +29,19 @@ pub async fn add_affiliated_artists(
     Ok(HttpResponse::Created().json(affiliation))
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema, IntoParams)]
 pub struct GetArtistPublicationsQuery {
     id: i64,
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/artist",
+    params (GetArtistPublicationsQuery),
+    responses(
+        (status = 200, description = "Successfully got the artist's pulications"),
+    )
+)]
 pub async fn get_artist_publications(
     query: web::Query<GetArtistPublicationsQuery>,
     arc: web::Data<Arcadia>,

@@ -28,7 +28,7 @@ pub struct RegisterQuery {
 }
 
 #[utoipa::path(
-    get,
+    post,
     path = "/api/register",
     responses(
         (status = 200, description = "Successfully registered the user", body = Register),
@@ -88,7 +88,7 @@ pub async fn register(
 }
 
 #[utoipa::path(
-    get,
+    post,
     path = "/api/login",
     responses(
         (status = 200, description = "Successfully logged in", body = Login),
