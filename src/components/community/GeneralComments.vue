@@ -47,7 +47,6 @@ export default {
         this.new_comment.content = ''
         this.new_comment.refers_to_torrent_id = null
         this.new_comment.answers_to_comment_id = null
-        // TODO: when logging in, get the user info, keep it in the store (and localstorage) and fill this info
         data.created_by = {}
         // TODO: don't mutate the prop
         this.comments.push(data)
