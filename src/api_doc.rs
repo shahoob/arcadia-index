@@ -1,7 +1,7 @@
 use utoipa::OpenApi;
 
 use crate::{
-    handlers::auth_handler::RegisterQuery,
+    handlers::{artist_handler::GetArtistPublicationsQuery, auth_handler::RegisterQuery},
     models::user::{Login, Register},
 };
 
@@ -11,7 +11,8 @@ use crate::{
     paths(
         crate::handlers::auth_handler::register,
         crate::handlers::auth_handler::login,
+        crate::handlers::artist_handler::get_artist_publications,
     ),
-    components(schemas(Register, RegisterQuery, Login),)
+    components(schemas(Register, RegisterQuery, Login, GetArtistPublicationsQuery),)
 )]
 pub struct ApiDoc;
