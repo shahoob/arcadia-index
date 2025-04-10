@@ -27,20 +27,19 @@
     <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'Movie'">
         <FloatLabel>
-          <InputText
-            size="small"
-            name="tmdb_id"
-            v-model="external_database_ids.tmdb" />
-          <label for="tmdb_id">TMDB id</label>
-          <InputIcon
-            :class="{
-              pi: true,
-              'pi-search': !gettingExternalDatabaseData,
-              'pi-hourglass': gettingExternalDatabaseData,
-              'cursor-pointer': true,
-            }"
-            @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/movie')"
-          />
+          <IconField>
+            <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
+            <label for="tmdb_id">TMDB id</label>
+            <InputIcon
+              :class="{
+                pi: true,
+                'pi-search': !gettingExternalDatabaseData,
+                'pi-hourglass': gettingExternalDatabaseData,
+                'cursor-pointer': true,
+              }"
+              @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/movie')"
+            />
+          </IconField>
         </FloatLabel>
         or
         <FloatLabel>
@@ -55,20 +54,19 @@
         </FloatLabel>
         or
         <FloatLabel>
-          <InputText
-            size="small"
-            name="tmdb_id"
-            v-model="external_database_ids.tmdb" />
-          <label for="tvdb_id">TMDB id</label>
-          <InputIcon
-            :class="{
-              pi: true,
-              'pi-search': !gettingExternalDatabaseData,
-              'pi-hourglass': gettingExternalDatabaseData,
-              'cursor-pointer': true,
-            }"
-            @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/tv')"
-          />
+          <IconField>
+            <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
+            <label for="tmdb_id">TMDB id</label>
+            <InputIcon
+              :class="{
+                pi: true,
+                'pi-search': !gettingExternalDatabaseData,
+                'pi-hourglass': gettingExternalDatabaseData,
+                'cursor-pointer': true,
+              }"
+              @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/tv')"
+            />
+          </IconField>
         </FloatLabel>
         or
         <FloatLabel>
@@ -304,6 +302,7 @@ export default {
       getExternalDatabaseData(item_id, database).then((data) => {
         data.title_group.original_release_date = new Date(data.title_group.original_release_date)
         this.titleGroupForm = data.title_group
+        // if the api also returns some info about the specific edition, pass it to the edition component
         if (data.edition_group) {
           this.$emit('gotEditionData', data.edition_group)
         }
