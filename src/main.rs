@@ -9,10 +9,10 @@ use dotenv;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
-// use utoipa_actix_web::AppExt;
-// use utoipa_swagger_ui::SwaggerUi;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
-use arcadia_index::{Arcadia, Error, OpenSignups, Result};
+use arcadia_index::{Arcadia, Error, OpenSignups, Result, api_doc::ApiDoc};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -47,11 +47,10 @@ async fn main() -> std::io::Result<()> {
                 open_signups,
             }))
             .configure(init) // Initialize routes
-        // .into_utoipa_app()
-        // .openapi_service(|api| {
-        //     SwaggerUi::new("/swagger-ui/{_:.*}").url("/api/openapi.json", api)
-        // })
-        // .into_app()
+            .service(
+                SwaggerUi::new("/swagger-ui/{_:.*}")
+                    .url("/swagger-json/openapi.json", ApiDoc::openapi()),
+            )
     })
     .bind(format!("{}:{}", host, port))?
     .run()

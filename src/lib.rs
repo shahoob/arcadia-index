@@ -1,3 +1,4 @@
+pub mod api_doc;
 pub mod handlers;
 pub mod models;
 pub mod repositories;
