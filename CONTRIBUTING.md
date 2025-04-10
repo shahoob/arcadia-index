@@ -43,6 +43,8 @@ cargo run
 
 This will start the development server in dev mode.
 
+A swagger for the API is available at `http://localhost:8080/swagger-ui`
+
 ## Code structure
 
 API calls are forwarded to `handlers`, database requests are done by `repositories`, objects are defined by `models`. Directories with those names contain the relevant code.
