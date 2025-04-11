@@ -151,7 +151,11 @@ export default {
     Select,
     Message,
   },
-  props: { titleGroup: {}, sendingEditionGroup: { default: false } },
+  props: {
+    titleGroup: {},
+    sendingEditionGroup: { default: false },
+    initialEditionGroupForm: { default: {} },
+  },
   data() {
     return {
       editionGroupForm: {
@@ -236,6 +240,9 @@ export default {
   created() {
     if (this.titleGroup.id) {
       this.editionGroupForm.title_group_id = this.titleGroup.id
+    }
+    if (Object.keys(this.initialEditionGroupForm).length > 0) {
+      this.editionGroupForm = this.initialEditionGroupForm
     }
   },
 }
