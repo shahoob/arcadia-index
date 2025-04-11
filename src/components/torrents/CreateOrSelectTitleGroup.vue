@@ -239,14 +239,11 @@ import { useTitleGroupStore } from '@/stores/titleGroup'
 export default {
   components: {
     DatePicker,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Button,
     InputNumber,
     FloatLabel,
     InputText,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Textarea,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Select,
     InputIcon,
     IconField,

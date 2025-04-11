@@ -41,7 +41,6 @@ import Button from 'primevue/button'
 import { register } from '@/services/api/authService'
 
 export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
   components: { Button, InputText },
   data() {
     return {

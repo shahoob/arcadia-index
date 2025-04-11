@@ -8,7 +8,6 @@
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
   components: { LoginForm, RegisterForm },
 }
 </script>
