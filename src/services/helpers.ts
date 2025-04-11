@@ -65,3 +65,11 @@ export const getFeatures = (contentType) => {
     return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
   }
 }
+export const isValidUrl = (url: string) => {
+  try {
+    new URL(url)
+    return true
+  } catch (_) {
+    return false
+  }
+}
