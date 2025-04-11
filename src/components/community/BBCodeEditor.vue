@@ -6,6 +6,7 @@
       style="width: 100%"
       autoResize
       @value-change="$emit('value-change', content)"
+      name="content"
     />
     <label for="in_label">{{ label }}</label>
   </FloatLabel>

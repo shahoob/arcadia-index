@@ -12,7 +12,6 @@ import Menubar from 'primevue/menubar'
 import { Button } from 'primevue'
 
 export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
   components: { Menubar, Button },
   setup() {
     const menuItems = ref([

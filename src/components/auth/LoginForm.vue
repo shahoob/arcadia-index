@@ -36,7 +36,6 @@ import Checkbox from 'primevue/checkbox'
 import { login } from '@/services/api/authService'
 
 export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
   components: { Button, InputText, Checkbox },
   data() {
     return {

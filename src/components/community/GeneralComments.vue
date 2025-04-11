@@ -2,17 +2,28 @@
   <div class="comments">
     <GeneralComment v-for="comment in comments" :key="comment.id" :comment="comment" />
   </div>
-  <div class="new-comment">
-    <BBCodeEditor @value-change="newCommentUpdated" label="New comment" />
-    <Button
-      type="button"
-      label="Post"
-      icon="pi pi-send"
-      :loading="sending_comment"
-      @click="sendComment"
-      class="post-button"
-    />
-  </div>
+  <Form
+    v-slot="$form"
+    :initialValues="new_comment"
+    :resolver
+    @submit="onFormSubmit"
+    validateOnSubmit
+    :validateOnValueUpdate="false"
+  >
+    <div class="new-comment">
+      <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
+        {{ $form.content.error?.message }}
+      </Message>
+      <BBCodeEditor @value-change="newCommentUpdated" label="New comment" />
+      <Button
+        type="submit"
+        label="Post"
+        icon="pi pi-send"
+        :loading="sending_comment"
+        class="post-button"
+      />
+    </div>
+  </Form>
 </template>
 
 <script lang="ts">
@@ -20,9 +31,11 @@ import GeneralComment from './GeneralComment.vue'
 import { Button } from 'primevue'
 import { postTitleGroupComment } from '@/services/api/commentService'
 import BBCodeEditor from './BBCodeEditor.vue'
+import { Form } from '@primevue/forms'
+import Message from 'primevue/message'
+
 export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
-  components: { GeneralComment, BBCodeEditor, Button },
+  components: { GeneralComment, BBCodeEditor, Button, Form, Message },
   props: {
     comments: [],
   },
@@ -37,6 +50,23 @@ export default {
     }
   },
   methods: {
+    resolver({ values }) {
+      const errors = {}
+
+      if (values.content.length < 5) {
+        console.log(values.content.length)
+        errors.content = [{ message: 'You must write more than 5 characters' }]
+      }
+
+      return {
+        errors,
+      }
+    },
+    onFormSubmit({ valid }) {
+      if (valid) {
+        this.sendComment()
+      }
+    },
     newCommentUpdated(content: string) {
       this.new_comment.content = content
     },

@@ -127,14 +127,11 @@
 </template>
 
 <script lang="ts">
-import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import InputIcon from 'primevue/inputicon'
-import IconField from 'primevue/iconfield'
 import Checkbox from 'primevue/checkbox'
 import FileUpload from 'primevue/fileupload'
 import MultiSelect from 'primevue/multiselect'
@@ -146,19 +143,13 @@ import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
   components: {
-    // eslint-disable-next-line vue/no-reserved-component-names
     Button,
     MultiSelect,
     FileUpload,
-    InputNumber,
     FloatLabel,
     InputText,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Textarea,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Select,
-    InputIcon,
-    IconField,
     Checkbox,
   },
   props: {},

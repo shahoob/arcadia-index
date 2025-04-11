@@ -117,14 +117,11 @@
 </template>
 
 <script lang="ts">
-import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import InputIcon from 'primevue/inputicon'
-import IconField from 'primevue/iconfield'
 import DatePicker from 'primevue/datepicker'
 import { createEditionGroup, getTitleGroupLite } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
@@ -133,17 +130,11 @@ import { getEditionGroupSlug } from '@/services/helpers'
 export default {
   components: {
     DatePicker,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Button,
-    InputNumber,
     FloatLabel,
     InputText,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Textarea,
-    // eslint-disable-next-line vue/no-reserved-component-names
     Select,
-    InputIcon,
-    IconField,
   },
   data() {
     return {
