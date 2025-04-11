@@ -150,7 +150,7 @@ import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import CreateOrEditTitleGroup from './CreateOrEditTitleGroup.vue'
+import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
 
 export default {
   components: {

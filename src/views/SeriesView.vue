@@ -31,7 +31,7 @@
 import { getSeries } from '@/services/api/seriesService'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { Image } from 'primevue'
-import TitleGroupPreviewCoverOnly from '@/components/torrents/TitleGroupPreviewCoverOnly.vue'
+import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/torrents/TitleGroupPreviewTable.vue'
 export default {
   components: { ContentContainer, Image, TitleGroupPreviewCoverOnly, TitleGroupPreviewTable },
