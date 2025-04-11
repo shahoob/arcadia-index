@@ -2,7 +2,7 @@
   <div>
     <div class="title">Upload torrent</div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0">
+      <AccordionPanel value="0" :disabled="uploadStep != 1">
         <AccordionHeader>Title</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectTitleGroup @done="titleGroupDone" />
@@ -10,7 +10,7 @@
       </AccordionPanel>
     </Accordion>
     <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0" :disabled="uploadStep < 2">
+      <AccordionPanel value="0" :disabled="uploadStep != 2">
         <AccordionHeader>Edition</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectEditionGroup v-if="uploadStep > 1" @done="editionGroupDone" />
@@ -18,7 +18,7 @@
       </AccordionPanel>
     </Accordion>
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0" :disabled="uploadStep < 3">
+      <AccordionPanel value="0" :disabled="uploadStep != 3">
         <AccordionHeader>Torrent</AccordionHeader>
         <AccordionContent
           ><CreateTorrent v-if="uploadStep > 2" @done="torrentDone"
