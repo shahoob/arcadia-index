@@ -20,9 +20,9 @@
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 3">
         <AccordionHeader>Torrent</AccordionHeader>
-        <AccordionContent
-          ><CreateTorrent v-if="uploadStep > 2" @done="torrentDone"
-        /></AccordionContent>
+        <AccordionContent>
+          <CreateTorrent v-if="uploadStep > 2" @done="torrentDone" />
+        </AccordionContent>
       </AccordionPanel>
     </Accordion>
   </div>
@@ -34,7 +34,7 @@ import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import CreateOrSelectTitleGroup from '@/components/title_group/CreateOrSelectTitleGroup.vue'
 import CreateOrSelectEditionGroup from '@/components/edition_group/CreateOrSelectEditionGroup.vue'
-import CreateTorrent from '@/components/torrent/CreateTorrent.vue'
+import CreateTorrent from '@/components/torrent/CreateOrEditTorrent.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 
