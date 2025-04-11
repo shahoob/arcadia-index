@@ -17,15 +17,11 @@
       >
         <template #option="slotProps">
           <div>
-            <!-- {{ slotProps.option.name }} / {{ slotProps.option.source }} /
-            {{ slotProps.option.release_date.substring(0, 10) }} -->
             {{ getEditionGroupSlug(slotProps.option) }}
           </div>
         </template>
         <template #value="slotProps" v-if="selected_edition_group.id">
           <div>
-            <!-- {{ slotProps.value.name }} / {{ slotProps.value.source }} /
-            {{ slotProps.value.release_date.substring(0, 10) }} -->
             {{ getEditionGroupSlug(slotProps.value) }}
           </div>
         </template>
