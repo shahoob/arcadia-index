@@ -31,7 +31,7 @@
 import ContentContainer from '@/components/ContentContainer.vue'
 import { Image } from 'primevue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
-import TitleGroupPreviewTable from '@/components/torrents/TitleGroupPreviewTable.vue'
+import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import { getArtist } from '@/services/api/artistService'
 export default {
   components: { ContentContainer, Image, TitleGroupPreviewCoverOnly, TitleGroupPreviewTable },

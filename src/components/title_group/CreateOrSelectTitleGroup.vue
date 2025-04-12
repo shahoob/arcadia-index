@@ -118,14 +118,15 @@
           </IconField>
         </FloatLabel>
       </div>
-      <div v-if="step == 2">
+      <div v-if="step == 2" class="external-db-inputs" style="margin-left: 5px">
         or
         <span
           class="cursor-pointer"
           style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
           @click="(step = 3) && (manualCreation = true)"
-          >create the title manually</span
         >
+          create the title manually
+        </span>
       </div>
     </div>
     <div v-if="step > 2">
@@ -251,7 +252,7 @@ export default {
   cursor: pointer;
 }
 .p-floatlabel {
-  margin-bottom: 30px;
+  margin-top: 30px;
 }
 .select {
   width: 200px;
@@ -265,6 +266,7 @@ export default {
   display: flex;
   align-items: center;
   margin-left: -10px;
+  margin-top: 30px;
 }
 .external-db-inputs .p-floatlabel {
   margin: 0px 10px;

@@ -9,50 +9,70 @@
     validateOnBlur
   >
     <div class="line">
-      <FloatLabel class="name">
+      <div class="name">
+        <FloatLabel>
+          <InputText size="small" v-model="titleGroupForm.name" name="name" />
+          <label for="name">Name</label>
+        </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
         </Message>
-        <InputText size="small" v-model="titleGroupForm.name" name="name" />
-        <label for="name">Name</label>
-      </FloatLabel>
-      <FloatLabel>
+      </div>
+      <div>
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.category"
+            inputId="category"
+            :options="selectableCategories[content_type]"
+            size="small"
+            name="category"
+            class="select"
+          />
+          <label for="category">Category</label>
+        </FloatLabel>
         <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">
           {{ $form.category.error?.message }}
         </Message>
-        <Select
-          v-model="titleGroupForm.category"
-          inputId="category"
-          :options="selectableCategories[content_type]"
-          size="small"
-          name="category"
-          class="select"
-        />
-        <label for="category">Category</label>
-      </FloatLabel>
-      <FloatLabel class="tags">
+      </div>
+      <div class="tags">
+        <FloatLabel>
+          <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
+          <label for="tags">Tags (comma separated)</label>
+        </FloatLabel>
         <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
           {{ $form.tags.error?.message }}
         </Message>
-        <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
-        <label for="tags">Tags (comma separated)</label>
-      </FloatLabel>
+      </div>
     </div>
-    <FloatLabel>
+    <div>
+      <FloatLabel>
+        <Textarea
+          v-model="titleGroupForm.description"
+          name="description"
+          class="description"
+          autoResize
+          rows="5"
+        />
+        <label for="description">Description</label>
+      </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
       </Message>
-      <Textarea
-        v-model="titleGroupForm.description"
-        name="description"
-        class="description"
-        autoResize
-        rows="5"
-      />
-      <label for="description">Description</label>
-    </FloatLabel>
+    </div>
     <div class="line">
-      <FloatLabel>
+      <div>
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.original_language"
+            inputId="original_language"
+            :options="selectableLanguages"
+            class="select"
+            size="small"
+            name="original_language"
+            filter
+          />
+          <label for="original_language">Original language</label>
+        </FloatLabel>
         <Message
           v-if="$form.original_language?.invalid"
           severity="error"
@@ -61,42 +81,26 @@
         >
           {{ $form.original_language.error?.message }}
         </Message>
-        <Select
-          v-model="titleGroupForm.original_language"
-          inputId="original_language"
-          :options="selectableLanguages"
-          class="select"
-          size="small"
-          name="original_language"
-          filter
-        />
-        <label for="original_language">Original language</label>
-      </FloatLabel>
-      <FloatLabel>
+      </div>
+      <div>
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.country_from"
+            inputId="country_from"
+            :options="selectableCountries"
+            class="select"
+            size="small"
+            name="country_from"
+            filter
+          />
+          <label for="country_from">Country from</label>
+        </FloatLabel>
         <Message v-if="$form.country_from?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.original_language.error?.message }}
+          {{ $form.country_from.error?.message }}
         </Message>
-        <Select
-          v-model="titleGroupForm.country_from"
-          inputId="country_from"
-          :options="selectableCountries"
-          class="select"
-          size="small"
-          name="country_from"
-          filter
-        />
-        <label for="country_from">Country from</label>
-      </FloatLabel>
+      </div>
     </div>
-    <div>
-      <Message
-        v-if="$form.original_release_date?.invalid"
-        severity="error"
-        size="small"
-        variant="simple"
-      >
-        {{ $form.original_release_date.error?.message }}
-      </Message>
+    <div class="original-release-date">
       <label for="original_release_date" class="block">Original release date</label>
       <DatePicker
         v-model="titleGroupForm.original_release_date"
@@ -106,18 +110,18 @@
         size="small"
         name="original_release_date"
       />
+      <Message
+        v-if="$form.original_release_date?.invalid"
+        severity="error"
+        size="small"
+        variant="simple"
+      >
+        {{ $form.original_release_date.error?.message }}
+      </Message>
     </div>
     <div class="covers input-list">
       <label>Covers</label>
       <div v-for="(link, index) in titleGroupForm.covers" :key="index">
-        <Message
-          v-if="$form.covers?.[index]?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          {{ $form.covers[index].error?.message }}
-        </Message>
         <InputText size="small" v-model="titleGroupForm.covers[index]" :name="`covers[${index}]`" />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
         <Button
@@ -126,19 +130,19 @@
           icon="pi pi-minus"
           size="small"
         />
+        <Message
+          v-if="$form.covers?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ $form.covers[index].error?.message }}
+        </Message>
       </div>
     </div>
     <div class="external-links input-list">
       <label>External Links</label>
       <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
-        <Message
-          v-if="$form.external_links?.[index]?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          {{ $form.external_links[index].error?.message }}
-        </Message>
         <InputText
           size="small"
           v-model="titleGroupForm.external_links[index]"
@@ -151,6 +155,14 @@
           icon="pi pi-minus"
           size="small"
         />
+        <Message
+          v-if="$form.external_links?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ $form.external_links[index].error?.message }}
+        </Message>
       </div>
     </div>
     <div class="flex justify-content-center">
@@ -312,7 +324,10 @@ export default {
   width: 200px;
 }
 .p-floatlabel {
-  margin-bottom: 30px;
+  margin-top: 30px;
+}
+.original-release-date {
+  margin-top: 30px;
 }
 .input-list {
   margin-top: 15px;

@@ -9,53 +9,58 @@
     validateOnBlur
   >
     <div class="line">
-      <FloatLabel>
+      <div>
+        <FloatLabel>
+          <InputText size="small" v-model="editionGroupForm.name" name="name" />
+          <label for="name">Name</label>
+        </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
         </Message>
-        <InputText size="small" v-model="editionGroupForm.name" name="name" />
-        <label for="name">Name</label>
-      </FloatLabel>
-      <FloatLabel>
+      </div>
+      <div>
+        <FloatLabel>
+          <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
+          <label for="distributor">Distributor</label>
+        </FloatLabel>
         <Message v-if="$form.distributor?.invalid" severity="error" size="small" variant="simple">
           {{ $form.distributor.error?.message }}
         </Message>
-        <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
-        <label for="distributor">Distributor</label>
-      </FloatLabel>
-      <FloatLabel>
+      </div>
+      <div>
+        <FloatLabel>
+          <Select
+            v-model="editionGroupForm.source"
+            inputId="source"
+            :options="selectableSources[titleGroup.content_type]"
+            class="select-source"
+            size="small"
+            name="source"
+          />
+          <label for="source">Source</label>
+        </FloatLabel>
         <Message v-if="$form.source?.invalid" severity="error" size="small" variant="simple">
           {{ $form.source.error?.message }}
         </Message>
-        <Select
-          v-model="editionGroupForm.source"
-          inputId="source"
-          :options="selectableSources[titleGroup.content_type]"
-          class="select-source"
-          size="small"
-          name="source"
-        />
-        <label for="source">Source</label>
-      </FloatLabel>
+      </div>
     </div>
-    <FloatLabel>
+    <div>
+      <FloatLabel>
+        <Textarea
+          v-model="editionGroupForm.description"
+          name="description"
+          class="description"
+          autoResize
+          rows="5"
+        />
+        <label for="description">Description</label>
+      </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
       </Message>
-      <Textarea
-        v-model="editionGroupForm.description"
-        name="description"
-        class="description"
-        autoResize
-        rows="5"
-      />
-      <label for="description">Description</label>
-    </FloatLabel>
-    <div>
+    </div>
+    <div class="release-date">
       <label for="release_date" class="block">Realease date</label>
-      <Message v-if="$form.release_date?.invalid" severity="error" size="small" variant="simple">
-        {{ $form.release_date.error?.message }}
-      </Message>
       <DatePicker
         v-model="editionGroupForm.release_date"
         showIcon
@@ -65,18 +70,13 @@
         dateFormat="yy-mm-dd"
         name="release_date"
       />
+      <Message v-if="$form.release_date?.invalid" severity="error" size="small" variant="simple">
+        {{ $form.release_date.error?.message }}
+      </Message>
     </div>
     <div class="covers input-list">
       <label>Covers</label>
       <div v-for="(link, index) in editionGroupForm.covers" :key="index">
-        <Message
-          v-if="$form.covers?.[index]?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          {{ $form.covers[index].error?.message }}
-        </Message>
         <InputText
           size="small"
           v-model="editionGroupForm.covers[index]"
@@ -89,19 +89,19 @@
           icon="pi pi-minus"
           size="small"
         />
+        <Message
+          v-if="$form.covers?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ $form.covers[index].error?.message }}
+        </Message>
       </div>
     </div>
     <div class="external-links input-list">
       <label>External Links</label>
       <div v-for="(link, index) in editionGroupForm.external_links" :key="index">
-        <Message
-          v-if="$form.external_links?.[index]?.invalid"
-          severity="error"
-          size="small"
-          variant="simple"
-        >
-          {{ $form.external_links[index].error?.message }}
-        </Message>
         <InputText
           size="small"
           v-model="editionGroupForm.external_links[index]"
@@ -114,6 +114,14 @@
           icon="pi pi-minus"
           size="small"
         />
+        <Message
+          v-if="$form.external_links?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ $form.external_links[index].error?.message }}
+        </Message>
       </div>
     </div>
     <div class="flex justify-content-center">
@@ -255,6 +263,9 @@ export default {
 .select-source {
   width: 150px;
 }
+.release-date {
+  margin-top: 20px;
+}
 .input-list {
   margin-top: 15px;
 }
@@ -266,7 +277,7 @@ export default {
   width: 400px;
 }
 .p-floatlabel {
-  margin-bottom: 30px;
+  margin-top: 30px;
 }
 .validate-button {
   margin-top: 20px;

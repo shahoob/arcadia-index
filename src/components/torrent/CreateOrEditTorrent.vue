@@ -9,22 +9,28 @@
     validateOnBlur
   >
     <div id="create-torrent">
-      <FloatLabel>
+      <div class="mediainfo">
+        <FloatLabel>
+          <Textarea
+            v-model="torrentForm.mediainfo"
+            name="mediainfo"
+            class="textarea pre-style"
+            rows="5"
+            @update:model-value="mediainfoUpdated"
+          />
+          <label for="mediainfo">Mediainfo</label>
+        </FloatLabel>
         <Message v-if="$form.mediainfo?.invalid" severity="error" size="small" variant="simple">
           {{ $form.mediainfo.error?.message }}
         </Message>
-        <Textarea
-          v-model="torrentForm.mediainfo"
-          name="mediainfo"
-          class="textarea pre-style"
-          rows="5"
-          @update:model-value="mediainfoUpdated"
-        />
-        <label for="mediainfo">Mediainfo</label>
-      </FloatLabel>
+      </div>
       <div v-if="step > 1">
         <div class="line">
-          <FloatLabel class="release-name">
+          <div class="release-name">
+            <FloatLabel>
+              <InputText v-model="torrentForm.release_name" size="small" name="release_name" />
+              <label for="release_name">Release name</label>
+            </FloatLabel>
             <Message
               v-if="$form.release_name?.invalid"
               severity="error"
@@ -33,45 +39,59 @@
             >
               {{ $form.release_name.error?.message }}
             </Message>
-            <InputText v-model="torrentForm.release_name" size="small" name="release_name" />
-            <label for="release_name">Release name</label>
-          </FloatLabel>
-          <FloatLabel>
+          </div>
+          <div>
+            <FloatLabel>
+              <InputText v-model="torrentForm.release_group" size="small" name="release_group" />
+              <label for="release_group">Release group</label>
+            </FloatLabel>
             <Message
               v-if="$form.release_group?.invalid"
               severity="error"
               size="small"
               variant="simple"
             >
-              {{ $form.release_name.error?.message }}
+              {{ $form.release_group.error?.message }}
             </Message>
-            <InputText v-model="torrentForm.release_group" size="small" name="release_group" />
-            <label for="release_group">Release group</label>
-          </FloatLabel>
+          </div>
         </div>
-        <FloatLabel>
+        <div>
+          <FloatLabel>
+            <Textarea
+              v-model="torrentForm.description"
+              name="description"
+              class="textarea"
+              autoResize
+              rows="5"
+            />
+            <label for="description">Description</label>
+          </FloatLabel>
           <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
             {{ $form.release_name.error?.message }}
           </Message>
-          <Textarea
-            v-model="torrentForm.description"
-            name="description"
-            class="textarea"
-            autoResize
-            rows="5"
-          />
-          <label for="description">Description</label>
-        </FloatLabel>
-
+        </div>
         <div class="line">
-          <FloatLabel>
+          <div>
+            <FloatLabel>
+              <InputText v-model="torrentForm.container" size="small" name="container" />
+              <label for="container">Container</label>
+            </FloatLabel>
             <Message v-if="$form.container?.invalid" severity="error" size="small" variant="simple">
               {{ $form.container.error?.message }}
             </Message>
-            <InputText v-model="torrentForm.container" size="small" name="container" />
-            <label for="container">Container</label>
-          </FloatLabel>
-          <FloatLabel>
+          </div>
+          <div>
+            <FloatLabel>
+              <Select
+                v-model="torrentForm.video_codec"
+                inputId="video_coded"
+                :options="selectableVideoCodecs"
+                class="select"
+                size="small"
+                name="video_codec"
+              />
+              <label for="video_coded">Video codec</label>
+            </FloatLabel>
             <Message
               v-if="$form.video_codec?.invalid"
               severity="error"
@@ -80,17 +100,19 @@
             >
               {{ $form.video_codec.error?.message }}
             </Message>
-            <Select
-              v-model="torrentForm.video_codec"
-              inputId="video_coded"
-              :options="selectableVideoCodecs"
-              class="select"
-              size="small"
-              name="video_codec"
-            />
-            <label for="video_coded">Video codec</label>
-          </FloatLabel>
-          <FloatLabel>
+          </div>
+          <div>
+            <FloatLabel>
+              <Select
+                v-model="torrentForm.video_resolution"
+                inputId="video_resolution"
+                :options="selectableVideoResolutions"
+                class="select"
+                size="small"
+                name="video_resolution"
+              />
+              <label for="video_resolution">Video resolution</label>
+            </FloatLabel>
             <Message
               v-if="$form.video_resolution?.invalid"
               severity="error"
@@ -99,17 +121,19 @@
             >
               {{ $form.video_codec.error?.message }}
             </Message>
-            <Select
-              v-model="torrentForm.video_resolution"
-              inputId="video_resolution"
-              :options="selectableVideoResolutions"
-              class="select"
-              size="small"
-              name="video_resolution"
-            />
-            <label for="video_resolution">Video resolution</label>
-          </FloatLabel>
-          <FloatLabel>
+          </div>
+          <div>
+            <FloatLabel>
+              <Select
+                v-model="torrentForm.audio_codec"
+                inputId="audio_coded"
+                :options="selectableAudioCodecs"
+                class="select"
+                size="small"
+                name="audio_codec"
+              />
+              <label for="audio_coded">Audio codec</label>
+            </FloatLabel>
             <Message
               v-if="$form.audio_codec?.invalid"
               severity="error"
@@ -118,31 +142,24 @@
             >
               {{ $form.video_codec.error?.message }}
             </Message>
+          </div>
+        </div>
+        <div>
+          <FloatLabel>
             <Select
-              v-model="torrentForm.audio_codec"
-              inputId="audio_coded"
-              :options="selectableAudioCodecs"
+              v-model="torrentForm.language"
+              inputId="language"
+              :options="selectableLanguages"
               class="select"
               size="small"
-              name="audio_codec"
+              name="language"
             />
-            <label for="audio_coded">Audio codec</label>
+            <label for="language">Language</label>
           </FloatLabel>
-        </div>
-        <FloatLabel>
           <Message v-if="$form.language?.invalid" severity="error" size="small" variant="simple">
             {{ $form.language.error?.message }}
           </Message>
-          <Select
-            v-model="torrentForm.language"
-            inputId="language"
-            :options="selectableLanguages"
-            class="select"
-            size="small"
-            name="language"
-          />
-          <label for="language">Language</label>
-        </FloatLabel>
+        </div>
         <FloatLabel>
           <MultiSelect
             v-model="torrentForm.features"
@@ -162,15 +179,12 @@
         <InputText v-model="torrentForm.audio_bitrate" size="small" name="audio_bitrate" />
         <label for="audio_codec">Audio bitrate (in kb/s)</label>
       </FloatLabel> -->
-        <FormField v-slot="$field" name="torrent_file" :initialValue="torrentForm.torrent_file">
-          <Message
-            v-if="$form.torrent_file?.invalid"
-            severity="error"
-            size="small"
-            variant="simple"
-          >
-            {{ $form.torrent_file.error?.message }}
-          </Message>
+        <FormField
+          v-slot="$field"
+          name="torrent_file"
+          :initialValue="torrentForm.torrent_file"
+          class="torrent-file"
+        >
           <FileUpload
             ref="torrentFile"
             accept="application/x-bittorrent"
@@ -184,6 +198,14 @@
               files.length != 0 ? files[0].name : 'Select a file'
             }}</template>
           </FileUpload>
+          <Message
+            v-if="$form.torrent_file?.invalid"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
+            {{ $form.torrent_file.error?.message }}
+          </Message>
         </FormField>
         <div class="flex align-items-center">
           <Checkbox v-model="torrentForm.uploaded_as_anonymous" name="anonymous" binary />
@@ -375,12 +397,18 @@ export default {
 }
 </script>
 <style scoped>
+#create-torrent {
+  padding-top: 20px;
+}
 .textarea {
   width: 100%;
   height: 10em;
 }
 .p-floatlabel {
-  margin-bottom: 30px;
+  margin-top: 30px;
+}
+.mediainfo .p-floatlabel {
+  margin-top: 0px;
 }
 .release-name {
   width: 100%;
@@ -391,8 +419,12 @@ export default {
 .select {
   width: 200px;
 }
-.file-upload {
+/* .file-upload {
   max-width: 300px;
+  margin-bottom: 100px !important;
+} */
+.torrent-file {
+  margin-bottom: 20px;
 }
 .validate-button {
   margin-top: 20px;
@@ -402,7 +434,7 @@ export default {
 #create-torrent {
   .p-fileupload {
     max-width: 300px;
-    margin-bottom: 15px;
+    margin-top: 15px;
   }
 }
 </style>

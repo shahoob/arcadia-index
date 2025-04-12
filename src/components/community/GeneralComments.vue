@@ -11,10 +11,10 @@
     :validateOnValueUpdate="false"
   >
     <div class="new-comment">
+      <BBCodeEditor @value-change="newCommentUpdated" label="New comment" />
       <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
         {{ $form.content.error?.message }}
       </Message>
-      <BBCodeEditor @value-change="newCommentUpdated" label="New comment" />
       <Button
         type="submit"
         label="Post"
