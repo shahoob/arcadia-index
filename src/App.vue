@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import AppNavbar from './components/AppNavbar.vue'
+import { useUserStore } from './stores/user'
 
 export default {
   name: 'App',
@@ -25,6 +26,13 @@ export default {
 <script setup lang="ts">
 // enable dark mode by default
 document.documentElement.classList.add('dark-theme')
+
+const user = localStorage.getItem('user')
+if (user) {
+  const userStore = useUserStore()
+  userStore.setUser(JSON.parse(user))
+  console.log(JSON.parse(user))
+}
 </script>
 
 <style>
