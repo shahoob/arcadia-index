@@ -118,6 +118,6 @@ pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Res
 
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "token": token,
-        "user": {"username": user.username, "id": user.id, "avatar": user.avatar}
+        "user": {"username": user.username, "id": user.id, "avatar": user.avatar, "settings": user.settings}
     })))
 }

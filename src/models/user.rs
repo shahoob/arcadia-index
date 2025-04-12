@@ -9,8 +9,11 @@ use utoipa::ToSchema;
 // #[derive(Serialize, Deserialize, Debug, sqlx::Type)]
 // #[sqlx(type_name = "item_detail_layout")]
 // pub enum ItemDetailLayout {
+// #[sqlx(rename = "header")]
 //     Header,
+// #[sqlx(rename = "sidebar_right")]
 //     SideBarRight,
+// #[sqlx(rename = "sidebar_left")]
 //     SideBarLeft,
 // }
 
@@ -22,7 +25,7 @@ use utoipa::ToSchema;
 // #[derive(Serialize, Deserialize, Debug, FromRow, sqlx::Type)]
 // // #[sqlx(type_name = "user_settings")]
 // pub struct UserSettings {
-//     pub site_appearance_settings: SiteAppearanceSettings,
+//     pub site_appearance: SiteAppearanceSettings,
 // }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
