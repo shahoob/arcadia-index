@@ -1,76 +1,7 @@
 <template>
   <!-- TODO: use skeletons while the data is loading -->
-  <div id="title-group-view" v-if="title_group">
-    <ContentContainer class="header">
-      <div class="left">
-        <Galleria
-          :value="title_group.covers"
-          :numVisible="1"
-          :circular="true"
-          :showItemNavigators="false"
-          :showThumbnails="false"
-          :showIndicators="true"
-          class="carousel"
-        >
-          <template #item="slotProps">
-            <Image :src="slotProps.item" preview>
-              <template #previewicon>
-                <i class="pi pi-search"></i>
-              </template>
-            </Image>
-          </template>
-        </Galleria>
-        <div class="textual-information">
-          <div class="title">
-            {{ title_group.name }}
-            <span class="title-metadata"
-              >({{ title_group.original_release_date.substring(0, 4) }})</span
-            >
-          </div>
-          <div class="information-line">
-            <span class="item-title">Tags:</span>
-            <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
-              {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
-            </div>
-          </div>
-          <div
-            class="information-line"
-            v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
-          >
-            <span class="item-title">Aliases:</span>
-            <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
-              {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
-            </div>
-          </div>
-          <div class="information-line">
-            <span class="item-title">Original language:</span>
-            {{ title_group.original_language }}
-          </div>
-          <div class="information-line">
-            <span class="item-title">Country from:</span>
-            {{ title_group.country_from }}
-          </div>
-          <div v-if="title_group.series.id" class="information-line series">
-            <span class="item-title">Series:</span>
-            <a :href="'/series?id=' + title_group.series.id">{{ title_group.series.name }}</a>
-          </div>
-          <div class="information-line link-logos">
-            <div v-for="link in title_group.external_links" :key="link">
-              <ExternalLink :link="link" class="link-logo" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="right">
-        <div class="affiliated_artists">
-          <AffiliatedArtist
-            v-for="affiliated_artist in title_group.affiliated_artists"
-            :key="affiliated_artist.artist.id"
-            :affiliated_artist="affiliated_artist"
-          />
-        </div>
-      </div>
-    </ContentContainer>
+  <div v-if="title_group">
+    <TitleGroupHeader :title_group />
     <div class="actions">
       <div>
         <i
@@ -135,15 +66,12 @@ import GeneralComments from '@/components/community/GeneralComments.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { getTitleGroup } from '@/services/api/torrentService'
 import TitleGroupTable from '@/components/title_group/TitleGroupTable.vue'
-import { Galleria } from 'primevue'
-import Image from 'primevue/image'
-import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
-import ExternalLink from '@/components/ExternalLink.vue'
 import TorrentRequestsTable from '@/components/request/TorrentRequestsTable.vue'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
+import TitleGroupHeader from '@/components/title_group/TitleGroupHeader.vue'
 import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { getEditionGroupSlug } from '@/services/helpers'
@@ -154,18 +82,15 @@ export default {
   components: {
     ContentContainer,
     TitleGroupTable,
-    Galleria,
-    Image,
     FloatLabel,
     Select,
-    AffiliatedArtist,
-    ExternalLink,
     GeneralComments,
     TorrentRequestsTable,
     Accordion,
     AccordionContent,
     AccordionHeader,
     AccordionPanel,
+    TitleGroupHeader,
   },
   setup() {},
   data() {
@@ -211,49 +136,6 @@ export default {
 </script>
 
 <style scoped>
-.header {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-}
-.left {
-  display: flex;
-}
-.p-galleria {
-  height: 22em;
-  border: none;
-  margin-right: 20px;
-}
-.title {
-  font-weight: bold;
-  font-size: 2em;
-}
-.item-title {
-  font-weight: bold;
-  margin-right: 7px;
-}
-.information-line {
-  display: flex;
-  margin-top: 8px;
-}
-.information-line .item {
-  margin-right: 5px;
-}
-.series a {
-  padding: 0px;
-}
-.link-logos {
-  margin-top: 25px;
-  display: flex;
-  align-items: center;
-}
-.link-logo {
-  margin-right: 7px;
-}
-.affiliated-artists {
-  margin-right: 0px;
-  margin-left: auto;
-}
 .actions {
   display: flex;
   justify-content: space-between;
@@ -289,14 +171,5 @@ export default {
 }
 .comments {
   margin-top: 20px;
-}
-</style>
-<style>
-#title-group-view .left .p-galleria-content img {
-  height: 20em !important;
-  border-radius: 7px;
-}
-#title-group-view .p-galleria-indicator-list {
-  padding: 7px !important;
 }
 </style>
