@@ -6,7 +6,7 @@ body{
 }
 
 #app{
-  max-width: 1900px;
+  max-width: 2100px;
   margin: 0 auto;
   padding: 1rem;
   font-weight: normal;
@@ -22,7 +22,7 @@ body{
 }
 
 #view-container{
-  width: 70%;
+  width: 75%;
 }
 
 a:hover{
@@ -50,6 +50,10 @@ a{
   padding-top: 1em;
 }
 
+.p-galleria-indicator-list:has(li:only-child) {
+  display: none;
+}
+
 .pre-style {
   font-family: monospace !important;
   white-space: pre-wrap !important;
@@ -64,6 +68,22 @@ a{
   }
 }
 
+.sidebar-right {
+  display: flex;
+  .main {
+    margin-right: 20px;
+  }
+}
+.sidebar-left {
+  display: flex;
+  flex-direction: row-reverse;
+  .main {
+    margin-left: 20px;
+  }
+}
+.slim-header {
+  margin-bottom: 20px;
+}
 
 @media (hover: hover) {
   a:hover {

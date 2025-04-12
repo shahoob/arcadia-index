@@ -1,19 +1,28 @@
 <template>
-  <div class="container">
-    <slot></slot>
+  <div class="content-container">
+    <div class="title" v-if="containerTitle">{{ containerTitle }}</div>
+    <div>
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 export default {
   name: 'ContentContainer',
+  props: { containerTitle: {}, slotClass: {} },
 }
 </script>
 
 <style scoped>
-.container {
+.content-container {
   padding: 12px;
   border-radius: 10px;
   background-color: rgb(29, 29, 29);
+  display: block !important;
+}
+.title {
+  color: var(--color-primary);
+  margin-bottom: 10px;
 }
 </style>
