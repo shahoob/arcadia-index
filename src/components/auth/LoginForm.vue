@@ -7,9 +7,6 @@
       placeholder="Username"
       v-model="form.username"
     />
-    <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
-        $form.username.error?.message
-      }}</Message> -->
   </div>
   <div class="flex flex-col gap-1">
     <InputText
@@ -19,9 +16,6 @@
       placeholder="Password"
       v-model="form.password"
     />
-    <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
-        $form.email.error?.message
-      }}</Message> -->
   </div>
   <div>
     <Checkbox class="form-item" v-model="form.remember_me" binary />
@@ -34,6 +28,7 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import { login } from '@/services/api/authService'
+import { useUserStore } from '@/stores/user'
 
 export default {
   components: { Button, InputText, Checkbox },
@@ -51,6 +46,8 @@ export default {
       login(this.form).then((data) => {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
+        const userStore = useUserStore()
+        userStore.setUser(data.user)
         this.$router.push('/')
       })
     },

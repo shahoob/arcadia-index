@@ -33,6 +33,7 @@ import { postTitleGroupComment } from '@/services/api/commentService'
 import BBCodeEditor from './BBCodeEditor.vue'
 import { Form } from '@primevue/forms'
 import Message from 'primevue/message'
+import { useUserStore } from '@/stores/user'
 
 export default {
   components: { GeneralComment, BBCodeEditor, Button, Form, Message },
@@ -78,6 +79,7 @@ export default {
         this.new_comment.refers_to_torrent_id = null
         this.new_comment.answers_to_comment_id = null
         data.created_by = {}
+        data.created_by = useUserStore()
         // TODO: don't mutate the prop
         this.comments.push(data)
         this.sending_comment = false
