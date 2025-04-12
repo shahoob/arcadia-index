@@ -31,7 +31,6 @@ const user = localStorage.getItem('user')
 if (user) {
   const userStore = useUserStore()
   userStore.setUser(JSON.parse(user))
-  console.log(JSON.parse(user))
 }
 </script>
 

@@ -1,40 +1,61 @@
 <template>
-  <div id="artist-view" v-if="artist">
-    <ContentContainer class="header">
-      <Image class="artist-pictures" :src="artist.pictures[0]" preview>
-        <template #previewicon>
-          <i class="pi pi-search"></i>
-        </template>
-      </Image>
-      <div class="textual-information">
-        <div class="name">{{ artist.name }}</div>
-        <div class="description">{{ artist.description }}</div>
-      </div>
-    </ContentContainer>
-    <ContentContainer v-if="title_group_preview_mode == 'cover-only'" class="title-groups">
-      <TitleGroupPreviewCoverOnly
+  <div
+    v-if="artist"
+    id="artist-view"
+    :class="{
+      'sidebar-right': userStore.settings.site_appearance.item_detail_layout == 'sidebar_right',
+      'sidebar-left': userStore.settings.site_appearance.item_detail_layout == 'sidebar_left',
+    }"
+  >
+    <div class="main">
+      <ArtistFullHeader
+        :artist
+        v-if="userStore.settings.site_appearance.item_detail_layout == 'header'"
+      />
+      <ArtistSlimHeader v-else class="slim-header" :artist />
+      <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
+        <div class="title-groups">
+          <TitleGroupPreviewCoverOnly
+            v-for="title_group in title_groups"
+            :key="title_group.id"
+            :title_group="title_group"
+          />
+        </div>
+      </ContentContainer>
+      <TitleGroupPreviewTable
         v-for="title_group in title_groups"
         :key="title_group.id"
         :title_group="title_group"
+        v-if="title_group_preview_mode == 'table'"
+        class="preview-table"
       />
-    </ContentContainer>
-    <TitleGroupPreviewTable
-      v-for="title_group in title_groups"
-      :key="title_group.id"
-      :title_group="title_group"
-      v-if="title_group_preview_mode == 'table'"
-      class="preview-table"
-    />
+    </div>
+    <ArtistSidebar :artist />
   </div>
 </template>
+
+<script setup lang="ts">
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+</script>
 <script lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
-import { Image } from 'primevue'
+import ArtistSidebar from '@/components/artist/ArtistSidebar.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
+import ArtistFullHeader from '@/components/artist/ArtistFullHeader.vue'
+import ArtistSlimHeader from '@/components/artist/ArtistSlimHeader.vue'
 import { getArtist } from '@/services/api/artistService'
 export default {
-  components: { ContentContainer, Image, TitleGroupPreviewCoverOnly, TitleGroupPreviewTable },
+  components: {
+    ArtistFullHeader,
+    ContentContainer,
+    TitleGroupPreviewCoverOnly,
+    TitleGroupPreviewTable,
+    ArtistSidebar,
+    ArtistSlimHeader,
+  },
   data() {
     return {
       artist: null,
@@ -52,23 +73,6 @@ export default {
 </script>
 
 <style scoped>
-.header {
-  display: flex;
-  margin-bottom: 15px;
-  height: 35vh;
-}
-.artist-pictures {
-  margin-right: 10px;
-}
-.name {
-  font-weight: bold;
-  font-size: 2em;
-}
-.description {
-  margin-top: 10px;
-  max-height: 80%;
-  overflow-y: scroll;
-}
 .title-groups {
   display: flex;
   align-items: center;
@@ -77,12 +81,5 @@ export default {
 }
 .preview-table {
   margin-bottom: 15px;
-}
-</style>
-<style>
-#artist-view .artist-pictures img {
-  max-width: 20em;
-  max-height: 20em;
-  border-radius: 7px;
 }
 </style>
