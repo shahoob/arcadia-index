@@ -30,7 +30,8 @@ CREATE TABLE users (
     average_seeding_time BIGINT NOT NULL DEFAULT 0,
     invited BIGINT NOT NULL DEFAULT 0,
     invitations SMALLINT NOT NULL DEFAULT 0,
-    bonus_points BIGINT NOT NULL DEFAULT 0
+    bonus_points BIGINT NOT NULL DEFAULT 0,
+    settings JSONB NOT NULL
 );
 CREATE TABLE invitations (
     id BIGSERIAL PRIMARY KEY,
