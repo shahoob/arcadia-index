@@ -104,7 +104,6 @@ export default {
 .title {
   font-weight: bold;
   font-size: 1.5em;
-  margin-bottom: 25px;
 }
 .title .alternative {
   font-size: 0.8em;
@@ -112,7 +111,7 @@ export default {
   cursor: pointer;
 }
 .p-floatlabel {
-  margin-bottom: 30px;
+  margin: 30px 0px;
 }
 .select-existing-edition {
   width: 500px;
