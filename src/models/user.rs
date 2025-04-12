@@ -4,6 +4,27 @@ use sqlx::prelude::FromRow;
 use sqlx::types::ipnetwork::IpNetwork;
 use utoipa::ToSchema;
 
+// TODO: deserialize the settings field to a rust struct, currently doesn't seem possible
+// https://github.com/launchbadge/sqlx/issues/3153#issuecomment-2798756953
+// #[derive(Serialize, Deserialize, Debug, sqlx::Type)]
+// #[sqlx(type_name = "item_detail_layout")]
+// pub enum ItemDetailLayout {
+//     Header,
+//     SideBarRight,
+//     SideBarLeft,
+// }
+
+// #[derive(Serialize, Deserialize, Debug, FromRow, sqlx::Type)]
+// pub struct SiteAppearanceSettings {
+//     pub item_detail_layout: ItemDetailLayout,
+// }
+
+// #[derive(Serialize, Deserialize, Debug, FromRow, sqlx::Type)]
+// // #[sqlx(type_name = "user_settings")]
+// pub struct UserSettings {
+//     pub site_appearance_settings: SiteAppearanceSettings,
+// }
+
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
     pub id: i64,
@@ -37,6 +58,7 @@ pub struct User {
     pub invited: i64,
     pub invitations: i16,
     pub bonus_points: i64,
+    pub settings: serde_json::Value,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]

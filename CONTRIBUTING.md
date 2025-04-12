@@ -28,6 +28,12 @@ The database schema is created in a migration file `migrations/*_initdb.sql`. It
 
 You can optionally add "fake" data to the databse by running the `fixtures.sql` file in the migrations directory. This allows to quickly have data to work with.
 
+Here is how to insert them if you are using docker :
+
+```
+docker exec -i arcadia_db psql -U arcadia -d arcadia < fixtures.sql
+```
+
 The default user is :
 
 ```
