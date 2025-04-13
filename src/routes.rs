@@ -6,13 +6,15 @@ use crate::handlers::{
     edition_group_handler::add_edition_group,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
-    scrapers::open_library::get_open_library_data,
-    scrapers::tmdb::{get_tmdb_movie_data, get_tmdb_tv_data},
+    scrapers::{
+        open_library::get_open_library_data,
+        tmdb::{get_tmdb_movie_data, get_tmdb_tv_data},
+    },
     series_handler::{add_series, get_series},
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
     title_group_handler::{add_title_group, get_lite_title_group_info, get_title_group},
-    torrent_handler::upload_torrent,
+    torrent_handler::{download_dottorrent_file, upload_torrent},
     torrent_request_handler::add_torrent_request,
     torrent_request_vote_handler::add_torrent_request_vote,
     user_handler::{get_me, get_user},
@@ -38,6 +40,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             )
             .route("/edition-group", web::post().to(add_edition_group))
             .route("/torrent", web::post().to(upload_torrent))
+            .route("/torrent", web::get().to(download_dottorrent_file))
             .route("/artist", web::post().to(add_artist))
             .route("/artist", web::get().to(get_artist_publications))
             .route(
