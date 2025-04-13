@@ -11,10 +11,18 @@
     size="small"
     :pt="{ rowGroupHeaderCell: { colspan: 8 } }"
   >
-    <Column expander style="width: 1em" />
+    <Column expander style="width: 1em" v-if="!preview" />
+    <Column style="width: 1em" v-else />
     <Column header="Properties" style="min-width: 300px">
       <template #body="slotProps">
-        {{ getTorrentSlug(slotProps.data) }}
+        <a
+          :href="
+            preview ? `/title-group?id=${title_group.id}&torrent_id=${slotProps.data.id}` : `#`
+          "
+          @click="preview ? null : toggleRow(slotProps.data)"
+        >
+          {{ getTorrentSlug(slotProps.data) }}
+        </a>
       </template>
     </Column>
     <Column header="Uploaded">
@@ -119,6 +127,13 @@ export default {
     return { expandedRows: [] }
   },
   methods: {
+    toggleRow(torrent) {
+      if (!this.expandedRows.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {
+        this.expandedRows = [...this.expandedRows, torrent]
+      } else {
+        this.expandedRows = this.expandedRows.filter((t) => t.id !== torrent.id)
+      }
+    },
     timeAgo(date: string) {
       return timeAgo(date)
     },
@@ -131,6 +146,15 @@ export default {
     downloadTorrent(torrentId: Number) {
       downloadTorrent(torrentId)
     },
+  },
+  created() {
+    if (this.$route.query.torrent_id) {
+      this.toggleRow(
+        this.title_group.edition_groups
+          .flatMap((edition_group) => edition_group.torrents)
+          .find((torrent) => torrent.id == this.$route.query.torrent_id),
+      )
+    }
   },
   computed: {
     getEditionGroupSlug() {
