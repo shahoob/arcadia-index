@@ -5,6 +5,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
+use utoipa::{ToResponse, ToSchema};
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type)]
 #[sqlx(type_name = "audio_codec_enum")]
@@ -163,4 +164,32 @@ pub struct UploadedTorrent {
     pub features: Text<String>,
     pub subtitle_languages: Text<String>,
     pub video_resolution: Option<Text<String>>, // ---- video
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct TorrentSearch {
+    pub title_group_name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct LiteTorrent {
+    pub id: i64,
+    pub edition_group_id: i64,
+    pub created_at: NaiveDateTime,
+    pub release_name: Option<String>,
+    pub file_amount_per_type: Json<Value>,
+    pub trumpable: Option<String>,
+    pub staff_checked: bool,
+    pub language: Option<String>,
+    pub container: String,
+    pub size: i64,
+    pub duration: Option<i32>,
+    pub audio_codec: Option<AudioCodec>,
+    pub audio_bitrate: Option<i32>,
+    pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
+    pub audio_channels: Option<String>,
+    pub video_codec: Option<VideoCodec>,
+    pub features: Option<Vec<Features>>,
+    pub subtitle_languages: Option<Vec<String>>,
+    pub video_resolution: Option<String>,
 }

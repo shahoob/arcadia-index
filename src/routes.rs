@@ -14,7 +14,7 @@ use crate::handlers::{
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
     title_group_handler::{add_title_group, get_lite_title_group_info, get_title_group},
-    torrent_handler::{download_dottorrent_file, upload_torrent},
+    torrent_handler::{download_dottorrent_file, find_torrents, upload_torrent},
     torrent_request_handler::add_torrent_request,
     torrent_request_vote_handler::add_torrent_request_vote,
     user_handler::{get_me, get_user},
@@ -41,6 +41,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/edition-group", web::post().to(add_edition_group))
             .route("/torrent", web::post().to(upload_torrent))
             .route("/torrent", web::get().to(download_dottorrent_file))
+            .route("/search/torrent", web::post().to(find_torrents))
             .route("/artist", web::post().to(add_artist))
             .route("/artist", web::get().to(get_artist_publications))
             .route(

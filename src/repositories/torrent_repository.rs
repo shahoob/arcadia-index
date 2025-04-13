@@ -1,15 +1,17 @@
 use crate::{
     Error, Result,
     models::{
-        torrent::{Features, Torrent, UploadedTorrent},
+        title_group::LiteTitleGroupHierachy,
+        torrent::{Features, Torrent, TorrentSearch, UploadedTorrent},
         user::User,
     },
 };
 
 use bip_metainfo::Metainfo;
 use reqwest::Url;
-use serde_json::json;
-use sqlx::PgPool;
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json, map::VacantEntry};
+use sqlx::{PgPool, prelude::FromRow};
 use std::{fs, path::PathBuf, str::FromStr};
 
 use super::notification_repository::notify_users;
@@ -172,4 +174,101 @@ pub async fn create_torrent(
     .await;
 
     Ok(uploaded_torrent)
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct TorrentSearchResults {
+    pub title_groups: Vec<LiteTitleGroupHierachy>,
+}
+
+pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
+    let search_results = sqlx::query!(
+        r#"
+           WITH title_group_search AS (
+    SELECT
+        id AS title_group_id
+    FROM title_groups
+    WHERE to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
+),
+title_group_data AS (
+    SELECT
+        jsonb_build_object(
+            'name', tg.name,
+            'covers', tg.covers,
+            'category', tg.category,
+            'content_type', tg.content_type,
+            'tags', tg.tags,
+            'original_release_date', tg.original_release_date,
+            'affiliated_artists', COALESCE((
+                SELECT jsonb_agg(
+                    jsonb_build_object(
+                        'nickname', aa.nickname,
+                        'status', aa.status,
+                        'artist', jsonb_build_object(
+                            'id', ar.id,
+                            'name', ar.name
+                        )
+                    )
+                )
+                FROM affiliated_artists aa
+                JOIN artists ar ON aa.artist_id = ar.id
+                WHERE aa.title_group_id = tg.id
+            ), '[]'::jsonb),
+            'editions', (
+                SELECT COALESCE(jsonb_agg(
+                    jsonb_build_object(
+                        'id', eg.id,
+                        'title_group_id', eg.title_group_id,
+                        'name', eg.name,
+                        'release_date', eg.release_date,
+                        'distributor', eg.distributor,
+                        'covers', eg.covers,
+                        'source', eg.source,
+                        'additional_information', eg.additional_information,
+                        'torrents', (
+                            SELECT COALESCE(jsonb_agg(
+                                jsonb_build_object(
+                                    'id', t.id,
+                                    'edition_group_id', t.edition_group_id,
+                                    'created_at', t.created_at,
+                                    'release_name', t.release_name,
+                                    'file_amount_per_type', t.file_amount_per_type,
+                                    'trumpable', t.trumpable,
+                                    'staff_checked', t.staff_checked,
+                                    'language', t.language,
+                                    'container', t.container,
+                                    'size', t.size,
+                                    'duration', t.duration,
+                                    'audio_codec', t.audio_codec,
+                                    'audio_bitrate', t.audio_bitrate,
+                                    'audio_bitrate_sampling', t.audio_bitrate_sampling,
+                                    'audio_channels', t.audio_channels,
+                                    'video_codec', t.video_codec,
+                                    'features', t.features,
+                                    'subtitle_languages', t.subtitle_languages,
+                                    'video_resolution', t.video_resolution
+                                )
+                            ), '[]'::jsonb)
+                            FROM torrents t
+                            WHERE t.edition_group_id = eg.id
+                        )
+                    )
+                ), '[]'::jsonb)
+                FROM edition_groups eg
+                WHERE eg.title_group_id = tg.id
+            )
+        ) AS lite_title_group
+    FROM title_groups tg
+    WHERE tg.id IN (SELECT title_group_id FROM title_group_search)
+)
+SELECT jsonb_agg(lite_title_group) AS title_groups
+FROM title_group_data;
+        "#,
+        torrent_search.title_group_name
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|error| Error::ErrorSearchingForTorrents(error.to_string()))?;
+
+    Ok(serde_json::json!({"title_groups": search_results.title_groups}))
 }

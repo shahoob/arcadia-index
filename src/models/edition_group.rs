@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
 
+use super::torrent::LiteTorrent;
+
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
 pub enum Source {
@@ -65,4 +67,17 @@ pub struct UserCreatedEditionGroup {
     // one of them should be given
     pub title_group_id: Option<i64>,
     // pub title_group: Option<UserCreatedTitleGroup>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct LiteEditionGroupHierachy {
+    pub id: i64,
+    pub title_group_id: i64,
+    pub name: String,
+    pub release_date: NaiveDateTime,
+    pub distributor: Option<String>,
+    pub covers: Vec<String>,
+    pub source: Source,
+    pub additional_information: Option<Json<Value>>,
+    pub torrents: Vec<LiteTorrent>,
 }
