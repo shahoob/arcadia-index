@@ -57,7 +57,7 @@
         {{ getEditionGroupSlug(slotProps.data.edition_group_id) }}
       </div>
     </template>
-    <template #expansion="slotProps">
+    <template #expansion="slotProps" v-if="!preview">
       <Accordion :value="[]" multiple class="dense-accordion">
         <AccordionPanel value="0">
           <AccordionHeader>Mediainfo</AccordionHeader>
@@ -113,6 +113,7 @@ export default {
   components: { DataTable, Column, AccordionPanel, AccordionHeader, AccordionContent, Accordion },
   props: {
     title_group: {},
+    preview: { default: false },
   },
   data() {
     return { expandedRows: [] }
