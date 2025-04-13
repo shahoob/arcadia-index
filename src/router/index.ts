@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('../views/TitleGroupView.vue'),
     },
     {
+      path: '/torrents',
+      name: 'Torrents',
+      component: () => import('../views/TorrentSearchView.vue'),
+    },
+    {
       path: '/series',
       name: 'Series',
       component: () => import('../views/SeriesView.vue'),

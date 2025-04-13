@@ -18,6 +18,7 @@
           class="table"
           :title_group="title_group"
           :edition_groups="title_group.edition_groups"
+          :preview="true"
         />
       </div>
     </div>
