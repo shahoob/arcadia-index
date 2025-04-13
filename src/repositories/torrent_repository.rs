@@ -186,9 +186,13 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
         r#"
            WITH title_group_search AS (
     SELECT
-        id AS title_group_id
+        id AS title_group_id,
+        CASE
+            WHEN $1 = '' THEN NULL
+            ELSE ts_rank_cd(to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')), plainto_tsquery('simple', $1))
+        END AS relevance
     FROM title_groups
-    WHERE to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
+    WHERE $1 = '' OR to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
 ),
 title_group_data AS (
     SELECT
@@ -202,12 +206,8 @@ title_group_data AS (
             'affiliated_artists', COALESCE((
                 SELECT jsonb_agg(
                     jsonb_build_object(
-                        'nickname', aa.nickname,
-                        'status', aa.status,
-                        'artist', jsonb_build_object(
-                            'id', ar.id,
-                            'name', ar.name
-                        )
+                        'id', ar.id,
+                        'name', ar.name
                     )
                 )
                 FROM affiliated_artists aa
@@ -257,11 +257,15 @@ title_group_data AS (
                 FROM edition_groups eg
                 WHERE eg.title_group_id = tg.id
             )
-        ) AS lite_title_group
+        ) AS lite_title_group,
+        CASE
+            WHEN $1 = '' THEN EXTRACT(EPOCH FROM tg.created_at)
+            ELSE tgs.relevance
+        END AS sort_order
     FROM title_groups tg
-    WHERE tg.id IN (SELECT title_group_id FROM title_group_search)
+    JOIN title_group_search tgs ON tg.id = tgs.title_group_id
 )
-SELECT jsonb_agg(lite_title_group) AS title_groups
+SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
 FROM title_group_data;
         "#,
         torrent_search.title_group_name
