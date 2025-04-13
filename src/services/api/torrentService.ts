@@ -52,3 +52,23 @@ export const uploadTorrent = async (torrentForm: object) => {
     throw error
   }
 }
+export const downloadTorrent = async (torrentId: Number | string) => {
+  try {
+    const response = await api.get('/torrent?id=' + torrentId, {
+      responseType: 'blob',
+    })
+
+    const blob = response.data
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${torrentId}.torrent`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}
