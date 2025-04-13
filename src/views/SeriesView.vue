@@ -85,8 +85,6 @@ export default {
 </style>
 <style>
 #series-view .series-covers img {
-  max-width: 30em;
-  max-height: 30em;
   border-radius: 7px;
 }
 </style>

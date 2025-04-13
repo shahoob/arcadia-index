@@ -1,5 +1,5 @@
 <template>
-  <ContentContainer class="header-wrapper">
+  <ContentContainer id="series-full-header" class="header-wrapper">
     <div class="header">
       <Image class="series-covers" :src="series.covers[0]" preview>
         <template #previewicon>
@@ -39,7 +39,7 @@ export default {
 }
 </style>
 <style>
-#series-view .series-covers img {
+#series-full-header .series-covers img {
   max-width: 30em;
   max-height: 30em;
   border-radius: 7px;

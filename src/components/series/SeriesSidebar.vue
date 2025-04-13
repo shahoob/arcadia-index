@@ -5,7 +5,7 @@
         <i class="pi pi-search"></i>
       </template>
     </Image>
-    <ContentContainer class="header-wrapper">
+    <ContentContainer class="header-wrapper" container-title="Description">
       <div class="description">{{ series.description }}</div>
     </ContentContainer>
   </div>
