@@ -116,6 +116,9 @@ pub enum Error {
     #[error("could not save torrent file in path: '{0}'\n'{1}'")]
     CouldNotSaveTorrentFile(String, String),
 
+    #[error("error while searching for torrents: '{0}'")]
+    ErrorSearchingForTorrents(String),
+
     #[error("unexpected third party response")]
     UnexpectedThirdPartyResponse(#[from] reqwest::Error),
 }

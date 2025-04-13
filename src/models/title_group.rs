@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
 
+use super::edition_group::LiteEditionGroupHierachy;
+
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
 #[sqlx(type_name = "content_type_enum")]
 pub enum ContentType {
@@ -129,6 +131,18 @@ pub struct UserCreatedTitleGroup {
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i64>,
     // pub master_group: Option<UserCreatedMasterGroup>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct LiteTitleGroupHierachy {
+    pub name: String,
+    pub covers: Option<Vec<String>>,
+    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,  // movies, tv shows, books, games, etc
+    pub tags: Vec<String>,
+    pub original_release_date: NaiveDateTime,
+    pub affiliated_artists: Vec<Json<Value>>,
+    pub editions: Vec<LiteEditionGroupHierachy>,
 }
 
 pub fn create_default_title_group() -> UserCreatedTitleGroup {

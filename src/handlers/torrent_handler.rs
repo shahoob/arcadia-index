@@ -6,8 +6,11 @@ use utoipa::{IntoParams, ToSchema};
 
 use crate::{
     Arcadia, Error, Result,
-    models::{torrent::UploadedTorrent, user::User},
-    repositories::torrent_repository::create_torrent,
+    models::{
+        torrent::{TorrentSearch, UploadedTorrent},
+        user::User,
+    },
+    repositories::torrent_repository::{create_torrent, search_torrents},
 };
 
 pub async fn upload_torrent(
@@ -63,4 +66,20 @@ pub async fn download_dottorrent_file(
     }
 
     actix_files::NamedFile::open(&file_path).map_err(|_| Error::DottorrentFileNotFound)
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/search/torrent",
+    responses(
+        (status = 200, description = "Title groups and their torrents found"),
+    )
+)]
+pub async fn find_torrents(
+    form: web::Json<TorrentSearch>,
+    arc: web::Data<Arcadia>,
+) -> Result<HttpResponse> {
+    let search_results = search_torrents(&arc.pool, &form).await?;
+
+    Ok(HttpResponse::Ok().json(search_results))
 }
