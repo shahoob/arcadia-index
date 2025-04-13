@@ -5,10 +5,12 @@ use crate::{
         user::User,
     },
 };
+
 use bip_metainfo::Metainfo;
+use reqwest::Url;
 use serde_json::json;
 use sqlx::PgPool;
-use std::str::FromStr;
+use std::{fs, path::PathBuf, str::FromStr};
 
 use super::notification_repository::notify_users;
 
@@ -22,6 +24,8 @@ pub async fn create_torrent(
     pool: &PgPool,
     torrent_form: &UploadedTorrent,
     current_user: &User,
+    frontend_url: &Url,
+    dottorrent_files_path: &PathBuf,
 ) -> Result<Torrent> {
     let create_torrent_query = r#"
     INSERT INTO torrents (
@@ -131,8 +135,6 @@ pub async fn create_torrent(
         .await
         .map_err(Error::CouldNotCreateTorrent)?;
 
-    // TODO: edit the torrent file with proper flags, remove announce url and store it to the disk
-
     let title_group_info = sqlx::query_as!(
         LiteTitleGroupInfo,
         r#"
@@ -145,6 +147,17 @@ pub async fn create_torrent(
     )
     .fetch_one(pool)
     .await?;
+
+    //TODO: edit torrent file : remove announce url, add comment with torrent url, etc.
+    let output_path = format!(
+        "{}",
+        dottorrent_files_path
+            .join(format!("{}{}", uploaded_torrent.id, ".torrent"))
+            .to_str()
+            .unwrap()
+    );
+    fs::write(&output_path, &torrent_form.torrent_file.data)
+        .map_err(|error| Error::CouldNotSaveTorrentFile(output_path, error.to_string()))?;
 
     let _ = notify_users(
         pool,

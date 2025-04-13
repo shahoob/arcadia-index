@@ -6,9 +6,10 @@ mod routes;
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web::Data};
 use dotenv;
+use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
-use std::env;
+use std::{env, path::PathBuf, str::FromStr};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -37,6 +38,12 @@ async fn main() -> std::io::Result<()> {
         OpenSignups::Disabled
     };
 
+    let dottorrent_files_path = env::var("ARCADIA_DOTTORRENT_FILES_PATH")
+        .expect("ARCADIA_DOTTORRENT_FILES_PATH env var is not set");
+
+    let frontend_url =
+        env::var("ARCADIA_FRONTEND_URL").expect("ARCADIA_FRONTEND_URL env var is not set");
+
     HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
@@ -44,7 +51,10 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .app_data(Data::new(Arcadia {
                 pool: pool.clone(),
-                open_signups,
+                open_signups: open_signups,
+                dottorrent_files_path: PathBuf::from(&dottorrent_files_path),
+                frontend_url: Url::from_str(&frontend_url)
+                    .expect("ARCADIA_FRONTEND_URL env var malformed"),
             }))
             .configure(init) // Initialize routes
             .service(
