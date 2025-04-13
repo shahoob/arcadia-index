@@ -23,10 +23,15 @@
       </template>
     </Column>
     <Column header="">
-      <template #body>
-        <i class="action pi pi-download" /> <i class="action pi pi-flag" />
-        <i class="action pi pi-link" />
-        <i class="action pi pi-pen-to-square" />
+      <template #body="slotProps">
+        <i
+          v-tooltip.top="'Download'"
+          class="action pi pi-download"
+          @click="downloadTorrent(slotProps.data.id)"
+        />
+        <i v-tooltip.top="'Report'" class="action pi pi-flag" />
+        <i v-tooltip.top="'Copy permalink'" class="action pi pi-link" />
+        <i v-tooltip.top="'Edit'" class="action pi pi-pen-to-square" />
       </template>
     </Column>
     <Column header="Size">
@@ -102,6 +107,7 @@ import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
+import { downloadTorrent } from '@/services/api/torrentService'
 
 export default {
   components: { DataTable, Column, AccordionPanel, AccordionHeader, AccordionContent, Accordion },
@@ -120,6 +126,9 @@ export default {
     },
     purifyHtml(html: string) {
       return DOMPurify.sanitize(html)
+    },
+    downloadTorrent(torrentId: Number) {
+      downloadTorrent(torrentId)
     },
   },
   computed: {
@@ -144,6 +153,7 @@ export default {
 }
 .action {
   margin-right: 7px;
+  cursor: pointer;
 }
 .mediainfo {
   border: 2px dotted black;
