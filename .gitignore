@@ -1,4 +1,4 @@
 target/
 docker/volumes/
 
-.env.local
+.env
