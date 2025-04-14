@@ -65,6 +65,8 @@ pub struct User {
     pub invitations: i16,
     pub bonus_points: i64,
     pub settings: serde_json::Value,
+    pub passkey_upper: i64,
+    pub passkey_lower: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]

@@ -12,6 +12,7 @@ use argon2::{
 };
 use futures::future::BoxFuture;
 use jsonwebtoken::{DecodingKey, Validation, decode};
+use rand::Rng;
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 use std::env;
 
@@ -23,17 +24,26 @@ pub async fn create_user(
     invitation: &Invitation,
     open_signups: &bool,
 ) -> Result<User> {
+    let mut rng = rand::rng();
+
+    let passkey = rng.random::<u128>();
+
+    let passkey_upper = (passkey >> 64) as i64;
+    let passkey_lower = passkey as i64;
+
     let registered_user = sqlx::query_as!(
         User,
         r#"
-            INSERT INTO users (username, email, password_hash, registered_from_ip)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO users (username, email, password_hash, registered_from_ip, passkey_upper, passkey_lower)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *
         "#,
         &user.username,
         &user.email,
         password_hash,
-        from_ip
+        from_ip,
+        passkey_upper,
+        passkey_lower
     )
     .fetch_one(pool)
     .await
