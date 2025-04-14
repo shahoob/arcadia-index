@@ -28,13 +28,16 @@ import FloatLabel from 'primevue/floatlabel'
 import Button from 'primevue/button'
 export default {
   components: { ContentContainer, Button, InputText, FloatLabel },
-  props: { loading: { default: false } },
+  props: { loading: { default: false }, initialTitleGroupName: {} },
   data() {
     return {
       searchForm: {
         title_group_name: '',
       },
     }
+  },
+  created() {
+    this.searchForm.title_group_name = this.initialTitleGroupName
   },
 }
 </script>
