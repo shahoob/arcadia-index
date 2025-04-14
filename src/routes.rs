@@ -56,7 +56,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/series", web::get().to(get_series))
             .route("/torrent-request", web::post().to(add_torrent_request))
             .route(
-                "/torrent-request-vote",
+                "/torrent-request/vote",
                 web::post().to(add_torrent_request_vote),
             )
             .route("/subscription", web::post().to(add_subscription))

@@ -1,11 +1,13 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
+use utoipa::ToSchema;
 
-#[derive(Debug, Deserialize, Serialize, FromRow)]
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct Artist {
     pub id: i64,
     pub name: String,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
     pub created_by_id: i64,
     pub description: String,
@@ -24,7 +26,7 @@ pub struct SimilarArtists {
     pub artist_2_id: i64,
 }
 
-#[derive(Debug, Deserialize, FromRow)]
+#[derive(Debug, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedArtist {
     pub name: String,
     pub description: String,
