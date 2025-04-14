@@ -1,6 +1,7 @@
 use actix_web::web;
 
 use crate::handlers::{
+    announce_handler::handle_announce,
     artist_handler::{
         add_affiliated_artists, add_artist, get_artist_publications, get_artists_lite,
     },
@@ -24,7 +25,7 @@ use crate::handlers::{
 };
 
 pub fn init(cfg: &mut web::ServiceConfig) {
-    cfg.service(
+    cfg.service(handle_announce).service(
         web::scope("/api")
             .route("/register", web::post().to(register))
             .route("/login", web::post().to(login))

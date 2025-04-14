@@ -36,18 +36,17 @@ pub async fn create_torrent(
         file_list, mediainfo, trumpable, staff_checked, size,
         duration, audio_codec, audio_bitrate, audio_bitrate_sampling,
         audio_channels, video_codec, features, subtitle_languages, video_resolution, container,
-        language
+        language, info_hash
     ) VALUES (
         $1, $2, $3, 
         $4, $5, $6, $7, 
         $8, $9, $10, $11, $12,
         $13, $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
-        $17, $18::video_codec_enum, $19::features_enum[], $20, $21, $22, $23
+        $17, $18::video_codec_enum, $19::features_enum[], $20, $21, $22, $23, $24::bytea
     ) RETURNING *;
     "#;
 
-    let metainfo =
-        Metainfo::from_bytes::<Vec<u8>>(torrent_form.torrent_file.data.clone().into()).unwrap();
+    let metainfo = Metainfo::from_bytes(&torrent_form.torrent_file.data).unwrap();
     // let file_list = metainfo
     //     .info()
     //     .files()
@@ -132,6 +131,7 @@ pub async fn create_torrent(
         .bind(torrent_form.video_resolution.as_deref())
         .bind(&*torrent_form.container)
         .bind(torrent_form.language.as_deref())
+        .bind(info.info_hash().as_ref())
         .fetch_one(pool)
         .await
         .map_err(Error::CouldNotCreateTorrent)?;
