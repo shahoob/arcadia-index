@@ -60,6 +60,13 @@ a{
   overflow-wrap: break-word !important;
 }
 
+.bold{
+  font-weight: bold;
+}
+.warning{
+  color: rgb(213, 128, 31);
+}
+
 .line {
   display: flex;
   align-items: flex-start;
