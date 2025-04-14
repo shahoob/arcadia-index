@@ -1,5 +1,10 @@
 <template>
   <Menubar :model="menuItems" class="p-menubar">
+    <template #item="slotProps">
+      <a :href="slotProps.item.route">
+        <Button severity="secondary" :label="slotProps.item.label" size="small" />
+      </a>
+    </template>
     <template #end>
       <Button icon="pi pi-moon" @click="toggleDarkMode()" />
     </template>
@@ -15,7 +20,7 @@ export default {
   components: { Menubar, Button },
   setup() {
     const menuItems = ref([
-      { label: 'Torrents' },
+      { label: 'Torrents', route: '/torrents' },
       { label: 'Collages' },
       { label: 'Requests' },
       { label: 'Forums' },
