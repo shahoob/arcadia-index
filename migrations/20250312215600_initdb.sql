@@ -31,7 +31,11 @@ CREATE TABLE users (
     invited BIGINT NOT NULL DEFAULT 0,
     invitations SMALLINT NOT NULL DEFAULT 0,
     bonus_points BIGINT NOT NULL DEFAULT 0,
-    settings JSONB NOT NULL
+    settings JSONB NOT NULL DEFAULT '{}',
+    passkey_upper BIGINT NOT NULL,
+    passkey_lower BIGINT NOT NULL,
+
+    UNIQUE(passkey_upper, passkey_lower)
 );
 CREATE TABLE invitations (
     id BIGSERIAL PRIMARY KEY,
