@@ -13,6 +13,7 @@
 </template>
 
 <script lang="ts">
+import { useRouter } from 'vue-router'
 import AppNavbar from './components/AppNavbar.vue'
 import { useUserStore } from './stores/user'
 
@@ -31,6 +32,9 @@ const user = localStorage.getItem('user')
 if (user) {
   const userStore = useUserStore()
   userStore.setUser(JSON.parse(user))
+} else {
+  const router = useRouter()
+  router.push('/login')
 }
 </script>
 
