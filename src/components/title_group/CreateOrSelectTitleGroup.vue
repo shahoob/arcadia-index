@@ -217,6 +217,7 @@ export default {
         this.gettingTitleGroupInfo = false
       } else {
         this.sendingTitleGroup = true
+        titleGroupForm.content_type = this.content_type
         const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
         formattedTitleGroupForm.tags =
           formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
