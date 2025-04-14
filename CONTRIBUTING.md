@@ -13,7 +13,7 @@ It (will) also contain some scripts that are meant to be run on a regular basis 
 - [insomnia](https://github.com/Kong/insomnia/)
 
 ### Env
-Copy `.env` to `.env.local`
+Copy `.env.example` to `.env`
 
 ### Database
 
@@ -24,14 +24,14 @@ The recommended method is using docker:
 docker-compose -f docker/postgres.yml up -d
 ```
 
-The database schema is created in a migration file `migrations/*_initdb.sql`. It can be ran manually, or with sqlx-cli : `sqlx migrate run`. This command will establish a connection to the database with the details given in `.env.local` and run the SQL code in the migration file.
+The database schema is created in a migration file `migrations/*_initdb.sql`. It can be ran manually, or with sqlx-cli : `sqlx migrate run`. This command will establish a connection to the database with the details given in `.env` and run the SQL code in the migration file.
 
-You can optionally add "fake" data to the databse by running the `fixtures.sql` file in the migrations directory. This allows to quickly have data to work with.
+You can optionally add "fake" data to the database by running the `fixtures.sql` file in the migrations/fixtures directory. This allows to quickly have data to work with.
 
 Here is how to insert them if you are using docker :
 
 ```
-docker exec -i arcadia_db psql -U arcadia -d arcadia < fixtures.sql
+docker exec -i arcadia_db psql -U arcadia -d arcadia < migrations/fixtures/fixtures.sql
 ```
 
 The default user is :

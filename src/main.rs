@@ -5,7 +5,7 @@ mod routes;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web::Data};
-use dotenv;
+use dotenvy;
 use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
@@ -17,7 +17,7 @@ use arcadia_index::{Arcadia, Error, OpenSignups, Result, api_doc::ApiDoc};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    dotenv::from_filename(".env.local").ok();
+    dotenvy::dotenv().expect("Failed to load .env");
 
     env_logger::init_from_env(env_logger::Env::default().default_filter_or("debug"));
 
