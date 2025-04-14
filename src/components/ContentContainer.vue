@@ -18,7 +18,7 @@ export default {
 .content-container {
   padding: 12px;
   border-radius: 10px;
-  background-color: rgb(29, 29, 29);
+  background-color: var(--color-background-secondary);
   display: block !important;
 }
 .title {

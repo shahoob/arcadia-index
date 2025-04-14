@@ -1,23 +1,17 @@
 <template>
-  <Menubar :model="menuItems" class="p-menubar">
-    <template #item="slotProps">
-      <a :href="slotProps.item.route">
-        <Button severity="secondary" :label="slotProps.item.label" size="small" />
-      </a>
-    </template>
-    <template #end>
-      <Button icon="pi pi-moon" @click="toggleDarkMode()" />
-    </template>
-  </Menubar>
+  <div class="menu-bar">
+    <a v-for="item in menuItems" :key="item.label" class="item" :href="item.route">
+      <Button severity="secondary" :label="item.label" size="small" />
+    </a>
+  </div>
 </template>
 
 <script lang="ts">
 import { ref } from 'vue'
-import Menubar from 'primevue/menubar'
 import { Button } from 'primevue'
 
 export default {
-  components: { Menubar, Button },
+  components: { Button },
   setup() {
     const menuItems = ref([
       { label: 'Torrents', route: '/torrents' },
@@ -41,9 +35,11 @@ export default {
 </script>
 
 <style scoped>
-.p-menubar {
-  background-color: #181818;
-  color: white;
-  border: none;
+.menu-bar {
+  display: flex;
+  justify-content: center;
+}
+.item {
+  margin: 0px 7px;
 }
 </style>

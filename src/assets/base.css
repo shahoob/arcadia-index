@@ -27,6 +27,7 @@
   --color-primary: #5fe1ab;
   --color-secondary: rgb(135, 110, 208);
   --color-background-primary: #2f2f2f;
+  --color-background-secondary: rgb(29, 29, 29);
 
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);

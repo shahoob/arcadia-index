@@ -1,10 +1,12 @@
 <template>
   <div id="app-container">
     <div
-      class="navbar-container"
+      class="navbars-container"
       v-if="['/login', '/register'].indexOf($router.currentRoute.value.path) < 0"
     >
-      <AppNavbar />
+      <TopBar />
+      <MenuBar class="menu-bar" />
+      <SearchBars class="search-bars" />
     </div>
     <div id="view-container">
       <router-view></router-view>
@@ -14,13 +16,17 @@
 
 <script lang="ts">
 import { useRouter } from 'vue-router'
-import AppNavbar from './components/AppNavbar.vue'
+import MenuBar from './components/MenuBar.vue'
+import TopBar from './components/TopBar.vue'
+import SearchBars from './components/SearchBars.vue'
 import { useUserStore } from './stores/user'
 
 export default {
   name: 'App',
   components: {
-    AppNavbar,
+    MenuBar,
+    TopBar,
+    SearchBars,
   },
 }
 </script>
@@ -39,9 +45,13 @@ if (user) {
 </script>
 
 <style>
-/* Navbar Container */
-.navbar-container {
-  width: 80%;
+.navbars-container {
+  width: 100%;
+}
+.menu-bar {
+  margin-top: 10px;
+}
+.search-bars {
   margin-top: 10px;
   margin-bottom: 20px;
 }

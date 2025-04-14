@@ -1,6 +1,11 @@
 <template>
   <div v-if="search_results">
-    <TorrentSearchInputs class="torrent-search-inputs" @search="search" :loading />
+    <TorrentSearchInputs
+      class="torrent-search-inputs"
+      @search="search"
+      :loading
+      :initialTitleGroupName
+    />
     <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
       <div class="title-groups">
         <TitleGroupPreviewCoverOnly
@@ -38,6 +43,7 @@ export default {
       search_results: null,
       title_group_preview_mode: 'table', // TODO: make a select button to switch from cover-only to table
       loading: false,
+      initialTitleGroupName: '',
     }
   },
   methods: {
@@ -50,7 +56,8 @@ export default {
     },
   },
   created() {
-    this.search({ title_group_name: '' })
+    this.initialTitleGroupName = this.$route.query.title_group_name ?? ''
+    this.search({ title_group_name: this.initialTitleGroupName })
   },
 }
 </script>
