@@ -197,6 +197,7 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
 title_group_data AS (
     SELECT
         jsonb_build_object(
+            'id', tg.id,
             'name', tg.name,
             'covers', tg.covers,
             'category', tg.category,
@@ -214,7 +215,7 @@ title_group_data AS (
                 JOIN artists ar ON aa.artist_id = ar.id
                 WHERE aa.title_group_id = tg.id
             ), '[]'::jsonb),
-            'editions', (
+            'edition_groups', (
                 SELECT COALESCE(jsonb_agg(
                     jsonb_build_object(
                         'id', eg.id,
