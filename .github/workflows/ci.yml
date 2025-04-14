@@ -27,3 +27,9 @@ jobs:
 
     - name: Run tests
       run: cargo test
+
+    - name: install sqlx
+      run: cargo install sqlx-cli
+
+    - name: Ensure schema and query metadata are in sync
+      run: cargo sqlx prepare --check
