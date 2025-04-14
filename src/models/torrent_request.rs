@@ -1,14 +1,17 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
+use utoipa::ToSchema;
 
 use super::torrent::{AudioCodec, Features, VideoCodec};
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentRequest {
     pub id: i64,
     pub title_group_id: i64,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
+    #[schema(value_type = String, format = DateTime)]
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     pub edition_name: Option<String>,
@@ -28,7 +31,7 @@ pub struct TorrentRequest {
     pub subtitle_languages: Option<Vec<String>>,
     pub video_resolution: Option<String>, // ---- video
 }
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedTorrentRequest {
     pub title_group_id: i64,
     pub edition_name: Option<String>,

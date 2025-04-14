@@ -1,6 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
+use utoipa::ToSchema;
 
 // TODO: This is a temporary doc, move it to a proper documentation when made
 // MasterGroups are optional depending on the type of content
@@ -15,12 +16,14 @@ use sqlx::prelude::FromRow;
 // this is a form of denormalization, but as torrents should not change groups (unless a rare edit), it might be a good consideration
 //
 // or adding some sort of cache/search engine on top, that has the data deserialized
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct MasterGroup {
     pub id: i64,
     pub name: Option<String>,
     // pub name_aliases: Vec<String>,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
+    #[schema(value_type = String, format = DateTime)]
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     // pub description: String,
@@ -39,7 +42,7 @@ pub struct SimilarMasterGroups {
     pub group_2_id: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedMasterGroup {
     pub name: Option<String>,
     // pub name_aliases: Vec<String>,

@@ -5,9 +5,9 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
-use utoipa::{ToResponse, ToSchema};
+use utoipa::ToSchema;
 
-#[derive(Debug, Deserialize, Serialize, sqlx::Type)]
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_codec_enum")]
 #[sqlx(rename_all = "lowercase")]
 pub enum AudioCodec {
@@ -24,7 +24,7 @@ pub enum AudioCodec {
     Dsd,
 }
 
-#[derive(Debug, Deserialize, Serialize, sqlx::Type)]
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_bitrate_sampling_enum")]
 pub enum AudioBitrateSampling {
     #[sqlx(rename = "192")]
@@ -57,7 +57,7 @@ pub enum AudioBitrateSampling {
     Other,
 }
 
-#[derive(Debug, Deserialize, Serialize, sqlx::Type)]
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "video_codec_enum")]
 pub enum VideoCodec {
     #[sqlx(rename = "mpeg1")]
@@ -79,7 +79,7 @@ pub enum VideoCodec {
     UHD100,
 }
 
-#[derive(Debug, Deserialize, Serialize, sqlx::Type)]
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "features_enum")]
 pub enum Features {
     HDR,
@@ -106,18 +106,22 @@ impl FromStr for Features {
     }
 }
 
-#[derive(Debug, Serialize, FromRow)]
+#[derive(Debug, Serialize, FromRow, ToSchema)]
 pub struct Torrent {
     pub id: i64,
     pub edition_group_id: i64,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
+    #[schema(value_type = String, format = DateTime)]
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     pub release_name: Option<String>,
     pub release_group: String,
-    pub description: Option<String>,       // specific to the torrent
+    pub description: Option<String>, // specific to the torrent
+    #[schema(value_type = Value)]
     pub file_amount_per_type: Json<Value>, // (5 mp3, 1 log, 5 jpg, etc.)
     pub uploaded_as_anonymous: bool,
+    #[schema(value_type = Value)]
     pub file_list: Json<Value>,
     pub mediainfo: String,
     pub trumpable: Option<String>, // description of why it is trumpable
@@ -139,30 +143,48 @@ pub struct Torrent {
     pub video_resolution: Option<String>, // ---- video
 }
 
-#[derive(Debug, MultipartForm, FromRow)]
+#[derive(Debug, MultipartForm, FromRow, ToSchema)]
 pub struct UploadedTorrent {
+    #[schema(value_type = String)]
     pub release_name: Text<String>,
+    #[schema(value_type = String)]
     pub release_group: Text<String>,
+    #[schema(value_type = String)]
     pub description: Option<Text<String>>, // specific to the torrent
+    #[schema(value_type = bool)]
     pub uploaded_as_anonymous: Text<bool>,
+    #[schema(value_type = String)]
     pub mediainfo: Text<String>,
+    #[schema(value_type = String, format = Binary, content_media_type = "application/octet-stream")]
     pub torrent_file: Bytes,
+    #[schema(value_type = String)]
     pub language: Option<Text<String>>, // (fallback to original language) (english, french, etc.)
+    #[schema(value_type = String)]
     pub container: Text<String>,
     // one of them should be given
+    #[schema(value_type = i64)]
     pub edition_group_id: Text<i64>,
     // pub edition_group: Option<UserCreatedEditionGroup>,
     // ---- audio
+    #[schema(value_type = i32)]
     pub duration: Option<Text<i32>>, // in seconds
+    #[schema(value_type = AudioCodec)]
     pub audio_codec: Option<Text<AudioCodec>>,
+    #[schema(value_type = i32)]
     pub audio_bitrate: Option<Text<i32>>, // in kb/s
+    #[schema(value_type = String)]
     pub audio_channels: Option<Text<String>>,
+    #[schema(value_type = AudioBitrateSampling)]
     pub audio_bitrate_sampling: Option<Text<AudioBitrateSampling>>,
     // ---- audio
     // ---- video
+    #[schema(value_type = VideoCodec)]
     pub video_codec: Option<Text<VideoCodec>>,
+    #[schema(value_type = String)]
     pub features: Text<String>,
+    #[schema(value_type = String)]
     pub subtitle_languages: Text<String>,
+    #[schema(value_type = String)]
     pub video_resolution: Option<Text<String>>, // ---- video
 }
 

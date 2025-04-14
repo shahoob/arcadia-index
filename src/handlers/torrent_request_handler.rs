@@ -1,10 +1,20 @@
 use crate::{
     Arcadia, Result,
-    models::{torrent_request::UserCreatedTorrentRequest, user::User},
+    models::{
+        torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
+        user::User,
+    },
     repositories::torrent_request_repository::create_torrent_request,
 };
 use actix_web::{HttpResponse, web};
 
+#[utoipa::path(
+    post,
+    path = "/api/torrent-request",
+    responses(
+        (status = 200, description = "Successfully created the torrent_request", body=TorrentRequest),
+    )
+)]
 pub async fn add_torrent_request(
     torrent_request: web::Json<UserCreatedTorrentRequest>,
     arc: web::Data<Arcadia>,

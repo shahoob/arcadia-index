@@ -1,6 +1,10 @@
 use crate::{
     Arcadia, Result,
-    models::{artist::UserCreatedArtist, title_group::UserCreatedAffiliatedArtist, user::User},
+    models::{
+        artist::{Artist, UserCreatedArtist},
+        title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
+        user::User,
+    },
     repositories::artist_repository::{
         create_artist, create_artists_affiliation, find_artist_publications,
     },
@@ -9,6 +13,13 @@ use actix_web::{HttpResponse, web};
 use serde::Deserialize;
 use utoipa::{IntoParams, ToSchema};
 
+#[utoipa::path(
+    post,
+    path = "/api/artist",
+    responses(
+        (status = 200, description = "Successfully created the artist", body=Artist),
+    )
+)]
 pub async fn add_artist(
     artist: web::Json<UserCreatedArtist>,
     arc: web::Data<Arcadia>,
@@ -19,6 +30,13 @@ pub async fn add_artist(
     Ok(HttpResponse::Created().json(artist))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/affiliated-artists",
+    responses(
+        (status = 200, description = "Successfully created the artist affiliations", body=Vec<AffiliatedArtist>),
+    )
+)]
 pub async fn add_affiliated_artists(
     artists: web::Json<Vec<UserCreatedAffiliatedArtist>>,
     arc: web::Data<Arcadia>,

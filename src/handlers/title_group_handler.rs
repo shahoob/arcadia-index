@@ -1,14 +1,25 @@
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
+use utoipa::IntoParams;
 
 use crate::{
     Arcadia, Result,
-    models::{title_group::UserCreatedTitleGroup, user::User},
+    models::{
+        title_group::{TitleGroup, UserCreatedTitleGroup},
+        user::User,
+    },
     repositories::title_group_repository::{
         create_title_group, find_lite_title_group_info, find_title_group,
     },
 };
 
+#[utoipa::path(
+    post,
+    path = "/api/title-group",
+    responses(
+        (status = 200, description = "Successfully created the title_group", body=TitleGroup),
+    )
+)]
 pub async fn add_title_group(
     form: web::Json<UserCreatedTitleGroup>,
     arc: web::Data<Arcadia>,
@@ -19,11 +30,19 @@ pub async fn add_title_group(
     Ok(HttpResponse::Created().json(title_group))
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, IntoParams)]
 pub struct GetTitleGroupQuery {
     id: i64,
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/title-group",
+    params(GetTitleGroupQuery),
+    responses(
+        (status = 200, description = "Successfully got the title_group"),
+    )
+)]
 pub async fn get_title_group(
     arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupQuery>,
@@ -36,6 +55,14 @@ pub async fn get_title_group(
 
 pub type GetLiteTitleGroupInfoQuery = GetTitleGroupQuery;
 
+#[utoipa::path(
+    get,
+    path = "/api/title-group/lite",
+    params(GetLiteTitleGroupInfoQuery),
+    responses(
+        (status = 200, description = "Successfully got the title_group (lite info)"),
+    )
+)]
 pub async fn get_lite_title_group_info(
     arc: web::Data<Arcadia>,
     query: web::Query<GetLiteTitleGroupInfoQuery>,

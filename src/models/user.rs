@@ -28,20 +28,23 @@ use utoipa::ToSchema;
 //     pub site_appearance: SiteAppearanceSettings,
 // }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct User {
     pub id: i64,
     pub username: String,
     pub avatar: Option<String>,
     pub email: String,
     pub password_hash: String,
+    #[schema(value_type = String, format = "0.0.0.0")]
     pub registered_from_ip: IpNetwork,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
     pub downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
+    #[schema(value_type = String, format = DateTime)]
     pub last_seen: NaiveDateTime,
     pub class: String,
     pub forum_posts: i32,
@@ -85,17 +88,19 @@ pub struct Claims {
     pub exp: usize,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct PublicUser {
     pub id: i64,
     pub username: String,
     pub avatar: Option<String>,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
     pub downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
+    #[schema(value_type = String, format = DateTime)]
     pub last_seen: NaiveDateTime,
     pub class: String,
     pub forum_posts: i32,

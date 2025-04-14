@@ -2,7 +2,7 @@ use crate::{
     Arcadia, Error, Result,
     models::{
         invitation::Invitation,
-        user::{Claims, Login, Register},
+        user::{Claims, Login, Register, User},
     },
     repositories::{
         auth_repository::{create_user, find_user_with_password},
@@ -31,7 +31,7 @@ pub struct RegisterQuery {
     post,
     path = "/api/register",
     responses(
-        (status = 200, description = "Successfully registered the user", body = Register),
+        (status = 200, description = "Successfully registered the user", body = User),
     )
 )]
 pub async fn register(
@@ -91,7 +91,7 @@ pub async fn register(
     post,
     path = "/api/login",
     responses(
-        (status = 200, description = "Successfully logged in", body = Login),
+        (status = 200, description = "Successfully logged in"),
     )
 )]
 pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Result<HttpResponse> {
