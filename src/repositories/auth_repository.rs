@@ -31,17 +31,20 @@ pub async fn create_user(
     let passkey_upper = (passkey >> 64) as i64;
     let passkey_lower = passkey as i64;
 
+    let settings = serde_json::json!({"site_appearance":{"item_detail_layout": "sidebar_right"}});
+
     let registered_user = sqlx::query_as!(
         User,
         r#"
-            INSERT INTO users (username, email, password_hash, registered_from_ip, passkey_upper, passkey_lower)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO users (username, email, password_hash, registered_from_ip, settings, passkey_upper, passkey_lower)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
         "#,
         &user.username,
         &user.email,
         password_hash,
         from_ip,
+        settings,
         passkey_upper,
         passkey_lower
     )
