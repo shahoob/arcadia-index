@@ -22,7 +22,25 @@
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
-          {{ getTorrentSlug(slotProps.data) }}
+          <span v-if="slotProps.data.container">{{ slotProps.data.container }}</span>
+          <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }}</span>
+          <span v-if="slotProps.data.video_resolution">
+            / {{ slotProps.data.video_resolution }}</span
+          >
+          <span v-if="slotProps.data.audio_codec"> / {{ slotProps.data.audio_codec }}</span>
+          <span v-if="slotProps.data.audio_bitrate_sampling">
+            / {{ slotProps.data.audio_bitrate_sampling }}</span
+          >
+          <span v-if="slotProps.data.language && slotProps.data.language !== 'English'">
+            / {{ slotProps.data.language }}</span
+          >
+          <span v-for="(feature, index) in slotProps.data.features" :key="index">
+            / <span class="bold">{{ feature }}</span>
+          </span>
+          <span v-if="slotProps.data.release_group"> / {{ slotProps.data.release_group }}</span>
+          <span v-if="slotProps.data.trumpable != ''">
+            / <span class="warning">Trumpable</span></span
+          >
         </a>
       </template>
     </Column>
@@ -110,7 +128,7 @@
 <script lang="ts">
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { timeAgo, bytesToReadable, getEditionGroupSlug, getTorrentSlug } from '@/services/helpers'
+import { timeAgo, bytesToReadable, getEditionGroupSlug } from '@/services/helpers'
 import DOMPurify from 'dompurify'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
@@ -163,11 +181,6 @@ export default {
         return getEditionGroupSlug(
           this.title_group.edition_groups.find((group: Object) => group.id === id),
         )
-      }
-    },
-    getTorrentSlug() {
-      return (torrent) => {
-        return getTorrentSlug(torrent)
       }
     },
   },
