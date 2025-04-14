@@ -17,9 +17,10 @@
       <template #body="slotProps">
         <a
           :href="
-            preview ? `/title-group?id=${title_group.id}&torrent_id=${slotProps.data.id}` : `#`
+            preview ? `/title-group?id=${title_group.id}&torrent_id=${slotProps.data.id}` : null
           "
           @click="preview ? null : toggleRow(slotProps.data)"
+          class="cursor-pointer"
         >
           {{ getTorrentSlug(slotProps.data) }}
         </a>
