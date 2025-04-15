@@ -81,7 +81,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel>
+            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
@@ -102,7 +102,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel>
+            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -123,7 +123,9 @@
             </Message>
           </div>
           <div>
-            <FloatLabel>
+            <FloatLabel
+              v-if="['Movie', 'TVShow', 'Music', 'Collection'].indexOf(content_type) >= 0"
+            >
               <Select
                 v-model="torrentForm.audio_codec"
                 inputId="audio_coded"
@@ -145,7 +147,9 @@
           </div>
         </div>
         <div>
-          <FloatLabel>
+          <FloatLabel
+            v-if="['Movie', 'TVShow', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
+          >
             <Select
               v-model="torrentForm.language"
               inputId="language"
@@ -171,10 +175,10 @@
           />
           <label for="features">Features</label>
         </FloatLabel>
-        <FloatLabel>
+        <!-- <FloatLabel >
           <InputText v-model="torrentForm.duration" size="small" name="duration" />
           <label for="duration">Duration (total, in seconds)</label>
-        </FloatLabel>
+        </FloatLabel> -->
         <!-- <FloatLabel>
         <InputText v-model="torrentForm.audio_bitrate" size="small" name="audio_bitrate" />
         <label for="audio_codec">Audio bitrate (in kb/s)</label>
@@ -270,10 +274,10 @@ export default {
         description: '',
         language: '',
         container: '',
-        video_codec: '',
-        video_resolution: '',
+        video_codec: null,
+        video_resolution: null,
         duration: null,
-        audio_codec: '',
+        audio_codec: null,
         audio_bitrate: null,
         subtitle_languages: '',
         features: '',
@@ -372,16 +376,14 @@ export default {
     },
     sendTorrent() {
       this.uploadingTorrent = true
-      // const formattedTitleGroupForm = JSON.parse(JSON.stringify(this.titleGroupForm))
-      // formattedTitleGroupForm.tags =
-      //   formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
-      // // otherwise there is a json parse error, last char is "Z"
-      // formattedTitleGroupForm.original_release_date =
-      //   formattedTitleGroupForm.original_release_date.slice(0, -1)
-      uploadTorrent(this.torrentForm).then((data) => {
-        this.uploadingTorrent = false
-        this.$emit('done', data)
-      })
+      console.log(this.torrentForm.features)
+      uploadTorrent(this.torrentForm)
+        .then((data) => {
+          this.$emit('done', data)
+        })
+        .finally(() => {
+          this.uploadingTorrent = false
+        })
     },
   },
   computed: {
