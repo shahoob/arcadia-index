@@ -115,7 +115,6 @@ pub async fn create_torrent(
         } else {
             torrent_form
                 .features
-                .0
                 .split(',')
                 .map(|f| Features::from_str(f).ok().unwrap())
                 .collect::<Vec<Features>>()
