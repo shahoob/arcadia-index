@@ -32,7 +32,7 @@ export function splitIntoBDInfoSections(text) {
       .trim()
       .replace(/\n\r/, '\n')
       .split(/([a-zA-Z ]*:\n)/)
-      .map((v) => v.trim())
+      .map((v) => v.trim()),
   )
 }
 
@@ -42,7 +42,7 @@ export function splitIntoSections(text) {
       .trim()
       .replace(/\n\r/, '\n')
       .split(/\n\s*\n/)
-      .map((v) => v.trim())
+      .map((v) => v.trim()),
   )
 }
 
@@ -52,7 +52,7 @@ export function splitIntoLines(text) {
       .trim()
       .replace(/\n\r/, '\n')
       .split(/\n/)
-      .map((v) => v.trim())
+      .map((v) => v.trim()),
   )
 }
 

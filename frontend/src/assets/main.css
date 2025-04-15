@@ -1,15 +1,14 @@
 @import './base.css';
 
-body{
+body {
   margin: 0;
   background-color: var(--color-background-primary); /* Dark theme */
 }
 
-#app{
+#app {
   max-width: 2100px;
   margin: 0 auto;
   font-weight: normal;
-
 }
 
 #app-container {
@@ -20,21 +19,21 @@ body{
   color: white;
 }
 
-#view-container{
+#view-container {
   width: 75%;
 }
 
-a:hover{
+a:hover {
   background-color: transparent !important;
   /* color: var(--color-primary); */
 }
-a{
+a {
   color: var(--color-secondary);
   text-decoration: none;
 }
 
 .p-datatable-table,
-.p-accordionpanel{
+.p-accordionpanel {
   border-radius: 7px;
   overflow: hidden;
 }
@@ -42,10 +41,10 @@ a{
   width: 100% !important;
 } */
 
-.dense-accordion .p-accordionheader{
+.dense-accordion .p-accordionheader {
   padding: 0.5em;
 }
-.dense-accordion .p-accordioncontent-content{
+.dense-accordion .p-accordioncontent-content {
   padding-top: 1em;
 }
 
@@ -59,14 +58,14 @@ a{
   overflow-wrap: break-word !important;
 }
 
-.bold{
+.bold {
   font-weight: bold;
 }
-.warning{
+.warning {
   color: rgb(213, 128, 31);
 }
-.danger{
-  color:rgb(214, 52, 52);
+.danger {
+  color: rgb(214, 52, 52);
 }
 
 .line {
