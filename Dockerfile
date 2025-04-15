@@ -1,27 +1,40 @@
-FROM rust:1.86-slim-bullseye
+FROM rust:1.86-slim-bullseye AS prebuild
+# Don't delete any downloaded packages, we'd be using BuildKit cache mounts later!
+RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
 WORKDIR /app
 COPY . .
+COPY .sqlx/ ./sqlx/
 
-RUN if [ ! -f ".env" ]; then \
-    echo "No custom .env file found, using default env"; \
-    cp .env.example .env; \
-fi
+# This doesn't mount anything from your system, it's all in the build cache
+# Helps speed up repetitive docker builds by A LOT
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y libssl-dev openssl curl pkg-config
 
-RUN apt-get update && apt-get install -y postgresql postgresql-client libssl-dev openssl curl
-RUN mkdir -p /var/lib/postgresql/data
-RUN chown -R postgres:postgres /var/lib/postgresql/data
-USER postgres
 
-RUN find /usr/lib/postgresql/*/bin/initdb -executable -type f -print -quit | xargs -I {} sh -c "{} -D /var/lib/postgresql/data --no-locale --encoding=UTF8"
-RUN cat migrations/fixtures/create_db.sql migrations/20250312215600_initdb.sql migrations/fixtures/fixtures.sql > /var/lib/postgresql/data/init.sql
-# the db needs to be running at build time for sqlx compile-time checks
-RUN nohup sh -c "psql -U arcadia -d arcadia -f /init.sql &" && sleep 4
+FROM prebuild AS build-prod
 
-USER root
-RUN cargo build --release
+RUN SQLX_OFFLINE=true cargo build --release
+
+FROM prebuild AS build-debug
+
+RUN SQLX_OFFLINE=true cargo build
+
+# use --target debug when you want to build the debug variant
+FROM debian:bullseye-slim AS debug
+WORKDIR /app
+
+COPY --chmod=777 --from=build-debug /app/target/debug/arcadia-index .
+CMD ["arcadia-index"]
+
+FROM debian:bullseye-slim
+WORKDIR /app
+
+COPY --chmod=777 --from=build-prod /app/target/release/arcadia-index .
 
 # COPY docker-entrypoint.sh /usr/local/bin/
 # RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["/app/target/release/arcadia"]
+CMD ["arcadia-index"]
