@@ -389,3 +389,19 @@ CREATE TABLE notifications (
     read_status BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (receiver) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Views
+
+CREATE VIEW torrents_and_reports AS
+SELECT
+    t.*,
+    CASE
+        WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
+        ELSE NULL
+    END AS reports
+FROM
+    torrents t
+LEFT JOIN
+    torrent_reports tr ON t.id = tr.reported_torrent_id
+GROUP BY
+    t.id;

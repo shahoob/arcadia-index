@@ -88,7 +88,7 @@ pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<
                                     to_jsonb(eg) || jsonb_build_object(
                                         'torrents', (
                                             SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
-                                            FROM torrents t
+                                            FROM torrents_and_reports t
                                             WHERE t.edition_group_id = eg.id
                                         )
                                     )
