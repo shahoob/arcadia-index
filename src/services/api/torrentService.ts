@@ -80,3 +80,11 @@ export const searchTorrents = async (searchOptions: object) => {
     throw error
   }
 }
+export const reportTorrent = async (torrentReport) => {
+  try {
+    return (await api.post('/report/torrent', torrentReport)).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}
