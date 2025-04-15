@@ -1,7 +1,7 @@
 use crate::{
     Error, Result,
     models::{
-        artist::{Artist, UserCreatedArtist},
+        artist::{Artist, ArtistLite, UserCreatedArtist},
         title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
         user::User,
     },
@@ -128,4 +128,21 @@ pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<
     .await?;
 
     Ok(artist_publications.artist_data.unwrap())
+}
+
+pub async fn find_artists_lite(pool: &PgPool, name: &String) -> Result<Vec<ArtistLite>> {
+    let found_artists = sqlx::query_as!(
+        ArtistLite,
+        r#"
+            SELECT name, id, pictures
+            FROM artists
+            WHERE LOWER(name) LIKE LOWER('%' || $1 || '%')
+        "#,
+        name
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(Error::CouldNotSearchForArtists)?;
+
+    Ok(found_artists)
 }

@@ -1,7 +1,9 @@
 use actix_web::web;
 
 use crate::handlers::{
-    artist_handler::{add_affiliated_artists, add_artist, get_artist_publications},
+    artist_handler::{
+        add_affiliated_artists, add_artist, get_artist_publications, get_artists_lite,
+    },
     auth_handler::{login, register},
     edition_group_handler::add_edition_group,
     invitation_handler::send_invitation,
@@ -13,7 +15,7 @@ use crate::handlers::{
     series_handler::{add_series, get_series},
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
-    title_group_handler::{add_title_group, get_lite_title_group_info, get_title_group},
+    title_group_handler::{add_title_group, get_title_group, get_title_group_info_lite},
     torrent_handler::{download_dottorrent_file, find_torrents, upload_torrent},
     torrent_report_handler::add_torrent_report,
     torrent_request_handler::add_torrent_request,
@@ -37,13 +39,14 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/title-group", web::get().to(get_title_group))
             .route(
                 "/title-group/lite",
-                web::get().to(get_lite_title_group_info),
+                web::get().to(get_title_group_info_lite),
             )
             .route("/edition-group", web::post().to(add_edition_group))
             .route("/torrent", web::post().to(upload_torrent))
             .route("/torrent", web::get().to(download_dottorrent_file))
             .route("/report/torrent", web::post().to(add_torrent_report))
             .route("/search/torrent", web::post().to(find_torrents))
+            .route("/search/artist/lite", web::get().to(get_artists_lite))
             .route("/artist", web::post().to(add_artist))
             .route("/artist", web::get().to(get_artist_publications))
             .route(

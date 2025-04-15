@@ -53,19 +53,19 @@ pub async fn get_title_group(
     Ok(HttpResponse::Ok().json(title_group))
 }
 
-pub type GetLiteTitleGroupInfoQuery = GetTitleGroupQuery;
+pub type GetTitleGroupInfoLiteQuery = GetTitleGroupQuery;
 
 #[utoipa::path(
     get,
     path = "/api/title-group/lite",
-    params(GetLiteTitleGroupInfoQuery),
+    params(GetTitleGroupInfoLiteQuery),
     responses(
         (status = 200, description = "Successfully got the title_group (lite info)"),
     )
 )]
-pub async fn get_lite_title_group_info(
+pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
-    query: web::Query<GetLiteTitleGroupInfoQuery>,
+    query: web::Query<GetTitleGroupInfoLiteQuery>,
 ) -> Result<HttpResponse> {
     let title_group = find_lite_title_group_info(&arc.pool, query.id).await?;
 
