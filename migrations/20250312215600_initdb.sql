@@ -355,6 +355,15 @@ CREATE TABLE torrent_request_votes(
     FOREIGN KEY (torrent_request_id) REFERENCES torrent_requests(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE TABLE torrent_reports (
+    id BIGSERIAL PRIMARY KEY,
+    reported_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    reported_by_id BIGINT NOT NULL,
+    description TEXT NOT NULL,
+    reported_torrent_id BIGINT NOT NULL,
+    FOREIGN KEY (reported_by_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (reported_torrent_id) REFERENCES torrents(id) ON DELETE CASCADE
+);
 CREATE TABLE title_group_subscriptions (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
