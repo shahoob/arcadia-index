@@ -65,6 +65,9 @@ a{
 .warning{
   color: rgb(213, 128, 31);
 }
+.danger{
+  color:rgb(214, 52, 52);
+}
 
 .line {
   display: flex;

@@ -39,8 +39,9 @@
           </span>
           <span v-if="slotProps.data.release_group"> / {{ slotProps.data.release_group }}</span>
           <span v-if="slotProps.data.trumpable != ''">
-            / <span class="warning">Trumpable</span></span
-          >
+            / <span class="warning">Trumpable</span>
+          </span>
+          <span v-if="slotProps.data.reports"> / <span class="danger">Reported</span> </span>
         </a>
       </template>
     </Column>
@@ -86,25 +87,33 @@
     </template>
     <template #expansion="slotProps" v-if="!preview">
       <Accordion :value="[]" multiple class="dense-accordion">
-        <AccordionPanel value="0">
+        <AccordionPanel value="0" v-if="slotProps.data.reports">
+          <AccordionHeader>Report information</AccordionHeader>
+          <AccordionContent>
+            <div class="report" v-for="report in slotProps.data.reports" :key="report.id">
+              {{ timeAgo(report.reported_at) }} : {{ report.description }}
+            </div>
+          </AccordionContent>
+        </AccordionPanel>
+        <AccordionPanel value="1">
           <AccordionHeader>Mediainfo</AccordionHeader>
           <AccordionContent>
             <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel v-if="slotProps.data.description" value="1">
+        <AccordionPanel v-if="slotProps.data.description" value="2">
           <AccordionHeader>Description</AccordionHeader>
           <AccordionContent>
             <div>{{ slotProps.data.description }}</div>
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel v-if="slotProps.data.screenshots" value="2">
+        <AccordionPanel v-if="slotProps.data.screenshots" value="3">
           <AccordionHeader>Screenshots</AccordionHeader>
           <AccordionContent>
             <div>{{ slotProps.data.screenshots }}</div>
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel value="3">
+        <AccordionPanel value="4">
           <AccordionHeader>File List</AccordionHeader>
           <AccordionContent>
             <DataTable :value="slotProps.data.file_list.files" tableStyle="min-width: 50rem">
