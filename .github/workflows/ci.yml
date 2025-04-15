@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     container: rust:1.86-bullseye
     defaults:
-      working-directory: ./backend
+      run:
+        working-directory: ./backend
 
     services:
       arcadiadb:
