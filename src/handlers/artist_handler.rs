@@ -1,12 +1,12 @@
 use crate::{
     Arcadia, Result,
     models::{
-        artist::{Artist, UserCreatedArtist},
+        artist::{Artist, ArtistLite, UserCreatedArtist},
         title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
         user::User,
     },
     repositories::artist_repository::{
-        create_artist, create_artists_affiliation, find_artist_publications,
+        create_artist, create_artists_affiliation, find_artist_publications, find_artists_lite,
     },
 };
 use actix_web::{HttpResponse, web};
@@ -67,4 +67,27 @@ pub async fn get_artist_publications(
     let artist_publication = find_artist_publications(&arc.pool, &query.id).await?;
 
     Ok(HttpResponse::Created().json(artist_publication))
+}
+
+#[derive(Debug, Deserialize, ToSchema, IntoParams)]
+pub struct GetArtistLiteQuery {
+    name: String,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/search/artist/lite",
+    params (GetArtistLiteQuery),
+    description = "Case insensitive",
+    responses(
+        (status = 200, description = "Successfully got the artists and some data about them", body=Vec<ArtistLite>),
+    )
+)]
+pub async fn get_artists_lite(
+    query: web::Query<GetArtistLiteQuery>,
+    arc: web::Data<Arcadia>,
+) -> Result<HttpResponse> {
+    let artists = find_artists_lite(&arc.pool, &query.name).await?;
+
+    Ok(HttpResponse::Created().json(artists))
 }

@@ -6,7 +6,7 @@ use crate::{
         torrent_handler::DownloadTorrentQuery,
     },
     models::{
-        artist::Artist,
+        artist::{Artist, ArtistLite},
         edition_group::EditionGroup,
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
@@ -43,11 +43,12 @@ use crate::{
         crate::handlers::title_group_comment_handler::add_title_group_comment,
         crate::handlers::title_group_handler::add_title_group,
         crate::handlers::title_group_handler::get_title_group,
-        crate::handlers::title_group_handler::get_lite_title_group_info,
+        crate::handlers::title_group_handler::get_title_group_info_lite,
         crate::handlers::torrent_request_handler::add_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
-        crate::handlers::user_handler::get_me
+        crate::handlers::user_handler::get_me,
+        crate::handlers::artist_handler::get_artists_lite,
     ),
     components(schemas(
         Register,
@@ -74,7 +75,8 @@ use crate::{
         TorrentRequestVote,
         UserCreatedTorrentRequestVote,
         UserCreatedTorrentReport,
-        TorrentReport
+        TorrentReport,
+        ArtistLite
     ),)
 )]
 pub struct ApiDoc;
