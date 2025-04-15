@@ -250,7 +250,7 @@ title_group_data AS (
                                     'video_resolution', t.video_resolution
                                 )
                             ), '[]'::jsonb)
-                            FROM torrents t
+                            FROM torrents_and_reports t
                             WHERE t.edition_group_id = eg.id
                         )
                     )
