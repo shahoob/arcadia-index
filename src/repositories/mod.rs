@@ -8,6 +8,7 @@ pub mod series_repository;
 pub mod subscriptions_repository;
 pub mod title_group_comment_repository;
 pub mod title_group_repository;
+pub mod torrent_report_repository;
 pub mod torrent_repository;
 pub mod torrent_request_repository;
 pub mod torrent_request_vote_repository;
