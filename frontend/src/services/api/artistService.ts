@@ -1,6 +1,6 @@
 import api from './api.ts'
 
-export const getArtist = async (id: string | Number) => {
+export const getArtist = async (id: string | number) => {
   try {
     return (await api.get('/artist?id=' + id)).data
   } catch (error) {

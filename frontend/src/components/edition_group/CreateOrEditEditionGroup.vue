@@ -235,13 +235,13 @@ export default {
     addCover() {
       this.editionGroupForm.covers.push('')
     },
-    removeCover(index: Number) {
+    removeCover(index: number) {
       this.editionGroupForm.covers.splice(index, 1)
     },
     addLink() {
       this.editionGroupForm.external_links.push('')
     },
-    removeLink(index: Number) {
+    removeLink(index: number) {
       this.editionGroupForm.external_links.splice(index, 1)
     },
   },

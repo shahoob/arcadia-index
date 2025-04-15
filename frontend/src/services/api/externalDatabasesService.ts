@@ -1,6 +1,6 @@
 import api from './api.ts'
 
-export const getExternalDatabaseData = async (item_id: string | Number, database: string) => {
+export const getExternalDatabaseData = async (item_id: string | number, database: string) => {
   try {
     switch (database) {
       case 'openlibrary': {

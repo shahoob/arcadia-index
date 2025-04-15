@@ -191,7 +191,7 @@ export default {
     return { titleGroupStore }
   },
   methods: {
-    getExternalDatabaseData(item_id: string | Number, database: string) {
+    getExternalDatabaseData(item_id: string | number, database: string) {
       this.gettingExternalDatabaseData = true
       getExternalDatabaseData(item_id, database).then((data) => {
         data.title_group.original_release_date = new Date(data.title_group.original_release_date)
@@ -204,7 +204,7 @@ export default {
         this.gettingExternalDatabaseData = false
       })
     },
-    async sendTitleGroup(titleGroupForm: Object) {
+    async sendTitleGroup(titleGroupForm: object) {
       if (this.action == 'select') {
         this.gettingTitleGroupInfo = true
         if (!this.titleGroupStore.id) {

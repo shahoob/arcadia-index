@@ -179,9 +179,11 @@ export default {
       const reportedTorrent = this.title_group.edition_groups
         .flatMap((edition_group) => edition_group.torrents)
         .find((torrent) => torrent.id == torrentReport.reported_torrent_id)
-      reportedTorrent.reports
-        ? reportedTorrent.reports.push(torrentReport)
-        : (reportedTorrent.reports = [torrentReport])
+      if (reportedTorrent.reports) {
+        reportedTorrent.reports.push(torrentReport)
+      } else {
+        reportedTorrent.reports = [torrentReport]
+      }
     },
     reportTorrent(id: number) {
       this.reportingTorrentId = id
@@ -197,13 +199,13 @@ export default {
     timeAgo(date: string) {
       return timeAgo(date)
     },
-    bytesToReadable(bytes: Number) {
+    bytesToReadable(bytes: number) {
       return bytesToReadable(bytes)
     },
     purifyHtml(html: string) {
       return DOMPurify.sanitize(html)
     },
-    downloadTorrent(torrentId: Number) {
+    downloadTorrent(torrentId: number) {
       downloadTorrent(torrentId)
     },
   },
@@ -218,9 +220,9 @@ export default {
   },
   computed: {
     getEditionGroupSlug() {
-      return (id: Number) => {
+      return (id: number) => {
         return getEditionGroupSlug(
-          this.title_group.edition_groups.find((group: Object) => group.id === id),
+          this.title_group.edition_groups.find((group: object) => group.id === id),
         )
       }
     },
