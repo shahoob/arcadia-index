@@ -57,7 +57,11 @@
           class="action pi pi-download"
           @click="downloadTorrent(slotProps.data.id)"
         />
-        <i v-tooltip.top="'Report'" class="action pi pi-flag" />
+        <i
+          v-tooltip.top="'Report'"
+          class="action pi pi-flag"
+          @click="reportTorrent(slotProps.data.id)"
+        />
         <i v-tooltip.top="'Copy permalink'" class="action pi pi-link" />
         <i v-tooltip.top="'Edit'" class="action pi pi-pen-to-square" />
       </template>
@@ -91,7 +95,8 @@
           <AccordionHeader>Report information</AccordionHeader>
           <AccordionContent>
             <div class="report" v-for="report in slotProps.data.reports" :key="report.id">
-              {{ timeAgo(report.reported_at) }} : {{ report.description }}
+              <span class="bold">{{ timeAgo(report.reported_at) }}</span
+              >: {{ report.description }}
             </div>
           </AccordionContent>
         </AccordionPanel>
@@ -132,6 +137,9 @@
       </Accordion>
     </template>
   </DataTable>
+  <Dialog closeOnEscape modal header="Report torrent" v-model:visible="reportTorrentDialogVisible">
+    <ReportTorrentDialog :torrentId="reportingTorrentId" @reported="torrentReported" />
+  </Dialog>
 </template>
 
 <script lang="ts">
@@ -143,18 +151,42 @@ import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
+import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
+import Dialog from 'primevue/dialog'
 import { downloadTorrent } from '@/services/api/torrentService'
 
 export default {
-  components: { DataTable, Column, AccordionPanel, AccordionHeader, AccordionContent, Accordion },
+  components: {
+    DataTable,
+    Column,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
+    Accordion,
+    ReportTorrentDialog,
+    Dialog,
+  },
   props: {
     title_group: {},
     preview: { default: false },
   },
   data() {
-    return { expandedRows: [] }
+    return { expandedRows: [], reportTorrentDialogVisible: false, reportingTorrentId: 0 }
   },
   methods: {
+    torrentReported(torrentReport) {
+      this.reportTorrentDialogVisible = false
+      const reportedTorrent = this.title_group.edition_groups
+        .flatMap((edition_group) => edition_group.torrents)
+        .find((torrent) => torrent.id == torrentReport.reported_torrent_id)
+      reportedTorrent.reports
+        ? reportedTorrent.reports.push(torrentReport)
+        : (reportedTorrent.reports = [torrentReport])
+    },
+    reportTorrent(id: number) {
+      this.reportingTorrentId = id
+      this.reportTorrentDialogVisible = true
+    },
     toggleRow(torrent) {
       if (!this.expandedRows.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {
         this.expandedRows = [...this.expandedRows, torrent]
