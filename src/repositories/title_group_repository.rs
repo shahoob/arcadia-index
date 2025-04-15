@@ -55,7 +55,7 @@ pub async fn find_title_group(
             to_jsonb(t) || jsonb_build_object('uploader', jsonb_build_object('id', u.id, 'username', u.username))
             ORDER BY t.size DESC
         ) AS torrents
-    FROM torrents t
+    FROM torrents_and_reports t
     LEFT JOIN users u ON u.id = t.created_by_id
     GROUP BY t.edition_group_id
 ),

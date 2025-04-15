@@ -1,7 +1,7 @@
 use crate::{
     Error, Result,
     models::{
-        title_group::LiteTitleGroupHierachy,
+        title_group::TitleGroupHierarchyLite,
         torrent::{Features, Torrent, TorrentSearch, UploadedTorrent},
         user::User,
     },
@@ -17,7 +17,7 @@ use std::{fs, path::PathBuf, str::FromStr};
 use super::notification_repository::notify_users;
 
 #[derive(sqlx::FromRow)]
-struct LiteTitleGroupInfo {
+struct TitleGroupInfoLite {
     id: i64,
     name: String,
 }
@@ -138,7 +138,7 @@ pub async fn create_torrent(
         .map_err(Error::CouldNotCreateTorrent)?;
 
     let title_group_info = sqlx::query_as!(
-        LiteTitleGroupInfo,
+        TitleGroupInfoLite,
         r#"
             SELECT title_groups.id, title_groups.name
             FROM edition_groups
@@ -178,7 +178,7 @@ pub async fn create_torrent(
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct TorrentSearchResults {
-    pub title_groups: Vec<LiteTitleGroupHierachy>,
+    pub title_groups: Vec<TitleGroupHierarchyLite>,
 }
 
 pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
@@ -250,7 +250,7 @@ title_group_data AS (
                                     'video_resolution', t.video_resolution
                                 )
                             ), '[]'::jsonb)
-                            FROM torrents t
+                            FROM torrents_and_reports t
                             WHERE t.edition_group_id = eg.id
                         )
                     )

@@ -144,7 +144,7 @@ pub struct UserCreatedTitleGroup {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
-pub struct LiteTitleGroupHierachy {
+pub struct TitleGroupHierarchyLite {
     pub name: String,
     pub covers: Option<Vec<String>>,
     pub category: Option<Category>,

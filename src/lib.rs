@@ -38,6 +38,9 @@ pub enum Error {
     #[error("could not create artist affiliation")]
     CouldNotCreateArtistAffiliation(#[source] sqlx::Error),
 
+    #[error("could not search for artists")]
+    CouldNotSearchForArtists(#[source] sqlx::Error),
+
     #[error("could not create user")]
     CouldNotCreateUser(#[source] sqlx::Error),
 
@@ -70,6 +73,9 @@ pub enum Error {
 
     #[error("could not create torrent request vote")]
     CouldNotCreateTorrentRequestVote(#[source] sqlx::Error),
+
+    #[error("could not create torrent report")]
+    CouldNotCreateTorrentReport(#[source] sqlx::Error),
 
     #[error("could not create series")]
     CouldNotCreateSeries(#[source] sqlx::Error),

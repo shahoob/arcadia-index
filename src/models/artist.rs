@@ -32,3 +32,10 @@ pub struct UserCreatedArtist {
     pub description: String,
     pub pictures: Option<Vec<String>>,
 }
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ArtistLite {
+    pub id: i64,
+    pub name: String,
+    pub pictures: Option<Vec<String>>,
+}

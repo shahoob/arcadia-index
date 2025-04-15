@@ -6,7 +6,7 @@ use crate::{
         torrent_handler::DownloadTorrentQuery,
     },
     models::{
-        artist::Artist,
+        artist::{Artist, ArtistLite},
         edition_group::EditionGroup,
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
@@ -14,6 +14,7 @@ use crate::{
         title_group::AffiliatedArtist,
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::TorrentSearch,
+        torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{Login, PublicUser, Register, User},
@@ -31,6 +32,7 @@ use crate::{
         crate::handlers::artist_handler::add_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::find_torrents,
+        crate::handlers::torrent_report_handler::add_torrent_report,
         crate::handlers::edition_group_handler::add_edition_group,
         crate::handlers::invitation_handler::send_invitation,
         crate::handlers::master_group_handler::add_master_group,
@@ -41,11 +43,12 @@ use crate::{
         crate::handlers::title_group_comment_handler::add_title_group_comment,
         crate::handlers::title_group_handler::add_title_group,
         crate::handlers::title_group_handler::get_title_group,
-        crate::handlers::title_group_handler::get_lite_title_group_info,
+        crate::handlers::title_group_handler::get_title_group_info_lite,
         crate::handlers::torrent_request_handler::add_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
-        crate::handlers::user_handler::get_me
+        crate::handlers::user_handler::get_me,
+        crate::handlers::artist_handler::get_artists_lite,
     ),
     components(schemas(
         Register,
@@ -70,7 +73,10 @@ use crate::{
         TorrentRequest,
         UserCreatedTorrentRequest,
         TorrentRequestVote,
-        UserCreatedTorrentRequestVote
+        UserCreatedTorrentRequestVote,
+        UserCreatedTorrentReport,
+        TorrentReport,
+        ArtistLite
     ),)
 )]
 pub struct ApiDoc;
