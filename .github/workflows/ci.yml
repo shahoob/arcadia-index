@@ -16,6 +16,18 @@ jobs:
     runs-on: ubuntu-latest
     container: rust:1.86-bullseye
 
+    services:
+      arcadiadb:
+        image: postgres
+        env:
+          POSTGRES_USER: arcadia
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
 
