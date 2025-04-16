@@ -19,8 +19,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - run: git diff --name-status  -- path/to/directory/
-
     - name: Setup
       uses: actions/setup-node@v4
       with:
