@@ -36,8 +36,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install rust toolchain
-      uses: dtolnay/rust-toolchain@stable
+    - name: Install Rust toolchain
+      uses: actions-rust-lang/setup-rust-toolchain
 
     - name: Setup env
       run: cp -f .env.ci .env
