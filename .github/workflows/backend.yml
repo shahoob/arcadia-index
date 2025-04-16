@@ -1,4 +1,4 @@
-name: running build
+name: Backend CI
 
 on:
   push:
@@ -7,14 +7,16 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'backend/**'
 
 env:
   CARGO_TERM_COLOR: always
 
+
 jobs:
-  build-backend:
+  build:
     runs-on: ubuntu-latest
-    container: rust:1.86-bullseye
     defaults:
       run:
         working-directory: ./backend
@@ -34,7 +36,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: setup env
+    - name: Install Rust toolchain
+      uses: actions-rust-lang/setup-rust-toolchain
+
+    - name: Setup env
       run: cp -f .env.ci .env
 
     - name: Build
@@ -43,28 +48,9 @@ jobs:
     - name: Run tests
       run: cargo test
 
-    - name: install sqlx
+    - name: Install sqlx
       run: cargo install sqlx-cli
 
     - name: Ensure schema and query metadata are in sync
       run: cargo sqlx prepare --check
 
-  lint-format-frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
-
-    - run: npm ci
-    - run: npm run lint
-    - run: npm run check-format
-    
