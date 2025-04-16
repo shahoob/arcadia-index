@@ -17,6 +17,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: rust:1.86-bullseye
     defaults:
       run:
         working-directory: ./backend
