@@ -286,13 +286,13 @@ export default {
     addLink() {
       this.titleGroupForm.external_links.push('')
     },
-    removeLink(index: Number) {
+    removeLink(index: number) {
       this.titleGroupForm.external_links.splice(index, 1)
     },
     addCover() {
       this.titleGroupForm.covers.push('')
     },
-    removeCover(index: Number) {
+    removeCover(index: number) {
       this.titleGroupForm.covers.splice(index, 1)
     },
   },

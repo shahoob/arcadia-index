@@ -15,13 +15,14 @@
         />
       </div>
     </ContentContainer>
-    <TitleGroupPreviewTable
-      v-for="title_group in search_results.title_groups"
-      :key="title_group.id"
-      :title_group="title_group"
-      v-if="title_group_preview_mode == 'table'"
-      class="preview-table"
-    />
+    <div v-if="title_group_preview_mode == 'table'">
+      <TitleGroupPreviewTable
+        v-for="title_group in search_results.title_groups"
+        :key="title_group.id"
+        :title_group="title_group"
+        class="preview-table"
+      />
+    </div>
   </div>
 </template>
 

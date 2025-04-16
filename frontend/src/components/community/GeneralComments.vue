@@ -80,7 +80,7 @@ export default {
         this.new_comment.answers_to_comment_id = null
         data.created_by = {}
         data.created_by = useUserStore()
-        // TODO: don't mutate the prop
+        // eslint-disable-next-line vue/no-mutating-props -- TODO: don't mutate the prop
         this.comments.push(data)
         this.sending_comment = false
       })

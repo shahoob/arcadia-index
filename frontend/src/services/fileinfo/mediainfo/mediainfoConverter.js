@@ -160,8 +160,8 @@ export default class MediainfoConverter {
       /2160p/i.test(completeName) || width === '3840'
         ? '2160p'
         : /1080i/i.test(completeName) ||
-          ((width === '1920' || (width < 1920 && height === '1080')) &&
-            (scanType === 'Interlaced' || scanType === 'MBAFF'))
+            ((width === '1920' || (width < 1920 && height === '1080')) &&
+              (scanType === 'Interlaced' || scanType === 'MBAFF'))
           ? '1080i'
           : /1080p/i.test(completeName) || width === '1920' || (width < 1920 && height === '1080')
             ? '1080p'
