@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-    paths: # comment this section out if you are updating actions and need to test
+    paths:
       - 'frontend/**'
 
 jobs:
