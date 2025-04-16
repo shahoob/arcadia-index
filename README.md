@@ -1,5 +1,4 @@
-# arcadia-index
-Arcadia's backend
+# arcadia
 
 <p align="center">
   <a href="https://discord.gg/amYWVk7pS3">
@@ -7,10 +6,52 @@ Arcadia's backend
   </a>
 </p>
 
-For contributions see [CONTRIBUTING.md](CONTRIBUTING.md)
+For contributions see (backend) [backend/CONTRIBUTING.md](backend/CONTRIBUTING.md) (frontend) [frontend/CONTRIBUTING.md](frontend/CONTRIBUTING.md)
 
-## Notes
+## Screenshots
 
-- This is not ready for production. Setup instructions are not yet available.
+Here are some examples of what type of content can be hosted with Arcadia, and how it can look like.
 
-- The current auth mechanism relies on an actix extractor, which is the user provider. Everytime a handler accesses the current user, the authentication takes place. This might be replaced by a middleware in the future.
+### Books (ebooks and audiobooks)
+
+![](media/book.png)
+
+### Book series
+
+#### Entry view
+
+![](media/book-illustrated.png)
+
+#### Series view
+
+![](media/book-illustrated-series.png)
+
+### Movies
+
+![](media/movie.png)
+
+### Music
+
+![](media/music.png)
+
+### TV Shows
+
+#### Season entry
+
+![](media/tvshow.png)
+
+#### Series view
+
+![](media/tvshow-series.png)
+
+### Collections
+
+Collections represent a "grouping" of content, to avoid having multiple uploads to do and to limit the load on the tracker. This can be useful for site-dumps, full/finished series, monthly/yearly grouping of content etc.
+
+#### Example with a podcast
+
+![](media/collection-podcast.png)
+
+## Acknlowedgements
+
+- Thanks to [GazellePW](https://github.com/Mosasauroidea/GazellePW/) for their mediainfo and bdinfo parsers written in js
