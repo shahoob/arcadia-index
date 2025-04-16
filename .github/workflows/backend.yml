@@ -1,4 +1,4 @@
-name: backend jobs
+name: Backend CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-    paths: # comment this out if you are updating actions
+    paths: # comment this section out if you are updating actions
       - 'backend/**'
 
 env:
@@ -37,7 +37,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: setup env
+    - name: Setup env
       run: cp -f .env.ci .env
 
     - name: Build
@@ -46,7 +46,7 @@ jobs:
     - name: Run tests
       run: cargo test
 
-    - name: install sqlx
+    - name: Install sqlx
       run: cargo install sqlx-cli
 
     - name: Ensure schema and query metadata are in sync
