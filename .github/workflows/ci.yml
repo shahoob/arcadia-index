@@ -12,9 +12,12 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  build-backend:
     runs-on: ubuntu-latest
     container: rust:1.86-bullseye
+    defaults:
+      run:
+        working-directory: ./backend
 
     services:
       arcadiadb:

@@ -101,6 +101,8 @@ impl FromStr for Features {
             "Commentary" => Ok(Features::Commentary),
             "Remux" => Ok(Features::Remux),
             "3D" => Ok(Features::ThreeD),
+            "Booklet" => Ok(Features::Booklet),
+            "Cue" => Ok(Features::Cue),
             _ => Err(()),
         }
     }
