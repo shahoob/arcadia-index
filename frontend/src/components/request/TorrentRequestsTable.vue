@@ -28,7 +28,7 @@ export default {
     torrent_requests: {},
   },
   methods: {
-    bytesToReadable(bytes: Number) {
+    bytesToReadable(bytes: number) {
       return bytesToReadable(bytes)
     },
   },

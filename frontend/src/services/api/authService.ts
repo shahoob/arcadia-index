@@ -1,6 +1,6 @@
 import api from './api.ts'
 
-export const login = async (form: Object) => {
+export const login = async (form: object) => {
   try {
     return (await api.post('/login', form)).data
   } catch (error) {
@@ -9,7 +9,7 @@ export const login = async (form: Object) => {
   }
 }
 
-export const register = async (form: Object) => {
+export const register = async (form: object) => {
   try {
     return (await api.post('/register', form)).data
   } catch (error) {

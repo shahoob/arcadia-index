@@ -8,7 +8,7 @@ export const timeAgo = (date: string) => {
         ? `${Math.floor(diff / 3600)}h ago`
         : `${Math.floor(diff / 86400)}d ago`
 }
-export const bytesToReadable = (bytes: Number) => {
+export const bytesToReadable = (bytes: number) => {
   const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB']
   let size = bytes
   let unitIndex = 0
@@ -69,7 +69,7 @@ export const isValidUrl = (url: string) => {
   try {
     new URL(url)
     return true
-  } catch (_) {
+  } catch {
     return false
   }
 }

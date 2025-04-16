@@ -1,6 +1,6 @@
 import api from './api.ts'
 
-export const getTitleGroup = async (id: string | Number) => {
+export const getTitleGroup = async (id: string | number) => {
   try {
     return (await api.get('/title-group?id=' + id)).data
   } catch (error) {
@@ -8,7 +8,7 @@ export const getTitleGroup = async (id: string | Number) => {
     throw error
   }
 }
-export const getTitleGroupLite = async (id: string | Number) => {
+export const getTitleGroupLite = async (id: string | number) => {
   try {
     return (await api.get('/title-group/lite?id=' + id)).data
   } catch (error) {
@@ -52,7 +52,7 @@ export const uploadTorrent = async (torrentForm: object) => {
     throw error
   }
 }
-export const downloadTorrent = async (torrentId: Number | string) => {
+export const downloadTorrent = async (torrentId: number | string) => {
   try {
     const response = await api.get('/torrent?id=' + torrentId, {
       responseType: 'blob',

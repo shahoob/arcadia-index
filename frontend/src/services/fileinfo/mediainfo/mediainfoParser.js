@@ -35,7 +35,7 @@ export default class MediainfoParser {
     return result
   }
 
-  extractFields({ sectionName, sectionBody }) {
+  extractFields({ sectionName: _sectionName, sectionBody }) {
     const result = {}
     const lines = splitIntoLines(sectionBody)
     for (const line of lines) {

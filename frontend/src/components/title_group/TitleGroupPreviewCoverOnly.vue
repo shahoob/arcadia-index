@@ -11,9 +11,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Image } from 'primevue'
 export default {
-  components: { Image },
   props: {
     title_group: {},
   },
