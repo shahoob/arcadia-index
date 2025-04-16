@@ -1,4 +1,4 @@
-FROM rust:1.86-slim-bullseye AS prebuild
+FROM rust:1.86-slim-bookworm AS prebuild
 # Don't delete any downloaded packages, we'd be using BuildKit cache mounts later!
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
@@ -22,13 +22,13 @@ FROM prebuild AS build-debug
 RUN SQLX_OFFLINE=true cargo build
 
 # use --target debug when you want to build the debug variant
-FROM debian:bullseye-slim AS debug
+FROM debian:bookworm-slim AS debug
 WORKDIR /app
 
 COPY --chmod=777 --from=build-debug /app/target/debug/arcadia-index .
 CMD ["arcadia-index"]
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 WORKDIR /app
 
 COPY --chmod=777 --from=build-prod /app/target/release/arcadia-index .
