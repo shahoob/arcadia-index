@@ -2,6 +2,7 @@ mod handlers;
 mod models;
 mod repositories;
 mod routes;
+mod tracker;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web::Data};

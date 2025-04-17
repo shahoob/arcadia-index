@@ -1,35 +1,12 @@
-use actix_http::Request;
 use actix_web::{
-    App, Error,
-    dev::{Service, ServiceResponse},
     http::{StatusCode, header::HeaderValue},
-    test, web,
+    test,
 };
-use arcadia_index::{Arcadia, OpenSignups};
-use reqwest::Url;
+use arcadia_index::OpenSignups;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use std::path::PathBuf;
 
-async fn create_test_app(
-    pool: PgPool,
-    open_signups: OpenSignups,
-) -> impl Service<Request, Response = ServiceResponse, Error = Error> {
-    let arc = Arcadia {
-        pool,
-        open_signups,
-        dottorrent_files_path: PathBuf::new(),
-        frontend_url: Url::parse("http://testurl").unwrap(),
-    };
-
-    // TODO: CORS?
-    test::init_service(
-        App::new()
-            .app_data(web::Data::new(arc))
-            .configure(arcadia_index::routes::init),
-    )
-    .await
-}
+mod common;
 
 #[derive(PartialEq, Debug, Serialize)]
 struct RegisterRequest<'a> {
@@ -48,7 +25,7 @@ struct RegisterResponse {
 
 #[sqlx::test]
 async fn test_open_registration(pool: PgPool) {
-    let service = create_test_app(pool, OpenSignups::Enabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Enabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -84,7 +61,7 @@ async fn test_open_registration(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_failures(pool: PgPool) {
-    let service = create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
 
     // No key specified.  Should fail.
     let req = test::TestRequest::post()
@@ -131,7 +108,7 @@ async fn test_closed_registration_failures(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_success(pool: PgPool) {
-    let service = create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -184,7 +161,7 @@ async fn test_closed_registration_success(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_expired_test_user_invite"))]
 async fn test_closed_registration_expired_failure(pool: PgPool) {
-    let service = create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -222,7 +199,7 @@ struct LoginResponse {
 
 #[sqlx::test(fixtures("with_test_user"))]
 async fn test_login_success(pool: PgPool) {
-    let service = create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -251,7 +228,7 @@ async fn test_login_success(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user"))]
 async fn test_authorized_endpoint_after_login(pool: PgPool) {
-    let service = create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))

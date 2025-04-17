@@ -6,6 +6,7 @@ pub mod handlers;
 pub mod models;
 pub mod repositories;
 pub mod routes;
+pub mod tracker;
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum OpenSignups {
