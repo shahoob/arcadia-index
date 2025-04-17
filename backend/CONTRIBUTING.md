@@ -2,7 +2,7 @@ First, thanks for considering contributing to Arcadia's devevelopment !
 
 ## Developer Setup
 
-Arcadia-index is a [REST](https://en.wikipedia.org/wiki/REST) API written in rust with the [actix](https://github.com/actix/actix-web) framework and the [sqlx](https://github.com/launchbadge/sqlx) database driver.
+Arcadia's backend is a [REST](https://en.wikipedia.org/wiki/REST) API written in rust with the [actix](https://github.com/actix/actix-web) framework and the [sqlx](https://github.com/launchbadge/sqlx) database driver. It is made of 2 main parts : the site's API and a tracker. The site's API is meant to be used by the frontend, while the tracker is meant to be used by torrent clients (qbittorrent, deluge, etc.).
 
 It (will) also contain some scripts that are meant to be run on a regular basis (for example as cron jobs) when the site is on production.
 
@@ -13,11 +13,11 @@ It (will) also contain some scripts that are meant to be run on a regular basis 
 - [insomnia](https://github.com/Kong/insomnia/)
 
 ### Environment
-At runtime, Arcadia-index will source environment variables to influence it's behavior.  The simplest way to set these during development is to write them into a file named `.env`.  A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.sample .env`.
+At runtime, arcadia's backend will source environment variables to influence it's behavior.  The simplest way to set these during development is to write them into a file named `.env`.  A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.sample .env`.
 
 ### Database
 
-Arcadia uses a postgresql database. The recommended method for spawning an instance of postgres is using docker:
+Arcadia's backend uses a postgresql database. The recommended method for spawning an instance of postgres is using docker:
 
 ```
 docker-compose -f docker/postgres.yml up -d
@@ -63,7 +63,7 @@ A swagger for the API is available at `http://localhost:8080/swagger-ui`
 
 ## Testing
 
-Adding additional tests to Arcadia is strongly encouraged, especially when adding new features!  For unit tests, they can be added in the module being tested using standard rust idioms.
+Adding additional tests to Arcadia is strongly encouraged, especially when adding new features! For unit tests, they can be added in the module being tested using standard rust idioms.
 
 End-to-end tests can also be authored, they should be located in `tests/` and use the sqlx test fixture machinery to populate the database for testing.  See `tests/test_auth.rs` for examples.
 
@@ -76,13 +76,13 @@ Whether you want to add a new feature or fix an existing issue, it needs to be d
 - create a new branch `feature-name` or `bug-name-fix` (with the proper name)
 - open a pull request when your contribution is done
 
-If you are unsure about what/how to do something, don't hesitate to [open a discussion](https://github.com/Arcadia-Solutions/arcadia-index/discussions) or [an issue](https://github.com/Arcadia-Solutions/arcadia-index/issues) about the topic.
+If you are unsure about what/how to do something, don't hesitate to [open a discussion](https://github.com/Arcadia-Solutions/arcadia/discussions) or [an issue](https://github.com/Arcadia-Solutions/arcadia/issues) about the topic.
 
 You can also hop on the [discord server](https://discord.gg/amYWVk7pS3) to chat with other devs and the community.
 
 ### Finding contributions to make
 
-Arcadia-index has a [board](https://github.com/orgs/Arcadia-Solutions/projects/1) to track the existing issues and features that need to be worked on. Feel free to claim one that isn't claimed yet before starting to work on it.
+Arcadia's backend has a [board](https://github.com/orgs/Arcadia-Solutions/projects/1) to track the existing issues and features that need to be worked on. Feel free to claim one that isn't claimed yet before starting to work on it.
 
 To claim a github issue, simply leave a comment on it saying that you are working on it.
 
