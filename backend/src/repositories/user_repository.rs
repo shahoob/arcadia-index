@@ -1,22 +1,5 @@
-use crate::{
-    Error, Result,
-    models::user::{PublicUser, User},
-};
+use crate::{Error, Result, models::user::PublicUser};
 use sqlx::PgPool;
-
-pub async fn find_user_by_username(pool: &PgPool, username: &str) -> Result<User> {
-    sqlx::query_as!(
-        User,
-        r#"
-            SELECT * FROM users
-            WHERE username = $1
-        "#,
-        username
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|_| Error::UserNotFound(username.into()))
-}
 
 pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
     sqlx::query_as!(
