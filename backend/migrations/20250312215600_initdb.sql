@@ -273,6 +273,7 @@ CREATE TABLE torrents (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
+    info_hash BYTEA NOT NULL,
     language VARCHAR(15),
     release_name VARCHAR(500),
     -- maybe change the size
@@ -286,25 +287,28 @@ CREATE TABLE torrents (
     trumpable TEXT,
     staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
     container VARCHAR(8) NOT NULL,
-    size BIGINT NOT NULL,
     -- in bytes
+    size BIGINT NOT NULL,
+
+    -- audio
+    duration INT,
+    -- in seconds
+    audio_codec audio_codec_enum,
+    audio_bitrate INT,
+    -- in kb/s, taken from mediainfo
+    audio_bitrate_sampling audio_bitrate_sampling_enum,
+    audio_channels VARCHAR(5),
+    -- audio
+
+    -- video
+    video_codec video_codec_enum,
+    features features_enum [],
+    subtitle_languages VARCHAR(20) [],
+    video_resolution VARCHAR(6),
+
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
-    SET NULL,
-        -- audio
-        duration INT,
-        -- in seconds
-        audio_codec audio_codec_enum,
-        audio_bitrate INT,
-        -- in kb/s, taken from mediainfo
-        audio_bitrate_sampling audio_bitrate_sampling_enum,
-        audio_channels VARCHAR(5),
-        -- audio
-        -- video
-        video_codec video_codec_enum,
-        features features_enum [],
-        subtitle_languages VARCHAR(20) [],
-        video_resolution VARCHAR(6) -- video
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE (info_hash)
 );
 
 CREATE TABLE title_group_comments (
@@ -388,6 +392,36 @@ CREATE TABLE notifications (
     item_id BIGINT,
     read_status BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (receiver) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE peers (
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    torrent_id BIGINT NOT NULL,
+    peer_id BYTEA NOT NULL,
+    ip INET NOT NULL,
+    port INTEGER NOT NULL,
+    first_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
+
+    UNIQUE (torrent_id, peer_id, ip, port)
+);
+CREATE TABLE user_peers (
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT NOT NULL,
+    peer_id BIGINT NOT NULL,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE,
+
+    FOREIGN KEY (peer_id) REFERENCES peers(id)
+    ON DELETE CASCADE,
+
+    UNIQUE (user_id, peer_id)
 );
 
 -- Views
