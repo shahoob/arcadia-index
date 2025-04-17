@@ -19,10 +19,10 @@ pub async fn create_edition_group(
     "#;
 
     let created_edition_group = sqlx::query_as::<_, EditionGroup>(CREATE_EDITION_GROUPS_QUERY)
-        .bind(&edition_group_form.title_group_id)
+        .bind(edition_group_form.title_group_id)
         .bind(&edition_group_form.name)
-        .bind(&edition_group_form.release_date)
-        .bind(&current_user.id)
+        .bind(edition_group_form.release_date)
+        .bind(current_user.id)
         .bind(&edition_group_form.description)
         .bind(&edition_group_form.distributor)
         .bind(&edition_group_form.covers)

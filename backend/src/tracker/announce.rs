@@ -231,7 +231,7 @@ impl Serialize for PeerCompact {
 
 struct BytesVisitor;
 
-impl<'de> serde::de::Visitor<'de> for BytesVisitor {
+impl serde::de::Visitor<'_> for BytesVisitor {
     type Value = PeerCompact;
 
     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {

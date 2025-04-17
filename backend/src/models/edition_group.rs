@@ -9,24 +9,33 @@ use super::torrent::LiteTorrent;
 #[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
 pub enum Source {
-    CD,
-    DVD5,
-    DVD9,
+    #[sqlx(rename = "CD")]
+    Cd,
+    #[sqlx(rename = "DVD5")]
+    Dvd5,
+    #[sqlx(rename = "DVD9")]
+    Dvd9,
     Vinyl,
     Web,
     Soundboard,
-    SACD,
-    DAT,
+    #[sqlx(rename = "SACD")]
+    Sacd,
+    #[sqlx(rename = "DAT")]
+    Dat,
     Cassette,
     #[sqlx(rename = "Blu-Ray")]
     BluRay,
     LaserDisc,
     #[sqlx(rename = "HD-DVD")]
-    HDDVD,
-    HDTV,
-    PDTV,
-    TV,
-    VHS,
+    Hddvd,
+    #[sqlx(rename = "HDTV")]
+    Hdtv,
+    #[sqlx(rename = "PDTV")]
+    Pdtv,
+    #[sqlx(rename = "TV")]
+    Tv,
+    #[sqlx(rename = "VHS")]
+    Vhs,
     Mixed,
     #[sqlx(rename = "Physical-Book")]
     PhysicalBook,

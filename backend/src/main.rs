@@ -6,7 +6,6 @@ mod tracker;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web::Data};
-use dotenvy;
 use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
@@ -52,7 +51,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .app_data(Data::new(Arcadia {
                 pool: pool.clone(),
-                open_signups: open_signups,
+                open_signups,
                 dottorrent_files_path: PathBuf::from(&dottorrent_files_path),
                 frontend_url: Url::from_str(&frontend_url)
                     .expect("ARCADIA_FRONTEND_URL env var malformed"),
