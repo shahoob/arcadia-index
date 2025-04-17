@@ -6,7 +6,7 @@
   </a>
 </p>
 
-For contributions see (backend) [backend/CONTRIBUTING.md](backend/CONTRIBUTING.md) (frontend) [frontend/CONTRIBUTING.md](frontend/CONTRIBUTING.md)
+For contributions see [backend/CONTRIBUTING.md](backend/CONTRIBUTING.md) or [frontend/CONTRIBUTING.md](frontend/CONTRIBUTING.md)
 
 ## Screenshots
 
