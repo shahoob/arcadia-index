@@ -20,10 +20,10 @@ pub async fn create_title_group(
     "#;
 
     let created_title_group = sqlx::query_as::<_, TitleGroup>(create_title_group_query)
-        .bind(&title_group_form.master_group_id)
+        .bind(title_group_form.master_group_id)
         .bind(&title_group_form.name)
         .bind(&title_group_form.name_aliases)
-        .bind(&current_user.id)
+        .bind(current_user.id)
         .bind(&title_group_form.description)
         .bind(&title_group_form.original_language)
         .bind(&title_group_form.country_from)
@@ -32,7 +32,7 @@ pub async fn create_title_group(
         .bind(&title_group_form.embedded_links)
         .bind(&title_group_form.category)
         .bind(&title_group_form.content_type)
-        .bind(&title_group_form.original_release_date)
+        .bind(title_group_form.original_release_date)
         .bind(&title_group_form.tags)
         .bind(&title_group_form.tagline)
         // .bind(&title_group_form.public_ratings)

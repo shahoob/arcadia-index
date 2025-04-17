@@ -31,8 +31,6 @@ pub enum Category {
     Soundtrack,
     Anthology,
     Compilation,
-    #[sqlx(rename = "Single")]
-    SingleCategory,
     Remix,
     Bootleg,
     Mixtape,
