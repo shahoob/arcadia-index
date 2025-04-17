@@ -82,8 +82,10 @@ pub enum VideoCodec {
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "features_enum")]
 pub enum Features {
-    HDR,
-    DV,
+    #[sqlx(rename = "HDR")]
+    Hdr,
+    #[sqlx(rename = "DV")]
+    Dv,
     Commentary,
     Remux,
     #[sqlx(rename = "3D")]
@@ -91,13 +93,14 @@ pub enum Features {
     Booklet,
     Cue,
 }
+
 impl FromStr for Features {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "HDR" => Ok(Features::HDR),
-            "DV" => Ok(Features::DV),
+            "HDR" => Ok(Features::Hdr),
+            "DV" => Ok(Features::Dv),
             "Commentary" => Ok(Features::Commentary),
             "Remux" => Ok(Features::Remux),
             "3D" => Ok(Features::ThreeD),

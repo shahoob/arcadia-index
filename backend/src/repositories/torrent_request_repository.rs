@@ -24,8 +24,8 @@ pub async fn create_torrent_request(
     "#;
 
     let created_torrent_request = sqlx::query_as::<_, TorrentRequest>(create_torrent_request_query)
-        .bind(&torrent_request.title_group_id)
-        .bind(&current_user.id)
+        .bind(torrent_request.title_group_id)
+        .bind(current_user.id)
         .bind(&torrent_request.edition_name)
         .bind(&torrent_request.release_group)
         .bind(&torrent_request.description)
@@ -37,8 +37,8 @@ pub async fn create_torrent_request(
         .bind(&torrent_request.features)
         .bind(&torrent_request.subtitle_languages)
         .bind(&torrent_request.video_resolution)
-        .bind(&torrent_request.bounty_upload)
-        .bind(&torrent_request.bounty_bonus_points)
+        .bind(torrent_request.bounty_upload)
+        .bind(torrent_request.bounty_bonus_points)
         .fetch_one(pool)
         .await
         .map_err(Error::CouldNotCreateTorrentRequest)?;

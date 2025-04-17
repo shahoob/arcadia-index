@@ -65,7 +65,7 @@ pub async fn download_dottorrent_file(
         return Err(Error::DottorrentFileNotFound);
     }
 
-    actix_files::NamedFile::open(&file_path).map_err(|_| Error::DottorrentFileNotFound)
+    actix_files::NamedFile::open(file_path).map_err(|_| Error::DottorrentFileNotFound)
 }
 
 #[utoipa::path(
