@@ -10,7 +10,7 @@ use crate::{
 use bip_metainfo::Metainfo;
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json, map::VacantEntry};
+use serde_json::{Value, json};
 use sqlx::{PgPool, prelude::FromRow};
 use std::{fs, path::PathBuf, str::FromStr};
 
@@ -26,7 +26,7 @@ pub async fn create_torrent(
     pool: &PgPool,
     torrent_form: &UploadedTorrent,
     current_user: &User,
-    frontend_url: &Url,
+    _frontend_url: &Url,
     dottorrent_files_path: &PathBuf,
 ) -> Result<Torrent> {
     let create_torrent_query = r#"
