@@ -122,7 +122,6 @@ CREATE TYPE category_enum AS ENUM (
     'Soundtrack',
     'Anthology',
     'Compilation',
-    'SingleCategory',
     'Remix',
     'Bootleg',
     'Mixtape',

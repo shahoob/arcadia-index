@@ -39,6 +39,11 @@ jobs:
 
     - name: Install Rust toolchain
       uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        components: clippy
+
+    - name: Check clippy for new warnings
+      run: cargo clippy
 
     - name: Setup env
       run: cp -f .env.ci .env

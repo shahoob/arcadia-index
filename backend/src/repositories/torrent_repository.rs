@@ -12,7 +12,7 @@ use reqwest::Url;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{PgPool, prelude::FromRow};
-use std::{fs, path::PathBuf, str::FromStr};
+use std::{fs, path::Path, str::FromStr};
 
 use super::notification_repository::notify_users;
 
@@ -27,7 +27,7 @@ pub async fn create_torrent(
     torrent_form: &UploadedTorrent,
     current_user: &User,
     _frontend_url: &Url,
-    dottorrent_files_path: &PathBuf,
+    dottorrent_files_path: &Path,
 ) -> Result<Torrent> {
     let create_torrent_query = r#"
     INSERT INTO torrents (
@@ -75,7 +75,7 @@ pub async fn create_torrent(
         metainfo
             .info()
             .files()
-            .flat_map(|file| file.path().to_str().unwrap().split('.').last())
+            .flat_map(|file| file.path().to_str().unwrap().split('.').next_back())
             .fold(std::collections::HashMap::new(), |mut acc, ext| {
                 *acc.entry(ext.to_string()).or_insert(0) += 1;
                 acc
@@ -91,18 +91,18 @@ pub async fn create_torrent(
         .sum::<u64>() as i64;
 
     let uploaded_torrent = sqlx::query_as::<_, Torrent>(create_torrent_query)
-        .bind(&torrent_form.edition_group_id.0)
-        .bind(&current_user.id)
+        .bind(torrent_form.edition_group_id.0)
+        .bind(current_user.id)
         .bind(&*torrent_form.release_name.0)
         .bind(&*torrent_form.release_group.0)
         .bind(torrent_form.description.as_deref())
         .bind(&file_amount_per_type)
-        .bind(&torrent_form.uploaded_as_anonymous.0)
+        .bind(torrent_form.uploaded_as_anonymous.0)
         .bind(&file_list)
         .bind(&*torrent_form.mediainfo.0)
         .bind(&trumpable)
-        .bind(&false)
-        .bind(&size)
+        .bind(false)
+        .bind(size)
         .bind(torrent_form.duration.as_deref())
         .bind(torrent_form.audio_codec.as_deref())
         .bind(torrent_form.audio_bitrate.as_deref())
@@ -150,21 +150,19 @@ pub async fn create_torrent(
     .await?;
 
     //TODO: edit torrent file : remove announce url, add comment with torrent url, etc.
-    let output_path = format!(
-        "{}",
-        dottorrent_files_path
-            .join(format!("{}{}", uploaded_torrent.id, ".torrent"))
-            .to_str()
-            .unwrap()
-    );
+    let output_path = dottorrent_files_path
+        .join(format!("{}{}", uploaded_torrent.id, ".torrent"))
+        .to_str()
+        .unwrap()
+        .to_string();
     fs::write(&output_path, &torrent_form.torrent_file.data)
         .map_err(|error| Error::CouldNotSaveTorrentFile(output_path, error.to_string()))?;
 
     let _ = notify_users(
         pool,
-        &"torrent_uploaded",
+        "torrent_uploaded",
         &title_group_info.id,
-        &"New torrent uploaded subscribed title group",
+        "New torrent uploaded subscribed title group",
         &format!(
             "New torrent uploaded in title group \"{}\"",
             title_group_info.name
