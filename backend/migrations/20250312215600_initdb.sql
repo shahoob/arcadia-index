@@ -281,8 +281,9 @@ CREATE TABLE torrents (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     info_hash BYTEA NOT NULL,
+    info_dict BYTEA NOT NULL,
     language VARCHAR(15),
-    release_name VARCHAR(500),
+    release_name TEXT NOT NULL,
     -- maybe change the size
     release_group VARCHAR(30),
     description TEXT,
