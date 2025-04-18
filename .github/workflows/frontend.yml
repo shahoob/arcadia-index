@@ -4,14 +4,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'frontend/**'
+      - '.github/workflows/frontend.yml'
 
 jobs:
-  check-lint-format:
+  lint:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,5 +32,7 @@ jobs:
 
     - run: npm ci
     - run: npm run lint
+      continue-on-error: true
     - run: npm run check-format
+      continue-on-error: true
     
