@@ -15,7 +15,7 @@ pub async fn create_title_group(
 ) -> Result<TitleGroup> {
     let create_title_group_query = r#"
         INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::category_enum, $12::content_type_enum, $13, $14, $15)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::title_group_category_enum, $12::content_type_enum, $13, $14, $15)
         RETURNING *;
     "#;
 
