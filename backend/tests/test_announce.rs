@@ -1,19 +1,11 @@
-use actix_web::{body::MessageBody, dev::ServiceResponse, test};
+use actix_web::test;
 use serde::Deserialize;
-use serde::de::DeserializeOwned;
 use sqlx::PgPool;
 
 mod common;
 
 use arcadia_index::OpenSignups;
 use arcadia_index::tracker::announce;
-
-async fn read_body_bencode<T: DeserializeOwned, B: MessageBody>(
-    resp: ServiceResponse<B>,
-) -> Result<T, serde_bencode::Error> {
-    let body = test::read_body(resp).await;
-    serde_bencode::from_bytes(&body)
-}
 
 #[derive(Debug, Deserialize)]
 struct WrappedError {
@@ -51,7 +43,7 @@ async fn test_announce_unknown_passkey(pool: PgPool) {
     );
 
     // Any error is okay, as long as it has "failure reason" populated.
-    read_body_bencode::<WrappedError, _>(resp)
+    common::read_body_bencode::<WrappedError, _>(resp)
         .await
         .expect("expected failure message");
 }
@@ -86,7 +78,7 @@ async fn test_announce_unknown_torrent(pool: PgPool) {
     );
 
     // Any error is okay, as long as it has "failure reason" populated.
-    read_body_bencode::<WrappedError, _>(resp)
+    common::read_body_bencode::<WrappedError, _>(resp)
         .await
         .expect("expected failure message");
 }
@@ -119,7 +111,7 @@ async fn test_announce_known_torrent(pool: PgPool) {
         resp.status()
     );
 
-    let resp = read_body_bencode::<announce::AnnounceResponse, _>(resp)
+    let resp = common::read_body_bencode::<announce::AnnounceResponse, _>(resp)
         .await
         .expect("could not deserialize announce response");
 
@@ -160,7 +152,7 @@ async fn test_announce_known_torrent_with_peers(pool: PgPool) {
         resp.status()
     );
 
-    let resp = read_body_bencode::<announce::AnnounceResponse, _>(resp)
+    let resp = common::read_body_bencode::<announce::AnnounceResponse, _>(resp)
         .await
         .expect("could not deserialize announce response");
 
