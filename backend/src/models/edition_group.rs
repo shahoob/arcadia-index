@@ -78,6 +78,9 @@ pub struct EditionGroup {
     // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: numer/name of the last item)
     #[schema(value_type = Value)]
     pub additional_information: Option<Json<Value>>,
+    // supported keys in the frontend:
+    // Collections: date_from, first_item, last_item
+    // Music: label, catalogue_number
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

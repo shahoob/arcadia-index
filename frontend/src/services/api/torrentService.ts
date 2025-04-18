@@ -26,6 +26,12 @@ export const createTitleGroup = async (titleGroup: object) => {
 }
 export const createEditionGroup = async (editionGroup: object) => {
   try {
+    editionGroup.additional_information = Object.fromEntries(
+      Object.entries(editionGroup.additional_information).filter(
+        ([, value]) => value !== null && value !== '',
+      ),
+    )
+    editionGroup.distributor = editionGroup.distributor == '' ? null : editionGroup.distributor
     return (await api.post('/edition-group', editionGroup)).data
   } catch (error) {
     console.error('API Error:', error)
