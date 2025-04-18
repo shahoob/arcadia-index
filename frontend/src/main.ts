@@ -10,6 +10,7 @@ import 'primeicons/primeicons.css'
 import './assets/main.css'
 import Tooltip from 'primevue/tooltip'
 import { definePreset } from '@primeuix/themes'
+import * as helpers from './services/helpers'
 
 const app = createApp(App)
 
@@ -39,4 +40,9 @@ app.use(PrimeVue, {
 })
 app.use(router)
 app.directive('tooltip', Tooltip)
+
+Object.keys(helpers).forEach((key) => {
+  app.config.globalProperties[`$${key}`] = helpers[key as keyof typeof helpers]
+})
+
 app.mount('#app')

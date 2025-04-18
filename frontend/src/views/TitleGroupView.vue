@@ -63,7 +63,7 @@
         </div>
         <div v-for="edition_group in title_group.edition_groups" :key="edition_group.id">
           <div v-if="edition_group.description" class="edition-description">
-            <div class="edition-group-slug">{{ getEditionGroupSlug(edition_group) }}</div>
+            <div class="edition-group-slug">{{ $getEditionGroupSlug(edition_group) }}</div>
             {{ edition_group.description }}
           </div>
         </div>
@@ -99,7 +99,6 @@ import TitleGroupFullHeader from '@/components/title_group/TitleGroupFullHeader.
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { getEditionGroupSlug } from '@/services/helpers'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 
@@ -131,13 +130,6 @@ export default {
     getTitleGroup(this.$route.query.id?.toString()).then((data) => {
       this.title_group = data
     })
-  },
-  computed: {
-    getEditionGroupSlug() {
-      return (edition_group) => {
-        return getEditionGroupSlug(edition_group)
-      }
-    },
   },
   methods: {
     uploadTorrent() {

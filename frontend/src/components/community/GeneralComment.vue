@@ -11,7 +11,7 @@
           {{ comment.created_by.username }}
         </span>
         <span class="time-ago">
-          {{ timeAgo(comment.created_at) }}
+          {{ $timeAgo(comment.created_at) }}
         </span>
       </div>
       <div class="comment-body">
@@ -23,16 +23,10 @@
 
 <script lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
-import { timeAgo } from '@/services/helpers'
 export default {
   components: { ContentContainer },
   props: {
     comment: {},
-  },
-  methods: {
-    timeAgo(datetime) {
-      return timeAgo(datetime)
-    },
   },
 }
 </script>
