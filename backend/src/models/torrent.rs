@@ -19,6 +19,7 @@ pub enum AudioCodec {
     Flac,
     Pcm,
     #[sqlx(rename = "true-hd")]
+    #[serde(alias = "true-hd")]
     TrueHd,
     Opus,
     Dsd,
@@ -28,16 +29,22 @@ pub enum AudioCodec {
 #[sqlx(type_name = "audio_channels_enum")]
 pub enum AudioChannels {
     #[sqlx(rename = "1.0")]
+    #[serde(alias = "1.0")]
     OneDotZero,
     #[sqlx(rename = "2.0")]
+    #[serde(alias = "2.0")]
     TwoDotZero,
     #[sqlx(rename = "2.1")]
+    #[serde(alias = "2.1")]
     TwoDotOne,
     #[sqlx(rename = "5.0")]
+    #[serde(alias = "5.0")]
     FiveDotZero,
     #[sqlx(rename = "5.1")]
+    #[serde(alias = "5.1")]
     FiveDotOne,
     #[sqlx(rename = "7.1")]
+    #[serde(alias = "7.1")]
     SevenDotOne,
 }
 
@@ -45,31 +52,44 @@ pub enum AudioChannels {
 #[sqlx(type_name = "audio_bitrate_sampling_enum")]
 pub enum AudioBitrateSampling {
     #[sqlx(rename = "192")]
+    #[serde(alias = "192")]
     Bitrate192,
     #[sqlx(rename = "256")]
+    #[serde(alias = "256")]
     Bitrate256,
     #[sqlx(rename = "320")]
+    #[serde(alias = "320")]
     Bitrate320,
     #[sqlx(rename = "APS (VBR)")]
+    #[serde(alias = "APS (VBR)")]
     ApsVbr,
     #[sqlx(rename = "V2 (VBR)")]
+    #[serde(alias = "V2 (VBR)")]
     V2Vbr,
     #[sqlx(rename = "V1 (VBR)")]
+    #[serde(alias = "V1 (VBR)")]
     V1Vbr,
     #[sqlx(rename = "APX (VBR)")]
+    #[serde(alias = "APX (VBR)")]
     ApxVbr,
     #[sqlx(rename = "V0 (VBR)")]
+    #[serde(alias = "V0 (VBR)")]
     V0Vbr,
     Lossless,
     #[sqlx(rename = "24bit Lossless")]
+    #[serde(alias = "24bit Lossless")]
     Lossless24Bit,
     #[sqlx(rename = "DSD64")]
+    #[serde(alias = "DSD64")]
     Dsd64,
     #[sqlx(rename = "DSD128")]
+    #[serde(alias = "DSD128")]
     Dsd128,
     #[sqlx(rename = "DSD256")]
+    #[serde(alias = "DSD256")]
     Dsd256,
     #[sqlx(rename = "DSD512")]
+    #[serde(alias = "DSD512")]
     Dsd512,
     Other,
 }
@@ -78,19 +98,26 @@ pub enum AudioBitrateSampling {
 #[sqlx(type_name = "video_codec_enum")]
 pub enum VideoCodec {
     #[sqlx(rename = "mpeg1")]
+    #[serde(alias = "mpeg1")]
     Mpeg1,
     #[sqlx(rename = "mpeg2")]
+    #[serde(alias = "mpeg2")]
     Mpeg2,
     Xvid,
     #[sqlx(rename = "divX")]
+    #[serde(alias = "divX")]
     DivX,
     #[sqlx(rename = "h264")]
+    #[serde(alias = "h264")]
     H264,
     #[sqlx(rename = "h265")]
+    #[serde(alias = "h265")]
     H265,
     #[sqlx(rename = "vc-1")]
+    #[serde(alias = "vc-1")]
     Vc1,
     #[sqlx(rename = "vp9")]
+    #[serde(alias = "vp9")]
     Vp9,
     BD50,
     UHD100,
@@ -100,12 +127,15 @@ pub enum VideoCodec {
 #[sqlx(type_name = "features_enum")]
 pub enum Features {
     #[sqlx(rename = "HDR")]
+    #[serde(alias = "HDR")]
     Hdr,
     #[sqlx(rename = "DV")]
+    #[serde(alias = "DV")]
     Dv,
     Commentary,
     Remux,
     #[sqlx(rename = "3D")]
+    #[serde(alias = "3D")]
     ThreeD,
     Booklet,
     Cue,

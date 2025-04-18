@@ -99,11 +99,11 @@ COPY public.edition_groups (id, title_group_id, name, release_date, created_at, 
 4	2	Silent version	1925-08-15 00:00:00	2025-03-31 10:25:44.86285	2025-03-31 10:25:44.86285	1	\N		{""}	{""}	Blu-Ray	{}
 5	2	Sound version	1942-02-11 00:00:00	2025-03-31 10:40:17.868567	2025-03-31 10:40:17.868567	1	This version has dialogues dubbed		{""}	{""}	Blu-Ray	{}
 6	2	Sound version digital restoration	2012-02-15 00:00:00	2025-03-31 10:43:37.252083	2025-03-31 10:43:37.252083	1	High-definition digital restoration of the 1942 sound version (2012).		{""}	{""}	Blu-Ray	{}
-7	3	Original edition	1862-03-31 00:16:08	2025-03-31 11:03:45.905456	2025-03-31 11:03:45.905456	1			{""}	{""}	Physical-Book	{}
+7	3	Original edition	1862-03-31 00:16:08	2025-03-31 11:03:45.905456	2025-03-31 11:03:45.905456	1			{""}	{""}	Physical Book	{}
 8	3	Revised edition	2010-05-28 00:00:00	2025-03-31 11:08:53.447285	2025-03-31 11:08:53.447285	1	Revised edition of the book, including footnotes to explain things about the context of the time.	Amazon	{""}	{""}	Web	{}
 10	3	CD Audiobook	2012-02-02 00:00:00	2025-03-31 11:43:42.916292	2025-03-31 11:43:42.916292	1			{""}	{""}	CD	{}
-11	4	Original edition	1940-05-01 00:00:00	2025-03-31 12:04:53.496183	2025-03-31 12:04:53.496183	1			{""}	{""}	Physical-Book	{}
-12	5	Original edition	1940-05-01 00:00:00	2025-03-31 12:15:38.583304	2025-03-31 12:15:38.583304	1			{""}	{""}	Physical-Book	{}
+11	4	Original edition	1940-05-01 00:00:00	2025-03-31 12:04:53.496183	2025-03-31 12:04:53.496183	1			{""}	{""}	Physical Book	{}
+12	5	Original edition	1940-05-01 00:00:00	2025-03-31 12:15:38.583304	2025-03-31 12:15:38.583304	1			{""}	{""}	Physical Book	{}
 9	3	Original edition	2011-02-09 00:00:00	2025-03-31 11:41:20.328981	2025-03-31 11:41:20.328981	1	Audiobook of the original version	Audible	{""}	{""}	Web	{}
 13	6	Original edition	2016-12-10 00:00:00	2025-03-31 13:39:26.541847	2025-03-31 13:39:26.541847	1		casefilepodcast	{""}	{""}	Web	{"date_from": "2016-01-09", "last_item": "Case 40", "first_item": "Case 01"}
 15	6	Original edition	2018-12-22 00:00:00	2025-03-31 13:52:36.241175	2025-03-31 13:52:36.241175	1		casefilepodcast	{""}	{""}	Web	{"date_from": "2018-01-13", "last_item": "Case 104", "first_item": "Case 72"}

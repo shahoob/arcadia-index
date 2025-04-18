@@ -32,7 +32,7 @@
           <Select
             v-model="editionGroupForm.source"
             inputId="source"
-            :options="selectableSources[titleGroup.content_type]"
+            :options="selectableSources"
             class="select-source"
             size="small"
             name="source"
@@ -146,7 +146,7 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { Form } from '@primevue/forms'
-import { isValidUrl } from '@/services/helpers'
+import { getSources, isValidUrl } from '@/services/helpers'
 
 export default {
   components: {
@@ -176,14 +176,6 @@ export default {
         source: '',
         distributor: '',
         additional_information: {},
-      },
-      selectableSources: {
-        Book: ['Web', 'CD', 'PhysicalBook'],
-        Music: ['Web', 'CD', 'Vinyl'],
-        Movie: ['Web', 'BluRay'],
-        Software: ['Web'],
-        'TV-Show': ['Web', 'BluRay', 'DVD9'],
-        Collection: ['Web'],
       },
     }
   },
@@ -243,6 +235,11 @@ export default {
     },
     removeLink(index: number) {
       this.editionGroupForm.external_links.splice(index, 1)
+    },
+  },
+  computed: {
+    selectableSources() {
+      return getSources(this.titleGroup.content_type)
     },
   },
   created() {

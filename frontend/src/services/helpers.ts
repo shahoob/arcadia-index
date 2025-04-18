@@ -65,6 +65,51 @@ export const getFeatures = (contentType) => {
     return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
   }
 }
+export const getSources = (contentType: string) => {
+  const sources = ['Web']
+  console.log(contentType)
+  switch (contentType) {
+    case 'Book': {
+      sources.push('Physical Book')
+      break
+    }
+    case 'Music': {
+      sources.push('Vinyl', 'Blu-Ray', 'CD', 'Soundboard', 'SACD', 'DAT', 'Cassette')
+      break
+    }
+    case 'Movie': {
+      sources.push('Blu-Ray', 'DVD9', 'DVD5', 'HD-DVD', 'HD-TV', 'PDTV', 'VHS', 'TV', 'LaserDisc')
+      break
+    }
+    case 'TV-Show': {
+      sources.push('Blu-Ray', 'DVD9', 'DVD5', 'HD-DVD', 'HD-TV', 'PDTV', 'VHS', 'TV', 'LaserDisc')
+      break
+    }
+    case 'Collection': {
+      sources.push(
+        'Blu-Ray',
+        'DVD9',
+        'DVD5',
+        'HD-DVD',
+        'HD-TV',
+        'PDTV',
+        'VHS',
+        'TV',
+        'LaserDisc',
+        'Physical Book',
+        'Vinyl',
+        'CD',
+        'Soundboard',
+        'SACD',
+        'DAT',
+        'Cassette',
+      )
+      break
+    }
+  }
+  sources.push('Mixed')
+  return sources
+}
 export const isValidUrl = (url: string) => {
   try {
     new URL(url)

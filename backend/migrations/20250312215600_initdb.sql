@@ -204,7 +204,7 @@ CREATE TYPE source_enum AS ENUM (
     'TV',
     'VHS',
     'Mixed',
-    'Physical-Book'
+    'Physical Book'
 );
 CREATE TABLE edition_groups (
     id BIGSERIAL PRIMARY KEY,
