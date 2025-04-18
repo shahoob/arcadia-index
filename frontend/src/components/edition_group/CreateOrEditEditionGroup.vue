@@ -27,6 +27,32 @@
           {{ $form.distributor.error?.message }}
         </Message>
       </div>
+      <div v-if="titleGroup.content_type == 'Music'">
+        <FloatLabel>
+          <InputText
+            size="small"
+            v-model="editionGroupForm.additional_information.label"
+            name="label"
+          />
+          <label for="label">Label</label>
+        </FloatLabel>
+        <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.label.error?.message }}
+        </Message>
+      </div>
+      <div v-if="titleGroup.content_type == 'Music'">
+        <FloatLabel>
+          <InputText
+            size="small"
+            v-model="editionGroupForm.additional_information.catalogue_number"
+            name="catalogue_number"
+          />
+          <label for="catalogue_number">Catalogue number</label>
+        </FloatLabel>
+        <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.label.error?.message }}
+        </Message>
+      </div>
       <div>
         <FloatLabel>
           <Select
@@ -186,9 +212,9 @@ export default {
       if (values.name.length < 5) {
         errors.name = [{ message: 'Write more than 5 characters' }]
       }
-      if (values.distributor.length < 2) {
-        errors.distributor = [{ message: 'Write more than 2 characters' }]
-      }
+      // if (values.distributor.length < 2) {
+      //   errors.distributor = [{ message: 'Write more than 2 characters' }]
+      // }
       if (values.source == '') {
         errors.source = [{ message: 'Select a source' }]
       }
@@ -248,6 +274,10 @@ export default {
     }
     if (Object.keys(this.initialEditionGroupForm).length > 0) {
       this.editionGroupForm = this.initialEditionGroupForm
+    }
+    if (this.titleGroup.content_type == 'Music') {
+      this.editionGroupForm.additional_information.label = ''
+      this.editionGroupForm.additional_information.catalogue_number = ''
     }
   },
 }

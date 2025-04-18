@@ -38,6 +38,12 @@ export const getEditionGroupSlug = (editionGroup) => {
       ')'
   }
   slug += ' - ' + editionGroup.name
+  if (editionGroup.additional_information?.label) {
+    slug += ' / ' + editionGroup.additional_information?.label
+  }
+  if (editionGroup.additional_information?.catalogue_number) {
+    slug += ' / ' + editionGroup.additional_information?.catalogue_number
+  }
   slug += ' / ' + editionGroup.source
   slug += editionGroup.distributor ? ' / ' + editionGroup.distributor : ''
   return slug
