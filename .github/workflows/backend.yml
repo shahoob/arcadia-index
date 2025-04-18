@@ -21,6 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container: rust:1.86-bullseye
+
     services:
       arcadiadb:
         image: postgres
@@ -46,6 +47,9 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           cache-workspaces: ./backend
+      
+      - name: Setup env
+        run: cp -f .env.ci .env
       
       - name: Build
         run: cargo build
