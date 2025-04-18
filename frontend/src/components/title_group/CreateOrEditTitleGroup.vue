@@ -186,7 +186,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import { isValidUrl } from '@/services/helpers'
 
 export default {
   components: {
@@ -258,7 +257,7 @@ export default {
         errors.original_release_date = [{ message: 'Select a date' }]
       }
       values.external_links.forEach((link, index) => {
-        if (!isValidUrl(link)) {
+        if (!this.$isValidUrl(link)) {
           if (!('external_links' in errors)) {
             errors.external_links = []
           }
@@ -266,7 +265,7 @@ export default {
         }
       })
       values.covers.forEach((link, index) => {
-        if (!isValidUrl(link)) {
+        if (!this.$isValidUrl(link)) {
           if (!('covers' in errors)) {
             errors.covers = []
           }

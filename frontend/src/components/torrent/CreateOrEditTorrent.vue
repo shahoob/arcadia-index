@@ -85,7 +85,7 @@
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
-                :options="selectableVideoCodecs"
+                :options="*getFeatures()"
                 class="select"
                 size="small"
                 name="video_codec"
@@ -212,7 +212,7 @@
           <MultiSelect
             v-model="torrentForm.features"
             display="chip"
-            :options="selectableFeatures"
+            :options="$getFeatures(content_type)"
             filter
             size="small"
             name="features"
@@ -289,8 +289,8 @@ import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
-import { getFeatures } from '@/services/helpers'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import { getFeatures } from '@/services/helpers'
 
 export default {
   components: {
@@ -448,11 +448,6 @@ export default {
         .finally(() => {
           this.uploadingTorrent = false
         })
-    },
-  },
-  computed: {
-    selectableFeatures() {
-      return getFeatures(this.content_type)
     },
   },
   created() {

@@ -11,7 +11,7 @@
     <Column field="edition_name" header="Edition"></Column>
     <Column header="Bounty">
       <template #body="slotProps">
-        {{ bytesToReadable(slotProps.data.bounty_upload) }} +
+        {{ $bytesToReadable(slotProps.data.bounty_upload) }} +
         {{ slotProps.data.bounty_bonus_points }} bp
       </template>
     </Column>
@@ -21,16 +21,10 @@
 
 <script lang="ts">
 import { Column, DataTable } from 'primevue'
-import { bytesToReadable } from '@/services/helpers'
 export default {
   components: { DataTable, Column },
   props: {
     torrent_requests: {},
-  },
-  methods: {
-    bytesToReadable(bytes: number) {
-      return bytesToReadable(bytes)
-    },
   },
 }
 </script>

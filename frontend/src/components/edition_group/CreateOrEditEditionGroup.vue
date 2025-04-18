@@ -58,7 +58,7 @@
           <Select
             v-model="editionGroupForm.source"
             inputId="source"
-            :options="selectableSources"
+            :options="$getSources(titleGroup.content_type)"
             class="select-source"
             size="small"
             name="source"
@@ -172,7 +172,6 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { Form } from '@primevue/forms'
-import { getSources, isValidUrl } from '@/services/helpers'
 
 export default {
   components: {
@@ -225,7 +224,7 @@ export default {
         errors.description = [{ message: 'Write more than 10 characters' }]
       }
       values.external_links.forEach((link, index) => {
-        if (!isValidUrl(link)) {
+        if (!this.$isValidUrl(link)) {
           if (!('external_links' in errors)) {
             errors.external_links = []
           }
@@ -233,7 +232,7 @@ export default {
         }
       })
       values.covers.forEach((link, index) => {
-        if (!isValidUrl(link)) {
+        if (!this.$isValidUrl(link)) {
           if (!('covers' in errors)) {
             errors.covers = []
           }
@@ -261,11 +260,6 @@ export default {
     },
     removeLink(index: number) {
       this.editionGroupForm.external_links.splice(index, 1)
-    },
-  },
-  computed: {
-    selectableSources() {
-      return getSources(this.titleGroup.content_type)
     },
   },
   created() {

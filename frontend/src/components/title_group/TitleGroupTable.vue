@@ -53,7 +53,7 @@
     </Column>
     <Column header="Uploaded">
       <template #body="slotProps">
-        {{ timeAgo(slotProps.data.created_at) }}
+        {{ $timeAgo(slotProps.data.created_at) }}
       </template>
     </Column>
     <Column header="">
@@ -73,9 +73,7 @@
       </template>
     </Column>
     <Column header="Size">
-      <template #body="slotProps">
-        {{ bytesToReadable(slotProps.data.size) }}
-      </template>
+      <template #body="slotProps"> {{ $bytesToReadable(slotProps.data.size) }} </template>
     </Column>
     <!-- TODO: replace with real data from the tracker -->
     <Column style="width: 2.5em">
@@ -102,7 +100,7 @@
           <AccordionHeader>Report information</AccordionHeader>
           <AccordionContent>
             <div class="report" v-for="report in slotProps.data.reports" :key="report.id">
-              <span class="bold">{{ timeAgo(report.reported_at) }}</span
+              <span class="bold">{{ $timeAgo(report.reported_at) }}</span
               >: {{ report.description }}
             </div>
           </AccordionContent>
@@ -135,7 +133,7 @@
               ></Column>
               <Column field="size" header="Size">
                 <template #body="slotProps">
-                  {{ bytesToReadable(slotProps.data.size) }}
+                  {{ $bytesToReadable(slotProps.data.size) }}
                 </template>
               </Column>
             </DataTable>
@@ -152,7 +150,6 @@
 <script lang="ts">
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { timeAgo, bytesToReadable, getEditionGroupSlug } from '@/services/helpers'
 import DOMPurify from 'dompurify'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
@@ -203,12 +200,6 @@ export default {
         this.expandedRows = this.expandedRows.filter((t) => t.id !== torrent.id)
       }
     },
-    timeAgo(date: string) {
-      return timeAgo(date)
-    },
-    bytesToReadable(bytes: number) {
-      return bytesToReadable(bytes)
-    },
     purifyHtml(html: string) {
       return DOMPurify.sanitize(html)
     },
@@ -228,7 +219,7 @@ export default {
   computed: {
     getEditionGroupSlug() {
       return (id: number) => {
-        return getEditionGroupSlug(
+        return this.$getEditionGroupSlug(
           this.title_group.edition_groups.find((group: object) => group.id === id),
         )
       }

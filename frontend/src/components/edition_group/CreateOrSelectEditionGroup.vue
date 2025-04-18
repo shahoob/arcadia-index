@@ -17,12 +17,12 @@
       >
         <template #option="slotProps">
           <div>
-            {{ getEditionGroupSlug(slotProps.option) }}
+            {{ $getEditionGroupSlug(slotProps.option) }}
           </div>
         </template>
         <template #value="slotProps" v-if="selected_edition_group.id">
           <div>
-            {{ getEditionGroupSlug(slotProps.value) }}
+            {{ $getEditionGroupSlug(slotProps.value) }}
           </div>
         </template>
       </Select>
@@ -52,7 +52,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import { createEditionGroup } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { getEditionGroupSlug } from '@/services/helpers'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 
 export default {
@@ -74,9 +73,6 @@ export default {
     }
   },
   methods: {
-    getEditionGroupSlug(editionGroup) {
-      return getEditionGroupSlug(editionGroup)
-    },
     sendEditionGroup(editionGroupForm) {
       if (this.action == 'select') {
         this.$emit('done', this.selected_edition_group)
