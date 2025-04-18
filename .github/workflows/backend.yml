@@ -30,6 +30,8 @@ jobs:
 
       - name: Install Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          cache-workspaces: ./backend
       
       - name: Build
         run: cargo build
@@ -51,6 +53,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: clippy
+          cache-workspaces: ./backend
   
       - name: Check clippy for new warnings
         run: cargo clippy
@@ -58,7 +61,7 @@ jobs:
 
   schema-check:
     runs-on: ubuntu-latest
-    # container: rust:1.86-bullseye
+    container: rust:1.86-bullseye
     defaults:
       run:
         working-directory: ./backend
@@ -82,6 +85,8 @@ jobs:
 
       - name: Install Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          cache-workspaces: ./backend
 
       - name: Setup env
         run: cp -f .env.ci .env
