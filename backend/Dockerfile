@@ -40,6 +40,24 @@ COPY . .
 
 RUN SQLX_OFFLINE=true cargo build
 
+FROM alpine:3 AS debug-alpine
+
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+COPY --chmod=777 --from=build-debug /app/target/debug/arcadia-index .
+CMD ["arcadia-index"]
+
+FROM alpine:3 AS alpine
+
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+COPY --chmod=777 --from=build-prod /app/target/release/arcadia-index .
+CMD ["arcadia-index"]
+
 # use --target debug when you want to build the debug variant
 FROM debian:bookworm-slim AS debug
 WORKDIR /app
