@@ -168,7 +168,7 @@ pub struct Torrent {
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     pub release_name: Option<String>,
-    pub release_group: String,
+    pub release_group: Option<String>,
     pub description: Option<String>, // specific to the torrent
     #[schema(value_type = Value)]
     pub file_amount_per_type: Json<Value>, // (5 mp3, 1 log, 5 jpg, etc.)
@@ -200,7 +200,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = String)]
     pub release_name: Text<String>,
     #[schema(value_type = String)]
-    pub release_group: Text<String>,
+    pub release_group: Option<Text<String>>,
     #[schema(value_type = String)]
     pub description: Option<Text<String>>, // specific to the torrent
     #[schema(value_type = bool)]

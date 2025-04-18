@@ -387,9 +387,9 @@ export default {
       if (values.release_name.length < 5) {
         errors.release_name = [{ message: 'Write more than 5 characters' }]
       }
-      if (values.release_group.length < 2) {
-        errors.release_group = [{ message: 'Write more than 2 characters' }]
-      }
+      // if (values.release_group.length < 2) {
+      //   errors.release_group = [{ message: 'Write more than 2 characters' }]
+      // }
       // if (values.description == '') {
       //   errors.description = [{ message: 'Write a description' }]
       // }
