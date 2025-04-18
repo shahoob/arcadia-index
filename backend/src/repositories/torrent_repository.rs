@@ -244,7 +244,8 @@ title_group_data AS (
                                     'video_codec', t.video_codec,
                                     'features', t.features,
                                     'subtitle_languages', t.subtitle_languages,
-                                    'video_resolution', t.video_resolution
+                                    'video_resolution', t.video_resolution,
+                                    'reports', t.reports
                                 )
                             ), '[]'::jsonb)
                             FROM torrents_and_reports t
