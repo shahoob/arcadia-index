@@ -42,7 +42,7 @@ export const uploadTorrent = async (torrentForm: object) => {
   try {
     const formData = new FormData()
     for (const [key, value] of Object.entries(torrentForm)) {
-      if (value != null) {
+      if (value != null && value != '') {
         formData.append(key, value)
       }
     }

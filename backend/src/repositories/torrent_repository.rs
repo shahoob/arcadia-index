@@ -94,7 +94,7 @@ pub async fn create_torrent(
         .bind(torrent_form.edition_group_id.0)
         .bind(current_user.id)
         .bind(&*torrent_form.release_name.0)
-        .bind(&*torrent_form.release_group.0)
+        .bind(torrent_form.release_group.as_deref())
         .bind(torrent_form.description.as_deref())
         .bind(&file_amount_per_type)
         .bind(torrent_form.uploaded_as_anonymous.0)
