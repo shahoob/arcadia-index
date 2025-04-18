@@ -25,6 +25,23 @@ pub enum AudioCodec {
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "audio_channels_enum")]
+pub enum AudioChannels {
+    #[sqlx(rename = "1.0")]
+    OneDotZero,
+    #[sqlx(rename = "2.0")]
+    TwoDotZero,
+    #[sqlx(rename = "2.1")]
+    TwoDotOne,
+    #[sqlx(rename = "5.0")]
+    FiveDotZero,
+    #[sqlx(rename = "5.1")]
+    FiveDotOne,
+    #[sqlx(rename = "7.1")]
+    SevenDotOne,
+}
+
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_bitrate_sampling_enum")]
 pub enum AudioBitrateSampling {
     #[sqlx(rename = "192")]
@@ -139,7 +156,7 @@ pub struct Torrent {
     pub audio_codec: Option<AudioCodec>,
     pub audio_bitrate: Option<i32>, // in kb/s
     pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
-    pub audio_channels: Option<String>,
+    pub audio_channels: Option<AudioChannels>,
     // ---- audio
     // ---- video
     pub video_codec: Option<VideoCodec>,
@@ -178,7 +195,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = i32)]
     pub audio_bitrate: Option<Text<i32>>, // in kb/s
     #[schema(value_type = String)]
-    pub audio_channels: Option<Text<String>>,
+    pub audio_channels: Option<Text<AudioChannels>>,
     #[schema(value_type = AudioBitrateSampling)]
     pub audio_bitrate_sampling: Option<Text<AudioBitrateSampling>>,
     // ---- audio

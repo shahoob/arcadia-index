@@ -128,13 +128,13 @@
             >
               <Select
                 v-model="torrentForm.audio_codec"
-                inputId="audio_coded"
+                inputId="audio_codec"
                 :options="selectableAudioCodecs"
                 class="select"
                 size="small"
                 name="audio_codec"
               />
-              <label for="audio_coded">Audio codec</label>
+              <label for="audio_codec">Audio codec</label>
             </FloatLabel>
             <Message
               v-if="$form.audio_codec?.invalid"
@@ -142,7 +142,51 @@
               size="small"
               variant="simple"
             >
-              {{ $form.video_codec.error?.message }}
+              {{ $form.audio_codec.error?.message }}
+            </Message>
+          </div>
+          <div>
+            <FloatLabel
+              v-if="['Movie', 'TVShow', 'Music', 'Collection'].indexOf(content_type) >= 0"
+            >
+              <Select
+                v-model="torrentForm.audio_bitrate_sampling"
+                inputId="audio_coded"
+                :options="selectableAudioBitrateSamplings"
+                class="select"
+                size="small"
+                name="audio_bitrate_sampling"
+              />
+              <label for="audio_bitrate_sampling">Audio bitrate sampling</label>
+            </FloatLabel>
+            <Message
+              v-if="$form.audio_bitrate_sampling?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.audio_bitrate_sampling.error?.message }}
+            </Message>
+          </div>
+          <div>
+            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
+              <Select
+                v-model="torrentForm.audio_channels"
+                inputId="audio_channels"
+                :options="selectableAudioChannels"
+                class="select"
+                size="small"
+                name="audio_channels"
+              />
+              <label for="audio_channels">Audio channels</label>
+            </FloatLabel>
+            <Message
+              v-if="$form.audio_channels?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.audio_channels.error?.message }}
             </Message>
           </div>
         </div>
@@ -281,7 +325,7 @@ export default {
         audio_bitrate: null,
         subtitle_languages: '',
         features: '',
-        audio_channels: '',
+        audio_channels: null,
         audio_bitrate_sampling: null,
         torrent_file: null,
         uploaded_as_anonymous: false,
@@ -313,6 +357,31 @@ export default {
         'TrueHd',
         'Dsd',
       ],
+      selectableAudioBitrateSamplings: [
+        'Bitrate192',
+        'Bitrate256',
+        'Bitrate320',
+        'ApsVbr',
+        'V2Vbr',
+        'V1Vbr',
+        'ApxVbr',
+        'V0Vbr',
+        'Lossless',
+        'Lossless24Bit',
+        'Dsd64',
+        'Dsd128',
+        'Dsd256',
+        'Dsd512',
+        'Other',
+      ],
+      selectableAudioChannels: [
+        'OneDotZero',
+        'TwoDotZero',
+        'TwoDotOne',
+        'FiveDotZero',
+        'FiveDotOne',
+        'SevenDotOne',
+      ],
       selectableLanguages: ['English', 'French'],
       uploadingTorrent: false,
       content_type: '',
@@ -334,14 +403,17 @@ export default {
       if (values.container == '') {
         errors.container = [{ message: 'File container missing' }]
       }
-      if (values.video_codec == '') {
+      if (!values.video_codec) {
         errors.video_codec = [{ message: 'Select a codec' }]
       }
-      if (values.video_resolution == '') {
+      if (!values.video_resolution) {
         errors.video_resolution = [{ message: 'Select a resolution' }]
       }
-      if (values.audio_codec == '') {
+      if (!values.audio_codec) {
         errors.audio_codec = [{ message: 'Select a codec' }]
+      }
+      if (!values.audio_bitrate_sampling) {
+        errors.audio_bitrate_sampling = [{ message: 'Select a bitrate' }]
       }
       if (values.language == '') {
         errors.language = [{ message: 'Select a language' }]
@@ -349,7 +421,6 @@ export default {
       if (!this.torrentForm.torrent_file) {
         errors.torrent_file = [{ message: 'Select a torrent_file' }]
       }
-      console.log(errors)
 
       return {
         errors,

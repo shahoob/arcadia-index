@@ -253,6 +253,14 @@ CREATE TYPE audio_bitrate_sampling_enum AS ENUM(
     'DSD512',
     'other'
 );
+CREATE TYPE audio_channels_enum AS ENUM (
+    '1.0',
+    '2.0',
+    '2.1',
+    '5.0',
+    '5.1',
+    '7.1'
+);
 CREATE TYPE video_codec_enum AS ENUM(
     'mpeg1',
     'mpeg2',
@@ -296,7 +304,7 @@ CREATE TABLE torrents (
     audio_bitrate INT,
     -- in kb/s, taken from mediainfo
     audio_bitrate_sampling audio_bitrate_sampling_enum,
-    audio_channels VARCHAR(5),
+    audio_channels audio_channels_enum,
     -- audio
 
     -- video
