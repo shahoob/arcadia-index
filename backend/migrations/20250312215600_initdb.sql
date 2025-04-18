@@ -430,6 +430,74 @@ CREATE TABLE user_peers (
 
     UNIQUE (user_id, peer_id)
 );
+CREATE TABLE entities (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    pictures TEXT [],
+    created_by_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    title_groups_amount INT NOT NULL DEFAULT 0,
+    edition_groups_amount INT NOT NULL DEFAULT 0,
+    torrents_amount INT NOT NULL DEFAULT 0,
+    seeders_amount INT NOT NULL DEFAULT 0,
+    leechers_amount INT NOT NULL DEFAULT 0,
+    snatches_amount INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TYPE collage_category_enum AS ENUM (
+    'Personal',
+    'Staff Picks',
+    'External',
+    'Theme'
+);
+CREATE TYPE collage_type_enum AS ENUM (
+    'Artist',
+    'Entity',
+    'Title'
+);
+CREATE TABLE collage (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    name VARCHAR NOT NULL,
+    covers VARCHAR NOT NULL,
+    description TEXT NOT NULL,
+    tags VARCHAR[] NOT NULL,
+    category collage_category_enum NOT NULL,
+    section collage_type_enum NOT NULL,
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_title_group_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    title_group_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_artist_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    artist_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    FOREIGN KEY (artist_id) REFERENCES artists(id),
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_entity_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    entity_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    FOREIGN KEY (entity_id) REFERENCES entities(id),
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
 
 -- Views
 
