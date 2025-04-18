@@ -7,7 +7,7 @@ The publishing year was printed on the label, as “RECORDING FIRST PUBLISHED 19
 This release has labels without “MADE IN GT. BRITAIN” printed below the Parlophone £ logo.
 Matrix numbers: Side A: 7XCE 17144-1N, Side B: 7XCE 17145-1N.', 'Parlophone', '{""}', '{https://www.discogs.com/release/1789539-The-Beatles-Love-Me-Do}', 'Vinyl', '{}');
 
-INSERT INTO torrents VALUES (1, 1, '2025-03-30 16:44:41.458969', '2025-03-30 16:44:41.458969', 1, '\x112233445566778899aabbccddeeff0011223344', NULL, 'The Beatles - Love Me Do - P.S. I Love You (Parlophone Single) [24-96]', '', 'Full scans included
+INSERT INTO torrents VALUES (1, 1, '2025-03-30 16:44:41.458969', '2025-03-30 16:44:41.458969', 1, '\x112233445566778899aabbccddeeff0011223344', '\x64363a6c656e67746869313465343a6e616d65383a746573742e74787431323a7069656365206c656e67746869313637373732313665363a70696563657332303a09fac8dbfd27bd9b4d23a00eb648aa751789536d65', NULL, 'The Beatles - Love Me Do - P.S. I Love You (Parlophone Single) [24-96]', '', 'Full scans included
 
 Lineage:
 
