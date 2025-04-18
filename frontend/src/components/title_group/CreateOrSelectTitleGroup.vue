@@ -47,6 +47,7 @@
                 pi: true,
                 'pi-search': !gettingExternalDatabaseData,
                 'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
                 'cursor-pointer': true,
               }"
               @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/movie')"
@@ -74,6 +75,7 @@
                 pi: true,
                 'pi-search': !gettingExternalDatabaseData,
                 'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
                 'cursor-pointer': true,
               }"
               @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/tv')"
@@ -111,6 +113,8 @@
                 pi: true,
                 'pi-search': !gettingExternalDatabaseData,
                 'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
+
                 'cursor-pointer': true,
               }"
               @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"

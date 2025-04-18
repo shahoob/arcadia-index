@@ -85,7 +85,7 @@
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
-                :options="*getFeatures()"
+                :options="selectableVideoCodecs"
                 class="select"
                 size="small"
                 name="video_codec"
@@ -290,7 +290,6 @@ import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { getFeatures } from '@/services/helpers'
 
 export default {
   components: {
