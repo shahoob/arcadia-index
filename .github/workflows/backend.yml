@@ -18,45 +18,6 @@ env:
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
-    container: rust:1.86-bullseye
-    services:
-      arcadiadb:
-        image: postgres
-        env:
-          POSTGRES_USER: arcadia
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    defaults:
-      run:
-        working-directory: ./backend
-    
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          cache-workspaces: ./backend
-      
-      - name: Build
-        run: cargo build
-        env:
-          SQLX_OFFLINE: "true"
-  
-      - name: Run tests
-        run: cargo test
-        env:
-          SQLX_OFFLINE: "true"
-
   lint:
     runs-on: ubuntu-latest
 
@@ -72,14 +33,14 @@ jobs:
         with:
           components: clippy
           cache-workspaces: ./backend
+          cache-on-failure: true
   
       - name: Check clippy for new warnings
         run: cargo clippy
         env:
           SQLX_OFFLINE: "true"
   
-
-  schema-check:
+  build-schema-check:
     runs-on: ubuntu-latest
     container: rust:1.86-bullseye
     defaults:
@@ -107,9 +68,20 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           cache-workspaces: ./backend
+          cache-on-failure: true
 
       - name: Setup env
         run: cp -f .env.ci .env
+
+      - name: Build
+        run: cargo build
+        env:
+        #  SQLX_OFFLINE: "true"
+  
+      - name: Run tests
+        run: cargo test
+        env:
+        #  SQLX_OFFLINE: "true"
 
       - name: Install sqlx
         run: cargo install sqlx-cli
