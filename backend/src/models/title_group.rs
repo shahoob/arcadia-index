@@ -11,6 +11,7 @@ use super::edition_group::LiteEditionGroupHierachy;
 pub enum ContentType {
     Movie,
     #[sqlx(rename = "TV-Show")]
+    #[serde(alias = "TV-Show")]
     TVShow,
     Music,
     Software,

@@ -81,7 +81,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
@@ -102,7 +102,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -124,7 +124,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TVShow', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['Movie', 'TV-Show', 'Music', 'Collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_codec"
@@ -147,7 +147,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TVShow', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['Movie', 'TV-Show', 'Music', 'Collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
@@ -169,7 +169,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.audio_channels"
                 inputId="audio_channels"
@@ -192,7 +192,7 @@
         </div>
         <div>
           <FloatLabel
-            v-if="['Movie', 'TVShow', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
+            v-if="['Movie', 'TV-Show', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
           >
             <Select
               v-model="torrentForm.language"
@@ -332,14 +332,14 @@ export default {
       },
       // TODO : move all the selectable* arrays to an helper function
       selectableVideoCodecs: [
-        'Mpeg1',
-        'Mpeg2',
-        'Xvid',
+        'mpeg1',
+        'mpeg2',
+        'divX',
         'DivX',
-        'H264',
-        'H265',
-        'Vc1',
-        'Vp9',
+        'h264',
+        'h265',
+        'vc-1',
+        'vp9',
         'BD50',
         'UHD100',
       ],
@@ -354,34 +354,27 @@ export default {
         'Dts',
         'Flac',
         'Pcm',
-        'TrueHd',
+        'true-hd',
         'Dsd',
       ],
       selectableAudioBitrateSamplings: [
-        'Bitrate192',
-        'Bitrate256',
-        'Bitrate320',
-        'ApsVbr',
-        'V2Vbr',
-        'V1Vbr',
-        'ApxVbr',
-        'V0Vbr',
+        '192',
+        '256',
+        '320',
+        'APS (VBR)',
+        'V2 (VBR)',
+        'V1 (VBR)',
+        'V0 (VBR)',
+        'APX (VBR)',
         'Lossless',
-        'Lossless24Bit',
-        'Dsd64',
-        'Dsd128',
-        'Dsd256',
-        'Dsd512',
+        '24bit Lossless',
+        'DSD64',
+        'DSD128',
+        'DSD256',
+        'DSD512',
         'Other',
       ],
-      selectableAudioChannels: [
-        'OneDotZero',
-        'TwoDotZero',
-        'TwoDotOne',
-        'FiveDotZero',
-        'FiveDotOne',
-        'SevenDotOne',
-      ],
+      selectableAudioChannels: ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1'],
       selectableLanguages: ['English', 'French'],
       uploadingTorrent: false,
       content_type: '',
@@ -466,6 +459,7 @@ export default {
     this.content_type = useTitleGroupStore().content_type
     const editionGroupStore = useEditionGroupStore()
     this.torrentForm.edition_group_id = editionGroupStore.id
+    console.log(this.content_type)
   },
 }
 </script>

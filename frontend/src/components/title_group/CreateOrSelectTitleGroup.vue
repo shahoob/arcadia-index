@@ -59,7 +59,7 @@
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'TVShow'">
+      <div class="external-db-inputs" v-if="content_type == 'TV-Show'">
         <FloatLabel>
           <InputText size="small" name="tvdb_id" />
           <label for="tvdb_id">TVDB id</label>
@@ -171,7 +171,7 @@ export default {
       titleGroupId: '',
       step: 1,
       manualCreation: false,
-      selectableContentTypes: ['Movie', 'TVShow', 'Music', 'Software', 'Book', 'Collection'],
+      selectableContentTypes: ['Movie', 'TV-Show', 'Music', 'Software', 'Book', 'Collection'],
       content_type: '',
       gettingTitleGroupInfo: false,
       sendingTitleGroup: false,
