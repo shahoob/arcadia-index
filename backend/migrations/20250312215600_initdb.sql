@@ -115,7 +115,7 @@ CREATE TYPE content_type_enum AS ENUM (
     'Book',
     'Collection'
 );
-CREATE TYPE category_enum AS ENUM (
+CREATE TYPE title_group_category_enum AS ENUM (
     'Ep',
     'Album',
     'Single',
@@ -155,7 +155,7 @@ CREATE TABLE title_groups (
     covers TEXT [],
     external_links TEXT [] NOT NULL,
     embedded_links JSONB,
-    category category_enum,
+    category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
     series_id BIGINT,

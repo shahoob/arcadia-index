@@ -23,8 +23,8 @@ pub enum ContentType {
 
 // this is not to store the genre, but the format
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
-#[sqlx(type_name = "category_enum")]
-pub enum Category {
+#[sqlx(type_name = "title_group_category_enum")]
+pub enum TitleGroupCategory {
     //music
     Ep,
     Album, // includes "live album" as an "edition"
@@ -81,8 +81,8 @@ pub struct TitleGroup {
     // pub main_artists
     // pub artists_affiliated (multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub content_type: ContentType,  // movies, tv shows, books, games, etc
+    pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     #[schema(value_type = Value)]
     pub public_ratings: Option<Json<Value>>, // {service: rating}
@@ -128,8 +128,8 @@ pub struct UserCreatedTitleGroup {
     pub embedded_links: Option<Json<Value>>,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub content_type: ContentType,  // movies, tv shows, books, games, etc
+    pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub tagline: Option<String>,
     #[schema(value_type = String, format = DateTime)]
@@ -146,7 +146,7 @@ pub struct UserCreatedTitleGroup {
 pub struct TitleGroupHierarchyLite {
     pub name: String,
     pub covers: Option<Vec<String>>,
-    pub category: Option<Category>,
+    pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
     pub original_release_date: NaiveDateTime,
