@@ -17,7 +17,7 @@
       <template #body="slotProps">
         <a
           :href="
-            preview ? `/title-group?id=${title_group.id}&torrent_id=${slotProps.data.id}` : null
+            preview ? `/title-group?id=${title_group.id}&torrentId=${slotProps.data.id}` : null
           "
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
@@ -28,6 +28,7 @@
             / {{ slotProps.data.video_resolution }}</span
           >
           <span v-if="slotProps.data.audio_codec"> / {{ slotProps.data.audio_codec }}</span>
+          <span v-if="slotProps.data.audio_channels"> / {{ slotProps.data.audio_channels }}</span>
           <span v-if="slotProps.data.audio_bitrate_sampling">
             / {{ slotProps.data.audio_bitrate_sampling }}</span
           >
@@ -90,6 +91,7 @@
       </div>
     </template>
     <template #expansion="slotProps" v-if="!preview">
+      <div class="pre-style release-name">{{ slotProps.data.release_name }}</div>
       <Accordion :value="[]" multiple class="dense-accordion">
         <AccordionPanel value="0" v-if="slotProps.data.reports">
           <AccordionHeader>Report information</AccordionHeader>
@@ -210,11 +212,11 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.torrent_id) {
+    if (this.$route.query.torrentId) {
       this.toggleRow(
         this.title_group.edition_groups
           .flatMap((edition_group) => edition_group.torrents)
-          .find((torrent) => torrent.id == this.$route.query.torrent_id),
+          .find((torrent) => torrent.id == this.$route.query.torrentId),
       )
     }
   },
@@ -246,5 +248,9 @@ export default {
 }
 .date {
   font-weight: bold;
+}
+.release-name {
+  margin-bottom: 10px;
+  margin-left: 7px;
 }
 </style>
