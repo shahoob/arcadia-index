@@ -2,7 +2,22 @@
   <div id="top-bar">
     <div class="left"></div>
     <div class="user-stats">
-      <i v-tooltip.top="'Uploaded'" class="pi pi-upload" />{{ user.uploaded }}
+      <div class="stat" v-tooltip.bottom="'Uploaded'">
+        <i class="pi pi-upload" />
+        {{ $bytesToReadable(user.uploaded) }}
+      </div>
+      <span class="stat" v-tooltip.bottom="'Downloaded'">
+        <i class="pi pi-download" />{{ $bytesToReadable(user.downloaded) }}
+      </span>
+      <span class="stat" v-tooltip.bottom="'Ratio'">
+        <i class="pi pi-wave-pulse" />{{ user.ratio }}
+      </span>
+      <span class="stat" v-tooltip.bottom="'Bonus points'">
+        <i class="pi pi-money-bill" />{{ user.bonus_points }}
+      </span>
+      <span class="stat" v-tooltip.bottom="'Freeleech tokens'">
+        <i class="pi pi-ticket" />{{ user.freeleech_tokens }}
+      </span>
     </div>
     <div class="right">
       <div class="actions">
@@ -30,7 +45,6 @@ export default {
     },
   },
   created() {
-    console.log(this.$bytesToReadable(654654654))
     this.user = useUserStore()
   },
 }
@@ -47,8 +61,16 @@ export default {
   width: 100%;
 }
 .user-stats {
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  .stat {
+    margin: 0px 10px;
+    display: flex;
+    align-items: center;
+  }
   i {
-    margin-right: 5px;
+    margin-right: 7px;
   }
 }
 .actions .p-button {
