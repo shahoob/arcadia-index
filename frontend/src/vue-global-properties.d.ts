@@ -8,6 +8,7 @@ declare module '@vue/runtime-core' {
     $getTorrentSlug: (torrent: unknwon) => string
     $getFeatures: (contentType: string) => string[]
     $getLanguages: () => string[]
+    $getPlatforms: () => string[]
     $getSources: (contentType: string) => string[]
     $isValidUrl: (url: string) => boolean
   }

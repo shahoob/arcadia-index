@@ -138,6 +138,11 @@ CREATE TYPE title_group_category_enum AS ENUM (
     'Manual',
     'Other'
 );
+CREATE TYPE platform_enum AS ENUM(
+    'Linux',
+    'MacOS', 
+    'Windows'
+);
 CREATE TABLE title_groups (
     id BIGSERIAL PRIMARY KEY,
     master_group_id BIGINT,
@@ -147,6 +152,7 @@ CREATE TABLE title_groups (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     description TEXT NOT NULL,
+    platform platform_enum,
     original_language TEXT,
     original_release_date TIMESTAMP NOT NULL,
     tagline TEXT,

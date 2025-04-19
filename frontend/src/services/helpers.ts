@@ -76,7 +76,10 @@ export const getFeatures = (contentType) => {
   }
 }
 export const getLanguages = () => {
-  return ['English', 'French', 'German', 'Italian', 'Spanish', 'Swedish']
+  return ['Multi', 'English', 'French', 'German', 'Italian', 'Spanish', 'Swedish']
+}
+export const getPlatforms = () => {
+  return ['Linux', 'MacOS', 'Windows']
 }
 export const getSources = (contentType: string) => {
   const sources = ['Web']

@@ -22,12 +22,21 @@
         <ExternalLink v-for="link in title_group.external_links" :key="link.url" :link="link" />
       </div>
     </ContentContainer>
-    <ContentContainer container-title="Artists">
+    <ContentContainer container-title="Artists" v-if="title_group.affiliated_artists.length != 0">
       <div class="affiliated-artists">
         <AffiliatedArtist
           v-for="artist in title_group.affiliated_artists"
           :key="artist.id"
           :affiliated_artist="artist"
+        />
+      </div>
+    </ContentContainer>
+    <ContentContainer container-title="Other platforms" v-if="title_group.in_same_master_group">
+      <div class="flex justify-content-center">
+        <PlatformLink
+          v-for="tg in title_group.in_same_master_group"
+          :key="tg.id"
+          :title_group="tg"
         />
       </div>
     </ContentContainer>
@@ -46,6 +55,7 @@ import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
+import PlatformLink from '@/components/PlatformLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 
 export default {
@@ -54,6 +64,7 @@ export default {
     Image,
     AffiliatedArtist,
     ExternalLink,
+    PlatformLink,
     ContentContainer,
   },
   props: {

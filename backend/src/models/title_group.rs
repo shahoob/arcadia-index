@@ -21,6 +21,14 @@ pub enum ContentType {
     Collection,
 }
 
+#[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "platform_enum")]
+pub enum Platform {
+    Windows,
+    Linux,
+    MacOS,
+}
+
 // this is not to store the genre, but the format
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "title_group_category_enum")]
@@ -69,6 +77,7 @@ pub struct TitleGroup {
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     pub description: String,
+    pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
@@ -132,6 +141,7 @@ pub struct UserCreatedTitleGroup {
     pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub tagline: Option<String>,
+    pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
     #[schema(value_type = Value)]
@@ -168,6 +178,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         content_type: ContentType::Book,
         tags: Vec::new(),
         tagline: None,
+        platform: None,
         original_release_date: NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d")
             .unwrap()
             .and_hms_opt(0, 0, 0)
