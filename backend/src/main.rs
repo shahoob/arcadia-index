@@ -9,7 +9,7 @@ use actix_web::{App, HttpServer, middleware, web::Data};
 use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
-use std::{env, path::PathBuf, str::FromStr};
+use std::env;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -38,11 +38,18 @@ async fn main() -> std::io::Result<()> {
         OpenSignups::Disabled
     };
 
-    let dottorrent_files_path = env::var("ARCADIA_DOTTORRENT_FILES_PATH")
-        .expect("ARCADIA_DOTTORRENT_FILES_PATH env var is not set");
+    let tracker_name =
+        env::var("ARCADIA_TRACKER_NAME").expect("ARCADIA_TRACKER_NAME env var is not set");
 
-    let frontend_url =
-        env::var("ARCADIA_FRONTEND_URL").expect("ARCADIA_FRONTEND_URL env var is not set");
+    let frontend_url = env::var("ARCADIA_FRONTEND_URL")
+        .ok()
+        .and_then(|s| Url::parse(&s).ok())
+        .expect("ARCADIA_FRONTEND_URL env var is not set");
+
+    let tracker_url = env::var("ARCADIA_TRACKER_URL")
+        .ok()
+        .and_then(|s| Url::parse(&s).ok())
+        .expect("ARCADIA_TRACKER_URL malformed or missing");
 
     HttpServer::new(move || {
         let cors = Cors::permissive();
@@ -52,9 +59,9 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(Arcadia {
                 pool: pool.clone(),
                 open_signups,
-                dottorrent_files_path: PathBuf::from(&dottorrent_files_path),
-                frontend_url: Url::from_str(&frontend_url)
-                    .expect("ARCADIA_FRONTEND_URL env var malformed"),
+                tracker_name: tracker_name.clone(),
+                frontend_url: frontend_url.clone(),
+                tracker_url: tracker_url.clone(),
             }))
             .configure(init) // Initialize routes
             .service(
