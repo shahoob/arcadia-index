@@ -18,7 +18,7 @@
       </template>
     </Galleria>
     <ContentContainer container-title="Links">
-      <div class="external-links">
+      <div class="external-links links">
         <ExternalLink v-for="link in title_group.external_links" :key="link.url" :link="link" />
       </div>
     </ContentContainer>
@@ -31,8 +31,11 @@
         />
       </div>
     </ContentContainer>
-    <ContentContainer container-title="Other platforms" v-if="title_group.in_same_master_group">
-      <div class="flex justify-content-center">
+    <ContentContainer
+      :container-title="`Other platforms (master group ${title_group.master_group_id})`"
+      v-if="title_group.in_same_master_group"
+    >
+      <div class="flex justify-content-center links">
         <PlatformLink
           v-for="tg in title_group.in_same_master_group"
           :key="tg.id"
@@ -87,13 +90,15 @@ export default {
 .p-galleria {
   border: none;
 }
+.links {
+  a {
+    margin: 0px 5px;
+  }
+}
 .external-links {
   display: flex;
   justify-content: center;
   align-items: center;
-  a {
-    margin: 0px 10px;
-  }
 }
 </style>
 <style>

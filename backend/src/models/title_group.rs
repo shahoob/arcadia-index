@@ -27,6 +27,7 @@ pub enum Platform {
     Windows,
     Linux,
     MacOS,
+    Xbox,
 }
 
 // this is not to store the genre, but the format

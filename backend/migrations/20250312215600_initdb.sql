@@ -141,7 +141,8 @@ CREATE TYPE title_group_category_enum AS ENUM (
 CREATE TYPE platform_enum AS ENUM(
     'Linux',
     'MacOS', 
-    'Windows'
+    'Windows',
+    'Xbox'
 );
 CREATE TABLE title_groups (
     id BIGSERIAL PRIMARY KEY,
