@@ -32,12 +32,12 @@ pub async fn create_torrent(
             file_amount_per_type, uploaded_as_anonymous, file_list, mediainfo, trumpable,
             staff_checked, size, duration, audio_codec, audio_bitrate, audio_bitrate_sampling,
             audio_channels, video_codec, features, subtitle_languages, video_resolution, container,
-            language, info_hash, info_dict
+            languages, info_hash, info_dict
         ) VALUES (
             $1, $2, $3, $4, $5, $6, $7,
             $8, $9, $10, $11, $12, $13,
             $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
-            $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[], $20, $21, $22, $23, $24::bytea, $25::bytea
+            $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[], $20::languages_enum[], $21, $22, $23::languages_enum[], $24::bytea, $25::bytea
         )
         RETURNING *
     "#;
@@ -113,7 +113,16 @@ pub async fn create_torrent(
         })
         .bind(torrent_form.video_resolution.as_deref())
         .bind(&*torrent_form.container)
-        .bind(torrent_form.language.as_deref())
+        .bind(if torrent_form.languages.is_empty() {
+            Vec::new()
+        } else {
+            torrent_form
+                .languages
+                .0
+                .split(',')
+                .map(|f| f.trim())
+                .collect::<Vec<&str>>()
+        })
         .bind(info.info_hash().as_ref())
         .bind(info.to_bytes())
         .fetch_one(pool)
@@ -265,7 +274,7 @@ title_group_data AS (
                                     'file_amount_per_type', t.file_amount_per_type,
                                     'trumpable', t.trumpable,
                                     'staff_checked', t.staff_checked,
-                                    'language', t.language,
+                                    'languages', t.languages,
                                     'container', t.container,
                                     'size', t.size,
                                     'duration', t.duration,
