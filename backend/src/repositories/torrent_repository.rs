@@ -260,6 +260,7 @@ title_group_data AS (
                                     'edition_group_id', t.edition_group_id,
                                     'created_at', t.created_at,
                                     'release_name', t.release_name,
+                                    'release_group', t.release_group,
                                     'file_amount_per_type', t.file_amount_per_type,
                                     'trumpable', t.trumpable,
                                     'staff_checked', t.staff_checked,
