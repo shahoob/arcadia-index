@@ -37,9 +37,14 @@
           <span v-if="slotProps.data.audio_bitrate_sampling">
             / {{ slotProps.data.audio_bitrate_sampling }}</span
           >
-          <span v-if="slotProps.data.language && slotProps.data.language !== 'English'">
-            / {{ slotProps.data.language }}</span
+          <span
+            v-if="
+              slotProps.data.languages.length === 1 && slotProps.data.languages[0] !== 'English'
+            "
           >
+            / {{ slotProps.data.languages[0] }}
+          </span>
+          <span v-if="slotProps.data.languages.length > 1"> / Multi-Language </span>
           <span v-for="(feature, index) in slotProps.data.features" :key="index">
             / <span class="bold">{{ feature }}</span>
           </span>

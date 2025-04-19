@@ -194,18 +194,20 @@
           <FloatLabel
             v-if="['Movie', 'TV-Show', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
           >
-            <Select
-              v-model="torrentForm.language"
-              inputId="language"
+            <MultiSelect
+              v-model="torrentForm.languages"
+              inputId="languages"
               :options="$getLanguages()"
               class="select"
               size="small"
-              name="language"
+              display="chip"
+              filter
+              name="languages"
             />
-            <label for="language">Language</label>
+            <label for="languages">Language(s)</label>
           </FloatLabel>
-          <Message v-if="$form.language?.invalid" severity="error" size="small" variant="simple">
-            {{ $form.language.error?.message }}
+          <Message v-if="$form.languages?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.languages.error?.message }}
           </Message>
         </div>
         <FloatLabel>
@@ -315,15 +317,15 @@ export default {
         release_group: '',
         mediainfo: '',
         description: '',
-        language: '',
+        languages: [],
         container: '',
         video_codec: null,
         video_resolution: null,
         duration: null,
         audio_codec: null,
         audio_bitrate: null,
-        subtitle_languages: '',
-        features: '',
+        subtitle_languages: [],
+        features: [],
         audio_channels: null,
         audio_bitrate_sampling: null,
         torrent_file: null,
@@ -406,8 +408,8 @@ export default {
       if (!values.audio_bitrate_sampling) {
         errors.audio_bitrate_sampling = [{ message: 'Select a bitrate' }]
       }
-      if (values.language == '') {
-        errors.language = [{ message: 'Select a language' }]
+      if (values.languages.length === 0) {
+        errors.languages = [{ message: 'Select at least 1 language' }]
       }
       if (!this.torrentForm.torrent_file) {
         errors.torrent_file = [{ message: 'Select a torrent_file' }]
@@ -477,7 +479,7 @@ export default {
   }
 }
 .select {
-  width: 200px;
+  min-width: 200px;
 }
 /* .file-upload {
   max-width: 300px;
