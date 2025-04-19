@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH peer_id AS (\n            INSERT INTO peers(torrent_id, peer_id, ip, port) VALUES ($1, $2, $3, $4)\n            ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE\n            SET\n              last_seen_at = CURRENT_TIMESTAMP\n            RETURNING id\n        )\n        INSERT INTO user_peers(user_id, peer_id) SELECT $5 AS user_id, peer_id.id AS peer_id FROM peer_id\n        ON CONFLICT (user_id, peer_id) DO NOTHING\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Bytea",
+        "Inet",
+        "Int4",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "90dd7debb44e0d0c0c30596d026cb7df6a33cd61914b434e1b738a7df64d8e27"
+}
