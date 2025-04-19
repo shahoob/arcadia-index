@@ -124,6 +124,17 @@ pub enum VideoCodec {
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "language_enum")]
+pub enum Language {
+    English,
+    French,
+    German,
+    Italian,
+    Spanish,
+    Swedish,
+}
+
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "features_enum")]
 pub enum Features {
     #[sqlx(rename = "HDR")]
@@ -178,7 +189,7 @@ pub struct Torrent {
     pub mediainfo: String,
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
-    pub language: Option<String>, // (fallback to original language) (english, french, etc.)
+    pub languages: Option<Vec<Language>>, // (fallback to original language) (english, french, etc.)
     pub container: String, // container of the main file (ex: if mkv movie and srt subs, mkv is the main)
     pub size: i64,         // in bytes
     // ---- audio
@@ -191,7 +202,7 @@ pub struct Torrent {
     // ---- video
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>, // ---- video
 }
 
@@ -210,7 +221,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = String, format = Binary, content_media_type = "application/octet-stream")]
     pub torrent_file: Bytes,
     #[schema(value_type = String)]
-    pub language: Option<Text<String>>, // (fallback to original language) (english, french, etc.)
+    pub languages: Text<String>, // (fallback to original language) (english, french, etc.)
     #[schema(value_type = String)]
     pub container: Text<String>,
     // one of them should be given
@@ -254,7 +265,7 @@ pub struct LiteTorrent {
     pub file_amount_per_type: Json<Value>,
     pub trumpable: Option<String>,
     pub staff_checked: bool,
-    pub language: Option<String>,
+    pub languages: Option<Vec<Language>>,
     pub container: String,
     pub size: i64,
     pub duration: Option<i32>,
@@ -264,6 +275,6 @@ pub struct LiteTorrent {
     pub audio_channels: Option<String>,
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>,
 }

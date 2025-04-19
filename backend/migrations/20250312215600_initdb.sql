@@ -280,6 +280,14 @@ CREATE TYPE video_codec_enum AS ENUM(
     'BD50',
     'UHD100'
 );
+CREATE TYPE language_enum AS ENUM(
+   'English',
+   'French',
+   'German',
+   'Italian',
+   'Spanish',
+   'Swedish'
+);
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
@@ -289,7 +297,7 @@ CREATE TABLE torrents (
     created_by_id BIGINT NOT NULL,
     info_hash BYTEA NOT NULL,
     info_dict BYTEA NOT NULL,
-    language VARCHAR(15),
+    languages language_enum[],
     release_name TEXT NOT NULL,
     -- maybe change the size
     release_group VARCHAR(30),
@@ -318,14 +326,13 @@ CREATE TABLE torrents (
     -- video
     video_codec video_codec_enum,
     features features_enum [],
-    subtitle_languages VARCHAR(20) [],
+    subtitle_languages language_enum[],
     video_resolution VARCHAR(6),
 
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL,
     UNIQUE (info_hash)
 );
-
 CREATE TABLE title_group_comments (
     id BIGSERIAL PRIMARY KEY,
     content TEXT NOT NULL,
@@ -349,7 +356,7 @@ CREATE TABLE torrent_requests (
     edition_name TEXT,
     release_group VARCHAR(20),
     description TEXT,
-    language VARCHAR(25),
+    languages language_enum[],
     container VARCHAR(8),
     bounty_upload BIGINT NOT NULL,
     bounty_bonus_points BIGINT NOT NULL,
@@ -359,7 +366,7 @@ CREATE TABLE torrent_requests (
     -- Video
     video_codec video_codec_enum,
     features features_enum[],
-    subtitle_languages TEXT[],
+    subtitle_languages language_enum[],
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
@@ -520,7 +527,7 @@ SELECT
         ELSE t.created_by_id
     END as created_by_id,
     t.info_hash,
-    t.language,
+    t.languages,
     t.release_name,
     t.release_group,
     t.description,
