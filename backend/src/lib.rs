@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use reqwest::Url;
 pub mod api_doc;
 pub mod handlers;
@@ -17,8 +15,9 @@ pub enum OpenSignups {
 pub struct Arcadia {
     pub pool: sqlx::PgPool,
     pub open_signups: OpenSignups,
-    pub dottorrent_files_path: PathBuf,
+    pub tracker_name: String,
     pub frontend_url: Url,
+    pub tracker_url: Url,
 }
 
 impl Arcadia {
@@ -116,6 +115,9 @@ pub enum Error {
 
     #[error("not enough upload to place this bounty")]
     InsufficientUploadForBounty,
+
+    #[error("torrent file invalid")]
+    TorrentFileInvalid,
 
     #[error("dottorrent file not found")]
     DottorrentFileNotFound,

@@ -281,8 +281,9 @@ CREATE TABLE torrents (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     info_hash BYTEA NOT NULL,
+    info_dict BYTEA NOT NULL,
     language VARCHAR(15),
-    release_name VARCHAR(500),
+    release_name TEXT NOT NULL,
     -- maybe change the size
     release_group VARCHAR(30),
     description TEXT,
@@ -503,7 +504,36 @@ CREATE TABLE collage_entity_entry (
 
 CREATE VIEW torrents_and_reports AS
 SELECT
-    t.*,
+    t.id,
+    t.edition_group_id,
+    t.created_at,
+    t.updated_at,
+    CASE
+        WHEN t.uploaded_as_anonymous THEN NULL
+        ELSE t.created_by_id
+    END as created_by_id,
+    t.info_hash,
+    t.language,
+    t.release_name,
+    t.release_group,
+    t.description,
+    t.file_amount_per_type,
+    t.uploaded_as_anonymous,
+    t.file_list,
+    t.mediainfo,
+    t.trumpable,
+    t.staff_checked,
+    t.container,
+    t.size,
+    t.duration,
+    t.audio_codec,
+    t.audio_bitrate,
+    t.audio_bitrate_sampling,
+    t.audio_channels,
+    t.video_codec,
+    t.features,
+    t.subtitle_languages,
+    t.video_resolution,
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
         ELSE NULL
