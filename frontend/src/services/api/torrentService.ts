@@ -31,6 +31,8 @@ export const createEditionGroup = async (editionGroup: object) => {
         ([, value]) => value !== null && value !== '',
       ),
     )
+    editionGroup.covers = editionGroup.covers.filter((cover) => cover.trim() !== '')
+    editionGroup.external_links = editionGroup.external_links.filter((link) => link.trim() !== '')
     editionGroup.distributor = editionGroup.distributor == '' ? null : editionGroup.distributor
     return (await api.post('/edition-group', editionGroup)).data
   } catch (error) {
@@ -42,7 +44,7 @@ export const uploadTorrent = async (torrentForm: object) => {
   try {
     const formData = new FormData()
     for (const [key, value] of Object.entries(torrentForm)) {
-      if (value != null && value != '') {
+      if (value != null) {
         formData.append(key, value)
       }
     }

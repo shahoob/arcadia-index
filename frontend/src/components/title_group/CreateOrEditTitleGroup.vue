@@ -219,7 +219,7 @@ export default {
         tags: '',
       },
       selectableLanguages: ['English', 'French'],
-      selectableCountries: ['France', 'UK', 'USA'],
+      selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
       selectableCategories: {
         Book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
         Music: ['Single', 'Album', 'Ep'],
@@ -272,7 +272,7 @@ export default {
           errors.covers[index] = [{ message: `Not a valid URL.` }]
         }
       })
-
+      console.log(errors)
       return {
         errors,
       }
