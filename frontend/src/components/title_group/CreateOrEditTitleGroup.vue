@@ -8,6 +8,17 @@
     :validateOnValueUpdate="false"
     validateOnBlur
   >
+    <div class="line" v-if="content_type == 'Software'">
+      <FloatLabel>
+        <InputNumber
+          size="small"
+          v-model="titleGroupForm.master_group_id"
+          name="master_group_id"
+          :format="false"
+        />
+        <label for="master_group_id">Master group id</label>
+      </FloatLabel>
+    </div>
     <div class="line">
       <div class="name">
         <FloatLabel>
@@ -203,6 +214,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
+import { InputNumber } from 'primevue'
 
 export default {
   components: {
@@ -214,6 +226,7 @@ export default {
     Textarea,
     Select,
     Message,
+    InputNumber,
   },
   props: {
     content_type: {},
@@ -234,6 +247,7 @@ export default {
         name_aliases: [],
         affiliated_artists: [],
         tags: '',
+        master_group_id: null,
         platform: null,
       },
       selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
