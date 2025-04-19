@@ -228,6 +228,7 @@ title_group_data AS (
             'name', tg.name,
             'covers', tg.covers,
             'category', tg.category,
+            'platform', tg.platform,
             'content_type', tg.content_type,
             'tags', tg.tags,
             'original_release_date', tg.original_release_date,

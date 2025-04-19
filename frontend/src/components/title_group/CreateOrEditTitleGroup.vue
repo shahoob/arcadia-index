@@ -60,6 +60,23 @@
       </Message>
     </div>
     <div class="line">
+      <div v-if="content_type == 'Software'">
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.platform"
+            inputId="platform"
+            :options="$getPlatforms()"
+            class="select"
+            size="small"
+            name="platform"
+            filter
+          />
+          <label for="platform">Platform</label>
+        </FloatLabel>
+        <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.platform.error?.message }}
+        </Message>
+      </div>
       <div>
         <FloatLabel>
           <Select
@@ -217,6 +234,7 @@ export default {
         name_aliases: [],
         affiliated_artists: [],
         tags: '',
+        platform: null,
       },
       selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
       selectableCategories: {
@@ -245,6 +263,9 @@ export default {
       }
       if (values.description.length < 10) {
         errors.description = [{ message: 'Write more than 10 characters' }]
+      }
+      if (values.platform == '') {
+        errors.platform = [{ message: 'Select a platform' }]
       }
       if (values.original_language == '') {
         errors.original_language = [{ message: 'Select a language' }]

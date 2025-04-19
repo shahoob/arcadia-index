@@ -1,8 +1,14 @@
 <template>
   <div class="title">
     <span v-if="title_group.series?.id">
-      <a class="series-name" :href="`/series?id=${title_group.series.id}`"
+      <a class="prefix" :href="`/series?id=${title_group.series.id}`"
         >{{ title_group.series.name }}
+      </a>
+      -
+    </span>
+    <span v-if="title_group.platform">
+      <a class="prefix" :href="`/platform?name=${title_group.platform}`">
+        {{ title_group.platform }}
       </a>
       -
     </span>
@@ -26,7 +32,7 @@ export default {
   font-weight: bold;
   margin-right: 5px;
 }
-.series-name {
+.prefix {
   font-weight: bold;
 }
 </style>
