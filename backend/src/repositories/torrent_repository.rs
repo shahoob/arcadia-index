@@ -7,7 +7,7 @@ use crate::{
     },
 };
 
-use bip_metainfo::{Info, Metainfo, MetainfoBuilder};
+use bip_metainfo::{Info, Metainfo, MetainfoBuilder, PieceLength};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{PgPool, prelude::FromRow};
@@ -46,6 +46,8 @@ pub async fn create_torrent(
         .map_err(|_| Error::TorrentFileInvalid)?;
 
     let info = metainfo.info();
+
+    // TODO: need to ensure private is set
 
     // TODO: torrent metadata extraction should be done on the client side
     let parent_folder = info.directory().map(|d| d.to_str().unwrap()).unwrap_or("");
@@ -202,6 +204,7 @@ pub async fn get_torrent(
         .set_creation_date(Some(torrent.created_at_secs))
         .set_comment(Some(&frontend_url))
         .set_created_by(Some(tracker_name))
+        .set_piece_length(PieceLength::Custom(info.piece_length() as usize))
         .set_private_flag(Some(true))
         .build(1, &info, |_| {})
         .map_err(|_| Error::TorrentFileInvalid)?;
