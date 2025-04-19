@@ -193,7 +193,7 @@ export default {
     return {
       editionGroupForm: {
         name: '',
-        description: '',
+        description: null,
         external_links: [''],
         covers: [''],
         release_date: null,
@@ -220,11 +220,11 @@ export default {
       if (!values.release_date) {
         errors.release_date = [{ message: 'Select a date' }]
       }
-      if (values.description.length < 10) {
-        errors.description = [{ message: 'Write more than 10 characters' }]
-      }
+      // if (values.description.length < 10) {
+      //   errors.description = [{ message: 'Write more than 10 characters' }]
+      // }
       values.external_links.forEach((link, index) => {
-        if (!this.$isValidUrl(link)) {
+        if (!this.$isValidUrl(link) && link != '') {
           if (!('external_links' in errors)) {
             errors.external_links = []
           }
@@ -232,7 +232,7 @@ export default {
         }
       })
       values.covers.forEach((link, index) => {
-        if (!this.$isValidUrl(link)) {
+        if (!this.$isValidUrl(link) && link != '') {
           if (!('covers' in errors)) {
             errors.covers = []
           }
