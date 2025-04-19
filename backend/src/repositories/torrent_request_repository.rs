@@ -18,7 +18,7 @@ pub async fn create_torrent_request(
         release_group, description, languages, container, audio_codec,
         audio_channels, video_codec, features, subtitle_languages, video_resolution,
         bounty_upload, bounty_bonus_points)
-        VALUES ($1, $2, $3, $4, $5, $6::languages_enum[], $7, $8::audio_codec_enum, $9,
+        VALUES ($1, $2, $3, $4, $5, $6::language_enum[], $7, $8::audio_codec_enum, $9,
         $10::video_codec_enum, $11::features_enum[], $12, $13, $14, $15)
         RETURNING *;
     "#;

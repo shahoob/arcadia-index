@@ -37,7 +37,7 @@ pub async fn create_torrent(
             $1, $2, $3, $4, $5, $6, $7,
             $8, $9, $10, $11, $12, $13,
             $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
-            $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[], $20::languages_enum[], $21, $22, $23::languages_enum[], $24::bytea, $25::bytea
+            $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[], $20::language_enum[], $21, $22, $23::language_enum[], $24::bytea, $25::bytea
         )
         RETURNING *
     "#;

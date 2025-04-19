@@ -5,7 +5,6 @@ declare module '@vue/runtime-core' {
     $timeAgo: (date: string) => string
     $bytesToReadable: (bytes: number) => string
     $getEditionGroupSlug: (editionGroup: unknown) => string
-    $getTorrentSlug: (torrent: unknwon) => string
     $getFeatures: (contentType: string) => string[]
     $getLanguages: () => string[]
     $getPlatforms: () => string[]
