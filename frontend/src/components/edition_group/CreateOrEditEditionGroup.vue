@@ -198,7 +198,7 @@ export default {
         covers: [''],
         release_date: null,
         title_group_id: 0,
-        source: '',
+        source: null,
         distributor: '',
         additional_information: {},
       },
@@ -214,9 +214,9 @@ export default {
       // if (values.distributor.length < 2) {
       //   errors.distributor = [{ message: 'Write more than 2 characters' }]
       // }
-      if (values.source == '') {
-        errors.source = [{ message: 'Select a source' }]
-      }
+      // if (values.source == '') {
+      //   errors.source = [{ message: 'Select a source' }]
+      // }
       if (!values.release_date) {
         errors.release_date = [{ message: 'Select a date' }]
       }

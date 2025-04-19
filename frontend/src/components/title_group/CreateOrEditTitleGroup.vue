@@ -65,7 +65,7 @@
           <Select
             v-model="titleGroupForm.original_language"
             inputId="original_language"
-            :options="selectableLanguages"
+            :options="$getLanguages()"
             class="select"
             size="small"
             name="original_language"
@@ -218,7 +218,6 @@ export default {
         affiliated_artists: [],
         tags: '',
       },
-      selectableLanguages: ['English', 'French'],
       selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
       selectableCategories: {
         Book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
