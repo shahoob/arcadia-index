@@ -297,7 +297,7 @@ CREATE TABLE torrents (
     created_by_id BIGINT NOT NULL,
     info_hash BYTEA NOT NULL,
     info_dict BYTEA NOT NULL,
-    languages language_enum[],
+    languages language_enum[] NOT NULL,
     release_name TEXT NOT NULL,
     -- maybe change the size
     release_group VARCHAR(30),
@@ -326,7 +326,7 @@ CREATE TABLE torrents (
     -- video
     video_codec video_codec_enum,
     features features_enum [],
-    subtitle_languages language_enum[],
+    subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
 
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
@@ -356,7 +356,7 @@ CREATE TABLE torrent_requests (
     edition_name TEXT,
     release_group VARCHAR(20),
     description TEXT,
-    languages language_enum[],
+    languages language_enum[] NOT NULL,
     container VARCHAR(8),
     bounty_upload BIGINT NOT NULL,
     bounty_bonus_points BIGINT NOT NULL,
@@ -366,7 +366,7 @@ CREATE TABLE torrent_requests (
     -- Video
     video_codec video_codec_enum,
     features features_enum[],
-    subtitle_languages language_enum[],
+    subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
