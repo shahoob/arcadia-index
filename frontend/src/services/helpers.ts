@@ -44,7 +44,9 @@ export const getEditionGroupSlug = (editionGroup) => {
   if (editionGroup.additional_information?.catalogue_number) {
     slug += ' / ' + editionGroup.additional_information?.catalogue_number
   }
-  slug += ' / ' + editionGroup.source
+  if (editionGroup.source) {
+    slug += ' / ' + editionGroup.source
+  }
   slug += editionGroup.distributor ? ' / ' + editionGroup.distributor : ''
   return slug
 }
@@ -67,9 +69,14 @@ export const getTorrentSlug = (torrent) => {
 export const getFeatures = (contentType) => {
   if (contentType == 'Book' || contentType == 'Music') {
     return ['Cue', 'Booklet']
-  } else {
+  } else if (contentType == 'TV-Show' || contentType == 'Movie') {
     return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
+  } else {
+    return []
   }
+}
+export const getLanguages = () => {
+  return ['English', 'French', 'German', 'Italian', 'Spanish', 'Swedish']
 }
 export const getSources = (contentType: string) => {
   const sources = ['Web']

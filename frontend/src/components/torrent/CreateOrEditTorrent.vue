@@ -197,7 +197,7 @@
             <Select
               v-model="torrentForm.language"
               inputId="language"
-              :options="selectableLanguages"
+              :options="$getLanguages()"
               class="select"
               size="small"
               name="language"
@@ -374,7 +374,6 @@ export default {
         'Other',
       ],
       selectableAudioChannels: ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1'],
-      selectableLanguages: ['English', 'French'],
       uploadingTorrent: false,
       content_type: '',
     }
