@@ -32,7 +32,7 @@
       </div>
     </ContentContainer>
     <ContentContainer
-      :container-title="`Other platforms (master group ${title_group.master_group_id})`"
+      :container-title="`In same master group (${title_group.master_group_id})`"
       v-if="title_group.in_same_master_group.length != 0"
     >
       <div class="flex justify-content-center links">

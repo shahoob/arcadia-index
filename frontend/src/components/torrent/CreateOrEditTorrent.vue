@@ -81,7 +81,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
@@ -102,7 +102,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -124,7 +124,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TV-Show', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_codec"
@@ -147,7 +147,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TV-Show', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
@@ -192,7 +192,7 @@
         </div>
         <div>
           <FloatLabel
-            v-if="['Movie', 'TV-Show', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
+            v-if="['movie', 'tv_show', 'book', 'software', 'collection'].indexOf(content_type) >= 0"
           >
             <MultiSelect
               v-model="torrentForm.languages"

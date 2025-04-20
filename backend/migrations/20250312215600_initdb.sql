@@ -108,12 +108,12 @@ CREATE TABLE series (
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TYPE content_type_enum AS ENUM (
-    'Movie',
-    'TV-Show',
-    'Music',
-    'Software',
-    'Book',
-    'Collection'
+    'movie',
+    'tv_show',
+    'music',
+    'software',
+    'book',
+    'collection'
 );
 CREATE TYPE title_group_category_enum AS ENUM (
     'Ep',

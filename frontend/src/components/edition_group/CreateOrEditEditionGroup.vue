@@ -27,7 +27,7 @@
           {{ $form.distributor.error?.message }}
         </Message>
       </div>
-      <div v-if="titleGroup.content_type == 'Music'">
+      <div v-if="titleGroup.content_type == 'music'">
         <FloatLabel>
           <InputText
             size="small"
@@ -40,7 +40,7 @@
           {{ $form.label.error?.message }}
         </Message>
       </div>
-      <div v-if="titleGroup.content_type == 'Music'">
+      <div v-if="titleGroup.content_type == 'music'">
         <FloatLabel>
           <InputText
             size="small"
@@ -270,7 +270,7 @@ export default {
     if (Object.keys(this.initialEditionGroupForm).length > 0) {
       this.editionGroupForm = this.initialEditionGroupForm
     }
-    if (this.titleGroup.content_type == 'Music') {
+    if (this.titleGroup.content_type == 'music') {
       this.editionGroupForm.additional_information.label = ''
       this.editionGroupForm.additional_information.catalogue_number = ''
     }

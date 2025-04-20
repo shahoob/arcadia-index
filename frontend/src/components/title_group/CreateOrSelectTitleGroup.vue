@@ -37,7 +37,7 @@
       <label for="content_type">Content type</label>
     </FloatLabel>
     <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
-      <div class="external-db-inputs" v-if="content_type == 'Movie'">
+      <div class="external-db-inputs" v-if="content_type == 'movie'">
         <FloatLabel>
           <IconField>
             <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
@@ -60,7 +60,7 @@
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'TV-Show'">
+      <div class="external-db-inputs" v-if="content_type == 'tv_show'">
         <FloatLabel>
           <InputText size="small" name="tvdb_id" />
           <label for="tvdb_id">TVDB id</label>
@@ -88,7 +88,7 @@
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'Music'">
+      <div class="external-db-inputs" v-if="content_type == 'music'">
         <FloatLabel>
           <InputText size="small" name="musicbrainz_id" />
           <label for="musicbrainz_id">Musicbrainz id</label>
@@ -99,7 +99,7 @@
           <label for="discogs_id">Discogs id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'Book'">
+      <div class="external-db-inputs" v-if="content_type == 'book'">
         <FloatLabel>
           <IconField>
             <InputText
@@ -175,7 +175,7 @@ export default {
       titleGroupId: '',
       step: 1,
       manualCreation: false,
-      selectableContentTypes: ['Movie', 'TV-Show', 'Music', 'Software', 'Book', 'Collection'],
+      selectableContentTypes: ['movie', 'tv_show', 'music', 'software', 'book', 'collection'],
       content_type: '',
       gettingTitleGroupInfo: false,
       sendingTitleGroup: false,

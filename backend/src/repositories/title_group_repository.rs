@@ -121,7 +121,7 @@ pub async fn find_title_group(
             ),
             same_master_group AS (
                 SELECT
-                    jsonb_agg(jsonb_build_object('id', tg_inner.id, 'name', tg_inner.name, 'platform', tg_inner.platform)) AS in_same_master_group
+                    jsonb_agg(jsonb_build_object('id', tg_inner.id, 'name', tg_inner.name, 'content_type', tg_inner.content_type, 'platform', tg_inner.platform)) AS in_same_master_group
                 FROM title_groups tg_main
                 JOIN title_groups tg_inner ON tg_inner.master_group_id = tg_main.master_group_id AND tg_inner.id != tg_main.id
                 WHERE tg_main.id = $2 AND tg_main.master_group_id IS NOT NULL

@@ -22,7 +22,7 @@
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
-          <span v-if="slotProps.data.container && title_group.content_type != 'Music'">{{
+          <span v-if="slotProps.data.container && title_group.content_type != 'music'">{{
             slotProps.data.container
           }}</span>
           <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }}</span>
@@ -30,7 +30,7 @@
             / {{ slotProps.data.video_resolution }}</span
           >
           <span v-if="slotProps.data.audio_codec">
-            <span v-if="title_group.content_type != 'Music'">/ </span
+            <span v-if="title_group.content_type != 'music'">/ </span
             >{{ slotProps.data.audio_codec }}</span
           >
           <span v-if="slotProps.data.audio_channels"> / {{ slotProps.data.audio_channels }}</span>
