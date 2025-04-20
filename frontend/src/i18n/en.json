@@ -16,6 +16,22 @@
     "auth": {
         "remember_me": "Remember me"
     },
+    "artist": {
+        "role": {
+            "main": "Main",
+            "producer": "Producer",
+            "guest": "Guest",
+            "composer": "Composer",
+            "conductor": "Conductor",
+            "dj_compiler": "Dj/Compiler",
+            "remixer": "Remixer",
+            "arranger": "Arranger",
+            "director": "Director",
+            "cinematographer": "Cinematographer",
+            "actor": "Actor",
+            "author": "Author"
+        }
+    },
     "user": {
         "username": "Username",
         "password": "Password",

@@ -180,10 +180,24 @@ CREATE TABLE similar_title_groups (
     FOREIGN KEY (group_1_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2_id) REFERENCES title_groups(id) ON DELETE CASCADE
 );
+CREATE TYPE artist_role_enum AS ENUM(
+    'main',
+    'producer',
+    'guest',
+    'composer',
+    'conductor',
+    'dj_compiler',
+    'remixer',
+    'arranger',
+    'director',
+    'cinematographer',
+    'actor',
+    'author'
+);
 CREATE TABLE affiliated_artists (
     title_group_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    roles artist_role_enum[] NOT NULL,
     nickname VARCHAR(255),
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),

@@ -106,25 +106,6 @@ pub struct SimilarTitleGroups {
     pub group_2: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
-pub struct AffiliatedArtist {
-    pub title_group_id: i64,
-    pub artist_id: i64,
-    pub status: String,
-    pub nickname: Option<String>, // for example: name of the character the actor is playing
-    #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
-    pub created_by_id: i64,
-}
-
-#[derive(Debug, Deserialize, ToSchema)]
-pub struct UserCreatedAffiliatedArtist {
-    pub title_group_id: i64,
-    pub artist_id: i64,
-    pub status: String,
-    pub nickname: Option<String>,
-}
-
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 pub struct UserCreatedTitleGroup {
     pub name: String,

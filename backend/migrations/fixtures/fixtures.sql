@@ -92,10 +92,10 @@ COPY public.title_groups (id, master_group_id, name, name_aliases, created_at, u
 -- Data for Name: affiliated_artists; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.affiliated_artists (title_group_id, artist_id, status, nickname, created_by_id, created_at) FROM stdin;
-1	1	singer		1	2025-03-30 17:39:40.616037
-2	2	director, writer		1	2025-03-31 10:47:39.654048
-3	3	author		1	2025-03-31 11:47:39.311712
+COPY public.affiliated_artists (title_group_id, artist_id, roles, nickname, created_by_id, created_at) FROM stdin;
+1	1	{main}		1	2025-03-30 17:39:40.616037
+2	2	{director,actor}		1	2025-03-31 10:47:39.654048
+3	3	{author}		1	2025-03-31 11:47:39.311712
 \.
 
 
