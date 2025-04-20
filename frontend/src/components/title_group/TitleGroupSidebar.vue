@@ -36,7 +36,7 @@
       v-if="title_group.in_same_master_group.length != 0"
     >
       <div class="flex justify-content-center links">
-        <PlatformLink
+        <MasterGroupLink
           v-for="tg in title_group.in_same_master_group"
           :key="tg.id"
           :title_group="tg"
@@ -58,7 +58,7 @@ import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
-import PlatformLink from '@/components/PlatformLink.vue'
+import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 
 export default {
@@ -67,7 +67,7 @@ export default {
     Image,
     AffiliatedArtist,
     ExternalLink,
-    PlatformLink,
+    MasterGroupLink,
     ContentContainer,
   },
   props: {

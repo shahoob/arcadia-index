@@ -408,7 +408,7 @@ export default {
       if (!values.audio_bitrate_sampling) {
         errors.audio_bitrate_sampling = [{ message: 'Select a bitrate' }]
       }
-      if (values.languages.length === 0) {
+      if (values.languages && values.languages.length === 0) {
         errors.languages = [{ message: 'Select at least 1 language' }]
       }
       if (!this.torrentForm.torrent_file) {

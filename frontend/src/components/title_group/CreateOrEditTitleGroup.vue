@@ -307,7 +307,7 @@ export default {
       if (values.platform == '') {
         errors.platform = [{ message: 'Select a platform' }]
       }
-      if (values.original_language == '') {
+      if (this.content_type !== 'music' && values.original_language == '') {
         errors.original_language = [{ message: 'Select a language' }]
       }
       if (values.country_from == '') {
@@ -332,14 +332,16 @@ export default {
           errors.covers[index] = [{ message: `Not a valid URL.` }]
         }
       })
-      values.screenshots.forEach((link, index) => {
-        if (!this.$isValidUrl(link)) {
-          if (!('screenshots' in errors)) {
-            errors.screenshots = []
+      if (values.screenshots) {
+        values.screenshots.forEach((link, index) => {
+          if (!this.$isValidUrl(link)) {
+            if (!('screenshots' in errors)) {
+              errors.screenshots = []
+            }
+            errors.screenshots[index] = [{ message: `Not a valid URL.` }]
           }
-          errors.screenshots[index] = [{ message: `Not a valid URL.` }]
-        }
-      })
+        })
+      }
       console.log(errors)
       return {
         errors,
