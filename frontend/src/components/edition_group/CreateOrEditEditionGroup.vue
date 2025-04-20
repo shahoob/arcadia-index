@@ -12,7 +12,7 @@
       <div>
         <FloatLabel>
           <InputText size="small" v-model="editionGroupForm.name" name="name" />
-          <label for="name">Name</label>
+          <label for="name">{{ $t('edition_group.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
@@ -21,7 +21,7 @@
       <div>
         <FloatLabel>
           <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
-          <label for="distributor">Distributor</label>
+          <label for="distributor">{{ $t('edition_group.distributor') }}</label>
         </FloatLabel>
         <Message v-if="$form.distributor?.invalid" severity="error" size="small" variant="simple">
           {{ $form.distributor.error?.message }}
@@ -34,7 +34,7 @@
             v-model="editionGroupForm.additional_information.label"
             name="label"
           />
-          <label for="label">Label</label>
+          <label for="label">{{ $t('edition_group.label') }}</label>
         </FloatLabel>
         <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
           {{ $form.label.error?.message }}
@@ -47,7 +47,7 @@
             v-model="editionGroupForm.additional_information.catalogue_number"
             name="catalogue_number"
           />
-          <label for="catalogue_number">Catalogue number</label>
+          <label for="catalogue_number">{{ $t('edition_group.catalogue_number') }}</label>
         </FloatLabel>
         <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
           {{ $form.label.error?.message }}
@@ -63,7 +63,7 @@
             size="small"
             name="source"
           />
-          <label for="source">Source</label>
+          <label for="source">{{ $t('edition_group.source') }}</label>
         </FloatLabel>
         <Message v-if="$form.source?.invalid" severity="error" size="small" variant="simple">
           {{ $form.source.error?.message }}
@@ -79,14 +79,14 @@
           autoResize
           rows="5"
         />
-        <label for="description">Description</label>
+        <label for="description">{{ $t('general.description') }}</label>
       </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
       </Message>
     </div>
     <div class="release-date">
-      <label for="release_date" class="block">Realease date</label>
+      <label for="release_date" class="block">{{ $t('general.release_date') }}</label>
       <DatePicker
         v-model="editionGroupForm.release_date"
         showIcon
@@ -101,7 +101,7 @@
       </Message>
     </div>
     <div class="covers input-list">
-      <label>Covers</label>
+      <label>{{ $t('general.cover', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.covers" :key="index">
         <InputText
           size="small"
@@ -126,7 +126,7 @@
       </div>
     </div>
     <div class="external-links input-list">
-      <label>External Links</label>
+      <label>{{ $t('general.external_link', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.external_links" :key="index">
         <InputText
           size="small"
@@ -172,6 +172,7 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { Form } from '@primevue/forms'
+import { $t } from '@primeuix/themes'
 
 export default {
   components: {
@@ -209,7 +210,7 @@ export default {
       const errors = {}
 
       if (values.name.length < 5) {
-        errors.name = [{ message: 'Write more than 5 characters' }]
+        errors.name = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
       }
       // if (values.distributor.length < 2) {
       //   errors.distributor = [{ message: 'Write more than 2 characters' }]
@@ -218,7 +219,7 @@ export default {
       //   errors.source = [{ message: 'Select a source' }]
       // }
       if (!values.release_date) {
-        errors.release_date = [{ message: 'Select a date' }]
+        errors.release_date = [{ message: this.$t('error.select_date') }]
       }
       // if (values.description.length < 10) {
       //   errors.description = [{ message: 'Write more than 10 characters' }]
@@ -228,7 +229,7 @@ export default {
           if (!('external_links' in errors)) {
             errors.external_links = []
           }
-          errors.external_links[index] = [{ message: `Not a valid URL.` }]
+          errors.external_links[index] = [{ message: this.$t('error.invalid_url') }]
         }
       })
       values.covers.forEach((link, index) => {
@@ -236,7 +237,7 @@ export default {
           if (!('covers' in errors)) {
             errors.covers = []
           }
-          errors.covers[index] = [{ message: `Not a valid URL.` }]
+          errors.covers[index] = [{ message: this.$t('error.invalid_url') }]
         }
       })
 
