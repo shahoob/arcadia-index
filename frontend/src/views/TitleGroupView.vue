@@ -41,7 +41,7 @@
           <label for="sort_by">Sort by</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :title_group="title_group" />
+      <TitleGroupTable :title_group="title_group" :sortBy />
       <Accordion
         v-if="title_group.torrent_requests.length != 0"
         value="0"
@@ -122,8 +122,8 @@ export default {
     return {
       title_group: null,
       subscription_loading: false,
-      sortBy: 'Edition',
-      selectableSortingOptions: ['Edition', 'Size', 'Seeders', 'Completed', 'Uploaded at'],
+      sortBy: 'edition',
+      selectableSortingOptions: ['edition', 'size', 'seeders', 'completed', 'uploaded_at'],
     }
   },
   created() {
