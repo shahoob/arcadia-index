@@ -165,6 +165,7 @@ CREATE TABLE title_groups (
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
+    screenshots TEXT[] NOT NULL,
     series_id BIGINT,
     FOREIGN KEY (master_group_id) REFERENCES master_groups(id) ON DELETE
     SET NULL,

@@ -11,7 +11,8 @@
         "cover": "Cover | Covers",
         "external_link": "External link | External links",
         "or_create_one": "or create one",
-        "or_select_one": "or select an existing one"
+        "or_select_one": "or select an existing one",
+        "screenshots": "Screenshots"
     },
     "auth": {
         "remember_me": "Remember me"

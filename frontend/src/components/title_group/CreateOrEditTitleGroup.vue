@@ -168,6 +168,31 @@
         </Message>
       </div>
     </div>
+    <div class="screenshots input-list" v-if="content_type == 'Software'">
+      <label>Screenshots</label>
+      <div v-for="(link, index) in titleGroupForm.screenshots" :key="index">
+        <InputText
+          size="small"
+          v-model="titleGroupForm.screenshots[index]"
+          :name="`screenshots[${index}]`"
+        />
+        <Button v-if="index == 0" @click="addScreenshot" icon="pi pi-plus" size="small" />
+        <Button
+          v-if="index != 0 || titleGroupForm.screenshots.length > 1"
+          @click="removeScreenshot(index)"
+          icon="pi pi-minus"
+          size="small"
+        />
+        <Message
+          v-if="$form.screenshots?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ $form.screenshots[index].error?.message }}
+        </Message>
+      </div>
+    </div>
     <div class="external-links input-list">
       <label>External Links</label>
       <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
@@ -241,6 +266,7 @@ export default {
         original_language: '',
         original_release_date: null,
         covers: [''],
+        screenshots: [''],
         external_links: [''],
         category: '',
         country_from: '',
@@ -306,6 +332,14 @@ export default {
           errors.covers[index] = [{ message: `Not a valid URL.` }]
         }
       })
+      values.screenshots.forEach((link, index) => {
+        if (!this.$isValidUrl(link)) {
+          if (!('screenshots' in errors)) {
+            errors.screenshots = []
+          }
+          errors.screenshots[index] = [{ message: `Not a valid URL.` }]
+        }
+      })
       console.log(errors)
       return {
         errors,
@@ -327,6 +361,12 @@ export default {
     },
     removeCover(index: number) {
       this.titleGroupForm.covers.splice(index, 1)
+    },
+    addScreenshot() {
+      this.titleGroupForm.screenshots.push('')
+    },
+    removeScreenshot(index: number) {
+      this.titleGroupForm.screenshots.splice(index, 1)
     },
   },
   created() {

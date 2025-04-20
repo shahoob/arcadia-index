@@ -1,9 +1,7 @@
 <template>
   <div class="content-container">
     <div class="title" v-if="containerTitle">{{ containerTitle }}</div>
-    <div>
-      <slot></slot>
-    </div>
+    <slot></slot>
   </div>
 </template>
 
