@@ -1,9 +1,8 @@
 use crate::{
     Arcadia, Result,
     handlers::UserId,
-    models::{
-        artist::{Artist, ArtistLite, UserCreatedArtist},
-        title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
+    models::artist::{
+        AffiliatedArtist, Artist, ArtistLite, UserCreatedAffiliatedArtist, UserCreatedArtist,
     },
     repositories::artist_repository::{
         create_artist, create_artists_affiliation, find_artist_publications, find_artists_lite,
