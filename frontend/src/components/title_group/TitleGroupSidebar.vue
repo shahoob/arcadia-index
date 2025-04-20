@@ -18,16 +18,28 @@
       </template>
     </Galleria>
     <ContentContainer container-title="Links">
-      <div class="external-links">
+      <div class="external-links links">
         <ExternalLink v-for="link in title_group.external_links" :key="link.url" :link="link" />
       </div>
     </ContentContainer>
-    <ContentContainer container-title="Artists">
+    <ContentContainer container-title="Artists" v-if="title_group.affiliated_artists.length != 0">
       <div class="affiliated-artists">
         <AffiliatedArtist
           v-for="artist in title_group.affiliated_artists"
           :key="artist.id"
           :affiliated_artist="artist"
+        />
+      </div>
+    </ContentContainer>
+    <ContentContainer
+      :container-title="`In same master group (${title_group.master_group_id})`"
+      v-if="title_group.in_same_master_group.length != 0"
+    >
+      <div class="flex justify-content-center links">
+        <MasterGroupLink
+          v-for="tg in title_group.in_same_master_group"
+          :key="tg.id"
+          :title_group="tg"
         />
       </div>
     </ContentContainer>
@@ -46,6 +58,7 @@ import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
+import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 
 export default {
@@ -54,6 +67,7 @@ export default {
     Image,
     AffiliatedArtist,
     ExternalLink,
+    MasterGroupLink,
     ContentContainer,
   },
   props: {
@@ -76,13 +90,15 @@ export default {
 .p-galleria {
   border: none;
 }
+.links {
+  a {
+    margin: 0px 5px;
+  }
+}
 .external-links {
   display: flex;
   justify-content: center;
   align-items: center;
-  a {
-    margin: 0px 10px;
-  }
 }
 </style>
 <style>

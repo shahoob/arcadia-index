@@ -1,10 +1,11 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    Select edition <span class="alternative" @click="action = 'create'">(or create one)</span>
+    {{ $t('edition_group.select_edition') }}
+    <span class="alternative" @click="action = 'create'">({{ $t('general.or_create_one') }})</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    Create a new edition
-    <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
+    {{ $t('edition_group.create_edition') }}
+    <span class="alternative" @click="action = 'select'">({{ $t('general.or_select_one') }})</span>
   </div>
   <div id="select-edition-group" v-if="action == 'select'">
     <FloatLabel>
@@ -26,7 +27,7 @@
           </div>
         </template>
       </Select>
-      <label for="edition_group">Edition</label>
+      <label for="edition_group">{{ $t('torrent.edition') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
       <Button

@@ -1,5 +1,5 @@
 <template>
-  <a target="_blank" :href="link"><img :src="'logos/' + getLinkLogo()" /></a>
+  <a target="_blank" :href="link"><img :src="'logos/external_links/' + getLinkLogo()" /></a>
 </template>
 
 <script lang="ts">
@@ -29,6 +29,9 @@ export default {
       }
       if (this.link.includes('thetvdb.com')) {
         return 'tvdb.svg'
+      }
+      if (this.link.includes('store.steampowered.com')) {
+        return 'steam.svg'
       }
     },
   },

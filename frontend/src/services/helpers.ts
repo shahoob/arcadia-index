@@ -44,32 +44,26 @@ export const getEditionGroupSlug = (editionGroup) => {
   if (editionGroup.additional_information?.catalogue_number) {
     slug += ' / ' + editionGroup.additional_information?.catalogue_number
   }
-  slug += ' / ' + editionGroup.source
+  if (editionGroup.source) {
+    slug += ' / ' + editionGroup.source
+  }
   slug += editionGroup.distributor ? ' / ' + editionGroup.distributor : ''
   return slug
 }
-export const getTorrentSlug = (torrent) => {
-  let slug = torrent.container
-
-  slug += torrent.video_codec ? ' / ' + torrent.video_codec : ''
-  slug += torrent.video_resolution ? ' / ' + torrent.video_resolution : ''
-  slug += torrent.audio_codec ? ' / ' + torrent.audio_codec : ''
-  slug += torrent.audio_bitrate_sampling ? ' / ' + torrent.audio_bitrate_sampling : ''
-  slug += torrent.language && torrent.language != 'English' ? ' / ' + torrent.language : ''
-  // slug += torrent.audio_bitrate ? ' / ' + torrent.audio_bitrate : ''
-  torrent.features.forEach((feature) => {
-    slug += ' / ' + feature
-  })
-  slug += torrent.release_group ? ' / ' + torrent.release_group : ''
-
-  return slug
-}
 export const getFeatures = (contentType) => {
-  if (contentType == 'Book' || contentType == 'Music') {
+  if (contentType == 'book' || contentType == 'music') {
     return ['Cue', 'Booklet']
-  } else {
+  } else if (contentType == 'tv_show' || contentType == 'movie') {
     return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
+  } else {
+    return []
   }
+}
+export const getLanguages = () => {
+  return ['English', 'French', 'German', 'Italian', 'Spanish', 'Swedish']
+}
+export const getPlatforms = () => {
+  return ['Linux', 'MacOS', 'Windows']
 }
 export const getSources = (contentType: string) => {
   const sources = ['Web']

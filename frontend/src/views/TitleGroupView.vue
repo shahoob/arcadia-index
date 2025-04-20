@@ -18,17 +18,21 @@
         <div>
           <i
             v-if="title_group.is_subscribed"
-            v-tooltip.top="'Unsubscribe'"
+            v-tooltip.top="$t('general.unsubscribe')"
             @click="unsubscribe"
             class="pi pi-bell-slash"
           />
-          <i v-else v-tooltip.top="'Subscribe'" @click="subscribe" class="pi pi-bell" />
-          <i v-tooltip.top="'Bookmark'" class="pi pi-bookmark" />
+          <i v-else v-tooltip.top="$t('general.subscribe')" @click="subscribe" class="pi pi-bell" />
+          <i v-tooltip.top="$t('general.bookmark')" class="pi pi-bookmark" />
         </div>
         <div>
-          <i v-tooltip.top="'Edit'" class="pi pi-pen-to-square" />
-          <i @click="uploadTorrent" v-tooltip.top="'Upload Torrent'" class="pi pi-upload" />
-          <i v-tooltip.top="'Request format'" class="pi pi-shopping-cart" />
+          <i v-tooltip.top="$t('general.edit')" class="pi pi-pen-to-square" />
+          <i
+            @click="uploadTorrent"
+            v-tooltip.top="$t('torrent.upload_torrent')"
+            class="pi pi-upload"
+          />
+          <i v-tooltip.top="$t('torrent.request_format')" class="pi pi-shopping-cart" />
         </div>
         <FloatLabel class="sort-by-select" variant="on">
           <Select
@@ -37,18 +41,36 @@
             :options="selectableSortingOptions"
             class="select"
             size="small"
-          />
-          <label for="sort_by">Sort by</label>
+          >
+            <template #option="slotProps">
+              <span>{{ $t(`torrent.${slotProps.option}`) }}</span>
+            </template>
+            <template #value="slotProps">
+              <span>{{ $t(`torrent.${slotProps.value}`) }}</span>
+            </template>
+          </Select>
+          <label for="sort_by">{{ $t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :title_group="title_group" />
+      <TitleGroupTable :title_group="title_group" :sortBy />
+      <ContentContainer
+        :container-title="$t('general.screenshots')"
+        class="screenshots"
+        v-if="title_group.screenshots && title_group.screenshots?.length !== 0"
+      >
+        <CustomGalleria :images="title_group.screenshots" />
+      </ContentContainer>
       <Accordion
         v-if="title_group.torrent_requests.length != 0"
         value="0"
         class="torrent-requests dense-accordion"
       >
         <AccordionPanel value="0">
-          <AccordionHeader>Requests ({{ title_group.torrent_requests.length }})</AccordionHeader>
+          <AccordionHeader
+            >{{ $t('torrent.requests') }} ({{
+              title_group.torrent_requests.length
+            }})</AccordionHeader
+          >
           <AccordionContent>
             <TorrentRequestsTable
               :torrent_requests="title_group.torrent_requests"
@@ -57,7 +79,11 @@
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
-      <ContentContainer class="description" v-if="title_group" container-title="Title description">
+      <ContentContainer
+        class="description"
+        v-if="title_group"
+        :container-title="$t('title_group.description')"
+      >
         <div class="title-group-description">
           {{ title_group.description }}
         </div>
@@ -101,6 +127,7 @@ import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalServic
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
+import CustomGalleria from '@/components/CustomGalleria.vue'
 
 export default {
   components: {
@@ -117,13 +144,14 @@ export default {
     AccordionPanel,
     TitleGroupFullHeader,
     TitleGroupSidebar,
+    CustomGalleria,
   },
   data() {
     return {
       title_group: null,
       subscription_loading: false,
-      sortBy: 'Edition',
-      selectableSortingOptions: ['Edition', 'Size', 'Seeders', 'Completed', 'Uploaded at'],
+      sortBy: 'edition',
+      selectableSortingOptions: ['edition', 'size', 'seeders', 'completed', 'created_at'],
     }
   },
   created() {
@@ -167,6 +195,9 @@ export default {
   margin: 0px 0.5em;
   color: white;
   cursor: pointer;
+}
+.screenshots {
+  margin-top: 20px;
 }
 .torrent-requests {
   margin-top: 20px;

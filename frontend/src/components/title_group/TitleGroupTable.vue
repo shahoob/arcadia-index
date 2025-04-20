@@ -3,9 +3,9 @@
     v-model:expandedRows="expandedRows"
     :value="title_group.edition_groups.flatMap((edition_group: Object) => edition_group.torrents)"
     rowGroupMode="subheader"
-    groupRowsBy="edition_group_id"
+    :groupRowsBy="isGrouped ? 'edition_group_id' : null"
     sortMode="single"
-    sortField="representative.name"
+    :sortField="sortBy == 'edition' ? '' : sortBy"
     :sortOrder="1"
     tableStyle="min-width: 50rem"
     size="small"
@@ -22,7 +22,7 @@
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
-          <span v-if="slotProps.data.container && title_group.content_type != 'Music'">{{
+          <span v-if="slotProps.data.container && title_group.content_type != 'music'">{{
             slotProps.data.container
           }}</span>
           <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }}</span>
@@ -30,16 +30,21 @@
             / {{ slotProps.data.video_resolution }}</span
           >
           <span v-if="slotProps.data.audio_codec">
-            <span v-if="title_group.content_type != 'Music'">/ </span
+            <span v-if="title_group.content_type != 'music'">/ </span
             >{{ slotProps.data.audio_codec }}</span
           >
           <span v-if="slotProps.data.audio_channels"> / {{ slotProps.data.audio_channels }}</span>
           <span v-if="slotProps.data.audio_bitrate_sampling">
             / {{ slotProps.data.audio_bitrate_sampling }}</span
           >
-          <span v-if="slotProps.data.language && slotProps.data.language !== 'English'">
-            / {{ slotProps.data.language }}</span
+          <span
+            v-if="
+              slotProps.data.languages.length === 1 && slotProps.data.languages[0] !== 'English'
+            "
           >
+            / {{ slotProps.data.languages[0] }}
+          </span>
+          <span v-if="slotProps.data.languages.length > 1"> / Multi-Language </span>
           <span v-for="(feature, index) in slotProps.data.features" :key="index">
             / <span class="bold">{{ feature }}</span>
           </span>
@@ -88,7 +93,7 @@
       <template #header><i class="pi pi-arrow-down" v-tooltip.top="'Leechers'" /></template>
       <template #body>0</template>
     </Column>
-    <template #groupheader="slotProps">
+    <template #groupheader="slotProps" v-if="isGrouped">
       <div class="edition-group-header">
         {{ getEditionGroupSlug(slotProps.data.edition_group_id) }}
       </div>
@@ -173,6 +178,7 @@ export default {
   props: {
     title_group: {},
     preview: { default: false },
+    sortBy: { default: 'edition' },
   },
   data() {
     return { expandedRows: [], reportTorrentDialogVisible: false, reportingTorrentId: 0 }
@@ -217,6 +223,9 @@ export default {
     }
   },
   computed: {
+    isGrouped() {
+      return this.sortBy === 'edition'
+    },
     getEditionGroupSlug() {
       return (id: number) => {
         return this.$getEditionGroupSlug(

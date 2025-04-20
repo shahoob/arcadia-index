@@ -1,0 +1,74 @@
+{
+    "general": {
+        "subscribe": "Subscribe",
+        "unsubscribe": "Unsubscribe",
+        "bookmark": "Bookmark",
+        "edit": "Edit",
+        "sort_by": "Sort by",
+        "submit": "Submit",
+        "description": "Description",
+        "release_date": "Release date",
+        "cover": "Cover | Covers",
+        "external_link": "External link | External links",
+        "or_create_one": "or create one",
+        "or_select_one": "or select an existing one",
+        "screenshots": "Screenshots"
+    },
+    "auth": {
+        "remember_me": "Remember me"
+    },
+    "artist": {
+        "role": {
+            "main": "Main",
+            "producer": "Producer",
+            "guest": "Guest",
+            "composer": "Composer",
+            "conductor": "Conductor",
+            "dj_compiler": "Dj/Compiler",
+            "remixer": "Remixer",
+            "arranger": "Arranger",
+            "director": "Director",
+            "cinematographer": "Cinematographer",
+            "actor": "Actor",
+            "author": "Author"
+        }
+    },
+    "user": {
+        "username": "Username",
+        "password": "Password",
+        "email": "E-mail"
+    },
+    "community": {
+        "new_comment": "New comment"
+    },
+    "title_group": {
+        "description": "Title description",
+        "title": "Title"
+    },
+    "edition_group": {
+        "name": "Name",
+        "distributor": "Distributor",
+        "label": "Label",
+        "catalogue_number": "Catalogue number",
+        "source": "Source",
+        "select_edition": "Select an edition",
+        "create_edition": "Create one"
+    },
+    "torrent": {
+        "size": "Size",
+        "edition": "Edition",
+        "torrent": "Torrent",
+        "seeders": "Seeders",
+        "completed": "Completed",
+        "created_at": "Uploaded at",
+        "upload_torrent": "Upload torrent",
+        "request_format": "Request format",
+        "requests": "Requests",
+        "any_container": "Any container"
+    },
+    "error": {
+        "write_more_than_x_chars": "Write more than {0} characters",
+        "select_date": "Select a date",
+        "invalid_url": "Invalid url"
+    }
+}

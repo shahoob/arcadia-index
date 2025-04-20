@@ -8,6 +8,17 @@
     :validateOnValueUpdate="false"
     validateOnBlur
   >
+    <div class="line" v-if="content_type == 'software'">
+      <FloatLabel>
+        <InputNumber
+          size="small"
+          v-model="titleGroupForm.master_group_id"
+          name="master_group_id"
+          :format="false"
+        />
+        <label for="master_group_id">Master group id</label>
+      </FloatLabel>
+    </div>
     <div class="line">
       <div class="name">
         <FloatLabel>
@@ -60,12 +71,29 @@
       </Message>
     </div>
     <div class="line">
+      <div v-if="content_type == 'software'">
+        <FloatLabel>
+          <Select
+            v-model="titleGroupForm.platform"
+            inputId="platform"
+            :options="$getPlatforms()"
+            class="select"
+            size="small"
+            name="platform"
+            filter
+          />
+          <label for="platform">Platform</label>
+        </FloatLabel>
+        <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.platform.error?.message }}
+        </Message>
+      </div>
       <div>
         <FloatLabel>
           <Select
             v-model="titleGroupForm.original_language"
             inputId="original_language"
-            :options="selectableLanguages"
+            :options="$getLanguages()"
             class="select"
             size="small"
             name="original_language"
@@ -140,6 +168,31 @@
         </Message>
       </div>
     </div>
+    <div class="screenshots input-list" v-if="content_type == 'software'">
+      <label>Screenshots</label>
+      <div v-for="(link, index) in titleGroupForm.screenshots" :key="index">
+        <InputText
+          size="small"
+          v-model="titleGroupForm.screenshots[index]"
+          :name="`screenshots[${index}]`"
+        />
+        <Button v-if="index == 0" @click="addScreenshot" icon="pi pi-plus" size="small" />
+        <Button
+          v-if="index != 0 || titleGroupForm.screenshots.length > 1"
+          @click="removeScreenshot(index)"
+          icon="pi pi-minus"
+          size="small"
+        />
+        <Message
+          v-if="$form.screenshots?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ $form.screenshots[index].error?.message }}
+        </Message>
+      </div>
+    </div>
     <div class="external-links input-list">
       <label>External Links</label>
       <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
@@ -186,6 +239,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
+import { InputNumber } from 'primevue'
 
 export default {
   components: {
@@ -197,6 +251,7 @@ export default {
     Textarea,
     Select,
     Message,
+    InputNumber,
   },
   props: {
     content_type: {},
@@ -211,21 +266,23 @@ export default {
         original_language: '',
         original_release_date: null,
         covers: [''],
+        screenshots: [''],
         external_links: [''],
         category: '',
         country_from: '',
         name_aliases: [],
         affiliated_artists: [],
         tags: '',
+        master_group_id: null,
+        platform: null,
       },
-      selectableLanguages: ['English', 'French'],
-      selectableCountries: ['France', 'UK', 'USA'],
+      selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
       selectableCategories: {
-        Book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
-        Music: ['Single', 'Album', 'Ep'],
-        Movie: ['FeatureFilm', 'ShortFilm'],
-        Software: ['Program', 'Game'],
-        Collection: ['Other'],
+        book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
+        music: ['Single', 'Album', 'Ep'],
+        movie: ['FeatureFilm', 'ShortFilm'],
+        software: ['Program', 'Game'],
+        collection: ['Other'],
       },
     }
   },
@@ -247,7 +304,10 @@ export default {
       if (values.description.length < 10) {
         errors.description = [{ message: 'Write more than 10 characters' }]
       }
-      if (values.original_language == '') {
+      if (values.platform == '') {
+        errors.platform = [{ message: 'Select a platform' }]
+      }
+      if (this.content_type !== 'music' && values.original_language == '') {
         errors.original_language = [{ message: 'Select a language' }]
       }
       if (values.country_from == '') {
@@ -272,7 +332,17 @@ export default {
           errors.covers[index] = [{ message: `Not a valid URL.` }]
         }
       })
-
+      if (values.screenshots) {
+        values.screenshots.forEach((link, index) => {
+          if (!this.$isValidUrl(link)) {
+            if (!('screenshots' in errors)) {
+              errors.screenshots = []
+            }
+            errors.screenshots[index] = [{ message: `Not a valid URL.` }]
+          }
+        })
+      }
+      console.log(errors)
       return {
         errors,
       }
@@ -293,6 +363,12 @@ export default {
     },
     removeCover(index: number) {
       this.titleGroupForm.covers.splice(index, 1)
+    },
+    addScreenshot() {
+      this.titleGroupForm.screenshots.push('')
+    },
+    removeScreenshot(index: number) {
+      this.titleGroupForm.screenshots.splice(index, 1)
     },
   },
   created() {

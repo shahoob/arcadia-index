@@ -7,7 +7,7 @@ use crate::{
     },
 };
 
-use bip_metainfo::{Info, Metainfo, MetainfoBuilder};
+use bip_metainfo::{Info, Metainfo, MetainfoBuilder, PieceLength};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{PgPool, prelude::FromRow};
@@ -32,12 +32,12 @@ pub async fn create_torrent(
             file_amount_per_type, uploaded_as_anonymous, file_list, mediainfo, trumpable,
             staff_checked, size, duration, audio_codec, audio_bitrate, audio_bitrate_sampling,
             audio_channels, video_codec, features, subtitle_languages, video_resolution, container,
-            language, info_hash, info_dict
+            languages, info_hash, info_dict
         ) VALUES (
             $1, $2, $3, $4, $5, $6, $7,
             $8, $9, $10, $11, $12, $13,
             $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
-            $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[], $20, $21, $22, $23, $24::bytea, $25::bytea
+            $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[], $20::language_enum[], $21, $22, $23::language_enum[], $24::bytea, $25::bytea
         )
         RETURNING *
     "#;
@@ -46,6 +46,8 @@ pub async fn create_torrent(
         .map_err(|_| Error::TorrentFileInvalid)?;
 
     let info = metainfo.info();
+
+    // TODO: need to ensure private is set
 
     // TODO: torrent metadata extraction should be done on the client side
     let parent_folder = info.directory().map(|d| d.to_str().unwrap()).unwrap_or("");
@@ -113,7 +115,16 @@ pub async fn create_torrent(
         })
         .bind(torrent_form.video_resolution.as_deref())
         .bind(&*torrent_form.container)
-        .bind(torrent_form.language.as_deref())
+        .bind(if torrent_form.languages.is_empty() {
+            Vec::new()
+        } else {
+            torrent_form
+                .languages
+                .0
+                .split(',')
+                .map(|f| f.trim())
+                .collect::<Vec<&str>>()
+        })
         .bind(info.info_hash().as_ref())
         .bind(info.to_bytes())
         .fetch_one(pool)
@@ -193,6 +204,7 @@ pub async fn get_torrent(
         .set_creation_date(Some(torrent.created_at_secs))
         .set_comment(Some(&frontend_url))
         .set_created_by(Some(tracker_name))
+        .set_piece_length(PieceLength::Custom(info.piece_length() as usize))
         .set_private_flag(Some(true))
         .build(1, &info, |_| {})
         .map_err(|_| Error::TorrentFileInvalid)?;
@@ -228,6 +240,7 @@ title_group_data AS (
             'name', tg.name,
             'covers', tg.covers,
             'category', tg.category,
+            'platform', tg.platform,
             'content_type', tg.content_type,
             'tags', tg.tags,
             'original_release_date', tg.original_release_date,
@@ -260,10 +273,11 @@ title_group_data AS (
                                     'edition_group_id', t.edition_group_id,
                                     'created_at', t.created_at,
                                     'release_name', t.release_name,
+                                    'release_group', t.release_group,
                                     'file_amount_per_type', t.file_amount_per_type,
                                     'trumpable', t.trumpable,
                                     'staff_checked', t.staff_checked,
-                                    'language', t.language,
+                                    'languages', t.languages,
                                     'container', t.container,
                                     'size', t.size,
                                     'duration', t.duration,

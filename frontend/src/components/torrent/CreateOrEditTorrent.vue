@@ -81,7 +81,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
@@ -102,7 +102,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -124,7 +124,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TV-Show', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_codec"
@@ -147,7 +147,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TV-Show', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
@@ -192,20 +192,22 @@
         </div>
         <div>
           <FloatLabel
-            v-if="['Movie', 'TV-Show', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
+            v-if="['movie', 'tv_show', 'book', 'software', 'collection'].indexOf(content_type) >= 0"
           >
-            <Select
-              v-model="torrentForm.language"
-              inputId="language"
-              :options="selectableLanguages"
+            <MultiSelect
+              v-model="torrentForm.languages"
+              inputId="languages"
+              :options="$getLanguages()"
               class="select"
               size="small"
-              name="language"
+              display="chip"
+              filter
+              name="languages"
             />
-            <label for="language">Language</label>
+            <label for="languages">Language(s)</label>
           </FloatLabel>
-          <Message v-if="$form.language?.invalid" severity="error" size="small" variant="simple">
-            {{ $form.language.error?.message }}
+          <Message v-if="$form.languages?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.languages.error?.message }}
           </Message>
         </div>
         <FloatLabel>
@@ -315,15 +317,15 @@ export default {
         release_group: '',
         mediainfo: '',
         description: '',
-        language: '',
+        languages: [],
         container: '',
         video_codec: null,
         video_resolution: null,
         duration: null,
         audio_codec: null,
         audio_bitrate: null,
-        subtitle_languages: '',
-        features: '',
+        subtitle_languages: [],
+        features: [],
         audio_channels: null,
         audio_bitrate_sampling: null,
         torrent_file: null,
@@ -374,7 +376,6 @@ export default {
         'Other',
       ],
       selectableAudioChannels: ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1'],
-      selectableLanguages: ['English', 'French'],
       uploadingTorrent: false,
       content_type: '',
     }
@@ -407,8 +408,8 @@ export default {
       if (!values.audio_bitrate_sampling) {
         errors.audio_bitrate_sampling = [{ message: 'Select a bitrate' }]
       }
-      if (values.language == '') {
-        errors.language = [{ message: 'Select a language' }]
+      if (values.languages && values.languages.length === 0) {
+        errors.languages = [{ message: 'Select at least 1 language' }]
       }
       if (!this.torrentForm.torrent_file) {
         errors.torrent_file = [{ message: 'Select a torrent_file' }]
@@ -478,7 +479,7 @@ export default {
   }
 }
 .select {
-  width: 200px;
+  min-width: 200px;
 }
 /* .file-upload {
   max-width: 300px;

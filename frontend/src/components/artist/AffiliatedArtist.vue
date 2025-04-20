@@ -5,10 +5,14 @@
         <i class="pi pi-search"></i>
       </template>
     </Image>
-    <a :href="'/artist?id=' + affiliated_artist.artist.id"
-      ><div class="name">{{ affiliated_artist.artist.name }}</div></a
-    >
-    <div class="status">{{ affiliated_artist.status }}</div>
+    <a :href="'/artist?id=' + affiliated_artist.artist.id">
+      <div class="name">{{ affiliated_artist.artist.name }}</div>
+    </a>
+    <div class="roles">
+      <span v-for="(role, i) in affiliated_artist.roles" :key="role">
+        <span v-if="i != 0">, </span><span class="role">{{ $t(`artist.role.${role}`) }} </span>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -27,10 +31,12 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-.status {
+.roles {
   font-size: 0.8em;
-  color: var(--color-primary);
+}
+.role {
   font-weight: bold;
+  color: var(--color-primary);
 }
 </style>
 

@@ -108,12 +108,12 @@ CREATE TABLE series (
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TYPE content_type_enum AS ENUM (
-    'Movie',
-    'TV-Show',
-    'Music',
-    'Software',
-    'Book',
-    'Collection'
+    'movie',
+    'tv_show',
+    'music',
+    'software',
+    'book',
+    'collection'
 );
 CREATE TYPE title_group_category_enum AS ENUM (
     'Ep',
@@ -138,6 +138,12 @@ CREATE TYPE title_group_category_enum AS ENUM (
     'Manual',
     'Other'
 );
+CREATE TYPE platform_enum AS ENUM(
+    'Linux',
+    'MacOS', 
+    'Windows',
+    'Xbox'
+);
 CREATE TABLE title_groups (
     id BIGSERIAL PRIMARY KEY,
     master_group_id BIGINT,
@@ -147,6 +153,7 @@ CREATE TABLE title_groups (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     description TEXT NOT NULL,
+    platform platform_enum,
     original_language TEXT,
     original_release_date TIMESTAMP NOT NULL,
     tagline TEXT,
@@ -158,6 +165,7 @@ CREATE TABLE title_groups (
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
+    screenshots TEXT[] NOT NULL,
     series_id BIGINT,
     FOREIGN KEY (master_group_id) REFERENCES master_groups(id) ON DELETE
     SET NULL,
@@ -173,10 +181,24 @@ CREATE TABLE similar_title_groups (
     FOREIGN KEY (group_1_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2_id) REFERENCES title_groups(id) ON DELETE CASCADE
 );
+CREATE TYPE artist_role_enum AS ENUM(
+    'main',
+    'producer',
+    'guest',
+    'composer',
+    'conductor',
+    'dj_compiler',
+    'remixer',
+    'arranger',
+    'director',
+    'cinematographer',
+    'actor',
+    'author'
+);
 CREATE TABLE affiliated_artists (
     title_group_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    roles artist_role_enum[] NOT NULL,
     nickname VARCHAR(255),
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -218,7 +240,7 @@ CREATE TABLE edition_groups (
     distributor VARCHAR(255),
     covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
-    source source_enum NOT NULL,
+    source source_enum,
     additional_information JSONB,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
@@ -273,6 +295,14 @@ CREATE TYPE video_codec_enum AS ENUM(
     'BD50',
     'UHD100'
 );
+CREATE TYPE language_enum AS ENUM(
+   'English',
+   'French',
+   'German',
+   'Italian',
+   'Spanish',
+   'Swedish'
+);
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
@@ -282,7 +312,7 @@ CREATE TABLE torrents (
     created_by_id BIGINT NOT NULL,
     info_hash BYTEA NOT NULL,
     info_dict BYTEA NOT NULL,
-    language VARCHAR(15),
+    languages language_enum[] NOT NULL,
     release_name TEXT NOT NULL,
     -- maybe change the size
     release_group VARCHAR(30),
@@ -311,14 +341,13 @@ CREATE TABLE torrents (
     -- video
     video_codec video_codec_enum,
     features features_enum [],
-    subtitle_languages VARCHAR(20) [],
+    subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
 
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL,
     UNIQUE (info_hash)
 );
-
 CREATE TABLE title_group_comments (
     id BIGSERIAL PRIMARY KEY,
     content TEXT NOT NULL,
@@ -342,7 +371,7 @@ CREATE TABLE torrent_requests (
     edition_name TEXT,
     release_group VARCHAR(20),
     description TEXT,
-    language VARCHAR(25),
+    languages language_enum[] NOT NULL,
     container VARCHAR(8),
     bounty_upload BIGINT NOT NULL,
     bounty_bonus_points BIGINT NOT NULL,
@@ -352,7 +381,7 @@ CREATE TABLE torrent_requests (
     -- Video
     video_codec video_codec_enum,
     features features_enum[],
-    subtitle_languages TEXT[],
+    subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
@@ -513,7 +542,7 @@ SELECT
         ELSE t.created_by_id
     END as created_by_id,
     t.info_hash,
-    t.language,
+    t.languages,
     t.release_name,
     t.release_group,
     t.description,
