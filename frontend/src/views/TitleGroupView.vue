@@ -123,7 +123,7 @@ export default {
       title_group: null,
       subscription_loading: false,
       sortBy: 'edition',
-      selectableSortingOptions: ['edition', 'size', 'seeders', 'completed', 'uploaded_at'],
+      selectableSortingOptions: ['edition', 'size', 'seeders', 'completed', 'created_at'],
     }
   },
   created() {
