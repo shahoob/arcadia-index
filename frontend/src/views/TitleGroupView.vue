@@ -53,6 +53,12 @@
         </FloatLabel>
       </div>
       <TitleGroupTable :title_group="title_group" :sortBy />
+      <ContentContainer :container-title="$t('general.screenshots')" class="screenshots">
+        <CustomGalleria
+          v-if="title_group.screenshots.lenght !== 0"
+          :images="title_group.screenshots"
+        />
+      </ContentContainer>
       <Accordion
         v-if="title_group.torrent_requests.length != 0"
         value="0"
@@ -120,6 +126,7 @@ import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalServic
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
+import CustomGalleria from '@/components/CustomGalleria.vue'
 
 export default {
   components: {
@@ -136,6 +143,7 @@ export default {
     AccordionPanel,
     TitleGroupFullHeader,
     TitleGroupSidebar,
+    CustomGalleria,
   },
   data() {
     return {
@@ -186,6 +194,9 @@ export default {
   margin: 0px 0.5em;
   color: white;
   cursor: pointer;
+}
+.screenshots {
+  margin-top: 20px;
 }
 .torrent-requests {
   margin-top: 20px;
