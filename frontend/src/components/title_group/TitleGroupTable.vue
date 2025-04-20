@@ -3,9 +3,9 @@
     v-model:expandedRows="expandedRows"
     :value="title_group.edition_groups.flatMap((edition_group: Object) => edition_group.torrents)"
     rowGroupMode="subheader"
-    groupRowsBy="edition_group_id"
+    :groupRowsBy="isGrouped ? 'edition_group_id' : null"
     sortMode="single"
-    sortField="representative.name"
+    :sortField="sortBy == 'edition' ? '' : sortBy"
     :sortOrder="1"
     tableStyle="min-width: 50rem"
     size="small"
@@ -93,7 +93,7 @@
       <template #header><i class="pi pi-arrow-down" v-tooltip.top="'Leechers'" /></template>
       <template #body>0</template>
     </Column>
-    <template #groupheader="slotProps">
+    <template #groupheader="slotProps" v-if="isGrouped">
       <div class="edition-group-header">
         {{ getEditionGroupSlug(slotProps.data.edition_group_id) }}
       </div>
@@ -178,6 +178,7 @@ export default {
   props: {
     title_group: {},
     preview: { default: false },
+    sortBy: { default: 'edition' },
   },
   data() {
     return { expandedRows: [], reportTorrentDialogVisible: false, reportingTorrentId: 0 }
@@ -222,6 +223,9 @@ export default {
     }
   },
   computed: {
+    isGrouped() {
+      return this.sortBy === 'edition'
+    },
     getEditionGroupSlug() {
       return (id: number) => {
         return this.$getEditionGroupSlug(
