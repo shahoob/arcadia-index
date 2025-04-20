@@ -4,7 +4,7 @@
       <!-- TODO: Add more details -->
       <template #body="slotProps">
         <span v-if="slotProps.data.container">{{ slotProps.data.container }}</span>
-        <span v-else>Any Container</span>
+        <span v-else>{{ $t('torrent.any_container') }}</span>
         <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }} </span>
       </template>
     </Column>

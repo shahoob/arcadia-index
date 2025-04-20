@@ -11,7 +11,7 @@
     :validateOnValueUpdate="false"
   >
     <div class="new-comment">
-      <BBCodeEditor @value-change="newCommentUpdated" label="New comment" />
+      <BBCodeEditor @value-change="newCommentUpdated" :label="$t('community.new_comment')" />
       <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
         {{ $form.content.error?.message }}
       </Message>
@@ -55,8 +55,7 @@ export default {
       const errors = {}
 
       if (values.content.length < 5) {
-        console.log(values.content.length)
-        errors.content = [{ message: 'You must write more than 5 characters' }]
+        errors.content = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
       }
 
       return {

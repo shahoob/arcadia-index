@@ -11,6 +11,9 @@ import './assets/main.css'
 import Tooltip from 'primevue/tooltip'
 import { definePreset } from '@primeuix/themes'
 import * as helpers from './services/helpers'
+import { createI18n } from 'vue-i18n'
+import en from './i18n/en.json'
+import fr from './i18n/fr.json'
 
 const app = createApp(App)
 
@@ -28,6 +31,14 @@ const CustomThemePreset = definePreset(Aura, {
     },
   },
 })
+const i18n = createI18n({
+  locale: 'en',
+  fallbackLocale: 'en', // Fallback if a translation is missing
+  messages: {
+    en,
+    fr,
+  },
+})
 
 app.use(createPinia())
 app.use(PrimeVue, {
@@ -39,6 +50,7 @@ app.use(PrimeVue, {
   },
 })
 app.use(router)
+app.use(i18n)
 app.directive('tooltip', Tooltip)
 
 Object.keys(helpers).forEach((key) => {
