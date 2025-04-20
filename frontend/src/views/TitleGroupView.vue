@@ -8,7 +8,12 @@
       'sidebar-left': userStore.settings.site_appearance.item_detail_layout == 'sidebar_left',
     }"
   >
-    <div class="main">
+    <div
+      :class="{
+        main: true,
+        'with-sidebar': userStore.settings.site_appearance.item_detail_layout.includes('sidebar'),
+      }"
+    >
       <TitleGroupFullHeader
         :title_group
         v-if="userStore.settings.site_appearance.item_detail_layout == 'header'"
@@ -182,7 +187,7 @@ export default {
 </script>
 
 <style scoped>
-.main {
+.main.with-sidebar {
   width: 75%;
 }
 .actions {
