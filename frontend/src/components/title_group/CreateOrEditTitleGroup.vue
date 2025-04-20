@@ -8,7 +8,7 @@
     :validateOnValueUpdate="false"
     validateOnBlur
   >
-    <div class="line" v-if="content_type == 'Software'">
+    <div class="line" v-if="content_type == 'software'">
       <FloatLabel>
         <InputNumber
           size="small"
@@ -71,7 +71,7 @@
       </Message>
     </div>
     <div class="line">
-      <div v-if="content_type == 'Software'">
+      <div v-if="content_type == 'software'">
         <FloatLabel>
           <Select
             v-model="titleGroupForm.platform"
@@ -168,7 +168,7 @@
         </Message>
       </div>
     </div>
-    <div class="screenshots input-list" v-if="content_type == 'Software'">
+    <div class="screenshots input-list" v-if="content_type == 'software'">
       <label>Screenshots</label>
       <div v-for="(link, index) in titleGroupForm.screenshots" :key="index">
         <InputText
@@ -278,11 +278,11 @@ export default {
       },
       selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
       selectableCategories: {
-        Book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
-        Music: ['Single', 'Album', 'Ep'],
-        Movie: ['FeatureFilm', 'ShortFilm'],
-        Software: ['Program', 'Game'],
-        Collection: ['Other'],
+        book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
+        music: ['Single', 'Album', 'Ep'],
+        movie: ['FeatureFilm', 'ShortFilm'],
+        software: ['Program', 'Game'],
+        collection: ['Other'],
       },
     }
   },

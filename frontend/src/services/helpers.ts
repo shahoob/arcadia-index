@@ -51,9 +51,9 @@ export const getEditionGroupSlug = (editionGroup) => {
   return slug
 }
 export const getFeatures = (contentType) => {
-  if (contentType == 'Book' || contentType == 'Music') {
+  if (contentType == 'book' || contentType == 'music') {
     return ['Cue', 'Booklet']
-  } else if (contentType == 'TV-Show' || contentType == 'Movie') {
+  } else if (contentType == 'tv_show' || contentType == 'movie') {
     return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
   } else {
     return []

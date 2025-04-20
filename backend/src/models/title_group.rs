@@ -9,15 +9,25 @@ use super::edition_group::LiteEditionGroupHierachy;
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "content_type_enum")]
 pub enum ContentType {
+    #[sqlx(rename = "movie")]
+    #[serde(alias = "movie")]
     Movie,
-    #[sqlx(rename = "TV-Show")]
-    #[serde(alias = "TV-Show")]
+    #[sqlx(rename = "tv_show")]
+    #[serde(alias = "tv_show")]
     TVShow,
+    #[sqlx(rename = "music")]
+    #[serde(alias = "music")]
     Music,
+    #[sqlx(rename = "software")]
+    #[serde(alias = "software")]
     Software,
+    #[sqlx(rename = "book")]
+    #[serde(alias = "book")]
     Book,
     // aka SiteRip, but also includes packs of other content than website dumps (books, etc.)
     // this allows users to group content (when possible), which lowers the load on the tracker and makes the upload process faster (1 announce instead of multiple)
+    #[sqlx(rename = "collection")]
+    #[serde(alias = "collection")]
     Collection,
 }
 
