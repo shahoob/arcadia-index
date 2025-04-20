@@ -53,11 +53,12 @@
         </FloatLabel>
       </div>
       <TitleGroupTable :title_group="title_group" :sortBy />
-      <ContentContainer :container-title="$t('general.screenshots')" class="screenshots">
-        <CustomGalleria
-          v-if="title_group.screenshots.lenght !== 0"
-          :images="title_group.screenshots"
-        />
+      <ContentContainer
+        :container-title="$t('general.screenshots')"
+        class="screenshots"
+        v-if="title_group.screenshots && title_group.screenshots?.length !== 0"
+      >
+        <CustomGalleria :images="title_group.screenshots" />
       </ContentContainer>
       <Accordion
         v-if="title_group.torrent_requests.length != 0"
