@@ -13,6 +13,7 @@ use std::env;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
+
 use arcadia_index::{Arcadia, Error, OpenSignups, Result, api_doc::ApiDoc};
 
 #[actix_web::main]
@@ -31,6 +32,11 @@ async fn main() -> std::io::Result<()> {
         .connect(&database_url)
         .await
         .expect("Error building a connection pool");
+
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Error running migrations");
 
     let host = env::var("ACTIX_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("ACTIX_PORT").unwrap_or_else(|_| "8080".to_string());
