@@ -23,14 +23,12 @@ Arcadia's backend uses a postgresql database. The recommended method for spawnin
 docker-compose up db -d
 ```
 
-In addition to a database instance, the database needs to be populated with the schema used by Arcadia. Initialization of the database can be done with:
+Arcadia will automatically run migrations on launch. Otherwise, initialization of the database can be done with:
 
 ```
 cargo install sqlx-cli
 cargo sqlx database setup
 ```
-
-Note: if you are using the included docker compose service, the database will be initialized the first time the container is created.
 
 ### Test data
 
