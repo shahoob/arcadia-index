@@ -77,7 +77,6 @@ import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
-import { $t } from '@primeuix/themes'
 
 export default {
   components: {

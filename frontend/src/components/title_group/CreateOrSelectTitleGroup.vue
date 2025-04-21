@@ -166,7 +166,6 @@ import IconField from 'primevue/iconfield'
 import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
-import { $t } from '@primeuix/themes'
 
 export default {
   components: {

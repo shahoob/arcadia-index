@@ -294,7 +294,6 @@ import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { $t } from '@primeuix/themes'
 
 export default {
   components: {

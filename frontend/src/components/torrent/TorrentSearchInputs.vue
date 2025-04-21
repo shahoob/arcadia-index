@@ -26,7 +26,6 @@ import ContentContainer from '../ContentContainer.vue'
 import InputText from 'primevue/inputtext'
 import FloatLabel from 'primevue/floatlabel'
 import Button from 'primevue/button'
-import { $t } from '@primeuix/themes'
 export default {
   components: { ContentContainer, Button, InputText, FloatLabel },
   props: { loading: { default: false }, initialTitleGroupName: {} },
