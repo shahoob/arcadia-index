@@ -1,21 +1,22 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    Select title <span class="alternative" @click="action = 'create'">(or create one)</span>
+    {{ $t('title_group.select_title') }}
+    <span class="alternative" @click="action = 'create'">({{ $t('general.or_create_one') }})</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    Create a new title
-    <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
+    {{ $t('title_group.create_title') }}
+    <span class="alternative" @click="action = 'select'">({{ $t('general.or_select_one') }})</span>
   </div>
 
   <div id="select-title-group" v-if="action == 'select'">
     <FloatLabel>
       <InputNumber size="small" v-model="titleGroupId" name="id" :format="false" />
-      <label for="id">Title group id</label>
+      <label for="id">{{ $t('title_group.title_group_id') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
       <Button
         v-if="step == 3 || action == 'select'"
-        label="Validate title"
+        :label="$t('general.submit')"
         @click="sendTitleGroup"
         icon="pi pi-check"
         size="small"
@@ -33,11 +34,20 @@
         class="select"
         size="small"
         @update:modelValue="(step = 2) && (manualCreation = false)"
-      />
-      <label for="content_type">Content type</label>
+      >
+        <template #option="slotProps">
+          <span>{{ $t(`title_group.content_type.${slotProps.option}`) }}</span>
+        </template>
+        <template #value="slotProps">
+          <span v-if="slotProps.value">
+            {{ $t(`title_group.content_type.${slotProps.value}`) }}
+          </span>
+        </template>
+      </Select>
+      <label for="content_type">{{ $t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
     <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
-      <div class="external-db-inputs" v-if="content_type == 'Movie'">
+      <div class="external-db-inputs" v-if="content_type == 'movie'">
         <FloatLabel>
           <IconField>
             <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
@@ -47,6 +57,7 @@
                 pi: true,
                 'pi-search': !gettingExternalDatabaseData,
                 'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
                 'cursor-pointer': true,
               }"
               @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/movie')"
@@ -59,7 +70,7 @@
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'TVShow'">
+      <div class="external-db-inputs" v-if="content_type == 'tv_show'">
         <FloatLabel>
           <InputText size="small" name="tvdb_id" />
           <label for="tvdb_id">TVDB id</label>
@@ -74,6 +85,7 @@
                 pi: true,
                 'pi-search': !gettingExternalDatabaseData,
                 'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
                 'cursor-pointer': true,
               }"
               @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/tv')"
@@ -86,7 +98,7 @@
           <label for="imdb_id">IMDB id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'Music'">
+      <div class="external-db-inputs" v-if="content_type == 'music'">
         <FloatLabel>
           <InputText size="small" name="musicbrainz_id" />
           <label for="musicbrainz_id">Musicbrainz id</label>
@@ -97,7 +109,7 @@
           <label for="discogs_id">Discogs id</label>
         </FloatLabel>
       </div>
-      <div class="external-db-inputs" v-if="content_type == 'Book'">
+      <div class="external-db-inputs" v-if="content_type == 'book'">
         <FloatLabel>
           <IconField>
             <InputText
@@ -111,6 +123,8 @@
                 pi: true,
                 'pi-search': !gettingExternalDatabaseData,
                 'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
+
                 'cursor-pointer': true,
               }"
               @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"
@@ -171,7 +185,7 @@ export default {
       titleGroupId: '',
       step: 1,
       manualCreation: false,
-      selectableContentTypes: ['Movie', 'TVShow', 'Music', 'Software', 'Book', 'Collection'],
+      selectableContentTypes: ['movie', 'tv_show', 'music', 'software', 'book', 'collection'],
       content_type: '',
       gettingTitleGroupInfo: false,
       sendingTitleGroup: false,

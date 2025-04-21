@@ -108,21 +108,20 @@ CREATE TABLE series (
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TYPE content_type_enum AS ENUM (
-    'Movie',
-    'TV-Show',
-    'Music',
-    'Software',
-    'Book',
-    'Collection'
+    'movie',
+    'tv_show',
+    'music',
+    'software',
+    'book',
+    'collection'
 );
-CREATE TYPE category_enum AS ENUM (
+CREATE TYPE title_group_category_enum AS ENUM (
     'Ep',
     'Album',
     'Single',
     'Soundtrack',
     'Anthology',
     'Compilation',
-    'SingleCategory',
     'Remix',
     'Bootleg',
     'Mixtape',
@@ -139,6 +138,12 @@ CREATE TYPE category_enum AS ENUM (
     'Manual',
     'Other'
 );
+CREATE TYPE platform_enum AS ENUM(
+    'Linux',
+    'MacOS', 
+    'Windows',
+    'Xbox'
+);
 CREATE TABLE title_groups (
     id BIGSERIAL PRIMARY KEY,
     master_group_id BIGINT,
@@ -148,6 +153,7 @@ CREATE TABLE title_groups (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     description TEXT NOT NULL,
+    platform platform_enum,
     original_language TEXT,
     original_release_date TIMESTAMP NOT NULL,
     tagline TEXT,
@@ -156,9 +162,10 @@ CREATE TABLE title_groups (
     covers TEXT [],
     external_links TEXT [] NOT NULL,
     embedded_links JSONB,
-    category category_enum,
+    category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
+    screenshots TEXT[] NOT NULL,
     series_id BIGINT,
     FOREIGN KEY (master_group_id) REFERENCES master_groups(id) ON DELETE
     SET NULL,
@@ -174,10 +181,24 @@ CREATE TABLE similar_title_groups (
     FOREIGN KEY (group_1_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (group_2_id) REFERENCES title_groups(id) ON DELETE CASCADE
 );
+CREATE TYPE artist_role_enum AS ENUM(
+    'main',
+    'producer',
+    'guest',
+    'composer',
+    'conductor',
+    'dj_compiler',
+    'remixer',
+    'arranger',
+    'director',
+    'cinematographer',
+    'actor',
+    'author'
+);
 CREATE TABLE affiliated_artists (
     title_group_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
-    status VARCHAR(20) NOT NULL,
+    roles artist_role_enum[] NOT NULL,
     nickname VARCHAR(255),
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -205,7 +226,7 @@ CREATE TYPE source_enum AS ENUM (
     'TV',
     'VHS',
     'Mixed',
-    'Physical-Book'
+    'Physical Book'
 );
 CREATE TABLE edition_groups (
     id BIGSERIAL PRIMARY KEY,
@@ -219,7 +240,7 @@ CREATE TABLE edition_groups (
     distributor VARCHAR(255),
     covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
-    source source_enum NOT NULL,
+    source source_enum,
     additional_information JSONB,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
@@ -254,6 +275,14 @@ CREATE TYPE audio_bitrate_sampling_enum AS ENUM(
     'DSD512',
     'other'
 );
+CREATE TYPE audio_channels_enum AS ENUM (
+    '1.0',
+    '2.0',
+    '2.1',
+    '5.0',
+    '5.1',
+    '7.1'
+);
 CREATE TYPE video_codec_enum AS ENUM(
     'mpeg1',
     'mpeg2',
@@ -266,6 +295,14 @@ CREATE TYPE video_codec_enum AS ENUM(
     'BD50',
     'UHD100'
 );
+CREATE TYPE language_enum AS ENUM(
+   'English',
+   'French',
+   'German',
+   'Italian',
+   'Spanish',
+   'Swedish'
+);
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
@@ -273,8 +310,10 @@ CREATE TABLE torrents (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
-    language VARCHAR(15),
-    release_name VARCHAR(500),
+    info_hash BYTEA NOT NULL,
+    info_dict BYTEA NOT NULL,
+    languages language_enum[] NOT NULL,
+    release_name TEXT NOT NULL,
     -- maybe change the size
     release_group VARCHAR(30),
     description TEXT,
@@ -286,27 +325,29 @@ CREATE TABLE torrents (
     trumpable TEXT,
     staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
     container VARCHAR(8) NOT NULL,
-    size BIGINT NOT NULL,
     -- in bytes
-    FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
-    SET NULL,
-        -- audio
-        duration INT,
-        -- in seconds
-        audio_codec audio_codec_enum,
-        audio_bitrate INT,
-        -- in kb/s, taken from mediainfo
-        audio_bitrate_sampling audio_bitrate_sampling_enum,
-        audio_channels VARCHAR(5),
-        -- audio
-        -- video
-        video_codec video_codec_enum,
-        features features_enum [],
-        subtitle_languages VARCHAR(20) [],
-        video_resolution VARCHAR(6) -- video
-);
+    size BIGINT NOT NULL,
 
+    -- audio
+    duration INT,
+    -- in seconds
+    audio_codec audio_codec_enum,
+    audio_bitrate INT,
+    -- in kb/s, taken from mediainfo
+    audio_bitrate_sampling audio_bitrate_sampling_enum,
+    audio_channels audio_channels_enum,
+    -- audio
+
+    -- video
+    video_codec video_codec_enum,
+    features features_enum [],
+    subtitle_languages language_enum[] NOT NULL,
+    video_resolution VARCHAR(6),
+
+    FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE (info_hash)
+);
 CREATE TABLE title_group_comments (
     id BIGSERIAL PRIMARY KEY,
     content TEXT NOT NULL,
@@ -330,7 +371,7 @@ CREATE TABLE torrent_requests (
     edition_name TEXT,
     release_group VARCHAR(20),
     description TEXT,
-    language VARCHAR(25),
+    languages language_enum[] NOT NULL,
     container VARCHAR(8),
     bounty_upload BIGINT NOT NULL,
     bounty_bonus_points BIGINT NOT NULL,
@@ -340,7 +381,7 @@ CREATE TABLE torrent_requests (
     -- Video
     video_codec video_codec_enum,
     features features_enum[],
-    subtitle_languages TEXT[],
+    subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
@@ -389,12 +430,139 @@ CREATE TABLE notifications (
     read_status BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (receiver) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE TABLE peers (
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    torrent_id BIGINT NOT NULL,
+    peer_id BYTEA NOT NULL,
+    ip INET NOT NULL,
+    port INTEGER NOT NULL,
+    first_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
+
+    UNIQUE (torrent_id, peer_id, ip, port)
+);
+CREATE TABLE user_peers (
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT NOT NULL,
+    peer_id BIGINT NOT NULL,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE,
+
+    FOREIGN KEY (peer_id) REFERENCES peers(id)
+    ON DELETE CASCADE,
+
+    UNIQUE (user_id, peer_id)
+);
+CREATE TABLE entities (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    pictures TEXT [],
+    created_by_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    title_groups_amount INT NOT NULL DEFAULT 0,
+    edition_groups_amount INT NOT NULL DEFAULT 0,
+    torrents_amount INT NOT NULL DEFAULT 0,
+    seeders_amount INT NOT NULL DEFAULT 0,
+    leechers_amount INT NOT NULL DEFAULT 0,
+    snatches_amount INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TYPE collage_category_enum AS ENUM (
+    'Personal',
+    'Staff Picks',
+    'External',
+    'Theme'
+);
+CREATE TYPE collage_type_enum AS ENUM (
+    'Artist',
+    'Entity',
+    'Title'
+);
+CREATE TABLE collage (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    name VARCHAR NOT NULL,
+    covers VARCHAR NOT NULL,
+    description TEXT NOT NULL,
+    tags VARCHAR[] NOT NULL,
+    category collage_category_enum NOT NULL,
+    section collage_type_enum NOT NULL,
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_title_group_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    title_group_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_artist_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    artist_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    FOREIGN KEY (artist_id) REFERENCES artists(id),
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_entity_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    entity_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    FOREIGN KEY (entity_id) REFERENCES entities(id),
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
 
 -- Views
 
 CREATE VIEW torrents_and_reports AS
 SELECT
-    t.*,
+    t.id,
+    t.edition_group_id,
+    t.created_at,
+    t.updated_at,
+    CASE
+        WHEN t.uploaded_as_anonymous THEN NULL
+        ELSE t.created_by_id
+    END as created_by_id,
+    t.info_hash,
+    t.languages,
+    t.release_name,
+    t.release_group,
+    t.description,
+    t.file_amount_per_type,
+    t.uploaded_as_anonymous,
+    t.file_list,
+    t.mediainfo,
+    t.trumpable,
+    t.staff_checked,
+    t.container,
+    t.size,
+    t.duration,
+    t.audio_codec,
+    t.audio_bitrate,
+    t.audio_bitrate_sampling,
+    t.audio_channels,
+    t.video_codec,
+    t.features,
+    t.subtitle_languages,
+    t.video_resolution,
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
         ELSE NULL

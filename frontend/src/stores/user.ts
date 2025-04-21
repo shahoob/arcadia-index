@@ -13,6 +13,11 @@ interface User {
   id: number
   settings: UserSettings
   username: string
+  uploaded: number
+  downloaded: number
+  ratio: number
+  bonus_points: number
+  freeleech_tokens: number
 }
 
 export const useUserStore = defineStore('user', {
@@ -25,6 +30,11 @@ export const useUserStore = defineStore('user', {
       },
     },
     username: '',
+    uploaded: 0,
+    downloaded: 0,
+    ratio: 0.0,
+    bonus_points: 0,
+    freeleech_tokens: 0,
   }),
   actions: {
     setUser(user: User) {

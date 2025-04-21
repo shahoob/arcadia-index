@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="title">Upload torrent</div>
+    <div class="title">{{ $t('torrent.upload_torrent') }}</div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 1">
-        <AccordionHeader>Title</AccordionHeader>
+        <AccordionHeader>{{ $t('title_group.title') }}</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectTitleGroup @done="titleGroupDone" />
         </AccordionContent>
@@ -11,7 +11,7 @@
     </Accordion>
     <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 2">
-        <AccordionHeader>Edition</AccordionHeader>
+        <AccordionHeader>{{ $t('torrent.edition') }}</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectEditionGroup v-if="uploadStep > 1" @done="editionGroupDone" />
         </AccordionContent>
@@ -19,9 +19,9 @@
     </Accordion>
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 3">
-        <AccordionHeader>Torrent</AccordionHeader>
+        <AccordionHeader>{{ $t('torrent.torrent') }}</AccordionHeader>
         <AccordionContent>
-          <CreateTorrent v-if="uploadStep > 2" @done="torrentDone" />
+          <CreateOrEditTorrent v-if="uploadStep > 2" @done="torrentDone" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -34,7 +34,7 @@ import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import CreateOrSelectTitleGroup from '@/components/title_group/CreateOrSelectTitleGroup.vue'
 import CreateOrSelectEditionGroup from '@/components/edition_group/CreateOrSelectEditionGroup.vue'
-import CreateTorrent from '@/components/torrent/CreateOrEditTorrent.vue'
+import CreateOrEditTorrent from '@/components/torrent/CreateOrEditTorrent.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 
@@ -46,7 +46,7 @@ export default {
     AccordionContent,
     AccordionHeader,
     AccordionPanel,
-    CreateTorrent,
+    CreateOrEditTorrent,
   },
   data() {
     return {

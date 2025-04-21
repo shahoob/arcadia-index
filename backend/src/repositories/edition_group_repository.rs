@@ -1,16 +1,13 @@
 use crate::{
     Error, Result,
-    models::{
-        edition_group::{EditionGroup, UserCreatedEditionGroup},
-        user::User,
-    },
+    models::edition_group::{EditionGroup, UserCreatedEditionGroup},
 };
 use sqlx::PgPool;
 
 pub async fn create_edition_group(
     pool: &PgPool,
     edition_group_form: &UserCreatedEditionGroup,
-    current_user: &User,
+    current_user_id: i64,
 ) -> Result<EditionGroup> {
     const CREATE_EDITION_GROUPS_QUERY: &str = r#"
         INSERT INTO edition_groups (title_group_id, name, release_date, created_by_id, description, distributor, covers, external_links, source, additional_information) 
@@ -19,10 +16,10 @@ pub async fn create_edition_group(
     "#;
 
     let created_edition_group = sqlx::query_as::<_, EditionGroup>(CREATE_EDITION_GROUPS_QUERY)
-        .bind(&edition_group_form.title_group_id)
+        .bind(edition_group_form.title_group_id)
         .bind(&edition_group_form.name)
-        .bind(&edition_group_form.release_date)
-        .bind(&current_user.id)
+        .bind(edition_group_form.release_date)
+        .bind(current_user_id)
         .bind(&edition_group_form.description)
         .bind(&edition_group_form.distributor)
         .bind(&edition_group_form.covers)
