@@ -242,7 +242,6 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
-import { $t } from '@primeuix/themes'
 
 export default {
   components: {

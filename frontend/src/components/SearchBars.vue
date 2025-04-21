@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts">
-import { $t } from '@primeuix/themes'
 import InputText from 'primevue/inputtext'
 
 export default {

@@ -63,7 +63,6 @@ import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
-import { $t } from '@primeuix/themes'
 
 export default {
   components: {
