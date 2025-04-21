@@ -40,7 +40,7 @@ docker-compose up --build
 Database migrations will run by default when the container is first initialized. This step will be skipped if the `volumes` directory is populated. Fixtures can be created by running:
 
 ```
-docker-compose exec db bash -c 'psql -f /docker-entrypoint-initdb.d/fixtures/fixtures.sql $DATABASE_URL'
+docker exec -i arcadia_db psql -U arcadia -d arcadia < backend/migrations/fixtures/fixtures.sql
 ```
 
 
