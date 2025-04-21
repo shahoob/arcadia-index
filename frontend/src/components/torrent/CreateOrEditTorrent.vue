@@ -29,7 +29,7 @@
           <div class="release-name">
             <FloatLabel>
               <InputText v-model="torrentForm.release_name" size="small" name="release_name" />
-              <label for="release_name">Release name</label>
+              <label for="release_name">{{ $t('torrent.release_name') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.release_name?.invalid"
@@ -43,7 +43,7 @@
           <div>
             <FloatLabel>
               <InputText v-model="torrentForm.release_group" size="small" name="release_group" />
-              <label for="release_group">Release group</label>
+              <label for="release_group">{{ $t('torrent.release_group') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.release_group?.invalid"
@@ -64,7 +64,7 @@
               autoResize
               rows="5"
             />
-            <label for="description">Description</label>
+            <label for="description">{{ $t('general.description') }}</label>
           </FloatLabel>
           <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
             {{ $form.release_name.error?.message }}
@@ -74,14 +74,14 @@
           <div>
             <FloatLabel>
               <InputText v-model="torrentForm.container" size="small" name="container" />
-              <label for="container">Container</label>
+              <label for="container">{{ $t('torrent.container') }}</label>
             </FloatLabel>
             <Message v-if="$form.container?.invalid" severity="error" size="small" variant="simple">
               {{ $form.container.error?.message }}
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
@@ -90,7 +90,7 @@
                 size="small"
                 name="video_codec"
               />
-              <label for="video_coded">Video codec</label>
+              <label for="video_coded">{{ $t('torrent.video_codec') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.video_codec?.invalid"
@@ -102,7 +102,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TVShow', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -111,7 +111,7 @@
                 size="small"
                 name="video_resolution"
               />
-              <label for="video_resolution">Video resolution</label>
+              <label for="video_resolution">{{ $t('torrent.video_resolution') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.video_resolution?.invalid"
@@ -124,17 +124,17 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['Movie', 'TVShow', 'Music', 'Collection'].indexOf(content_type) >= 0"
+              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
             >
               <Select
                 v-model="torrentForm.audio_codec"
-                inputId="audio_coded"
+                inputId="audio_codec"
                 :options="selectableAudioCodecs"
                 class="select"
                 size="small"
                 name="audio_codec"
               />
-              <label for="audio_coded">Audio codec</label>
+              <label for="audio_codec">{{ $t('torrent.audio_codec') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.audio_codec?.invalid"
@@ -142,38 +142,84 @@
               size="small"
               variant="simple"
             >
-              {{ $form.video_codec.error?.message }}
+              {{ $form.audio_codec.error?.message }}
+            </Message>
+          </div>
+          <div>
+            <FloatLabel
+              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
+            >
+              <Select
+                v-model="torrentForm.audio_bitrate_sampling"
+                inputId="audio_coded"
+                :options="selectableAudioBitrateSamplings"
+                class="select"
+                size="small"
+                name="audio_bitrate_sampling"
+              />
+              <label for="audio_bitrate_sampling">{{ $t('torrent.audio_bitrate_sampling') }}</label>
+            </FloatLabel>
+            <Message
+              v-if="$form.audio_bitrate_sampling?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.audio_bitrate_sampling.error?.message }}
+            </Message>
+          </div>
+          <div>
+            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
+              <Select
+                v-model="torrentForm.audio_channels"
+                inputId="audio_channels"
+                :options="selectableAudioChannels"
+                class="select"
+                size="small"
+                name="audio_channels"
+              />
+              <label for="audio_channels">{{ $t('torrent.audio_channels') }}</label>
+            </FloatLabel>
+            <Message
+              v-if="$form.audio_channels?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.audio_channels.error?.message }}
             </Message>
           </div>
         </div>
         <div>
           <FloatLabel
-            v-if="['Movie', 'TVShow', 'Book', 'Software', 'Collection'].indexOf(content_type) >= 0"
+            v-if="['movie', 'tv_show', 'book', 'software', 'collection'].indexOf(content_type) >= 0"
           >
-            <Select
-              v-model="torrentForm.language"
-              inputId="language"
-              :options="selectableLanguages"
+            <MultiSelect
+              v-model="torrentForm.languages"
+              inputId="languages"
+              :options="$getLanguages()"
               class="select"
               size="small"
-              name="language"
+              display="chip"
+              filter
+              name="languages"
             />
-            <label for="language">Language</label>
+            <label for="languages">{{ $t('general.language', 2) }}</label>
           </FloatLabel>
-          <Message v-if="$form.language?.invalid" severity="error" size="small" variant="simple">
-            {{ $form.language.error?.message }}
+          <Message v-if="$form.languages?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.languages.error?.message }}
           </Message>
         </div>
         <FloatLabel>
           <MultiSelect
             v-model="torrentForm.features"
             display="chip"
-            :options="selectableFeatures"
+            :options="$getFeatures(content_type)"
             filter
             size="small"
             name="features"
           />
-          <label for="features">Features</label>
+          <label for="features">{{ $t('torrent.features') }}</label>
         </FloatLabel>
         <!-- <FloatLabel >
           <InputText v-model="torrentForm.duration" size="small" name="duration" />
@@ -192,15 +238,15 @@
           <FileUpload
             ref="torrentFile"
             accept="application/x-bittorrent"
-            chooseLabel="Torrent file"
+            :chooseLabel="$t('torrent.torrent_file')"
             :showCancelButton="false"
             :showUploadButton="false"
             @select="onFileSelect"
             v-bind="$field.props"
           >
-            <template #content="{ files }">{{
-              files.length != 0 ? files[0].name : 'Select a file'
-            }}</template>
+            <template #content="{ files }">
+              {{ files.length != 0 ? files[0].name : 'Select a file' }}
+            </template>
           </FileUpload>
           <Message
             v-if="$form.torrent_file?.invalid"
@@ -213,7 +259,9 @@
         </FormField>
         <div class="flex align-items-center">
           <Checkbox v-model="torrentForm.uploaded_as_anonymous" name="anonymous" binary />
-          <label for="anonymous" style="margin-left: 5px"> Upload as anonymous</label>
+          <label for="anonymous" style="margin-left: 5px">
+            {{ $t('torrent.upload_as_anonymous') }}</label
+          >
         </div>
       </div>
       <div class="flex justify-content-center">
@@ -245,7 +293,6 @@ import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
-import { getFeatures } from '@/services/helpers'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 
 export default {
@@ -272,30 +319,30 @@ export default {
         release_group: '',
         mediainfo: '',
         description: '',
-        language: '',
+        languages: [],
         container: '',
         video_codec: null,
         video_resolution: null,
         duration: null,
         audio_codec: null,
         audio_bitrate: null,
-        subtitle_languages: '',
-        features: '',
-        audio_channels: '',
+        subtitle_languages: [],
+        features: [],
+        audio_channels: null,
         audio_bitrate_sampling: null,
         torrent_file: null,
         uploaded_as_anonymous: false,
       },
       // TODO : move all the selectable* arrays to an helper function
       selectableVideoCodecs: [
-        'Mpeg1',
-        'Mpeg2',
-        'Xvid',
+        'mpeg1',
+        'mpeg2',
+        'divX',
         'DivX',
-        'H264',
-        'H265',
-        'Vc1',
-        'Vp9',
+        'h264',
+        'h265',
+        'vc-1',
+        'vp9',
         'BD50',
         'UHD100',
       ],
@@ -310,10 +357,27 @@ export default {
         'Dts',
         'Flac',
         'Pcm',
-        'TrueHd',
+        'true-hd',
         'Dsd',
       ],
-      selectableLanguages: ['English', 'French'],
+      selectableAudioBitrateSamplings: [
+        '192',
+        '256',
+        '320',
+        'APS (VBR)',
+        'V2 (VBR)',
+        'V1 (VBR)',
+        'V0 (VBR)',
+        'APX (VBR)',
+        'Lossless',
+        '24bit Lossless',
+        'DSD64',
+        'DSD128',
+        'DSD256',
+        'DSD512',
+        'Other',
+      ],
+      selectableAudioChannels: ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1'],
       uploadingTorrent: false,
       content_type: '',
     }
@@ -323,33 +387,35 @@ export default {
       const errors = {}
 
       if (values.release_name.length < 5) {
-        errors.release_name = [{ message: 'Write more than 5 characters' }]
+        errors.release_name = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
       }
-      if (values.release_group.length < 2) {
-        errors.release_group = [{ message: 'Write more than 2 characters' }]
-      }
+      // if (values.release_group.length < 2) {
+      //   errors.release_group = [{ message: 'Write more than 2 characters' }]
+      // }
       // if (values.description == '') {
       //   errors.description = [{ message: 'Write a description' }]
       // }
       if (values.container == '') {
-        errors.container = [{ message: 'File container missing' }]
+        errors.container = [{ message: this.$t('error.select_container') }]
       }
-      if (values.video_codec == '') {
-        errors.video_codec = [{ message: 'Select a codec' }]
+      if (!values.video_codec) {
+        errors.video_codec = [{ message: this.$t('error.select_codec') }]
       }
-      if (values.video_resolution == '') {
-        errors.video_resolution = [{ message: 'Select a resolution' }]
+      if (!values.video_resolution) {
+        errors.video_resolution = [{ message: this.$t('error.select_resolution') }]
       }
-      if (values.audio_codec == '') {
-        errors.audio_codec = [{ message: 'Select a codec' }]
+      if (!values.audio_codec) {
+        errors.audio_codec = [{ message: this.$t('error.select_codec') }]
       }
-      if (values.language == '') {
-        errors.language = [{ message: 'Select a language' }]
+      if (!values.audio_bitrate_sampling) {
+        errors.audio_bitrate_sampling = [{ message: this.$t('error.select_bitrate') }]
+      }
+      if (values.languages && values.languages.length === 0) {
+        errors.languages = [{ message: this.$t('error.select_at_least_x_language', [1]) }]
       }
       if (!this.torrentForm.torrent_file) {
-        errors.torrent_file = [{ message: 'Select a torrent_file' }]
+        errors.torrent_file = [{ message: this.$t('error.select_torrent_file') }]
       }
-      console.log(errors)
 
       return {
         errors,
@@ -386,15 +452,11 @@ export default {
         })
     },
   },
-  computed: {
-    selectableFeatures() {
-      return getFeatures(this.content_type)
-    },
-  },
   created() {
     this.content_type = useTitleGroupStore().content_type
     const editionGroupStore = useEditionGroupStore()
     this.torrentForm.edition_group_id = editionGroupStore.id
+    console.log(this.content_type)
   },
 }
 </script>
@@ -419,7 +481,7 @@ export default {
   }
 }
 .select {
-  width: 200px;
+  min-width: 200px;
 }
 /* .file-upload {
   max-width: 300px;

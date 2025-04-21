@@ -77,7 +77,7 @@ struct Tmdb {
     config: Configuration,
 }
 
-const BASE_URL: &'static str = "https://api.themoviedb.org/3";
+const BASE_URL: &str = "https://api.themoviedb.org/3";
 
 impl Tmdb {
     async fn new(bearer: impl Into<String>) -> Result<Self> {

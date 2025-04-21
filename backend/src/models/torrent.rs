@@ -19,40 +19,77 @@ pub enum AudioCodec {
     Flac,
     Pcm,
     #[sqlx(rename = "true-hd")]
+    #[serde(alias = "true-hd")]
     TrueHd,
     Opus,
     Dsd,
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "audio_channels_enum")]
+pub enum AudioChannels {
+    #[sqlx(rename = "1.0")]
+    #[serde(alias = "1.0")]
+    OneDotZero,
+    #[sqlx(rename = "2.0")]
+    #[serde(alias = "2.0")]
+    TwoDotZero,
+    #[sqlx(rename = "2.1")]
+    #[serde(alias = "2.1")]
+    TwoDotOne,
+    #[sqlx(rename = "5.0")]
+    #[serde(alias = "5.0")]
+    FiveDotZero,
+    #[sqlx(rename = "5.1")]
+    #[serde(alias = "5.1")]
+    FiveDotOne,
+    #[sqlx(rename = "7.1")]
+    #[serde(alias = "7.1")]
+    SevenDotOne,
+}
+
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_bitrate_sampling_enum")]
 pub enum AudioBitrateSampling {
     #[sqlx(rename = "192")]
+    #[serde(alias = "192")]
     Bitrate192,
     #[sqlx(rename = "256")]
+    #[serde(alias = "256")]
     Bitrate256,
     #[sqlx(rename = "320")]
+    #[serde(alias = "320")]
     Bitrate320,
     #[sqlx(rename = "APS (VBR)")]
+    #[serde(alias = "APS (VBR)")]
     ApsVbr,
     #[sqlx(rename = "V2 (VBR)")]
+    #[serde(alias = "V2 (VBR)")]
     V2Vbr,
     #[sqlx(rename = "V1 (VBR)")]
+    #[serde(alias = "V1 (VBR)")]
     V1Vbr,
     #[sqlx(rename = "APX (VBR)")]
+    #[serde(alias = "APX (VBR)")]
     ApxVbr,
     #[sqlx(rename = "V0 (VBR)")]
+    #[serde(alias = "V0 (VBR)")]
     V0Vbr,
     Lossless,
     #[sqlx(rename = "24bit Lossless")]
+    #[serde(alias = "24bit Lossless")]
     Lossless24Bit,
     #[sqlx(rename = "DSD64")]
+    #[serde(alias = "DSD64")]
     Dsd64,
     #[sqlx(rename = "DSD128")]
+    #[serde(alias = "DSD128")]
     Dsd128,
     #[sqlx(rename = "DSD256")]
+    #[serde(alias = "DSD256")]
     Dsd256,
     #[sqlx(rename = "DSD512")]
+    #[serde(alias = "DSD512")]
     Dsd512,
     Other,
 }
@@ -61,43 +98,67 @@ pub enum AudioBitrateSampling {
 #[sqlx(type_name = "video_codec_enum")]
 pub enum VideoCodec {
     #[sqlx(rename = "mpeg1")]
+    #[serde(alias = "mpeg1")]
     Mpeg1,
     #[sqlx(rename = "mpeg2")]
+    #[serde(alias = "mpeg2")]
     Mpeg2,
     Xvid,
     #[sqlx(rename = "divX")]
+    #[serde(alias = "divX")]
     DivX,
     #[sqlx(rename = "h264")]
+    #[serde(alias = "h264")]
     H264,
     #[sqlx(rename = "h265")]
+    #[serde(alias = "h265")]
     H265,
     #[sqlx(rename = "vc-1")]
+    #[serde(alias = "vc-1")]
     Vc1,
     #[sqlx(rename = "vp9")]
+    #[serde(alias = "vp9")]
     Vp9,
     BD50,
     UHD100,
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "language_enum")]
+pub enum Language {
+    English,
+    French,
+    German,
+    Italian,
+    Spanish,
+    Swedish,
+}
+
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "features_enum")]
 pub enum Features {
-    HDR,
-    DV,
+    #[sqlx(rename = "HDR")]
+    #[serde(alias = "HDR")]
+    Hdr,
+    #[sqlx(rename = "DV")]
+    #[serde(alias = "DV")]
+    Dv,
     Commentary,
     Remux,
     #[sqlx(rename = "3D")]
+    #[serde(alias = "3D")]
     ThreeD,
     Booklet,
     Cue,
 }
+
 impl FromStr for Features {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "HDR" => Ok(Features::HDR),
-            "DV" => Ok(Features::DV),
+            "HDR" => Ok(Features::Hdr),
+            "DV" => Ok(Features::Dv),
             "Commentary" => Ok(Features::Commentary),
             "Remux" => Ok(Features::Remux),
             "3D" => Ok(Features::ThreeD),
@@ -118,7 +179,7 @@ pub struct Torrent {
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     pub release_name: Option<String>,
-    pub release_group: String,
+    pub release_group: Option<String>,
     pub description: Option<String>, // specific to the torrent
     #[schema(value_type = Value)]
     pub file_amount_per_type: Json<Value>, // (5 mp3, 1 log, 5 jpg, etc.)
@@ -128,7 +189,7 @@ pub struct Torrent {
     pub mediainfo: String,
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
-    pub language: Option<String>, // (fallback to original language) (english, french, etc.)
+    pub languages: Option<Vec<Language>>, // (fallback to original language) (english, french, etc.)
     pub container: String, // container of the main file (ex: if mkv movie and srt subs, mkv is the main)
     pub size: i64,         // in bytes
     // ---- audio
@@ -136,12 +197,12 @@ pub struct Torrent {
     pub audio_codec: Option<AudioCodec>,
     pub audio_bitrate: Option<i32>, // in kb/s
     pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
-    pub audio_channels: Option<String>,
+    pub audio_channels: Option<AudioChannels>,
     // ---- audio
     // ---- video
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>, // ---- video
 }
 
@@ -150,7 +211,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = String)]
     pub release_name: Text<String>,
     #[schema(value_type = String)]
-    pub release_group: Text<String>,
+    pub release_group: Option<Text<String>>,
     #[schema(value_type = String)]
     pub description: Option<Text<String>>, // specific to the torrent
     #[schema(value_type = bool)]
@@ -160,7 +221,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = String, format = Binary, content_media_type = "application/octet-stream")]
     pub torrent_file: Bytes,
     #[schema(value_type = String)]
-    pub language: Option<Text<String>>, // (fallback to original language) (english, french, etc.)
+    pub languages: Text<String>, // (fallback to original language) (english, french, etc.)
     #[schema(value_type = String)]
     pub container: Text<String>,
     // one of them should be given
@@ -175,7 +236,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = i32)]
     pub audio_bitrate: Option<Text<i32>>, // in kb/s
     #[schema(value_type = String)]
-    pub audio_channels: Option<Text<String>>,
+    pub audio_channels: Option<Text<AudioChannels>>,
     #[schema(value_type = AudioBitrateSampling)]
     pub audio_bitrate_sampling: Option<Text<AudioBitrateSampling>>,
     // ---- audio
@@ -204,7 +265,7 @@ pub struct LiteTorrent {
     pub file_amount_per_type: Json<Value>,
     pub trumpable: Option<String>,
     pub staff_checked: bool,
-    pub language: Option<String>,
+    pub languages: Option<Vec<Language>>,
     pub container: String,
     pub size: i64,
     pub duration: Option<i32>,
@@ -214,6 +275,6 @@ pub struct LiteTorrent {
     pub audio_channels: Option<String>,
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>,
 }

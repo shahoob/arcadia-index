@@ -262,6 +262,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "actix-web-httpauth"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "456348ed9dcd72a13a1f4a660449fafdecee9ac8205552e286809eb5b0b29bd3"
+dependencies = [
+ "actix-utils",
+ "actix-web",
+ "base64",
+ "futures-core",
+ "futures-util",
+ "log",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -389,6 +404,7 @@ dependencies = [
  "actix-http",
  "actix-multipart",
  "actix-web",
+ "actix-web-httpauth",
  "argon2",
  "bip_metainfo",
  "chrono 0.4.40",
@@ -396,9 +412,11 @@ dependencies = [
  "env_logger",
  "futures",
  "jsonwebtoken",
+ "percent-encoding",
  "rand 0.9.0",
  "reqwest",
  "serde",
+ "serde_bencode",
  "serde_bytes",
  "serde_json",
  "sqlx",
@@ -623,8 +641,6 @@ dependencies = [
 [[package]]
 name = "bip_metainfo"
 version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7991f0f834f2c60b59b9106abc3a18c6aaaa986716fab3aadc81b64b72dd6d5"
 dependencies = [
  "bip_bencode",
  "bip_util",
@@ -2943,6 +2959,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
 dependencies = [
  "serde_derive",
+]
+
+[[package]]
+name = "serde_bencode"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a70dfc7b7438b99896e7f8992363ab8e2c4ba26aa5ec675d32d1c3c2c33d413e"
+dependencies = [
+ "serde",
+ "serde_bytes",
 ]
 
 [[package]]

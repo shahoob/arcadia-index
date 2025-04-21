@@ -1,9 +1,7 @@
 use crate::{
     Error, Result,
-    models::{
-        artist::{Artist, ArtistLite, UserCreatedArtist},
-        title_group::{AffiliatedArtist, UserCreatedAffiliatedArtist},
-        user::User,
+    models::artist::{
+        AffiliatedArtist, Artist, ArtistLite, UserCreatedAffiliatedArtist, UserCreatedArtist,
     },
 };
 use serde_json::Value;
@@ -12,7 +10,7 @@ use sqlx::PgPool;
 pub async fn create_artist(
     pool: &PgPool,
     artist: &UserCreatedArtist,
-    current_user: &User,
+    current_user_id: i64,
 ) -> Result<Artist> {
     let created_artist = sqlx::query_as!(
         Artist,
@@ -24,7 +22,7 @@ pub async fn create_artist(
         artist.name,
         artist.description,
         artist.pictures.as_deref(),
-        current_user.id
+        current_user_id
     )
     .fetch_one(pool)
     .await
@@ -36,12 +34,12 @@ pub async fn create_artist(
 pub async fn create_artists_affiliation(
     pool: &PgPool,
     artists: &Vec<UserCreatedAffiliatedArtist>,
-    current_user: &User,
+    current_user_id: i64,
 ) -> Result<Vec<AffiliatedArtist>> {
     let values: Vec<String> = (0..artists.len())
         .map(|i| {
             format!(
-                "(${}, ${}, ${}, ${}, ${})",
+                "(${}, ${}, ${}::artist_role_enum[], ${}, ${})",
                 i * 5 + 1,
                 i * 5 + 2,
                 i * 5 + 3,
@@ -52,7 +50,7 @@ pub async fn create_artists_affiliation(
         .collect();
 
     let query = format!(
-        "INSERT INTO affiliated_artists (title_group_id, artist_id, status, nickname, created_by_id) VALUES {} RETURNING *",
+        "INSERT INTO affiliated_artists (title_group_id, artist_id, roles, nickname, created_by_id) VALUES {} RETURNING *",
         values.join(", ")
     );
 
@@ -61,9 +59,9 @@ pub async fn create_artists_affiliation(
         q = q
             .bind(artist.title_group_id)
             .bind(artist.artist_id)
-            .bind(artist.status.clone())
+            .bind(&artist.roles)
             .bind(artist.nickname.clone())
-            .bind(current_user.id);
+            .bind(current_user_id);
     }
 
     let affiliated_artists = q

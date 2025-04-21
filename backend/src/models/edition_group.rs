@@ -9,26 +9,47 @@ use super::torrent::LiteTorrent;
 #[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
 pub enum Source {
-    CD,
-    DVD5,
-    DVD9,
+    #[sqlx(rename = "CD")]
+    #[serde(alias = "CD")]
+    Cd,
+    #[sqlx(rename = "DVD5")]
+    #[serde(alias = "DVD5")]
+    Dvd5,
+    #[sqlx(rename = "DVD9")]
+    #[serde(alias = "DVD9")]
+    Dvd9,
     Vinyl,
     Web,
     Soundboard,
-    SACD,
-    DAT,
+    #[sqlx(rename = "SACD")]
+    #[serde(alias = "SACD")]
+    Sacd,
+    #[sqlx(rename = "DAT")]
+    #[serde(alias = "DAT")]
+    Dat,
     Cassette,
     #[sqlx(rename = "Blu-Ray")]
+    #[serde(alias = "Blu-Ray")]
     BluRay,
     LaserDisc,
     #[sqlx(rename = "HD-DVD")]
-    HDDVD,
-    HDTV,
-    PDTV,
-    TV,
-    VHS,
+    #[serde(alias = "HD-DVD")]
+    Hddvd,
+    #[sqlx(rename = "HDTV")]
+    #[serde(alias = "HDTV")]
+    Hdtv,
+    #[sqlx(rename = "PDTV")]
+    #[serde(alias = "PDTV")]
+    Pdtv,
+    #[sqlx(rename = "TV")]
+    #[serde(alias = "TV")]
+    Tv,
+    #[sqlx(rename = "VHS")]
+    #[serde(alias = "VHS")]
+    Vhs,
     Mixed,
-    #[sqlx(rename = "Physical-Book")]
+    #[sqlx(rename = "Physical Book")]
+    #[serde(alias = "Physical Book")]
     PhysicalBook,
 }
 
@@ -52,9 +73,10 @@ pub struct EditionGroup {
     pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
     pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
-    pub source: Source,
+    pub source: Option<Source>,
     // this information will appea in the "title bar" of the edition
     // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: numer/name of the last item)
+    // for music: (label, catalogue_number)
     #[schema(value_type = Value)]
     pub additional_information: Option<Json<Value>>,
 }
@@ -68,7 +90,7 @@ pub struct UserCreatedEditionGroup {
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    pub source: Source,
+    pub source: Option<Source>,
     #[schema(value_type = Value)]
     pub additional_information: Option<Json<Value>>,
     // one of them should be given
@@ -84,7 +106,7 @@ pub struct LiteEditionGroupHierachy {
     pub release_date: NaiveDateTime,
     pub distributor: Option<String>,
     pub covers: Vec<String>,
-    pub source: Source,
+    pub source: Option<Source>,
     pub additional_information: Option<Json<Value>>,
     pub torrents: Vec<LiteTorrent>,
 }

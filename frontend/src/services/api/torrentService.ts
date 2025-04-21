@@ -18,6 +18,7 @@ export const getTitleGroupLite = async (id: string | number) => {
 }
 export const createTitleGroup = async (titleGroup: object) => {
   try {
+    titleGroup.screenshots = titleGroup.screenshots.filter((screenshot) => screenshot.trim() !== '')
     return (await api.post('/title-group', titleGroup)).data
   } catch (error) {
     console.error('API Error:', error)
@@ -26,6 +27,14 @@ export const createTitleGroup = async (titleGroup: object) => {
 }
 export const createEditionGroup = async (editionGroup: object) => {
   try {
+    editionGroup.additional_information = Object.fromEntries(
+      Object.entries(editionGroup.additional_information).filter(
+        ([, value]) => value !== null && value !== '',
+      ),
+    )
+    editionGroup.covers = editionGroup.covers.filter((cover) => cover.trim() !== '')
+    editionGroup.external_links = editionGroup.external_links.filter((link) => link.trim() !== '')
+    editionGroup.distributor = editionGroup.distributor == '' ? null : editionGroup.distributor
     return (await api.post('/edition-group', editionGroup)).data
   } catch (error) {
     console.error('API Error:', error)

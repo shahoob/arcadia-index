@@ -4,7 +4,7 @@
       class="form-item"
       name="username"
       type="text"
-      placeholder="Username"
+      :placeholder="$t('user.username')"
       v-model="form.username"
     />
   </div>
@@ -13,13 +13,13 @@
       class="form-item"
       name="password"
       type="text"
-      placeholder="Password"
+      :placeholder="$t('user.password')"
       v-model="form.password"
     />
   </div>
   <div>
     <Checkbox class="form-item" v-model="form.remember_me" binary />
-    <label for="ingredient1"> Remember Me </label>
+    <label for="ingredient1"> {{ $t('auth.remember_me') }} </label>
   </div>
   <Button class="form-item" type="submit" severity="secondary" label="Submit" @click="login" />
 </template>

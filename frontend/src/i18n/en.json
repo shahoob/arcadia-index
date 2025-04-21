@@ -1,0 +1,140 @@
+{
+    "general": {
+        "subscribe": "Subscribe",
+        "unsubscribe": "Unsubscribe",
+        "bookmark": "Bookmark",
+        "edit": "Edit",
+        "sort_by": "Sort by",
+        "submit": "Submit",
+        "description": "Description",
+        "release_date": "Release date",
+        "cover": "Cover | Covers",
+        "external_link": "External link | External links",
+        "or_create_one": "or create one",
+        "or_select_one": "or select an existing one",
+        "screenshots": "Screenshots",
+        "name": "Name",
+        "category": "Category",
+        "original_language": "Original language",
+        "country": "Country",
+        "tags_comma_separated": "Tags (comma separated)",
+        "tags": "Tags",
+        "alias": "Alias | Aliases",
+        "series": "Series",
+        "link": "Link | Links",
+        "report": "Report",
+        "uploaded": "Uploaded",
+        "language": "Language | Languages",
+        "search_terms": "Search terms",
+        "search": "Search"
+    },
+    "auth": {
+        "remember_me": "Remember me"
+    },
+    "artist": {
+        "artist": "Artist | Artists",
+        "role": {
+            "main": "Main",
+            "producer": "Producer",
+            "guest": "Guest",
+            "composer": "Composer",
+            "conductor": "Conductor",
+            "dj_compiler": "Dj/Compiler",
+            "remixer": "Remixer",
+            "arranger": "Arranger",
+            "director": "Director",
+            "cinematographer": "Cinematographer",
+            "actor": "Actor",
+            "author": "Author"
+        }
+    },
+    "series": {
+        "series": "Series"
+    },
+    "forum": {
+        "forum": "Forum | Forums"
+    },
+    "user": {
+        "username": "Username",
+        "password": "Password",
+        "email": "E-mail",
+        "user": "User | Users"
+    },
+    "community": {
+        "new_comment": "New comment"
+    },
+    "master_group": {
+        "master_group_id": "Master group id",
+        "in_same_master_group": "In same master group"
+    },
+    "title_group": {
+        "description": "Title description",
+        "title": "Title",
+        "platform": "Platform",
+        "original_release_date": "Original release date",
+        "select_title": "Select a title group",
+        "create_title": "Create a title group",
+        "title_group_id": "Title group id",
+        "content_type": {
+            "content_type": "Content type",
+            "music": "Music",
+            "movie": "Movie",
+            "tv_show": "TV Show",
+            "book": "Book",
+            "software": "Software"
+        }
+    },
+    "edition_group": {
+        "distributor": "Distributor",
+        "label": "Label",
+        "catalogue_number": "Catalogue number",
+        "source": "Source",
+        "select_edition": "Select an edition",
+        "create_edition": "Create one"
+    },
+    "torrent": {
+        "size": "Size",
+        "edition": "Edition",
+        "torrent": "Torrent | Torrents",
+        "seeders": "Seeders",
+        "leechers": "Leechers",
+        "completed": "Completed",
+        "created_at": "Uploaded at",
+        "upload_torrent": "Upload torrent",
+        "request_format": "Request format",
+        "requests": "Requests",
+        "any_container": "Any container",
+        "properties": "Properties",
+        "file_list": "File list",
+        "report_torrent": "Report torrent",
+        "copy_permalink": "Copy permalink",
+        "download": "Download",
+        "release_name": "Release name",
+        "release_group": "Release group",
+        "container": "Container",
+        "video_codec": "Video codec",
+        "video_resolution": "Video resolution",
+        "audio_codec": "Audio codec",
+        "audio_bitrate_sampling": "Audio bitrate sampling",
+        "audio_channels": "Audio channels",
+        "features": "Features",
+        "torrent_file": "Torrent file",
+        "upload_as_anonymous": "Upload as anonymous"
+    },
+    "error": {
+        "write_more_than_x_chars": "Write more than {0} characters",
+        "enter_at_least_x_tags": "Enter at least {0} tags",
+        "select_date": "Select a date",
+        "select_category": "Select a category",
+        "select_platform": "Select a platform",
+        "select_language": "Select a language",
+        "select_country": "Select a country",
+        "select_codec": "Select a codec",
+        "select_container": "Select a container",
+        "select_resolution": "Select a resolution",
+        "select_bitrate": "Select a bitrate",
+        "select_at_least_x_language": "Select at least {0} language(s)",
+        "select_torrent_file": "Select a torrent file",
+        "invalid_url": "Invalid url"
+    }
+}
