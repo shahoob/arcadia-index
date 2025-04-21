@@ -12,7 +12,7 @@
       <div>
         <FloatLabel>
           <InputText size="small" v-model="editionGroupForm.name" name="name" />
-          <label for="name">{{ $t('edition_group.name') }}</label>
+          <label for="name">{{ $t('general.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
