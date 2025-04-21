@@ -5,6 +5,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloa
 WORKDIR /app
 # COPY . .
 COPY .sqlx/ ./sqlx/
+COPY vendored vendored
 
 COPY Cargo.toml Cargo.lock ./
 
