@@ -8,14 +8,14 @@
           v-model="searchForm.title_group_name"
           name="title_group_name"
         />
-        <label for="title_group_name">Search terms</label>
+        <label for="title_group_name">{{ $t('general.search_terms') }}</label>
       </FloatLabel>
       <FloatLabel>
         <InputText class="tags" size="small" v-model="searchForm.tags" name="tags" />
-        <label for="tags">Tags (comma separated)</label>
+        <label for="tags">{{ $t('general.tags_comma_separated') }}</label>
       </FloatLabel>
       <div class="flex justify-content-center" style="margin-top: 15px">
-        <Button :loading label="Search" @click="$emit('search', searchForm)" />
+        <Button :loading :label="$t('general.search')" @click="$emit('search', searchForm)" />
       </div>
     </div>
   </ContentContainer>
@@ -26,6 +26,7 @@ import ContentContainer from '../ContentContainer.vue'
 import InputText from 'primevue/inputtext'
 import FloatLabel from 'primevue/floatlabel'
 import Button from 'primevue/button'
+import { $t } from '@primeuix/themes'
 export default {
   components: { ContentContainer, Button, InputText, FloatLabel },
   props: { loading: { default: false }, initialTitleGroupName: {} },

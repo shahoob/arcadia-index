@@ -1,21 +1,22 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    Select title <span class="alternative" @click="action = 'create'">(or create one)</span>
+    {{ $t('title_group.select_title') }}
+    <span class="alternative" @click="action = 'create'">({{ $t('general.or_create_one') }})</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    Create a new title
-    <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
+    {{ $t('title_group.create_title') }}
+    <span class="alternative" @click="action = 'select'">({{ $t('general.or_select_one') }})</span>
   </div>
 
   <div id="select-title-group" v-if="action == 'select'">
     <FloatLabel>
       <InputNumber size="small" v-model="titleGroupId" name="id" :format="false" />
-      <label for="id">Title group id</label>
+      <label for="id">{{ $t('title_group.title_group_id') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
       <Button
         v-if="step == 3 || action == 'select'"
-        label="Validate title"
+        :label="$t('general.submit')"
         @click="sendTitleGroup"
         icon="pi pi-check"
         size="small"
@@ -33,8 +34,17 @@
         class="select"
         size="small"
         @update:modelValue="(step = 2) && (manualCreation = false)"
-      />
-      <label for="content_type">Content type</label>
+      >
+        <template #option="slotProps">
+          <span>{{ $t(`title_group.content_type.${slotProps.option}`) }}</span>
+        </template>
+        <template #value="slotProps">
+          <span v-if="slotProps.value">
+            {{ $t(`title_group.content_type.${slotProps.value}`) }}
+          </span>
+        </template>
+      </Select>
+      <label for="content_type">{{ $t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
     <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
       <div class="external-db-inputs" v-if="content_type == 'movie'">
@@ -156,6 +166,7 @@ import IconField from 'primevue/iconfield'
 import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
+import { $t } from '@primeuix/themes'
 
 export default {
   components: {
