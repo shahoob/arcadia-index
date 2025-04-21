@@ -18,6 +18,7 @@ export const getTitleGroupLite = async (id: string | number) => {
 }
 export const createTitleGroup = async (titleGroup: object) => {
   try {
+    titleGroup.screenshots = titleGroup.screenshots.filter((screenshot) => screenshot.trim() !== '')
     return (await api.post('/title-group', titleGroup)).data
   } catch (error) {
     console.error('API Error:', error)
