@@ -1,16 +1,21 @@
-use actix_files::NamedFile;
 use actix_multipart::form::MultipartForm;
-use actix_web::{HttpResponse, web};
+use actix_web::{
+    HttpResponse,
+    http::header::{
+        Charset, ContentDisposition, ContentType, DispositionParam, DispositionType, ExtendedValue,
+    },
+    web,
+};
 use serde::Deserialize;
 use utoipa::{IntoParams, ToSchema};
 
 use crate::{
-    Arcadia, Error, Result,
+    Arcadia, Result,
     models::{
         torrent::{TorrentSearch, UploadedTorrent},
         user::User,
     },
-    repositories::torrent_repository::{create_torrent, search_torrents},
+    repositories::torrent_repository::{create_torrent, get_torrent, search_torrents},
 };
 
 pub async fn upload_torrent(
@@ -20,14 +25,7 @@ pub async fn upload_torrent(
 ) -> Result<HttpResponse> {
     // TODO : check if user can upload
 
-    let torrent = create_torrent(
-        &arc.pool,
-        &form,
-        &current_user,
-        &arc.frontend_url,
-        &arc.dottorrent_files_path,
-    )
-    .await?;
+    let torrent = create_torrent(&arc.pool, &form, &current_user).await?;
 
     Ok(HttpResponse::Created().json(torrent))
 }
@@ -49,23 +47,34 @@ pub async fn download_dottorrent_file(
     query: web::Query<DownloadTorrentQuery>,
     arc: web::Data<Arcadia>,
     current_user: User,
-) -> Result<NamedFile> {
-    let file_path = &arc
-        .dottorrent_files_path
-        .join(query.id.to_string() + ".torrent");
+) -> Result<HttpResponse> {
+    let torrent = get_torrent(
+        &arc.pool,
+        &current_user,
+        query.id,
+        &arc.tracker_name,
+        arc.frontend_url.as_ref(),
+        arc.tracker_url.as_ref(),
+    )
+    .await?;
 
-    // should never happen as query.id is an int, but we never know...
-    if !file_path.starts_with(&arc.dottorrent_files_path) {
-        println!(
-            "User(username: {}, id: {}) attempted path traversal: {:#?}",
-            current_user.username,
-            current_user.id,
-            file_path.to_str()
-        );
-        return Err(Error::DottorrentFileNotFound);
-    }
+    let cd = ContentDisposition {
+        disposition: DispositionType::Attachment,
+        parameters: vec![
+            DispositionParam::FilenameExt(ExtendedValue {
+                charset: Charset::Ext(String::from("UTF-8")),
+                language_tag: None,
+                value: format!("{}.torrent", torrent.title).into_bytes(),
+            }),
+            // TODO: add fallback for better compatibility
+            //DispositionParam::Filename(format!("{}.torrent", name_ascii))
+        ],
+    };
 
-    actix_files::NamedFile::open(file_path).map_err(|_| Error::DottorrentFileNotFound)
+    Ok(HttpResponse::Ok()
+        .insert_header(ContentType::octet_stream())
+        .insert_header(cd)
+        .body(torrent.file_contents))
 }
 
 #[utoipa::path(

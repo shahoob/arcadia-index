@@ -262,6 +262,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "actix-web-httpauth"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "456348ed9dcd72a13a1f4a660449fafdecee9ac8205552e286809eb5b0b29bd3"
+dependencies = [
+ "actix-utils",
+ "actix-web",
+ "base64",
+ "futures-core",
+ "futures-util",
+ "log",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -381,7 +396,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "arcadia-index"
+name = "arcadia-backend"
 version = "0.1.0"
 dependencies = [
  "actix-cors",
@@ -389,6 +404,7 @@ dependencies = [
  "actix-http",
  "actix-multipart",
  "actix-web",
+ "actix-web-httpauth",
  "argon2",
  "bip_metainfo",
  "chrono 0.4.40",
@@ -625,8 +641,6 @@ dependencies = [
 [[package]]
 name = "bip_metainfo"
 version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7991f0f834f2c60b59b9106abc3a18c6aaaa986716fab3aadc81b64b72dd6d5"
 dependencies = [
  "bip_bencode",
  "bip_util",

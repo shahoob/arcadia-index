@@ -1,10 +1,11 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    Select edition <span class="alternative" @click="action = 'create'">(or create one)</span>
+    {{ $t('edition_group.select_edition') }}
+    <span class="alternative" @click="action = 'create'">({{ $t('general.or_create_one') }})</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    Create a new edition
-    <span class="alternative" @click="action = 'select'">(or select an existing one)</span>
+    {{ $t('edition_group.create_edition') }}
+    <span class="alternative" @click="action = 'select'">({{ $t('general.or_select_one') }})</span>
   </div>
   <div id="select-edition-group" v-if="action == 'select'">
     <FloatLabel>
@@ -17,16 +18,16 @@
       >
         <template #option="slotProps">
           <div>
-            {{ getEditionGroupSlug(slotProps.option) }}
+            {{ $getEditionGroupSlug(slotProps.option) }}
           </div>
         </template>
         <template #value="slotProps" v-if="selected_edition_group.id">
           <div>
-            {{ getEditionGroupSlug(slotProps.value) }}
+            {{ $getEditionGroupSlug(slotProps.value) }}
           </div>
         </template>
       </Select>
-      <label for="edition_group">Edition</label>
+      <label for="edition_group">{{ $t('torrent.edition') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
       <Button
@@ -52,7 +53,6 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import { createEditionGroup } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { getEditionGroupSlug } from '@/services/helpers'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 
 export default {
@@ -74,9 +74,6 @@ export default {
     }
   },
   methods: {
-    getEditionGroupSlug(editionGroup) {
-      return getEditionGroupSlug(editionGroup)
-    },
     sendEditionGroup(editionGroupForm) {
       if (this.action == 'select') {
         this.$emit('done', this.selected_edition_group)
