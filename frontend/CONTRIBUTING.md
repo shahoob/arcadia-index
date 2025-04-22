@@ -37,12 +37,6 @@ Please note that this will perform a build the first time the command is run, wh
 docker-compose up --build
 ```
 
-Database migrations will run by default when the container is first initialized. This step will be skipped if the `volumes` directory is populated. Fixtures can be created by running:
-
-```
-docker exec -i arcadia_db psql -U arcadia -d arcadia < backend/migrations/fixtures/fixtures.sql
-```
-
 
 ## Contributing
 
