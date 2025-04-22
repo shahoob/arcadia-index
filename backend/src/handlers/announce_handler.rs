@@ -1,5 +1,9 @@
-use crate::Arcadia;
+use crate::repositories::announce_repository::find_torrent_with_id;
+use crate::repositories::peer_repository::{
+    find_torrent_peers, insert_or_update_peer, remove_peer,
+};
 use crate::tracker::announce;
+use crate::{Arcadia, repositories::announce_repository::find_user_with_passkey};
 use actix_web::{
     FromRequest, HttpRequest, HttpResponse, HttpResponseBuilder, ResponseError, dev, get, web,
 };
@@ -81,28 +85,9 @@ async fn handle_announce(
     let passkey_upper = (passkey >> 64) as i64;
     let passkey_lower = passkey as i64;
 
-    let user = sqlx::query!(
-        r#"
-            SELECT id, username FROM users
-            WHERE (passkey_upper, passkey_lower) = ($1, $2)
-        "#,
-        passkey_upper,
-        passkey_lower
-    )
-    .fetch_one(&arc.pool)
-    .await
-    .map_err(|_| Error::InvalidPassKey)?;
+    let user = find_user_with_passkey(&arc.pool, passkey_upper, passkey_lower).await?;
 
-    let torrent = sqlx::query!(
-        r#"
-            SELECT id FROM torrents
-            WHERE info_hash = $1
-        "#,
-        &ann.info_hash
-    )
-    .fetch_one(&arc.pool)
-    .await
-    .map_err(|_| Error::InvalidInfoHash)?;
+    let torrent = find_torrent_with_id(&arc.pool, &ann.info_hash).await?;
 
     // TODO check peer id prefix
 
@@ -112,75 +97,22 @@ async fn handle_announce(
         .unwrap();
 
     if let Some(announce::TorrentEvent::Stopped) = ann.event {
-        sqlx::query!(
-            r#"
-            DELETE FROM peers WHERE
-            (torrent_id, peer_id, ip, port) = ($1, $2, $3, $4)
-            "#,
-            &torrent.id,
-            &ann.peer_id,
-            &ip,
-            ann.port as i32
-        )
-        .execute(&arc.pool)
-        .await
-        .expect("failed");
+        remove_peer(&arc.pool, &torrent.id, &ann.peer_id, &ip, ann.port).await;
         //return HttpResponse::Ok().into();
         todo!();
     }
 
-    sqlx::query!(
-        r#"
-        WITH peer_id AS (
-            INSERT INTO peers(torrent_id, peer_id, ip, port) VALUES ($1, $2, $3, $4)
-            ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
-            SET
-              last_seen_at = CURRENT_TIMESTAMP
-            RETURNING id
-        )
-        INSERT INTO user_peers(user_id, peer_id) SELECT $5 AS user_id, peer_id.id AS peer_id FROM peer_id
-        ON CONFLICT (user_id, peer_id) DO NOTHING
-        "#,
+    insert_or_update_peer(
+        &arc.pool,
         &torrent.id,
         &ann.peer_id,
-        ip,
-        ann.port as i32,
-        user.id
+        &ip,
+        ann.port,
+        &user.id,
     )
-    .execute(&arc.pool)
-    .await
-    .expect("failed");
+    .await;
 
-    let peers = sqlx::query!(
-        r#"
-        SELECT peers.ip AS ip, peers.port AS port
-        FROM peers
-        JOIN user_peers ON user_peers.peer_id = peers.id
-        WHERE
-            torrent_id = $1
-        AND
-            user_peers.user_id != $2
-        "#,
-        &torrent.id,
-        user.id
-    )
-    .fetch_all(&arc.pool)
-    .await
-    .expect("failed");
-
-    let peers = peers
-        .into_iter()
-        .map(|p| {
-            let std::net::IpAddr::V4(ipv4) = p.ip.ip() else {
-                panic!("oops");
-            };
-
-            announce::PeerCompact {
-                ip: ipv4,
-                port: p.port as u16,
-            }
-        })
-        .collect::<Vec<_>>();
+    let peers = find_torrent_peers(&arc.pool, &torrent.id, &user.id).await;
 
     let resp = announce::AnnounceResponse {
         peers,
