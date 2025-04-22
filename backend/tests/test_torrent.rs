@@ -7,7 +7,7 @@ use sqlx::PgPool;
 
 mod common;
 
-use arcadia_index::OpenSignups;
+use arcadia_backend::OpenSignups;
 
 #[sqlx::test(fixtures("with_test_user", "with_test_torrent"))]
 async fn test_valid_torrent(pool: PgPool) {

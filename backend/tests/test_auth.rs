@@ -2,7 +2,7 @@ use actix_web::{
     http::{StatusCode, header::HeaderValue},
     test,
 };
-use arcadia_index::OpenSignups;
+use arcadia_backend::OpenSignups;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
