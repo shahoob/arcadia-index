@@ -432,6 +432,7 @@ CREATE TABLE notifications (
 );
 CREATE TABLE peers (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT,
     torrent_id BIGINT NOT NULL,
     peer_id BYTEA NOT NULL,
     ip INET NOT NULL,
@@ -442,23 +443,9 @@ CREATE TABLE peers (
     PRIMARY KEY (id),
 
     FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
 
     UNIQUE (torrent_id, peer_id, ip, port)
-);
-CREATE TABLE user_peers (
-    id BIGINT GENERATED ALWAYS AS IDENTITY,
-    user_id BIGINT NOT NULL,
-    peer_id BIGINT NOT NULL,
-
-    PRIMARY KEY (id),
-
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE,
-
-    FOREIGN KEY (peer_id) REFERENCES peers(id)
-    ON DELETE CASCADE,
-
-    UNIQUE (user_id, peer_id)
 );
 CREATE TABLE entities (
     id BIGSERIAL PRIMARY KEY,

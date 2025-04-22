@@ -85,7 +85,7 @@ async fn handle_announce(
     let passkey_upper = (passkey >> 64) as i64;
     let passkey_lower = passkey as i64;
 
-    let user = find_user_with_passkey(&arc.pool, passkey_upper, passkey_lower).await?;
+    let current_user = find_user_with_passkey(&arc.pool, passkey_upper, passkey_lower).await?;
 
     let torrent = find_torrent_with_id(&arc.pool, &ann.info_hash).await?;
 
@@ -108,11 +108,11 @@ async fn handle_announce(
         &ann.peer_id,
         &ip,
         ann.port,
-        &user.id,
+        &current_user.id,
     )
     .await;
 
-    let peers = find_torrent_peers(&arc.pool, &torrent.id, &user.id).await;
+    let peers = find_torrent_peers(&arc.pool, &torrent.id, &current_user.id).await;
 
     let resp = announce::AnnounceResponse {
         peers,

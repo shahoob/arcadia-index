@@ -34,15 +34,10 @@ pub async fn insert_or_update_peer(
 ) {
     sqlx::query!(
         r#"
-        WITH peer_id AS (
-            INSERT INTO peers(torrent_id, peer_id, ip, port) VALUES ($1, $2, $3, $4)
-            ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
-            SET
-              last_seen_at = CURRENT_TIMESTAMP
-            RETURNING id
-        )
-        INSERT INTO user_peers(user_id, peer_id) SELECT $5 AS user_id, peer_id.id AS peer_id FROM peer_id
-        ON CONFLICT (user_id, peer_id) DO NOTHING
+          INSERT INTO peers(torrent_id, peer_id, ip, port, user_id) VALUES ($1, $2, $3, $4, $5)
+          ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
+          SET
+            last_seen_at = CURRENT_TIMESTAMP
         "#,
         torrent_id,
         peer_id,
@@ -64,11 +59,10 @@ pub async fn find_torrent_peers(
         r#"
         SELECT peers.ip AS ip, peers.port AS port
         FROM peers
-        JOIN user_peers ON user_peers.peer_id = peers.id
         WHERE
             torrent_id = $1
         AND
-            user_peers.user_id != $2
+            peers.user_id != $2
         "#,
         torrent_id,
         user_id

@@ -296,13 +296,6 @@ COPY public.torrent_request_votes (id, torrent_request_id, created_at, created_b
 \.
 
 
---
--- Data for Name: user_peers; Type: TABLE DATA; Schema: public; Owner: arcadia
---
-
-COPY public.user_peers (id, user_id, peer_id) FROM stdin;
-\.
-
 
 --
 -- Name: artists_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
@@ -435,13 +428,6 @@ SELECT pg_catalog.setval('public.torrent_requests_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.torrents_id_seq', 37, true);
-
-
---
--- Name: user_peers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
---
-
-SELECT pg_catalog.setval('public.user_peers_id_seq', 1, false);
 
 
 --
