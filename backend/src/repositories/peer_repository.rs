@@ -77,7 +77,7 @@ pub async fn find_torrent_peers(
     .await
     .expect("failed");
 
-    let peers = peers
+    peers
         .into_iter()
         .map(|p| {
             let std::net::IpAddr::V4(ipv4) = p.ip.ip() else {
@@ -89,7 +89,5 @@ pub async fn find_torrent_peers(
                 port: p.port as u16,
             }
         })
-        .collect::<Vec<_>>();
-
-    return peers;
+        .collect::<Vec<_>>()
 }
