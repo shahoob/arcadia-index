@@ -94,37 +94,31 @@ pub async fn create_torrent(
         .bind(torrent_form.audio_bitrate_sampling.as_deref())
         .bind(torrent_form.audio_channels.as_deref())
         .bind(torrent_form.video_codec.as_deref())
-        .bind(if torrent_form.features.is_empty() {
-            Vec::new()
-        } else {
+        .bind(
             torrent_form
                 .features
                 .split(',')
                 .map(|f| Features::from_str(f).ok().unwrap())
-                .collect::<Vec<Features>>()
-        })
-        .bind(if torrent_form.subtitle_languages.is_empty() {
-            Vec::new()
-        } else {
+                .collect::<Vec<Features>>(),
+        )
+        .bind(
             torrent_form
                 .subtitle_languages
                 .0
                 .split(',')
                 .map(|f| f.trim())
-                .collect::<Vec<&str>>()
-        })
+                .collect::<Vec<&str>>(),
+        )
         .bind(torrent_form.video_resolution.as_deref())
         .bind(&*torrent_form.container)
-        .bind(if torrent_form.languages.is_empty() {
-            Vec::new()
-        } else {
+        .bind(
             torrent_form
                 .languages
                 .0
                 .split(',')
                 .map(|f| f.trim())
-                .collect::<Vec<&str>>()
-        })
+                .collect::<Vec<&str>>(),
+        )
         .bind(info.info_hash().as_ref())
         .bind(info.to_bytes())
         .fetch_one(pool)

@@ -1,12 +1,3 @@
-INSERT INTO title_groups (id, master_group_id, name, name_aliases, created_at, updated_at, created_by_id, description, platform, original_language, original_release_date, tagline, tags, country_from, covers, external_links, embedded_links, category, content_type, public_ratings, series_id, screenshots) VALUES (1, NULL, 'Love Me Do / P.S. I Love You', '{""}', '2025-03-30 16:35:06.418293', '2025-03-30 16:35:06.418293', 1, 'Tracklist
-A - Love Me Do
-B - P.S. I Love You', NULL, 'English', '1962-01-01 00:00:00', NULL, '{rock,pop}', 'UK', '{https://ia903406.us.archive.org/16/items/mbid-20e0bad7-bfbf-4f18-b0b3-8549dfcef6f3/mbid-20e0bad7-bfbf-4f18-b0b3-8549dfcef6f3-2190513301.jpg}', '{https://musicbrainz.org/release-group/5db85281-934d-36e5-865c-1922ad82a948,https://www.discogs.com/master/1154826-The-Beatles-Love-Me-Do}', NULL, 'Single', 'music', NULL, NULL, '{}');
-
-INSERT INTO edition_groups (id, title_group_id, name, release_date, created_at, updated_at, created_by_id, description, distributor, covers, external_links, source, additional_information) VALUES (1, 1, 'red label Parlophone single', '1962-01-01 00:00:00', '2025-03-30 16:43:28.474757', '2025-03-30 16:43:28.474757', 1, 'Red label with silver print. Catalog number with 45 prefix. These labels have “PARLOPHONE” in large stylized letters at the top and the Parlophone £ logo at 3 o’clock.
-The publishing year was printed on the label, as “RECORDING FIRST PUBLISHED 1962″.
-This release has labels without “MADE IN GT. BRITAIN” printed below the Parlophone £ logo.
-Matrix numbers: Side A: 7XCE 17144-1N, Side B: 7XCE 17145-1N.', 'Parlophone', '{""}', '{https://www.discogs.com/release/1789539-The-Beatles-Love-Me-Do}', 'Vinyl', '{}');
-
 INSERT INTO torrents (id, edition_group_id, created_at, updated_at, created_by_id, info_hash, info_dict, languages, release_name, release_group, description, file_amount_per_type, uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked, container, size, duration, audio_codec, audio_bitrate, audio_bitrate_sampling, audio_channels, video_codec, features, subtitle_languages, video_resolution) VALUES (1, 1, '2025-03-30 16:44:41.458969', '2025-03-30 16:44:41.458969', 1, '\x112233445566778899aabbccddeeff0011223344', '\x64363a6c656e67746869313465343a6e616d65383a746573742e74787431323a7069656365206c656e67746869313637373732313665363a70696563657332303a09fac8dbfd27bd9b4d23a00eb648aa751789536d65', '{}', 'The Beatles - Love Me Do - P.S. I Love You (Parlophone Single) [24-96]', '', 'Full scans included
 
 Lineage:
