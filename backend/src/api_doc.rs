@@ -22,7 +22,7 @@ use crate::{
 
 #[derive(OpenApi)]
 #[openapi(
-    info(title = "arcadia-index API",),
+    info(title = "arcadia-backend API",),
     paths(
         crate::handlers::auth_handler::register,
         crate::handlers::auth_handler::login,

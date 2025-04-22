@@ -47,16 +47,16 @@ RUN SQLX_OFFLINE=true cargo build
 FROM debian:bookworm-slim AS debug
 WORKDIR /app
 
-COPY --chmod=755 --from=build-debug /app/target/debug/arcadia-index .
+COPY --chmod=755 --from=build-debug /app/target/debug/arcadia-backend .
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
       apt-get update && apt-get install -y openssl
-CMD ["./arcadia-index"]
+CMD ["./arcadia-backend"]
 
 FROM debian:bookworm-slim
 WORKDIR /app
 
-COPY --chmod=755 --from=build-prod /app/target/release/arcadia-index .
+COPY --chmod=755 --from=build-prod /app/target/release/arcadia-backend .
 COPY --from=prebuild /usr/local/cargo/bin/sqlx .
 COPY  ./migrations ./migrations
 
@@ -65,4 +65,4 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
       apt-get update && apt-get install -y openssl
 
 # ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["./arcadia-index"]
+CMD ["./arcadia-backend"]

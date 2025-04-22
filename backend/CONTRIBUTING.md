@@ -13,7 +13,7 @@ It (will) also contain some scripts that are meant to be run on a regular basis 
 - [insomnia](https://github.com/Kong/insomnia/)
 
 ### Environment
-At runtime, arcadia's backend will source environment variables to influence it's behavior.  The simplest way to set these during development is to write them into a file named `.env`.  A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.sample .env`.
+At runtime, arcadia's backend will source environment variables to influence it's behavior.  The simplest way to set these during development is to write them into a file named `.env`.  A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.example .env`.
 
 ### Database
 
