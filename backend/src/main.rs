@@ -33,11 +33,6 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Error building a connection pool");
 
-    sqlx::migrate!("./migrations")
-        .run(&pool)
-        .await
-        .expect("Error running migrations");
-
     let host = env::var("ACTIX_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("ACTIX_PORT").unwrap_or_else(|_| "8080".to_string());
     println!("Server running at http://{}:{}", host, port);
