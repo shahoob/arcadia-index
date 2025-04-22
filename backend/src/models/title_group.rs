@@ -9,21 +9,41 @@ use super::edition_group::LiteEditionGroupHierachy;
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "content_type_enum")]
 pub enum ContentType {
+    #[sqlx(rename = "movie")]
+    #[serde(alias = "movie")]
     Movie,
-    #[sqlx(rename = "TV-Show")]
+    #[sqlx(rename = "tv_show")]
+    #[serde(alias = "tv_show")]
     TVShow,
+    #[sqlx(rename = "music")]
+    #[serde(alias = "music")]
     Music,
+    #[sqlx(rename = "software")]
+    #[serde(alias = "software")]
     Software,
+    #[sqlx(rename = "book")]
+    #[serde(alias = "book")]
     Book,
     // aka SiteRip, but also includes packs of other content than website dumps (books, etc.)
     // this allows users to group content (when possible), which lowers the load on the tracker and makes the upload process faster (1 announce instead of multiple)
+    #[sqlx(rename = "collection")]
+    #[serde(alias = "collection")]
     Collection,
+}
+
+#[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "platform_enum")]
+pub enum Platform {
+    Windows,
+    Linux,
+    MacOS,
+    Xbox,
 }
 
 // this is not to store the genre, but the format
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
-#[sqlx(type_name = "category_enum")]
-pub enum Category {
+#[sqlx(type_name = "title_group_category_enum")]
+pub enum TitleGroupCategory {
     //music
     Ep,
     Album, // includes "live album" as an "edition"
@@ -68,6 +88,7 @@ pub struct TitleGroup {
     pub updated_at: NaiveDateTime,
     pub created_by_id: i64,
     pub description: String,
+    pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
@@ -77,41 +98,19 @@ pub struct TitleGroup {
     pub external_links: Vec<String>, // (public DBs, other trackers)
     #[schema(value_type = Value)]
     pub embedded_links: Option<Json<Value>>, // {name: link} (trailer, preview, etc.)
-    // pub main_artists
-    // pub artists_affiliated (multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
-    // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub content_type: ContentType,  // movies, tv shows, books, games, etc
+    pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     #[schema(value_type = Value)]
     pub public_ratings: Option<Json<Value>>, // {service: rating}
     pub series_id: Option<i64>,
-    // pub edition_groups: Option<Vec<EditionGroup>>,
+    pub screenshots: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SimilarTitleGroups {
     pub group_1: i64,
     pub group_2: i64,
-}
-
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
-pub struct AffiliatedArtist {
-    pub title_group_id: i64,
-    pub artist_id: i64,
-    pub status: String,
-    pub nickname: Option<String>, // for example: name of the character the actor is playing
-    #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
-    pub created_by_id: i64,
-}
-
-#[derive(Debug, Deserialize, ToSchema)]
-pub struct UserCreatedAffiliatedArtist {
-    pub title_group_id: i64,
-    pub artist_id: i64,
-    pub status: String,
-    pub nickname: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
@@ -127,15 +126,17 @@ pub struct UserCreatedTitleGroup {
     pub embedded_links: Option<Json<Value>>,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
-    pub category: Option<Category>, // ((movie: feature film, short film), (music: ep, album, compilation))
-    pub content_type: ContentType,  // movies, tv shows, books, games, etc
+    pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
+    pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     pub tagline: Option<String>,
+    pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
     #[schema(value_type = Value)]
     pub affiliated_artists: Vec<Json<Value>>,
     pub series_id: Option<i64>,
+    pub screenshots: Vec<String>,
     // one of them should be given, if master groups are required for this type of content
     pub master_group_id: Option<i64>,
     // pub master_group: Option<UserCreatedMasterGroup>,
@@ -145,7 +146,7 @@ pub struct UserCreatedTitleGroup {
 pub struct TitleGroupHierarchyLite {
     pub name: String,
     pub covers: Option<Vec<String>>,
-    pub category: Option<Category>,
+    pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
     pub original_release_date: NaiveDateTime,
@@ -167,12 +168,14 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         content_type: ContentType::Book,
         tags: Vec::new(),
         tagline: None,
+        platform: None,
         original_release_date: NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d")
             .unwrap()
             .and_hms_opt(0, 0, 0)
             .unwrap(),
         affiliated_artists: Vec::new(),
         series_id: None,
+        screenshots: Vec::new(),
         master_group_id: None,
     }
 }

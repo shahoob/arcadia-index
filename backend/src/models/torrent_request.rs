@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
-use super::torrent::{AudioCodec, Features, VideoCodec};
+use super::torrent::{AudioCodec, Features, Language, VideoCodec};
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentRequest {
@@ -17,7 +17,7 @@ pub struct TorrentRequest {
     pub edition_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,
-    pub language: Option<String>,
+    pub languages: Option<Vec<Language>>,
     pub container: String,
     pub bounty_upload: i64,
     pub bounty_bonus_points: i64,
@@ -28,7 +28,7 @@ pub struct TorrentRequest {
     // ---- video
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>, // ---- video
 }
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -37,7 +37,7 @@ pub struct UserCreatedTorrentRequest {
     pub edition_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,
-    pub language: Option<String>,
+    pub languages: Option<Vec<Language>>,
     pub container: String,
     pub bounty_upload: i64,
     pub bounty_bonus_points: i64,
@@ -48,6 +48,6 @@ pub struct UserCreatedTorrentRequest {
     // ---- video
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Option<Vec<String>>,
+    pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>, // ---- video
 }

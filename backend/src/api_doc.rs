@@ -6,12 +6,11 @@ use crate::{
         torrent_handler::DownloadTorrentQuery,
     },
     models::{
-        artist::{Artist, ArtistLite},
+        artist::{AffiliatedArtist, Artist, ArtistLite},
         edition_group::EditionGroup,
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, UserCreatedSeries},
-        title_group::AffiliatedArtist,
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::TorrentSearch,
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
@@ -23,7 +22,7 @@ use crate::{
 
 #[derive(OpenApi)]
 #[openapi(
-    info(title = "arcadia-index API",),
+    info(title = "arcadia-backend API",),
     paths(
         crate::handlers::auth_handler::register,
         crate::handlers::auth_handler::login,

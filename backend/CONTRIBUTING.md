@@ -13,17 +13,17 @@ It (will) also contain some scripts that are meant to be run on a regular basis 
 - [insomnia](https://github.com/Kong/insomnia/)
 
 ### Environment
-At runtime, arcadia's backend will source environment variables to influence it's behavior.  The simplest way to set these during development is to write them into a file named `.env`.  A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.sample .env`.
+At runtime, arcadia's backend will source environment variables to influence it's behavior.  The simplest way to set these during development is to write them into a file named `.env`.  A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.example .env`.
 
 ### Database
 
-Arcadia's backend uses a postgresql database. The recommended method for spawning an instance of postgres is using docker:
+Arcadia's backend uses a postgresql database. The recommended method for spawning an instance of postgres is using docker compose:
 
 ```
-docker-compose -f docker/postgres.yml up -d
+docker-compose up db -d
 ```
 
-In addition to a database instance, the database needs to be populated with the schema used by Arcadia. Initialization of the database can be done with:
+Arcadia will automatically run migrations on launch. Otherwise, initialization of the database can be done with:
 
 ```
 cargo install sqlx-cli
@@ -37,7 +37,8 @@ You can optionally add "fake" data to the database by running the `fixtures.sql`
 Here is how to insert them if you are using docker :
 
 ```
-docker exec -i arcadia_db psql -U arcadia -d arcadia < migrations/fixtures/fixtures.sql
+
+docker exec -i arcadia_db psql -U arcadia -d arcadia < backend/migrations/fixtures/fixtures.sql
 ```
 
 The default user defined in the test data is:
