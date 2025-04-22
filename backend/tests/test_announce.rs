@@ -4,8 +4,8 @@ use sqlx::PgPool;
 
 mod common;
 
-use arcadia_index::OpenSignups;
-use arcadia_index::tracker::announce;
+use arcadia_backend::OpenSignups;
+use arcadia_backend::tracker::announce;
 
 #[derive(Debug, Deserialize)]
 struct WrappedError {
