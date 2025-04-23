@@ -17,13 +17,15 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Image } from 'primevue'
-export default {
+
+export default defineComponent({
   components: { Image },
   props: {
     affiliated_artist: {},
   },
-}
+})
 </script>
 <style scoped>
 .affiliated-artist {

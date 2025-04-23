@@ -233,6 +233,7 @@
   </Form>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Form } from '@primevue/forms'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
@@ -243,7 +244,7 @@ import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
 
-export default {
+export default defineComponent({
   components: {
     Form,
     DatePicker,
@@ -378,7 +379,7 @@ export default {
       this.titleGroupForm = this.initialTitleGroupForm
     }
   },
-}
+})
 </script>
 <style scoped>
 .description {

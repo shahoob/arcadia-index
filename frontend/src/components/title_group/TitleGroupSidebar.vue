@@ -57,6 +57,7 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
@@ -64,7 +65,7 @@ import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 
-export default {
+export default defineComponent({
   components: {
     Galleria,
     Image,
@@ -76,7 +77,7 @@ export default {
   props: {
     title_group: {},
   },
-}
+})
 </script>
 <style scoped>
 #title-group-sidebar {

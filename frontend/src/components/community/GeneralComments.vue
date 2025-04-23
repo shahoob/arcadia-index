@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import GeneralComment from './GeneralComment.vue'
 import { Button } from 'primevue'
 import { postTitleGroupComment } from '@/services/api/commentService'
@@ -35,7 +36,7 @@ import { Form } from '@primevue/forms'
 import Message from 'primevue/message'
 import { useUserStore } from '@/stores/user'
 
-export default {
+export default defineComponent({
   components: { GeneralComment, BBCodeEditor, Button, Form, Message },
   props: {
     comments: [],
@@ -85,7 +86,7 @@ export default {
       })
     },
   },
-}
+})
 </script>
 <style scoped>
 .new-comment {

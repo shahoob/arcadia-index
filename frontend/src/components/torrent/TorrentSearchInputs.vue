@@ -22,11 +22,13 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import ContentContainer from '../ContentContainer.vue'
 import InputText from 'primevue/inputtext'
 import FloatLabel from 'primevue/floatlabel'
 import Button from 'primevue/button'
-export default {
+
+export default defineComponent({
   components: { ContentContainer, Button, InputText, FloatLabel },
   props: { loading: { default: false }, initialTitleGroupName: {} },
   data() {
@@ -39,7 +41,7 @@ export default {
   created() {
     this.searchForm.title_group_name = this.initialTitleGroupName
   },
-}
+})
 </script>
 
 <style>

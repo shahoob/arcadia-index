@@ -11,15 +11,17 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { Image } from 'primevue'
-export default {
+
+export default defineComponent({
   components: { ContentContainer, Image },
   props: { artist: {} },
   data() {
     return {}
   },
-}
+})
 </script>
 <style scoped>
 .artist-sidebar {

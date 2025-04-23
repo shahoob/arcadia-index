@@ -1,6 +1,6 @@
 import type { ComponentCustomProperties } from 'vue'
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   export interface ComponentCustomProperties {
     $timeAgo: (date: string) => string
     $bytesToReadable: (bytes: number) => string
