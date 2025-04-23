@@ -4,7 +4,7 @@ use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
-use super::torrent::LiteTorrent;
+use super::torrent::TorrentLite;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
@@ -99,7 +99,7 @@ pub struct UserCreatedEditionGroup {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
-pub struct LiteEditionGroupHierachy {
+pub struct EditionGroupHierachyLite {
     pub id: i64,
     pub title_group_id: i64,
     pub name: String,
@@ -108,5 +108,5 @@ pub struct LiteEditionGroupHierachy {
     pub covers: Vec<String>,
     pub source: Option<Source>,
     pub additional_information: Option<Json<Value>>,
-    pub torrents: Vec<LiteTorrent>,
+    pub torrents: Vec<TorrentLite>,
 }

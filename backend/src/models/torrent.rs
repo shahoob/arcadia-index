@@ -257,7 +257,7 @@ pub struct TorrentSearch {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
-pub struct LiteTorrent {
+pub struct TorrentLite {
     pub id: i64,
     pub edition_group_id: i64,
     pub created_at: NaiveDateTime,
