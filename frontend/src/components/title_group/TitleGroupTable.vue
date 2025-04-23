@@ -164,6 +164,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import DOMPurify from 'dompurify'
@@ -175,7 +176,7 @@ import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
 import Dialog from 'primevue/dialog'
 import { downloadTorrent } from '@/services/api/torrentService'
 
-export default {
+export default defineComponent({
   components: {
     DataTable,
     Column,
@@ -245,7 +246,7 @@ export default {
       }
     },
   },
-}
+})
 </script>
 <style scoped>
 .feature {

@@ -279,6 +279,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -295,7 +296,7 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 
-export default {
+export default defineComponent({
   components: {
     Form,
     Message,
@@ -458,7 +459,7 @@ export default {
     this.torrentForm.edition_group_id = editionGroupStore.id
     console.log(this.content_type)
   },
-}
+})
 </script>
 <style scoped>
 #create-torrent {

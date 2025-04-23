@@ -35,9 +35,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 
-export default {
+export default defineComponent({
   components: { InputText },
   data() {
     return {
@@ -52,7 +53,7 @@ export default {
     }
   },
   methods: {},
-}
+})
 </script>
 
 <style scoped>

@@ -20,12 +20,13 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Column, DataTable } from 'primevue'
-export default {
+export default defineComponent({
   components: { DataTable, Column },
   props: {
     torrent_requests: {},
   },
-}
+})
 </script>
 <style scoped></style>
