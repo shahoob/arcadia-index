@@ -13,8 +13,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { FloatLabel, Textarea } from 'primevue'
-export default {
+
+export default defineComponent({
   components: { FloatLabel, Textarea },
   props: { label: {} },
   data() {
@@ -22,5 +24,5 @@ export default {
       content: '',
     }
   },
-}
+})
 </script>

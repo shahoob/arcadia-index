@@ -9,11 +9,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { reportTorrent } from '@/services/api/torrentService'
 import { Textarea, FloatLabel } from 'primevue'
 import Button from 'primevue/button'
 
-export default {
+export default defineComponent({
   components: { Textarea, FloatLabel, Button },
   props: { torrentId: {} },
   data() {
@@ -32,7 +33,7 @@ export default {
       })
     },
   },
-}
+})
 </script>
 
 <style scoped>
