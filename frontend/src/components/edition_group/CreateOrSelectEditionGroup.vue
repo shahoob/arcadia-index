@@ -48,6 +48,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
@@ -55,7 +56,7 @@ import { createEditionGroup } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 
-export default {
+export default defineComponent({
   components: {
     Button,
     FloatLabel,
@@ -95,7 +96,7 @@ export default {
       this.titleGroup = titleGroupStore
     }
   },
-}
+})
 </script>
 <style scoped>
 .title {
