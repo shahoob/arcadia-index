@@ -21,7 +21,7 @@ pub struct Arcadia {
     pub tracker_name: String,
     pub frontend_url: Url,
     pub tracker_url: Url,
-    pub allowed_torrent_clients: HashSet<[u8; 4]>,
+    pub allowed_torrent_clients: HashSet<Vec<u8>>,
 }
 
 impl Arcadia {

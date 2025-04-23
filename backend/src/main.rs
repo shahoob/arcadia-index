@@ -56,18 +56,12 @@ async fn main() -> std::io::Result<()> {
         .and_then(|s| Url::parse(&s).ok())
         .expect("ARCADIA_TRACKER_URL malformed or missing");
 
-    let allowed_torrent_clients: HashSet<[u8; 4]> = env::var("ARCADIA_ALLOWED_TORRENT_CLIENTS")
+    let allowed_torrent_clients = env::var("ARCADIA_ALLOWED_TORRENT_CLIENTS")
         .ok()
         .map(|s| {
             s.split(',')
-                .map(|s| {
-                    let b = s.trim().as_bytes();
-                    if b.len() != 4 {
-                        panic!("Invalid prefix length")
-                    }
-                    [b[0], b[1], b[2], b[3]]
-                })
-                .collect()
+                .map(|s| s.trim().as_bytes().to_vec())
+                .collect::<HashSet<Vec<u8>>>()
         })
         .expect("ARCADIA_ALLOWED_TORRENT_CLIENTS env var is not set");
 
