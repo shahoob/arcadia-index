@@ -155,6 +155,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
@@ -167,7 +168,7 @@ import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentServi
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
 
-export default {
+export default defineComponent({
   components: {
     CreateOrEditTitleGroup,
     Button,
@@ -253,7 +254,7 @@ export default {
       this.titleGroupId = this.titleGroupStore.id.toString()
     }
   },
-}
+})
 </script>
 <style scoped>
 .title {

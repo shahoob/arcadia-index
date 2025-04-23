@@ -22,13 +22,15 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
-export default {
+
+export default defineComponent({
   components: { ContentContainer },
   props: {
     comment: {},
   },
-}
+})
 </script>
 
 <style scoped>

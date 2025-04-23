@@ -42,11 +42,12 @@
   />
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { register } from '@/services/api/authService'
 
-export default {
+export default defineComponent({
   components: { Button, InputText },
   data() {
     return {
@@ -65,5 +66,5 @@ export default {
       })
     },
   },
-}
+})
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <Form v-slot="$form" :initialValues="form" @submit="login">
+  <Form :initialValues="form" @submit="login">
     <div class="flex flex-col gap-1">
       <InputText
         class="form-item"
@@ -26,6 +26,7 @@
   </Form>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import { Form } from '@primevue/forms'
@@ -34,7 +35,7 @@ import Checkbox from 'primevue/checkbox'
 import { login } from '@/services/api/authService'
 import { useUserStore } from '@/stores/user'
 
-export default {
+export default defineComponent({
   components: { Button, InputText, Checkbox, Password, Form },
   data() {
     return {
@@ -56,5 +57,5 @@ export default {
       })
     },
   },
-}
+})
 </script>
