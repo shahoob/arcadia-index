@@ -4,7 +4,7 @@ use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
-use super::edition_group::LiteEditionGroupHierachy;
+use super::edition_group::EditionGroupHierachyLite;
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "content_type_enum")]
@@ -151,7 +151,7 @@ pub struct TitleGroupHierarchyLite {
     pub tags: Vec<String>,
     pub original_release_date: NaiveDateTime,
     pub affiliated_artists: Vec<Json<Value>>,
-    pub editions: Vec<LiteEditionGroupHierachy>,
+    pub editions: Vec<EditionGroupHierachyLite>,
 }
 
 pub fn create_default_title_group() -> UserCreatedTitleGroup {
