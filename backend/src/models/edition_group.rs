@@ -98,15 +98,17 @@ pub struct UserCreatedEditionGroup {
     // pub title_group: Option<UserCreatedTitleGroup>,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct EditionGroupHierachyLite {
     pub id: i64,
     pub title_group_id: i64,
     pub name: String,
+    #[schema(value_type = String, format = DateTime)]
     pub release_date: NaiveDateTime,
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub source: Option<Source>,
+    #[schema(value_type = Value)]
     pub additional_information: Option<Json<Value>>,
     pub torrents: Vec<TorrentLite>,
 }

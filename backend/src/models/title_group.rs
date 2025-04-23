@@ -142,16 +142,18 @@ pub struct UserCreatedTitleGroup {
     // pub master_group: Option<UserCreatedMasterGroup>,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TitleGroupHierarchyLite {
     pub name: String,
     pub covers: Option<Vec<String>>,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
+    #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
-    pub affiliated_artists: Vec<Json<Value>>,
-    pub editions: Vec<EditionGroupHierachyLite>,
+    // #[schema(value_type = Value)]
+    // pub affiliated_artists: Vec<Json<Value>>,
+    pub edition_groups: Vec<EditionGroupHierachyLite>,
 }
 
 pub fn create_default_title_group() -> UserCreatedTitleGroup {
