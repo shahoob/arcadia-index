@@ -9,19 +9,36 @@ use utoipa::ToSchema;
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_codec_enum")]
-#[sqlx(rename_all = "lowercase")]
 pub enum AudioCodec {
+    #[sqlx(rename = "mp2")]
+    #[serde(alias = "mp2")]
     Mp2,
+    #[sqlx(rename = "mp3")]
+    #[serde(alias = "mp3")]
     Mp3,
+    #[sqlx(rename = "aac")]
+    #[serde(alias = "aac")]
     Aac,
+    #[sqlx(rename = "ac3")]
+    #[serde(alias = "ac3")]
     Ac3,
+    #[sqlx(rename = "dts")]
+    #[serde(alias = "dts")]
     Dts,
+    #[sqlx(rename = "flac")]
+    #[serde(alias = "flac")]
     Flac,
+    #[sqlx(rename = "pcm")]
+    #[serde(alias = "pcm")]
     Pcm,
     #[sqlx(rename = "true-hd")]
     #[serde(alias = "true-hd")]
     TrueHd,
+    #[sqlx(rename = "opus")]
+    #[serde(alias = "opus")]
     Opus,
+    #[sqlx(rename = "dsd")]
+    #[serde(alias = "dsd")]
     Dsd,
 }
 
@@ -256,12 +273,14 @@ pub struct TorrentSearch {
     pub title_group_name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentLite {
     pub id: i64,
     pub edition_group_id: i64,
+    #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
     pub release_name: Option<String>,
+    #[schema(value_type = Value)]
     pub file_amount_per_type: Json<Value>,
     pub trumpable: Option<String>,
     pub staff_checked: bool,

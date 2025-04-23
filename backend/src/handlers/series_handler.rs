@@ -1,7 +1,7 @@
 use crate::{
     Arcadia, Result,
     models::{
-        series::{Series, UserCreatedSeries},
+        series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
         user::User,
     },
     repositories::series_repository::{create_series, find_series},
@@ -37,7 +37,7 @@ pub struct GetSeriesQuery {
     path = "/api/series",
     params (GetSeriesQuery),
     responses(
-        (status = 200, description = "Successfully got the series"),
+        (status = 200, description = "Successfully got the series", body=SeriesAndTitleGroupHierarchyLite),
     )
 )]
 pub async fn get_series(

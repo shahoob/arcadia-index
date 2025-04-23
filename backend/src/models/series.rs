@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
+use super::title_group::TitleGroupHierarchyLite;
+
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Series {
     pub id: i64,
@@ -25,4 +27,10 @@ pub struct UserCreatedSeries {
     pub covers: Vec<String>,
     pub banners: Vec<String>,
     pub tags: Vec<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct SeriesAndTitleGroupHierarchyLite {
+    pub series: Series,
+    pub title_groups: Vec<TitleGroupHierarchyLite>,
 }
