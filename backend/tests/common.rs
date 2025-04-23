@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use actix_http::Request;
 use actix_web::{
     App, Error,
@@ -24,6 +26,7 @@ pub async fn create_test_app(
         tracker_name: String::from("Arcadia Test"),
         frontend_url: Url::parse("http://testurl").unwrap(),
         tracker_url: Url::parse("http://testurl").unwrap(),
+        allowed_torrent_clients: HashSet::from([[0x33, 0x33, 0x33, 0x33]]),
     };
 
     // TODO: CORS?
