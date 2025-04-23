@@ -71,6 +71,7 @@
   </ContentContainer>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 
 import { Galleria } from 'primevue'
@@ -78,7 +79,7 @@ import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 
-export default {
+export default defineComponent({
   components: {
     ContentContainer,
     Galleria,
@@ -89,7 +90,7 @@ export default {
   props: {
     title_group: {},
   },
-}
+})
 </script>
 <style scoped>
 #title-group-header {

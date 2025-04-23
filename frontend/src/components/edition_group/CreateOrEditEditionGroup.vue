@@ -164,6 +164,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -173,7 +174,7 @@ import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { Form } from '@primevue/forms'
 
-export default {
+export default defineComponent({
   components: {
     Form,
     DatePicker,
@@ -274,7 +275,7 @@ export default {
       this.editionGroupForm.additional_information.catalogue_number = ''
     }
   },
-}
+})
 </script>
 <style scoped>
 .description {

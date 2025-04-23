@@ -12,16 +12,17 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { ref } from 'vue'
 import Card from 'primevue/card'
 
-export default {
+export default defineComponent({
   components: { Card },
   setup() {
     const blogPosts = ref(['Server maintenance [Completed]'])
     return { blogPosts }
   },
-}
+})
 </script>
 
 <style scoped>

@@ -25,10 +25,12 @@
   </ContentContainer>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Image } from 'primevue'
 import TitleGroupTable from './TitleGroupTable.vue'
 import ContentContainer from '../ContentContainer.vue'
-export default {
+
+export default defineComponent({
   components: { Image, TitleGroupTable, ContentContainer },
   props: {
     title_group: {},
@@ -36,7 +38,7 @@ export default {
   methods: {
     titleGroupClicked() {},
   },
-}
+})
 </script>
 <style scoped>
 .title-group-preview-table {

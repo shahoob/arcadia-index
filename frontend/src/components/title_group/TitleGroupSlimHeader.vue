@@ -17,12 +17,14 @@
   </div>
 </template>
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   components: {},
   props: {
     title_group: {},
   },
-}
+})
 </script>
 <style scoped>
 .title {

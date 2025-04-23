@@ -11,10 +11,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { ref } from 'vue'
 import Card from 'primevue/card'
 
-export default {
+export default defineComponent({
   components: { Card },
   setup() {
     const uploads = ref([
@@ -26,7 +27,7 @@ export default {
 
     return { uploads }
   },
-}
+})
 </script>
 
 <style scoped>
