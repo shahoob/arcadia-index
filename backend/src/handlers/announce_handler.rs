@@ -2,6 +2,7 @@ use crate::repositories::announce_repository::find_torrent_with_id;
 use crate::repositories::peer_repository::{
     find_torrent_peers, insert_or_update_peer, remove_peer,
 };
+use crate::services::announce_service::is_torrent_client_allowed;
 use crate::tracker::announce;
 use crate::{Arcadia, repositories::announce_repository::find_user_with_passkey};
 use actix_web::{
@@ -50,6 +51,9 @@ pub enum Error {
 
     #[error("invalid info_hash")]
     InvalidInfoHash,
+
+    #[error("torrent client not in whitelist")]
+    TorrentClientNotInWhitelist,
 }
 
 impl actix_web::ResponseError for Error {
@@ -80,6 +84,10 @@ async fn handle_announce(
     ann: announce::Announce,
     conn: dev::ConnectionInfo,
 ) -> Result<HttpResponse> {
+    if !is_torrent_client_allowed(&ann.peer_id, &arc.allowed_torrent_clients) {
+        return Err(Error::TorrentClientNotInWhitelist);
+    }
+
     let passkey = u128::from_str_radix(&passkey, 16).map_err(|_| Error::InvalidPassKey)?;
 
     let passkey_upper = (passkey >> 64) as i64;
