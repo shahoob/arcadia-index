@@ -306,8 +306,8 @@ CREATE TYPE language_enum AS ENUM(
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
-    upload_factor FLOAT DEFAULT 1.0,
-    download_factor FLOAT DEFAULT 1.0,
+    upload_factor FLOAT NOT NULL DEFAULT 1.0,
+    download_factor FLOAT NOT NULL DEFAULT 1.0,
     edition_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
