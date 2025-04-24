@@ -5,11 +5,11 @@ use utoipa::IntoParams;
 use crate::{
     Arcadia, Result,
     models::{
-        title_group::{TitleGroup, UserCreatedTitleGroup},
+        title_group::{TitleGroup, TitleGroupHierarchy, TitleGroupInfoLite, UserCreatedTitleGroup},
         user::User,
     },
     repositories::title_group_repository::{
-        create_title_group, find_lite_title_group_info, find_title_group,
+        create_title_group, find_title_group, find_title_group_info_lite,
     },
 };
 
@@ -40,7 +40,7 @@ pub struct GetTitleGroupQuery {
     path = "/api/title-group",
     params(GetTitleGroupQuery),
     responses(
-        (status = 200, description = "Successfully got the title_group"),
+        (status = 200, description = "Successfully got the title_group", body=TitleGroupHierarchy),
     )
 )]
 pub async fn get_title_group(
@@ -60,14 +60,14 @@ pub type GetTitleGroupInfoLiteQuery = GetTitleGroupQuery;
     path = "/api/title-group/lite",
     params(GetTitleGroupInfoLiteQuery),
     responses(
-        (status = 200, description = "Successfully got the title_group (lite info)"),
+        (status = 200, description = "Successfully got the title_group (lite info)", body=TitleGroupInfoLite),
     )
 )]
 pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupInfoLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_group = find_lite_title_group_info(&arc.pool, query.id).await?;
+    let title_group = find_title_group_info_lite(&arc.pool, query.id).await?;
 
     Ok(HttpResponse::Ok().json(title_group))
 }
