@@ -126,3 +126,16 @@ pub struct PublicUser {
     pub invitations: i16,
     pub bonus_points: i64,
 }
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct UserLite {
+    pub id: i64,
+    pub username: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct UserLiteAvatar {
+    pub id: i64,
+    pub username: String,
+    pub avatar: Option<String>,
+}

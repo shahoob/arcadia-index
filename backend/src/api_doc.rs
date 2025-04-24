@@ -6,13 +6,14 @@ use crate::{
         torrent_handler::DownloadTorrentQuery,
     },
     models::{
-        artist::{AffiliatedArtist, Artist, ArtistLite},
+        artist::{AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite},
         edition_group::EditionGroup,
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
-        series::{Series, UserCreatedSeries},
+        series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
+        title_group::{TitleGroupHierarchy, TitleGroupInfoLite},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
-        torrent::TorrentSearch,
+        torrent::{TorrentSearch, TorrentSearchResults},
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
@@ -75,7 +76,12 @@ use crate::{
         UserCreatedTorrentRequestVote,
         UserCreatedTorrentReport,
         TorrentReport,
-        ArtistLite
+        ArtistLite,
+        SeriesAndTitleGroupHierarchyLite,
+        ArtistAndTitleGroupsLite,
+        TitleGroupHierarchy,
+        TitleGroupInfoLite,
+        TorrentSearchResults
     ),)
 )]
 pub struct ApiDoc;

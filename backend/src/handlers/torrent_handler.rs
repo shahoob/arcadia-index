@@ -12,7 +12,7 @@ use utoipa::{IntoParams, ToSchema};
 use crate::{
     Arcadia, Result,
     models::{
-        torrent::{TorrentSearch, UploadedTorrent},
+        torrent::{TorrentSearch, TorrentSearchResults, UploadedTorrent},
         user::User,
     },
     repositories::torrent_repository::{create_torrent, get_torrent, search_torrents},
@@ -81,7 +81,7 @@ pub async fn download_dottorrent_file(
     get,
     path = "/api/search/torrent",
     responses(
-        (status = 200, description = "Title groups and their torrents found"),
+        (status = 200, description = "Title groups and their torrents found", body=TorrentSearchResults),
     )
 )]
 pub async fn find_torrents(
