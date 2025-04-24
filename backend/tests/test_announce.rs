@@ -1,5 +1,6 @@
 use actix_web::test;
 use serde::Deserialize;
+use serde_json::Value;
 use sqlx::PgPool;
 
 pub mod common;
@@ -133,7 +134,7 @@ async fn test_announce_known_torrent(pool: PgPool) {
     "with_test_peers"
 ))]
 async fn test_announce_known_torrent_with_peers(pool: PgPool) {
-    let service = common::create_test_app(pool, OpenSignups::Enabled).await;
+    let (service, token) = common::create_test_app_and_login(pool).await;
     let req = test::TestRequest::get()
         .uri(concat!(
             "/announce/d2037c66dd3e13044e0d2f9b891c3837?",
@@ -142,8 +143,8 @@ async fn test_announce_known_torrent_with_peers(pool: PgPool) {
             "key=1ab4e687&",
             "compact=1&",
             "port=6968&",
-            "uploaded=0&",
-            "downloaded=0&",
+            "uploaded=42&",
+            "downloaded=43&",
             "left=14&",
             "event=started"
         ))
@@ -179,4 +180,20 @@ async fn test_announce_known_torrent_with_peers(pool: PgPool) {
             "peer by the same user is included in peer list"
         );
     }
+
+    let req = test::TestRequest::get()
+        .insert_header(("X-Forwarded-For", "10.10.4.88"))
+        .insert_header(token)
+        .uri("/api/me")
+        .to_request();
+
+    let resp = test::call_service(&service, req).await;
+
+    let body = test::read_body(resp).await;
+
+    let json_body: Value = serde_json::from_slice(&body).unwrap();
+
+    assert_eq!(json_body["user"]["uploaded"].as_u64().unwrap(), 42);
+    // should be 44 because users start with 1 byte uploaded at account creation
+    assert_eq!(json_body["user"]["downloaded"].as_u64().unwrap(), 44);
 }
