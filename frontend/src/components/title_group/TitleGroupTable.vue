@@ -16,7 +16,7 @@
     <Column :header="$t('torrent.properties')" style="min-width: 300px">
       <template #body="slotProps">
         <a
-          :href="preview ? `/title-group/${title_group.id}&torrentId=${slotProps.data.id}` : null"
+          :href="preview ? `/title-group/${title_group.id}?torrentId=${slotProps.data.id}` : null"
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >

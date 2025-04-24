@@ -68,7 +68,7 @@ const editionGroupDone = (editionGroup: object) => {
 }
 
 const torrentDone = (torrent) => {
-  router.push('/title-group/' + titleGroupStore.id + '&torrentId=' + torrent.id)
+  router.push('/title-group/' + titleGroupStore.id + '?torrentId=' + torrent.id)
 }
 </script>
 
