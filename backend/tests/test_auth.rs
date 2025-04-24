@@ -195,11 +195,15 @@ async fn test_authorized_endpoint_after_login(pool: PgPool) {
         .to_request();
 
     #[derive(PartialEq, Deserialize)]
-    struct MeResponse {
+    struct User {
         username: String,
+    }
+    #[derive(PartialEq, Deserialize)]
+    struct MeResponse {
+        user: User,
     }
 
     let user = common::call_and_read_body_json::<MeResponse, _>(&service, req).await;
 
-    assert_eq!(user.username, "test_user");
+    assert_eq!(user.user.username, "test_user");
 }
