@@ -13,7 +13,9 @@
   ],
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "node",
-    "strict": true
+    "strict": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noUncheckedIndexedAccess": true
   }
 }
