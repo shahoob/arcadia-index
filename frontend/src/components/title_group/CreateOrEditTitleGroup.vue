@@ -234,7 +234,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Form } from '@primevue/forms'
+import { Form, type FormResolverOptions } from '@primevue/forms'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -291,7 +291,7 @@ export default defineComponent({
   },
 
   methods: {
-    resolver({ values }) {
+    resolver({ values }: FormResolverOptions) {
       const errors = {}
 
       if (values.name.length < 5) {

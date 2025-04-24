@@ -172,7 +172,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import { Form } from '@primevue/forms'
+import { Form, type FormResolverOptions } from '@primevue/forms'
 
 export default defineComponent({
   components: {
@@ -206,7 +206,7 @@ export default defineComponent({
     }
   },
   methods: {
-    resolver({ values }) {
+    resolver({ values }: FormResolverOptions) {
       const errors = {}
 
       if (values.name.length < 5) {
