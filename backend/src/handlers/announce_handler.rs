@@ -1,4 +1,4 @@
-use crate::repositories::announce_repository::find_torrent_with_id;
+use crate::repositories::announce_repository::{credit_user_upload_download, find_torrent_with_id};
 use crate::repositories::peer_repository::{
     find_torrent_peers, insert_or_update_peer, remove_peer,
 };
@@ -51,6 +51,9 @@ pub enum Error {
 
     #[error("invalid info_hash")]
     InvalidInfoHash,
+
+    #[error("invalid user id")]
+    InvalidUserId,
 
     #[error("torrent client not in whitelist")]
     TorrentClientNotInWhitelist,
@@ -121,6 +124,34 @@ async fn handle_announce(
     .await;
 
     let peers = find_torrent_peers(&arc.pool, &torrent.id, &current_user.id).await;
+
+    // assuming that the client either sends both downloaded/uploaded
+    // or none of them
+    if ann.uploaded.is_some() && ann.downloaded.is_some() {
+        let upload_to_credit = ann.uploaded.map_or(0, |u| {
+            let factor = if arc.global_upload_factor != 1.0 {
+                arc.global_upload_factor
+            } else {
+                torrent.upload_factor
+            };
+            (u as f64 * factor as f64).ceil() as u64
+        });
+        let download_to_credit = ann.downloaded.map_or(0, |u| {
+            let factor = if arc.global_download_factor != 1.0 {
+                arc.global_download_factor
+            } else {
+                torrent.download_factor
+            };
+            (u as f64 * factor as f64).ceil() as u64
+        });
+        credit_user_upload_download(
+            &arc.pool,
+            upload_to_credit,
+            download_to_credit,
+            current_user.id,
+        )
+        .await;
+    }
 
     let resp = announce::AnnounceResponse {
         peers,

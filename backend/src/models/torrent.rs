@@ -191,6 +191,8 @@ impl FromStr for Features {
 #[derive(Debug, Serialize, FromRow, ToSchema)]
 pub struct Torrent {
     pub id: i64,
+    pub upload_factor: f32,
+    pub download_factor: f32,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
@@ -278,6 +280,8 @@ pub struct TorrentSearch {
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentLite {
     pub id: i64,
+    pub upload_factor: f32,
+    pub download_factor: f32,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,
@@ -303,6 +307,8 @@ pub struct TorrentLite {
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentHierarchy {
     pub id: i64,
+    pub upload_factor: f32,
+    pub download_factor: f32,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: NaiveDateTime,

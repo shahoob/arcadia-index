@@ -29,6 +29,8 @@ pub async fn find_user_with_passkey(
 #[derive(sqlx::FromRow)]
 pub struct TorrentCompact {
     pub id: i64,
+    pub upload_factor: f32,
+    pub download_factor: f32,
 }
 
 pub async fn find_torrent_with_id(
@@ -38,7 +40,7 @@ pub async fn find_torrent_with_id(
     sqlx::query_as!(
         TorrentCompact,
         r#"
-            SELECT id FROM torrents
+            SELECT id, upload_factor, download_factor FROM torrents
             WHERE info_hash = $1
         "#,
         info_hash
@@ -46,4 +48,26 @@ pub async fn find_torrent_with_id(
     .fetch_one(pool)
     .await
     .map_err(|_| Error::InvalidInfoHash)
+}
+
+pub async fn credit_user_upload_download(
+    pool: &PgPool,
+    uploaded: u64,
+    downloaded: u64,
+    user_id: i64,
+) {
+    sqlx::query!(
+        r#"
+        UPDATE users
+        SET uploaded = uploaded + $1,
+            downloaded = downloaded + $2
+        WHERE id = $3
+        "#,
+        uploaded,
+        downloaded,
+        user_id
+    )
+    .execute(pool)
+    .await
+    .map_err(|_| Error::InvalidUserId);
 }
