@@ -125,21 +125,21 @@ async fn handle_announce(
     // assuming that the client either sends both downloaded/uploaded
     // or none of them
     if ann.uploaded.is_some() && ann.downloaded.is_some() {
-        let upload_to_credit = ann.uploaded.map_or(0, |u| {
+        let upload_to_credit = ann.uploaded.map_or(0, |uploaded| {
             let factor = if arc.global_upload_factor != 1.0 {
                 arc.global_upload_factor
             } else {
                 torrent.upload_factor
             };
-            (u as f64 * factor as f64).ceil() as i64
+            (uploaded as f64 * factor as f64).ceil() as i64
         });
-        let download_to_credit = ann.downloaded.map_or(0, |u| {
+        let download_to_credit = ann.downloaded.map_or(0, |downloaded| {
             let factor = if arc.global_download_factor != 1.0 {
                 arc.global_download_factor
             } else {
                 torrent.download_factor
             };
-            (u as f64 * factor as f64).ceil() as i64
+            (downloaded as f64 * factor as f64).ceil() as i64
         });
         credit_user_upload_download(
             &arc.pool,
