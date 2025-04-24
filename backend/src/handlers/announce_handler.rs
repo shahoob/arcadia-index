@@ -52,9 +52,6 @@ pub enum Error {
     #[error("invalid info_hash")]
     InvalidInfoHash,
 
-    #[error("invalid user id")]
-    InvalidUserId,
-
     #[error("torrent client not in whitelist")]
     TorrentClientNotInWhitelist,
 }
@@ -134,7 +131,7 @@ async fn handle_announce(
             } else {
                 torrent.upload_factor
             };
-            (u as f64 * factor as f64).ceil() as u64
+            (u as f64 * factor as f64).ceil() as i64
         });
         let download_to_credit = ann.downloaded.map_or(0, |u| {
             let factor = if arc.global_download_factor != 1.0 {
@@ -142,7 +139,7 @@ async fn handle_announce(
             } else {
                 torrent.download_factor
             };
-            (u as f64 * factor as f64).ceil() as u64
+            (u as f64 * factor as f64).ceil() as i64
         });
         credit_user_upload_download(
             &arc.pool,

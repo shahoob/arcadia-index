@@ -29,8 +29,8 @@ pub async fn find_user_with_passkey(
 #[derive(sqlx::FromRow)]
 pub struct TorrentCompact {
     pub id: i64,
-    pub upload_factor: f32,
-    pub download_factor: f32,
+    pub upload_factor: f64,
+    pub download_factor: f64,
 }
 
 pub async fn find_torrent_with_id(
@@ -52,8 +52,8 @@ pub async fn find_torrent_with_id(
 
 pub async fn credit_user_upload_download(
     pool: &PgPool,
-    uploaded: u64,
-    downloaded: u64,
+    uploaded: i64,
+    downloaded: i64,
     user_id: i64,
 ) {
     sqlx::query!(
@@ -69,5 +69,5 @@ pub async fn credit_user_upload_download(
     )
     .execute(pool)
     .await
-    .map_err(|_| Error::InvalidUserId);
+    .expect("invalid user id");
 }

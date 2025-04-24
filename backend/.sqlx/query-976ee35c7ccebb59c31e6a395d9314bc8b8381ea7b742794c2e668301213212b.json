@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE users\n        SET uploaded = uploaded + $1,\n            downloaded = downloaded + $2\n        WHERE id = $3\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "976ee35c7ccebb59c31e6a395d9314bc8b8381ea7b742794c2e668301213212b"
+}

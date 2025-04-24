@@ -65,12 +65,12 @@ async fn main() -> std::io::Result<()> {
         })
         .expect("ARCADIA_ALLOWED_TORRENT_CLIENTS env var is not set");
 
-    let global_upload_factor: f32 = env::var("ARCADIA_GLOBAL_UPLOAD_FACTOR")
+    let global_upload_factor: f64 = env::var("ARCADIA_GLOBAL_UPLOAD_FACTOR")
         .expect("ARCADIA_GLOBAL_UPLOAD_FACTOR env var is not set")
         .parse()
         .expect("ARCADIA_GLOBAL_UPLOAD_FACTOR env var is not a valid f32");
 
-    let global_download_factor: f32 = env::var("ARCADIA_GLOBAL_DOWNLOAD_FACTOR")
+    let global_download_factor: f64 = env::var("ARCADIA_GLOBAL_DOWNLOAD_FACTOR")
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not set")
         .parse()
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f32");
