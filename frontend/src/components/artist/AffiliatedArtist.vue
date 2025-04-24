@@ -16,16 +16,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { Image } from 'primevue'
 
-export default defineComponent({
-  components: { Image },
-  props: {
-    affiliated_artist: {},
-  },
-})
+defineProps<{
+  // TODO: type properly
+  affiliated_artist: Record<string, any>
+}>();
 </script>
 <style scoped>
 .affiliated-artist {

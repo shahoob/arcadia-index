@@ -1,6 +1,10 @@
 import type { components } from '@/api-schema/schema'
 import api from './api.ts'
 
+export type TitleGroupHierarchy = components['schemas']['TitleGroupHierarchy']
+
+export type TitleGroupLite = components['schemas']['TitleGroupLite']
+
 export type TitleGroupAndAssociatedData = components['schemas']['TitleGroupAndAssociatedData']
 
 export const getTitleGroup = async (id: number): Promise<TitleGroupAndAssociatedData> => {

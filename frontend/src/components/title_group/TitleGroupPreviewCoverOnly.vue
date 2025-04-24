@@ -1,26 +1,21 @@
 <template>
   <div class="title-group-preview-cover-only">
-    <a :href="'/title-group?id=' + title_group.id">
+    <a :href="'/title-group/' + id">
       <img
         class="title-group-cover"
-        :src="title_group.covers[0]"
-        v-tooltip.top="title_group.name"
+        :src="cover"
+        v-tooltip.top="name"
         alt="Title Group Cover"
       />
     </a>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  props: {
-    title_group: {},
-  },
-  methods: {
-    titleGroupClicked() {},
-  },
-})
+<script setup lang="ts">
+defineProps<{
+  id: number,
+  name: string,
+  cover: string
+}>()
 </script>
 
 <style>

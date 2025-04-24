@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <span v-if="title_group.series?.id">
-      <a class="prefix" :href="`/series?id=${title_group.series.id}`"
+      <a class="prefix" :href="`/series/${title_group.series.id}`"
         >{{ title_group.series.name }}
       </a>
       -

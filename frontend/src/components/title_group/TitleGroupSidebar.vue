@@ -47,7 +47,7 @@
       </div>
     </ContentContainer>
     <ContentContainer :container-title="$t('general.series')" v-if="title_group.series.id">
-      <a :href="'/series?id=' + title_group.series.id">{{ title_group.series.name }}</a>
+      <a :href="'/series/' + title_group.series.id">{{ title_group.series.name }}</a>
     </ContentContainer>
     <ContentContainer :container-title="$t('general.tags')">
       <div class="tags">
