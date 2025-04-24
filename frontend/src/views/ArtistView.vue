@@ -45,20 +45,20 @@ import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPrevi
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import ArtistFullHeader from '@/components/artist/ArtistFullHeader.vue'
 import ArtistSlimHeader from '@/components/artist/ArtistSlimHeader.vue'
-import { getArtist } from '@/services/api/artistService'
-import type { components } from '@/api-schema/schema'
+import { getArtist, type Artist, type TitleGroupHierarchyLite } from '@/services/api/artistService'
 
 const route = useRoute()
 const userStore = useUserStore()
 
-const artist = ref<components['schemas']['Artist'] | null>(null)
-const title_groups = ref<components['schemas']['TitleGroupHierarchyLite'][]>([])
-const title_group_preview_mode = ref('table')
+const artist = ref<Artist>()
+const title_groups = ref<TitleGroupHierarchyLite[]>([])
+const title_group_preview_mode = ref<'table' | 'cover-only'>('table')
 
 onMounted(async () => {
-  const artistData = (await getArtist(
-    route.query.id as string,
-  )) as components['schemas']['ArtistAndTitleGroupsLite']
+  const artistData = await getArtist(
+    // TODO: typed routes
+    route.query.id,
+  )
   artist.value = artistData.artist
   title_groups.value = artistData.title_groups
 })
