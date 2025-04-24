@@ -5,7 +5,9 @@ use utoipa::IntoParams;
 use crate::{
     Arcadia, Result,
     models::{
-        title_group::{TitleGroup, TitleGroupHierarchy, TitleGroupInfoLite, UserCreatedTitleGroup},
+        title_group::{
+            TitleGroup, TitleGroupAndAssociatedData, TitleGroupInfoLite, UserCreatedTitleGroup,
+        },
         user::User,
     },
     repositories::title_group_repository::{
@@ -40,7 +42,7 @@ pub struct GetTitleGroupQuery {
     path = "/api/title-group",
     params(GetTitleGroupQuery),
     responses(
-        (status = 200, description = "Successfully got the title_group", body=TitleGroupHierarchy),
+        (status = 200, description = "Successfully got the title_group", body=TitleGroupAndAssociatedData),
     )
 )]
 pub async fn get_title_group(
