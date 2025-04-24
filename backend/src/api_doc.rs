@@ -11,7 +11,7 @@ use crate::{
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
-        title_group::{TitleGroupHierarchy, TitleGroupInfoLite},
+        title_group::{TitleGroupAndAssociatedData, TitleGroupHierarchy, TitleGroupInfoLite},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::{TorrentSearch, TorrentSearchResults},
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
@@ -81,7 +81,8 @@ use crate::{
         ArtistAndTitleGroupsLite,
         TitleGroupHierarchy,
         TitleGroupInfoLite,
-        TorrentSearchResults
+        TorrentSearchResults,
+        TitleGroupAndAssociatedData
     ),)
 )]
 pub struct ApiDoc;
