@@ -289,7 +289,7 @@ import Checkbox from 'primevue/checkbox'
 import FileUpload from 'primevue/fileupload'
 import MultiSelect from 'primevue/multiselect'
 import Message from 'primevue/message'
-import { FormField } from '@primevue/forms'
+import { FormField, type FormResolverOptions } from '@primevue/forms'
 import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
@@ -384,7 +384,7 @@ export default defineComponent({
     }
   },
   methods: {
-    resolver({ values }) {
+    resolver({ values }: FormResolverOptions) {
       const errors = {}
 
       if (values.release_name.length < 5) {

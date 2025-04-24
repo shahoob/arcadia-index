@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordInfo } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordInfo, type ParamValue } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 export interface RouteNamedMap {
@@ -8,8 +8,8 @@ export interface RouteNamedMap {
     { id: string | number },
     { id: number }
   >
-  Series: RouteRecordInfo<'Series', '/series/:id', { id: string | number }, { id: number }>
-  Artist: RouteRecordInfo<'Artist', '/artist/:id', { id: string | number }, { id: number }>
+  Series: RouteRecordInfo<'Series', '/series/:id', { id: string | number }, { id: string }>
+  Artist: RouteRecordInfo<'Artist', '/artist/:id', { id: string | number }, { id: string }>
 }
 
 declare module 'vue-router' {

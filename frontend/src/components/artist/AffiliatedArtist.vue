@@ -22,7 +22,7 @@ import { Image } from 'primevue'
 defineProps<{
   // TODO: type properly
   affiliated_artist: Record<string, any>
-}>();
+}>()
 </script>
 <style scoped>
 .affiliated-artist {

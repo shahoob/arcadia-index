@@ -20,7 +20,7 @@ export const bytesToReadable = (bytes: number): string => {
 
   return `${size.toFixed(2)} ${units[unitIndex]}`
 }
-export const getEditionGroupSlug = (editionGroup) => {
+export const getEditionGroupSlug = (editionGroup: string): string => {
   let slug = ''
 
   if (editionGroup.additional_information?.date_from) {
@@ -50,7 +50,7 @@ export const getEditionGroupSlug = (editionGroup) => {
   slug += editionGroup.distributor ? ' / ' + editionGroup.distributor : ''
   return slug
 }
-export const getFeatures = (contentType) => {
+export const getFeatures = (contentType: string): string[] => {
   if (contentType == 'book' || contentType == 'music') {
     return ['Cue', 'Booklet']
   } else if (contentType == 'tv_show' || contentType == 'movie') {
