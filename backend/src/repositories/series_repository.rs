@@ -34,6 +34,7 @@ pub async fn create_series(
     Ok(created_series)
 }
 
+// TODO: actually only query a TitleGroupHierarchyLite
 pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value> {
     let found_series = sqlx::query!(
         r#"

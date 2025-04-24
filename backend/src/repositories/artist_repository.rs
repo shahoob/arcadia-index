@@ -72,6 +72,7 @@ pub async fn create_artists_affiliation(
     Ok(affiliated_artists)
 }
 
+// TODO: actually only query a TitleGroupHierarchyLite
 pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<Value> {
     // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
     let artist_publications = sqlx::query!(
