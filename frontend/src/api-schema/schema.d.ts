@@ -270,7 +270,7 @@ export interface paths {
         };
         get: operations["download_dottorrent_file"];
         put?: never;
-        post?: never;
+        post: operations["upload_torrent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -718,6 +718,42 @@ export interface components {
             id: number;
             name: string;
         };
+        Torrent: {
+            /** Format: int32 */
+            audio_bitrate?: number | null;
+            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
+            audio_channels?: null | components["schemas"]["AudioChannels"];
+            audio_codec?: null | components["schemas"]["AudioCodec"];
+            container: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            description?: string | null;
+            /** Format: int32 */
+            duration?: number | null;
+            /** Format: int64 */
+            edition_group_id: number;
+            features?: components["schemas"]["Features"][] | null;
+            file_amount_per_type: unknown;
+            file_list: unknown;
+            /** Format: int64 */
+            id: number;
+            languages?: components["schemas"]["Language"][] | null;
+            mediainfo: string;
+            release_group?: string | null;
+            release_name?: string | null;
+            /** Format: int64 */
+            size: number;
+            staff_checked: boolean;
+            subtitle_languages?: components["schemas"]["Language"][] | null;
+            trumpable?: string | null;
+            /** Format: date-time */
+            updated_at: string;
+            uploaded_as_anonymous: boolean;
+            video_codec?: null | components["schemas"]["VideoCodec"];
+            video_resolution?: string | null;
+        };
         TorrentHierarchy: {
             /** Format: int32 */
             audio_bitrate?: number | null;
@@ -839,6 +875,30 @@ export interface components {
         };
         TorrentSearchResults: {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
+        };
+        UploadedTorrent: {
+            /** Format: int32 */
+            audio_bitrate: number;
+            audio_bitrate_sampling: components["schemas"]["AudioBitrateSampling"];
+            audio_channels: string;
+            audio_codec: components["schemas"]["AudioCodec"];
+            container: string;
+            description: string;
+            /** Format: int32 */
+            duration: number;
+            /** Format: int64 */
+            edition_group_id: number;
+            features: string;
+            languages: string;
+            mediainfo: string;
+            release_group: string;
+            release_name: string;
+            subtitle_languages: string;
+            /** Format: binary */
+            torrent_file: string;
+            uploaded_as_anonymous: boolean;
+            video_codec: components["schemas"]["VideoCodec"];
+            video_resolution: string;
         };
         User: {
             /** Format: int64 */
@@ -1494,6 +1554,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    upload_torrent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UploadedTorrent"];
+            };
+        };
+        responses: {
+            /** @description Successfully uploaded the torrent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Torrent"];
+                };
             };
         };
     };
