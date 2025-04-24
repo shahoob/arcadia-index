@@ -209,11 +209,6 @@ pub async fn get_torrent(
     })
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
-pub struct TorrentSearchResults {
-    pub title_groups: Vec<TitleGroupHierarchyLite>,
-}
-
 pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
     let search_results = sqlx::query!(
         r#"

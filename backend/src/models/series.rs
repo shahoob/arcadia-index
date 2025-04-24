@@ -34,3 +34,9 @@ pub struct SeriesAndTitleGroupHierarchyLite {
     pub series: Series,
     pub title_groups: Vec<TitleGroupHierarchyLite>,
 }
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct SeriesLite {
+    pub id: i64,
+    pub name: String,
+}

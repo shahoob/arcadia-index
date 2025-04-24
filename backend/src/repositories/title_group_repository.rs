@@ -151,7 +151,7 @@ pub async fn find_title_group(
 
     Ok(title_group.title_group_data.unwrap())
 }
-pub async fn find_lite_title_group_info(pool: &PgPool, title_group_id: i64) -> Result<Value> {
+pub async fn find_title_group_info_lite(pool: &PgPool, title_group_id: i64) -> Result<Value> {
     let title_group = sqlx::query!(
         r#"SELECT jsonb_build_object(
     'id', tg.id, 'content_type', tg.content_type, 'name', tg.name,

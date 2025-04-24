@@ -2,7 +2,8 @@ use crate::{
     Arcadia, Result,
     handlers::UserId,
     models::artist::{
-        AffiliatedArtist, Artist, ArtistLite, UserCreatedAffiliatedArtist, UserCreatedArtist,
+        AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite,
+        UserCreatedAffiliatedArtist, UserCreatedArtist,
     },
     repositories::artist_repository::{
         create_artist, create_artists_affiliation, find_artist_publications, find_artists_lite,
@@ -56,7 +57,7 @@ pub struct GetArtistPublicationsQuery {
     path = "/api/artist",
     params (GetArtistPublicationsQuery),
     responses(
-        (status = 200, description = "Successfully got the artist's pulications"),
+        (status = 200, description = "Successfully got the artist's pulications", body=ArtistAndTitleGroupsLite),
     )
 )]
 pub async fn get_artist_publications(

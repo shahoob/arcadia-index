@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
+use super::title_group::TitleGroupHierarchyLite;
+
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct Artist {
     pub id: i64,
@@ -102,4 +104,22 @@ pub struct UserCreatedAffiliatedArtist {
     pub artist_id: i64,
     pub roles: Vec<ArtistRole>,
     pub nickname: Option<String>,
+}
+
+#[derive(Debug, Deserialize, ToSchema)]
+pub struct ArtistAndTitleGroupsLite {
+    pub artist: Artist,
+    pub title_groups: Vec<TitleGroupHierarchyLite>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct AffiliatedArtistHierarchy {
+    pub title_group_id: i64,
+    pub artist_id: i64,
+    pub roles: Vec<ArtistRole>,
+    pub nickname: Option<String>,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: NaiveDateTime,
+    pub created_by_id: i64,
+    pub artist: Artist,
 }

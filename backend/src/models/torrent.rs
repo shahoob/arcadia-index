@@ -7,6 +7,8 @@ use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
+use super::{title_group::TitleGroupHierarchyLite, user::UserLite};
+
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_codec_enum")]
 pub enum AudioCodec {
@@ -296,4 +298,44 @@ pub struct TorrentLite {
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct TorrentHierarchy {
+    pub id: i64,
+    pub edition_group_id: i64,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: NaiveDateTime,
+    #[schema(value_type = String, format = DateTime)]
+    pub updated_at: NaiveDateTime,
+    pub created_by_id: i64,
+    pub release_name: Option<String>,
+    pub release_group: Option<String>,
+    pub description: Option<String>,
+    #[schema(value_type = Value)]
+    pub file_amount_per_type: Json<Value>,
+    pub uploaded_as_anonymous: bool,
+    #[schema(value_type = Value)]
+    pub file_list: Json<Value>,
+    pub mediainfo: String,
+    pub trumpable: Option<String>,
+    pub staff_checked: bool,
+    pub languages: Option<Vec<Language>>,
+    pub container: String,
+    pub size: i64,
+    pub duration: Option<i32>,
+    pub audio_codec: Option<AudioCodec>,
+    pub audio_bitrate: Option<i32>,
+    pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
+    pub audio_channels: Option<AudioChannels>,
+    pub video_codec: Option<VideoCodec>,
+    pub features: Option<Vec<Features>>,
+    pub subtitle_languages: Option<Vec<Language>>,
+    pub video_resolution: Option<String>,
+    pub uploader: UserLite,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct TorrentSearchResults {
+    pub title_groups: Vec<TitleGroupHierarchyLite>,
 }
