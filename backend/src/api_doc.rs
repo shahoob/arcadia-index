@@ -13,7 +13,7 @@ use crate::{
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
         title_group::{TitleGroupAndAssociatedData, TitleGroupHierarchy, TitleGroupInfoLite},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
-        torrent::{TorrentSearch, TorrentSearchResults},
+        torrent::{Torrent, TorrentSearch, TorrentSearchResults, UploadedTorrent},
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
@@ -31,6 +31,7 @@ use crate::{
         crate::handlers::artist_handler::add_artist,
         crate::handlers::artist_handler::add_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
+        crate::handlers::torrent_handler::upload_torrent,
         crate::handlers::torrent_handler::find_torrents,
         crate::handlers::torrent_report_handler::add_torrent_report,
         crate::handlers::edition_group_handler::add_edition_group,
@@ -82,7 +83,9 @@ use crate::{
         TitleGroupHierarchy,
         TitleGroupInfoLite,
         TorrentSearchResults,
-        TitleGroupAndAssociatedData
+        TitleGroupAndAssociatedData,
+        UploadedTorrent,
+        Torrent
     ),)
 )]
 pub struct ApiDoc;

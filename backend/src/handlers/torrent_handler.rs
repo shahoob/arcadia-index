@@ -12,12 +12,20 @@ use utoipa::{IntoParams, ToSchema};
 use crate::{
     Arcadia, Result,
     models::{
-        torrent::{TorrentSearch, TorrentSearchResults, UploadedTorrent},
+        torrent::{Torrent, TorrentSearch, TorrentSearchResults, UploadedTorrent},
         user::User,
     },
     repositories::torrent_repository::{create_torrent, get_torrent, search_torrents},
 };
 
+#[utoipa::path(
+    post,
+    path = "/api/torrent",
+    request_body(content = UploadedTorrent, content_type = "multipart/form-data"),
+    responses(
+        (status = 200, description = "Successfully uploaded the torrent", body=Torrent),
+    )
+)]
 pub async fn upload_torrent(
     form: MultipartForm<UploadedTorrent>,
     arc: web::Data<Arcadia>,
