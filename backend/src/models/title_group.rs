@@ -4,7 +4,12 @@ use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
-use super::edition_group::EditionGroupHierachyLite;
+use super::{
+    artist::AffiliatedArtistHierarchy,
+    edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
+    series::SeriesLite,
+    torrent_request::TorrentRequest,
+};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "content_type_enum")]
@@ -142,16 +147,76 @@ pub struct UserCreatedTitleGroup {
     // pub master_group: Option<UserCreatedMasterGroup>,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TitleGroupHierarchyLite {
     pub name: String,
     pub covers: Option<Vec<String>>,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
+    #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
-    pub affiliated_artists: Vec<Json<Value>>,
-    pub editions: Vec<EditionGroupHierachyLite>,
+    // #[schema(value_type = Value)]
+    // pub affiliated_artists: Vec<Json<Value>>,
+    pub edition_groups: Vec<EditionGroupHierarchyLite>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct TitleGroupLite {
+    pub id: i64,
+    pub name: String,
+    pub content_type: ContentType,
+    pub edition_groups: Vec<EditionGroupInfoLite>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct TitleGroupInfoLite {
+    pub id: i64,
+    pub name: String,
+    pub content_type: ContentType,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct TitleGroupHierarchy {
+    pub id: i64,
+    pub master_group_id: Option<i64>,
+    pub name: String,
+    pub name_aliases: Vec<String>,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: NaiveDateTime,
+    #[schema(value_type = String, format = DateTime)]
+    pub updated_at: NaiveDateTime,
+    pub created_by_id: i64,
+    pub description: String,
+    pub platform: Option<Platform>,
+    pub original_language: Option<String>,
+    #[schema(value_type = String, format = DateTime)]
+    pub original_release_date: NaiveDateTime,
+    pub tagline: Option<String>,
+    pub country_from: Option<String>,
+    pub covers: Option<Vec<String>>,
+    pub external_links: Vec<String>,
+    #[schema(value_type = Value)]
+    pub embedded_links: Option<Json<Value>>,
+    pub category: Option<TitleGroupCategory>,
+    pub content_type: ContentType,
+    pub tags: Vec<String>,
+    #[schema(value_type = Value)]
+    pub public_ratings: Option<Json<Value>>,
+    pub series_id: Option<i64>,
+    pub screenshots: Vec<String>,
+    pub edition_groups: Vec<EditionGroupHierarchy>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct TitleGroupAndAssociatedData {
+    pub title_group: TitleGroupHierarchy,
+    pub series: SeriesLite,
+    pub affiliated_artists: AffiliatedArtistHierarchy,
+    pub title_group_comments: Vec<TitleGroupHierarchy>,
+    pub torrent_requests: Vec<TorrentRequest>,
+    pub is_subscribed: bool,
+    pub in_same_master_group: Vec<TitleGroupLite>,
 }
 
 pub fn create_default_title_group() -> UserCreatedTitleGroup {

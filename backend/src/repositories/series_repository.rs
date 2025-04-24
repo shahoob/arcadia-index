@@ -75,5 +75,6 @@ pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value> {
     .await
     .map_err(|_| Error::SeriesWithIdNotFound(*series_id))?;
 
+    // Ok(serde_json::from_value(found_series.series_and_groups.unwrap()).unwrap())
     Ok(found_series.series_and_groups.unwrap())
 }

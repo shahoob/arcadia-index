@@ -1,16 +1,14 @@
 use crate::{
     Error, Result,
     models::{
-        title_group::TitleGroupHierarchyLite,
         torrent::{Features, Torrent, TorrentSearch, UploadedTorrent},
         user::User,
     },
 };
 
 use bip_metainfo::{Info, Metainfo, MetainfoBuilder, PieceLength};
-use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-use sqlx::{PgPool, prelude::FromRow};
+use sqlx::PgPool;
 use std::str::FromStr;
 
 use super::notification_repository::notify_users;
@@ -207,11 +205,6 @@ pub async fn get_torrent(
         title: torrent.release_name,
         file_contents: metainfo,
     })
-}
-
-#[derive(Debug, Serialize, Deserialize, FromRow)]
-pub struct TorrentSearchResults {
-    pub title_groups: Vec<TitleGroupHierarchyLite>,
 }
 
 pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
