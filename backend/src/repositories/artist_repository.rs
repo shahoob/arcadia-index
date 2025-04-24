@@ -72,44 +72,34 @@ pub async fn create_artists_affiliation(
     Ok(affiliated_artists)
 }
 
-// TODO: actually only query a TitleGroupHierarchyLite
 pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<Value> {
-    // TODO: only select the required info about the torrents (mediainfo etc is not necessary)
     let artist_publications = sqlx::query!(
         r#"
             WITH artist_group_data AS (
                 SELECT
                     aa.artist_id,
-                    jsonb_agg(
-                        to_jsonb(tg) || jsonb_build_object(
-                            'edition_groups', (
-                                SELECT COALESCE(jsonb_agg(
-                                    to_jsonb(eg) || jsonb_build_object(
-                                        'torrents', (
-                                            SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
-                                            FROM torrents_and_reports t
-                                            WHERE t.edition_group_id = eg.id
-                                        )
-                                    )
-                                ), '[]'::jsonb)
-                                FROM edition_groups eg
-                                WHERE eg.title_group_id = tg.id
-                            )
-                        )
-                    ) AS title_groups
-                FROM affiliated_artists aa
-                JOIN title_groups tg ON aa.title_group_id = tg.id
-                WHERE aa.artist_id = $1
-                GROUP BY aa.artist_id
+                    COALESCE(jsonb_agg(tgd.title_group_data), '[]'::jsonb) AS title_groups
+                FROM
+                    affiliated_artists aa
+                JOIN
+                    title_groups_and_edition_group_and_torrents_lite tgd ON aa.title_group_id = tgd.title_group_id
+                WHERE
+                    aa.artist_id = $1
+                GROUP BY
+                    aa.artist_id
             ),
             artist_torrent_requests AS (
                 SELECT
                     aa.artist_id,
                     COALESCE(jsonb_agg(to_jsonb(tr)), '[]'::jsonb) AS torrent_requests
-                FROM affiliated_artists aa
-                JOIN torrent_requests tr ON aa.title_group_id = tr.title_group_id
-                WHERE aa.artist_id = $1
-                GROUP BY aa.artist_id
+                FROM
+                    affiliated_artists aa
+                JOIN
+                    torrent_requests tr ON aa.title_group_id = tr.title_group_id
+                WHERE
+                    aa.artist_id = $1
+                GROUP BY
+                    aa.artist_id
             )
             SELECT jsonb_build_object(
                 'artist', to_jsonb(a),
