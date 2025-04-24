@@ -1,5 +1,22 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordInfo } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+
+export interface RouteNamedMap {
+  TitleGroup: RouteRecordInfo<
+    'TitleGroup',
+    '/title-group/:id',
+    { id: string | number },
+    { id: number }
+  >
+  Series: RouteRecordInfo<'Series', '/series/:id', { id: string | number }, { id: number }>
+  Artist: RouteRecordInfo<'Artist', '/artist/:id', { id: string | number }, { id: number }>
+}
+
+declare module 'vue-router' {
+  interface TypesConfig {
+    RouteNamedMap: RouteNamedMap
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +37,7 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/title-group',
+      path: '/title-group/:id',
       name: 'TitleGroup',
       component: () => import('../views/TitleGroupView.vue'),
     },
@@ -30,12 +47,12 @@ const router = createRouter({
       component: () => import('../views/TorrentSearchView.vue'),
     },
     {
-      path: '/series',
+      path: '/series/:id',
       name: 'Series',
       component: () => import('../views/SeriesView.vue'),
     },
     {
-      path: '/artist',
+      path: '/artist/:id',
       name: 'Artist',
       component: () => import('../views/ArtistView.vue'),
     },

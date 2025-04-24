@@ -17,7 +17,7 @@
       <template #body="slotProps">
         <a
           :href="
-            preview ? `/title-group?id=${title_group.id}&torrentId=${slotProps.data.id}` : null
+            preview ? `/title-group/${title_group.id}&torrentId=${slotProps.data.id}` : null
           "
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"

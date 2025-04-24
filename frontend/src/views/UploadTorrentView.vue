@@ -73,7 +73,7 @@ export default {
       this.uploadStep = 3
     },
     torrentDone(torrent) {
-      this.$router.push('/title-group?id=' + useTitleGroupStore().id + '&torrentId=' + torrent.id)
+      this.$router.push('/title-group/' + useTitleGroupStore().id + '&torrentId=' + torrent.id)
     },
   },
 }
