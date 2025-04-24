@@ -306,6 +306,8 @@ CREATE TYPE language_enum AS ENUM(
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
+    upload_factor FLOAT DEFAULT 1.0,
+    download_factor FLOAT DEFAULT 1.0,
     edition_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -521,6 +523,8 @@ CREATE TABLE collage_entity_entry (
 CREATE VIEW torrents_and_reports AS
 SELECT
     t.id,
+    t.upload_factor,
+    t.download_factor,
     t.edition_group_id,
     t.created_at,
     t.updated_at,
@@ -588,6 +592,8 @@ SELECT
                         SELECT jsonb_agg(
                             jsonb_build_object(
                                 'id', t.id,
+                                'upload_factor', t.upload_factor,
+                                'download_factor', t.download_factor,
                                 'edition_group_id', t.edition_group_id,
                                 'created_at', t.created_at,
                                 'release_name', t.release_name,

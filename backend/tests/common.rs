@@ -25,6 +25,8 @@ pub async fn create_test_app(
         frontend_url: Url::parse("http://testurl").unwrap(),
         tracker_url: Url::parse("http://testurl").unwrap(),
         allowed_torrent_clients: ["lt0F01".as_bytes().to_vec()].into_iter().collect(),
+        global_download_factor: 1.0,
+        global_upload_factor: 1.0,
     };
 
     // TODO: CORS?
