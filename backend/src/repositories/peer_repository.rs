@@ -24,6 +24,7 @@ pub async fn remove_peer(
     .expect("failed removing peer from table");
 }
 
+// returns uploaded/downloaded before the update
 pub async fn insert_or_update_peer(
     pool: &PgPool,
     torrent_id: &i64,
@@ -31,13 +32,14 @@ pub async fn insert_or_update_peer(
     ip: &IpNetwork,
     port: u16,
     user_id: &i64,
-) {
-    sqlx::query!(
+    uploaded: i64,
+    downloaded: i64,
+) -> (i64, i64) {
+    let existing = sqlx::query!(
         r#"
-          INSERT INTO peers(torrent_id, peer_id, ip, port, user_id) VALUES ($1, $2, $3, $4, $5)
-          ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
-          SET
-            last_seen_at = CURRENT_TIMESTAMP
+        SELECT uploaded, downloaded
+        FROM peers
+        WHERE torrent_id = $1 AND peer_id = $2 AND ip = $3 AND port = $4 AND user_id = $5
         "#,
         torrent_id,
         peer_id,
@@ -45,9 +47,36 @@ pub async fn insert_or_update_peer(
         port as i32,
         user_id
     )
+    .fetch_optional(pool)
+    .await
+    .expect("failed");
+
+    sqlx::query!(
+        r#"
+        INSERT INTO peers(torrent_id, peer_id, ip, port, user_id, uploaded, downloaded)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
+        SET
+            last_seen_at = CURRENT_TIMESTAMP,
+            uploaded = $6,
+            downloaded = $7
+        "#,
+        torrent_id,
+        peer_id,
+        ip,
+        port as i32,
+        user_id,
+        uploaded,
+        downloaded
+    )
     .execute(pool)
     .await
     .expect("failed");
+
+    match existing {
+        Some(row) => (row.uploaded, row.downloaded),
+        None => (0, 0),
+    }
 }
 
 pub async fn find_torrent_peers(

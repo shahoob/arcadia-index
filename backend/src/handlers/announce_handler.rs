@@ -110,13 +110,15 @@ async fn handle_announce(
         todo!();
     }
 
-    insert_or_update_peer(
+    let (old_uploaded, old_downloaded) = insert_or_update_peer(
         &arc.pool,
         &torrent.id,
         &ann.peer_id,
         &ip,
         ann.port,
         &current_user.id,
+        ann.uploaded.unwrap_or(0) as i64,
+        ann.downloaded.unwrap_or(0) as i64,
     )
     .await;
 
@@ -124,23 +126,23 @@ async fn handle_announce(
 
     // assuming that the client either sends both downloaded/uploaded
     // or none of them
-    if ann.uploaded.is_some() && ann.downloaded.is_some() {
-        let upload_to_credit = ann.uploaded.map_or(0, |uploaded| {
-            let factor = if arc.global_upload_factor != 1.0 {
-                arc.global_upload_factor
-            } else {
-                torrent.upload_factor
-            };
-            (uploaded as f64 * factor as f64).ceil() as i64
-        });
-        let download_to_credit = ann.downloaded.map_or(0, |downloaded| {
-            let factor = if arc.global_download_factor != 1.0 {
-                arc.global_download_factor
-            } else {
-                torrent.download_factor
-            };
-            (downloaded as f64 * factor as f64).ceil() as i64
-        });
+    if let (Some(uploaded), Some(downloaded)) = (ann.uploaded, ann.downloaded) {
+        let factor = if arc.global_upload_factor != 1.0 {
+            arc.global_upload_factor
+        } else {
+            torrent.upload_factor
+        };
+        let upload_to_credit =
+            ((uploaded as i64 - old_uploaded) as f64 * factor as f64).ceil() as i64;
+
+        let factor = if arc.global_download_factor != 1.0 {
+            arc.global_download_factor
+        } else {
+            torrent.download_factor
+        };
+        let download_to_credit =
+            ((downloaded as i64 - old_downloaded) as f64 * factor as f64).ceil() as i64;
+
         credit_user_upload_download(
             &arc.pool,
             upload_to_credit,

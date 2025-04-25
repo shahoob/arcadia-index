@@ -187,13 +187,9 @@ async fn test_announce_known_torrent_with_peers(pool: PgPool) {
         .uri("/api/me")
         .to_request();
 
-    let resp = test::call_service(&service, req).await;
+    let body = common::call_and_read_body_json::<Value, _>(&service, req).await;
 
-    let body = test::read_body(resp).await;
-
-    let json_body: Value = serde_json::from_slice(&body).unwrap();
-
-    assert_eq!(json_body["user"]["uploaded"].as_u64().unwrap(), 42);
+    assert_eq!(body["user"]["uploaded"].as_u64().unwrap(), 42);
     // should be 44 because users start with 1 byte uploaded at account creation
-    assert_eq!(json_body["user"]["downloaded"].as_u64().unwrap(), 44);
+    assert_eq!(body["user"]["downloaded"].as_u64().unwrap(), 44);
 }
