@@ -8,8 +8,10 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description TEXT NOT NULL DEFAULT '',
     uploaded BIGINT NOT NULL DEFAULT 0,
+    real_uploaded BIGINT NOT NULL DEFAULT 0,
     -- 1 byte downloaded
     downloaded BIGINT NOT NULL DEFAULT 1,
+    real_downloaded BIGINT NOT NULL DEFAULT 1,
     ratio FLOAT NOT NULL DEFAULT 0.0,
     required_ratio FLOAT NOT NULL DEFAULT 0.0,
     last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -441,8 +443,8 @@ CREATE TABLE peers (
     port INTEGER NOT NULL,
     first_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    uploaded BIGINT NOT NULL DEFAULT 0,
-    downloaded BIGINT NOT NULL DEFAULT 0,
+    real_uploaded BIGINT NOT NULL DEFAULT 0,
+    real_downloaded BIGINT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id),
 

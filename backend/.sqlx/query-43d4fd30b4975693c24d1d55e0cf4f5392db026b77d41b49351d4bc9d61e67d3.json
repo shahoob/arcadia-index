@@ -50,126 +50,136 @@
       },
       {
         "ordinal": 9,
-        "name": "downloaded",
+        "name": "real_uploaded",
         "type_info": "Int8"
       },
       {
         "ordinal": 10,
+        "name": "downloaded",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 11,
+        "name": "real_downloaded",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 12,
         "name": "ratio",
         "type_info": "Float8"
       },
       {
-        "ordinal": 11,
+        "ordinal": 13,
         "name": "required_ratio",
         "type_info": "Float8"
       },
       {
-        "ordinal": 12,
+        "ordinal": 14,
         "name": "last_seen",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 13,
+        "ordinal": 15,
         "name": "class",
         "type_info": "Varchar"
       },
       {
-        "ordinal": 14,
+        "ordinal": 16,
         "name": "forum_posts",
         "type_info": "Int4"
       },
       {
-        "ordinal": 15,
+        "ordinal": 17,
         "name": "forum_threads",
         "type_info": "Int4"
       },
       {
-        "ordinal": 16,
+        "ordinal": 18,
         "name": "group_comments",
         "type_info": "Int4"
       },
       {
-        "ordinal": 17,
+        "ordinal": 19,
         "name": "torrent_comments",
         "type_info": "Int4"
       },
       {
-        "ordinal": 18,
+        "ordinal": 20,
         "name": "request_comments",
         "type_info": "Int4"
       },
       {
-        "ordinal": 19,
+        "ordinal": 21,
         "name": "artist_comments",
         "type_info": "Int8"
       },
       {
-        "ordinal": 20,
+        "ordinal": 22,
         "name": "seeding",
         "type_info": "Int4"
       },
       {
-        "ordinal": 21,
+        "ordinal": 23,
         "name": "leeching",
         "type_info": "Int4"
       },
       {
-        "ordinal": 22,
+        "ordinal": 24,
         "name": "snatched",
         "type_info": "Int4"
       },
       {
-        "ordinal": 23,
+        "ordinal": 25,
         "name": "seeding_size",
         "type_info": "Int8"
       },
       {
-        "ordinal": 24,
+        "ordinal": 26,
         "name": "requests_filled",
         "type_info": "Int8"
       },
       {
-        "ordinal": 25,
+        "ordinal": 27,
         "name": "collages_started",
         "type_info": "Int8"
       },
       {
-        "ordinal": 26,
+        "ordinal": 28,
         "name": "requests_voted",
         "type_info": "Int8"
       },
       {
-        "ordinal": 27,
+        "ordinal": 29,
         "name": "average_seeding_time",
         "type_info": "Int8"
       },
       {
-        "ordinal": 28,
+        "ordinal": 30,
         "name": "invited",
         "type_info": "Int8"
       },
       {
-        "ordinal": 29,
+        "ordinal": 31,
         "name": "invitations",
         "type_info": "Int2"
       },
       {
-        "ordinal": 30,
+        "ordinal": 32,
         "name": "bonus_points",
         "type_info": "Int8"
       },
       {
-        "ordinal": 31,
+        "ordinal": 33,
         "name": "settings",
         "type_info": "Jsonb"
       },
       {
-        "ordinal": 32,
+        "ordinal": 34,
         "name": "passkey_upper",
         "type_info": "Int8"
       },
       {
-        "ordinal": 33,
+        "ordinal": 35,
         "name": "passkey_lower",
         "type_info": "Int8"
       }
@@ -189,6 +199,8 @@
       false,
       false,
       true,
+      false,
+      false,
       false,
       false,
       false,
