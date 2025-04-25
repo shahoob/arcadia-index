@@ -37,7 +37,7 @@ pub async fn insert_or_update_peer(
 ) -> (i64, i64) {
     let existing = sqlx::query!(
         r#"
-        SELECT uploaded, downloaded
+        SELECT real_uploaded, real_downloaded
         FROM peers
         WHERE torrent_id = $1 AND peer_id = $2 AND ip = $3 AND port = $4 AND user_id = $5
         "#,
@@ -53,13 +53,13 @@ pub async fn insert_or_update_peer(
 
     sqlx::query!(
         r#"
-        INSERT INTO peers(torrent_id, peer_id, ip, port, user_id, uploaded, downloaded)
+        INSERT INTO peers(torrent_id, peer_id, ip, port, user_id, real_uploaded, real_downloaded)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
         SET
             last_seen_at = CURRENT_TIMESTAMP,
-            uploaded = $6,
-            downloaded = $7
+            real_uploaded = $6,
+            real_downloaded = $7
         "#,
         torrent_id,
         peer_id,
@@ -74,7 +74,7 @@ pub async fn insert_or_update_peer(
     .expect("failed");
 
     match existing {
-        Some(row) => (row.uploaded, row.downloaded),
+        Some(row) => (row.real_uploaded, row.real_downloaded),
         None => (0, 0),
     }
 }

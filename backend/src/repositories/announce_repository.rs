@@ -54,17 +54,23 @@ pub async fn credit_user_upload_download(
     pool: &PgPool,
     uploaded: i64,
     downloaded: i64,
+    real_uploaded: i64,
+    real_downloaded: i64,
     user_id: i64,
 ) {
     sqlx::query!(
         r#"
         UPDATE users
         SET uploaded = uploaded + $1,
-            downloaded = downloaded + $2
-        WHERE id = $3
+            downloaded = downloaded + $2,
+            real_uploaded = real_uploaded + $3,
+            real_downloaded = real_downloaded + $4
+        WHERE id = $5
         "#,
         uploaded,
         downloaded,
+        real_uploaded,
+        real_downloaded,
         user_id
     )
     .execute(pool)

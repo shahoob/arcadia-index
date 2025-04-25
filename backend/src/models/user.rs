@@ -44,7 +44,9 @@ pub struct User {
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
+    pub real_uploaded: i64,
     pub downloaded: i64,
+    pub real_downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
@@ -102,7 +104,9 @@ pub struct PublicUser {
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
+    pub real_uploaded: i64,
     pub downloaded: i64,
+    pub real_downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
