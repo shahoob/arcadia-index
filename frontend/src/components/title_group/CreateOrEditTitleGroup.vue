@@ -16,14 +16,14 @@
           name="master_group_id"
           :format="false"
         />
-        <label for="master_group_id">Master group id</label>
+        <label for="master_group_id">{{ $t('master_group.master_group_id') }}</label>
       </FloatLabel>
     </div>
     <div class="line">
       <div class="name">
         <FloatLabel>
           <InputText size="small" v-model="titleGroupForm.name" name="name" />
-          <label for="name">Name</label>
+          <label for="name">{{ $t('general.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
@@ -39,7 +39,7 @@
             name="category"
             class="select"
           />
-          <label for="category">Category</label>
+          <label for="category">{{ $t('general.category') }}</label>
         </FloatLabel>
         <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">
           {{ $form.category.error?.message }}
@@ -48,7 +48,7 @@
       <div class="tags">
         <FloatLabel>
           <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
-          <label for="tags">Tags (comma separated)</label>
+          <label for="tags">{{ $t('general.tags_comma_separated') }}</label>
         </FloatLabel>
         <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
           {{ $form.tags.error?.message }}
@@ -64,7 +64,7 @@
           autoResize
           rows="5"
         />
-        <label for="description">Description</label>
+        <label for="description">{{ $t('general.description') }}</label>
       </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
@@ -82,7 +82,7 @@
             name="platform"
             filter
           />
-          <label for="platform">Platform</label>
+          <label for="platform">{{ $t('title_group.platform') }}</label>
         </FloatLabel>
         <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
           {{ $form.platform.error?.message }}
@@ -99,7 +99,7 @@
             name="original_language"
             filter
           />
-          <label for="original_language">Original language</label>
+          <label for="original_language">{{ $t('general.original_language') }}</label>
         </FloatLabel>
         <Message
           v-if="$form.original_language?.invalid"
@@ -121,7 +121,7 @@
             name="country_from"
             filter
           />
-          <label for="country_from">Country from</label>
+          <label for="country_from">{{ $t('general.country') }}</label>
         </FloatLabel>
         <Message v-if="$form.country_from?.invalid" severity="error" size="small" variant="simple">
           {{ $form.country_from.error?.message }}
@@ -129,7 +129,9 @@
       </div>
     </div>
     <div class="original-release-date">
-      <label for="original_release_date" class="block">Original release date</label>
+      <label for="original_release_date" class="block">{{
+        $t('title_group.original_release_date')
+      }}</label>
       <DatePicker
         v-model="titleGroupForm.original_release_date"
         showIcon
@@ -148,7 +150,7 @@
       </Message>
     </div>
     <div class="covers input-list">
-      <label>Covers</label>
+      <label>{{ $t('general.cover', 2) }}</label>
       <div v-for="(link, index) in titleGroupForm.covers" :key="index">
         <InputText size="small" v-model="titleGroupForm.covers[index]" :name="`covers[${index}]`" />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
@@ -169,7 +171,7 @@
       </div>
     </div>
     <div class="screenshots input-list" v-if="content_type == 'software'">
-      <label>Screenshots</label>
+      <label>{{ $t('general.screenshots') }}</label>
       <div v-for="(link, index) in titleGroupForm.screenshots" :key="index">
         <InputText
           size="small"
@@ -194,7 +196,7 @@
       </div>
     </div>
     <div class="external-links input-list">
-      <label>External Links</label>
+      <label>{{ $t('general.external_link', 2) }}</label>
       <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
         <InputText
           size="small"
@@ -231,6 +233,7 @@
   </Form>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Form } from '@primevue/forms'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
@@ -241,7 +244,7 @@ import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
 
-export default {
+export default defineComponent({
   components: {
     Form,
     DatePicker,
@@ -292,36 +295,36 @@ export default {
       const errors = {}
 
       if (values.name.length < 5) {
-        errors.name = [{ message: 'Write more than 5 characters' }]
+        errors.name = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
       }
       if (values.category == '') {
-        errors.category = [{ message: 'Select a category' }]
+        errors.category = [{ message: this.$t('error.select_category') }]
       }
       //TODO config: the minimum amount of tags required should be taken from the global config file
       if (values.tags == '' || values.tags.split(',').length - 1 < 1) {
-        errors.tags = [{ message: 'Enter at least 2 tags' }]
+        errors.tags = [{ message: this.$t('error.enter_at_least_x_tags', [2]) }]
       }
       if (values.description.length < 10) {
-        errors.description = [{ message: 'Write more than 10 characters' }]
+        errors.description = [{ message: this.$t('error.write_more_than_x_chars', [10]) }]
       }
       if (values.platform == '') {
-        errors.platform = [{ message: 'Select a platform' }]
+        errors.platform = [{ message: this.$t('error.select_platform') }]
       }
       if (this.content_type !== 'music' && values.original_language == '') {
-        errors.original_language = [{ message: 'Select a language' }]
+        errors.original_language = [{ message: this.$t('error.select_language') }]
       }
       if (values.country_from == '') {
-        errors.country_from = [{ message: 'Select a country' }]
+        errors.country_from = [{ message: this.$t('error.select_country') }]
       }
       if (!values.original_release_date || values.original_release_date == '') {
-        errors.original_release_date = [{ message: 'Select a date' }]
+        errors.original_release_date = [{ message: this.$t('error.select_date') }]
       }
       values.external_links.forEach((link, index) => {
         if (!this.$isValidUrl(link)) {
           if (!('external_links' in errors)) {
             errors.external_links = []
           }
-          errors.external_links[index] = [{ message: `Not a valid URL.` }]
+          errors.external_links[index] = [{ message: this.$t('error.invalid_url') }]
         }
       })
       values.covers.forEach((link, index) => {
@@ -329,7 +332,7 @@ export default {
           if (!('covers' in errors)) {
             errors.covers = []
           }
-          errors.covers[index] = [{ message: `Not a valid URL.` }]
+          errors.covers[index] = [{ message: this.$t('error.invalid_url') }]
         }
       })
       if (values.screenshots) {
@@ -338,7 +341,7 @@ export default {
             if (!('screenshots' in errors)) {
               errors.screenshots = []
             }
-            errors.screenshots[index] = [{ message: `Not a valid URL.` }]
+            errors.screenshots[index] = [{ message: this.$t('error.invalid_url') }]
           }
         })
       }
@@ -376,7 +379,7 @@ export default {
       this.titleGroupForm = this.initialTitleGroupForm
     }
   },
-}
+})
 </script>
 <style scoped>
 .description {

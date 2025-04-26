@@ -1,4 +1,4 @@
-# Arcadia-client
+# arcadia-frontend
 
 This is the client (frontend) of the Arcadia project.
 
@@ -9,4 +9,3 @@ This is the client (frontend) of the Arcadia project.
 </p>
 
 For contributions see [CONTRIBUTING.md](CONTRIBUTING.md)
-

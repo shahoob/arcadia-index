@@ -1,9 +1,12 @@
+use std::collections::HashSet;
+
 use reqwest::Url;
 pub mod api_doc;
 pub mod handlers;
 pub mod models;
 pub mod repositories;
 pub mod routes;
+pub mod services;
 pub mod tracker;
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -18,6 +21,7 @@ pub struct Arcadia {
     pub tracker_name: String,
     pub frontend_url: Url,
     pub tracker_url: Url,
+    pub allowed_torrent_clients: HashSet<Vec<u8>>,
 }
 
 impl Arcadia {

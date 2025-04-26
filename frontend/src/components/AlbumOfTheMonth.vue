@@ -10,11 +10,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import Card from 'primevue/card'
 
-export default {
+export default defineComponent({
   components: { Card },
-}
+})
 </script>
 
 <style scoped>

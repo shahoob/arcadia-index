@@ -2,22 +2,43 @@
   <div id="search-bars">
     <InputText
       type="text"
-      placeholder="Torrents"
+      :placeholder="$t('torrent.torrent', 2)"
       v-model="searchForm.torrents"
       size="small"
       @keyup.enter="$router.push(`/torrents?title_group_name=${searchForm.torrents}`)"
     />
-    <InputText type="text" placeholder="Artists" v-model="searchForm.artists" size="small" />
-    <InputText type="text" placeholder="Series" v-model="searchForm.series" size="small" />
-    <InputText type="text" placeholder="Forums" v-model="searchForm.forums" size="small" />
-    <InputText type="text" placeholder="Users" v-model="searchForm.users" size="small" />
+    <InputText
+      type="text"
+      :placeholder="$t('artist.artist', 2)"
+      v-model="searchForm.artists"
+      size="small"
+    />
+    <InputText
+      type="text"
+      :placeholder="$t('series.series')"
+      v-model="searchForm.series"
+      size="small"
+    />
+    <InputText
+      type="text"
+      :placeholder="$t('forum.forum', 2)"
+      v-model="searchForm.forums"
+      size="small"
+    />
+    <InputText
+      type="text"
+      :placeholder="$t('user.user', 2)"
+      v-model="searchForm.users"
+      size="small"
+    />
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 
-export default {
+export default defineComponent({
   components: { InputText },
   data() {
     return {
@@ -32,7 +53,7 @@ export default {
     }
   },
   methods: {},
-}
+})
 </script>
 
 <style scoped>

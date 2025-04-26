@@ -21,12 +21,12 @@
       <div class="textual-information">
         <div class="title">
           {{ title_group.name }}
-          <span class="title-metadata"
-            >({{ title_group.original_release_date.substring(0, 4) }})</span
-          >
+          <span class="title-metadata">
+            ({{ title_group.original_release_date.substring(0, 4) }})
+          </span>
         </div>
         <div class="information-line">
-          <span class="item-title">Tags:</span>
+          <span class="item-title">{{ $t('general.tags') }}:</span>
           <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
             {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
           </div>
@@ -35,21 +35,21 @@
           class="information-line"
           v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
         >
-          <span class="item-title">Aliases:</span>
+          <span class="item-title">{{ $t('general.alias', 2) }}:</span>
           <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
             {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
           </div>
         </div>
         <div class="information-line">
-          <span class="item-title">Original language:</span>
+          <span class="item-title">{{ $t('general.original_language') }}:</span>
           {{ title_group.original_language }}
         </div>
         <div class="information-line">
-          <span class="item-title">Country from:</span>
+          <span class="item-title">{{ $t('general.country') }}:</span>
           {{ title_group.country_from }}
         </div>
         <div v-if="title_group.series.id" class="information-line series">
-          <span class="item-title">Series:</span>
+          <span class="item-title">{{ $t('general.series') }}:</span>
           <a :href="'/series?id=' + title_group.series.id">{{ title_group.series.name }}</a>
         </div>
         <div class="information-line link-logos">
@@ -71,6 +71,7 @@
   </ContentContainer>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 
 import { Galleria } from 'primevue'
@@ -78,7 +79,7 @@ import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 
-export default {
+export default defineComponent({
   components: {
     ContentContainer,
     Galleria,
@@ -89,7 +90,7 @@ export default {
   props: {
     title_group: {},
   },
-}
+})
 </script>
 <style scoped>
 #title-group-header {

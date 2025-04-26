@@ -3,9 +3,11 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
-    link: {},
+    link: { type: String, required: true },
   },
   methods: {
     getLinkLogo() {
@@ -35,7 +37,7 @@ export default {
       }
     },
   },
-}
+})
 </script>
 <style scoped>
 img {

@@ -1,30 +1,43 @@
+import type { components } from '@/api-schema/schema'
 import api from './api.ts'
 
-export const getTitleGroup = async (id: string | number) => {
+export type TitleGroupAndAssociatedData = components['schemas']['TitleGroupAndAssociatedData']
+
+export const getTitleGroup = async (id: number): Promise<TitleGroupAndAssociatedData> => {
   try {
-    return (await api.get('/title-group?id=' + id)).data
+    return (await api.get<TitleGroupAndAssociatedData>('/title-group?id=' + id)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error
   }
 }
-export const getTitleGroupLite = async (id: string | number) => {
+
+export type TitleGroupInfoLite = components['schemas']['TitleGroupInfoLite']
+
+export const getTitleGroupLite = async (id: number): Promise<TitleGroupInfoLite> => {
   try {
-    return (await api.get('/title-group/lite?id=' + id)).data
+    return (await api.get<TitleGroupInfoLite>('/title-group/lite?id=' + id)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error
   }
 }
-export const createTitleGroup = async (titleGroup: object) => {
+
+export type UserCreatedTitleGroup = components['schemas']['UserCreatedTitleGroup']
+
+export const createTitleGroup = async (titleGroup: UserCreatedTitleGroup) => {
   try {
+    titleGroup.screenshots = titleGroup.screenshots.filter((screenshot) => screenshot.trim() !== '')
     return (await api.post('/title-group', titleGroup)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error
   }
 }
-export const createEditionGroup = async (editionGroup: object) => {
+
+export type UserCreatedEditionGroup = components['schemas']['UserCreatedEditionGroup']
+
+export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) => {
   try {
     editionGroup.additional_information = Object.fromEntries(
       Object.entries(editionGroup.additional_information).filter(
@@ -40,6 +53,9 @@ export const createEditionGroup = async (editionGroup: object) => {
     throw error
   }
 }
+
+// TODO: type uploadTorrent.
+
 export const uploadTorrent = async (torrentForm: object) => {
   try {
     const formData = new FormData()
@@ -60,7 +76,8 @@ export const uploadTorrent = async (torrentForm: object) => {
     throw error
   }
 }
-export const downloadTorrent = async (torrentId: number | string) => {
+
+export const downloadTorrent = async (torrentId: number) => {
   try {
     const response = await api.get('/torrent?id=' + torrentId, {
       responseType: 'blob',
@@ -80,7 +97,10 @@ export const downloadTorrent = async (torrentId: number | string) => {
     throw error
   }
 }
-export const searchTorrents = async (searchOptions: object) => {
+
+export type TorrentSearch = components['schemas']['TorrentSearch']
+
+export const searchTorrents = async (searchOptions: TorrentSearch) => {
   try {
     return (await api.post('/search/torrent', searchOptions)).data
   } catch (error) {
@@ -88,7 +108,10 @@ export const searchTorrents = async (searchOptions: object) => {
     throw error
   }
 }
-export const reportTorrent = async (torrentReport) => {
+
+export type UserCreatedTorrentReport = components['schemas']['UserCreatedTorrentReport']
+
+export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => {
   try {
     return (await api.post('/report/torrent', torrentReport)).data
   } catch (error) {

@@ -29,10 +29,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { Button } from 'primevue'
 
-export default {
+export default defineComponent({
   components: { Button },
   data() {
     return {
@@ -47,7 +48,7 @@ export default {
   created() {
     this.user = useUserStore()
   },
-}
+})
 </script>
 
 <style scoped>

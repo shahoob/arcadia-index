@@ -13,7 +13,7 @@
   >
     <Column expander style="width: 1em" v-if="!preview" />
     <Column style="width: 1em" v-else />
-    <Column header="Properties" style="min-width: 300px">
+    <Column :header="$t('torrent.properties')" style="min-width: 300px">
       <template #body="slotProps">
         <a
           :href="
@@ -56,7 +56,7 @@
         </a>
       </template>
     </Column>
-    <Column header="Uploaded">
+    <Column :header="$t('general.uploaded')">
       <template #body="slotProps">
         {{ $timeAgo(slotProps.data.created_at) }}
       </template>
@@ -64,33 +64,39 @@
     <Column header="">
       <template #body="slotProps">
         <i
-          v-tooltip.top="'Download'"
+          v-tooltip.top="$t('torrent.download')"
           class="action pi pi-download"
           @click="downloadTorrent(slotProps.data.id)"
         />
         <i
-          v-tooltip.top="'Report'"
+          v-tooltip.top="$t('general.report')"
           class="action pi pi-flag"
           @click="reportTorrent(slotProps.data.id)"
         />
-        <i v-tooltip.top="'Copy permalink'" class="action pi pi-link" />
-        <i v-tooltip.top="'Edit'" class="action pi pi-pen-to-square" />
+        <i v-tooltip.top="$t('torrent.copy_permalink')" class="action pi pi-link" />
+        <i v-tooltip.top="$t('general.edit')" class="action pi pi-pen-to-square" />
       </template>
     </Column>
-    <Column header="Size">
+    <Column :header="$t('torrent.size')">
       <template #body="slotProps"> {{ $bytesToReadable(slotProps.data.size) }} </template>
     </Column>
     <!-- TODO: replace with real data from the tracker -->
     <Column style="width: 2.5em">
-      <template #header><i class="pi pi-replay" v-tooltip.top="'Completed'" /></template>
+      <template #header
+        ><i class="pi pi-replay" v-tooltip.top="$t('torrent.completed')"
+      /></template>
       <template #body>10</template>
     </Column>
     <Column style="width: 2.5em">
-      <template #header><i class="pi pi-arrow-up" v-tooltip.top="'Seeders'" /></template>
+      <template #header
+        ><i class="pi pi-arrow-up" v-tooltip.top="$t('torrent.seeders')"
+      /></template>
       <template #body><span style="color: green">5</span></template>
     </Column>
     <Column style="width: 2.5em">
-      <template #header><i class="pi pi-arrow-down" v-tooltip.top="'Leechers'" /></template>
+      <template #header
+        ><i class="pi pi-arrow-down" v-tooltip.top="$t('torrent.leechers')"
+      /></template>
       <template #body>0</template>
     </Column>
     <template #groupheader="slotProps" v-if="isGrouped">
@@ -117,26 +123,26 @@
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel v-if="slotProps.data.description" value="2">
-          <AccordionHeader>Description</AccordionHeader>
+          <AccordionHeader>{{ $t('general.description') }}</AccordionHeader>
           <AccordionContent>
             <div>{{ slotProps.data.description }}</div>
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel v-if="slotProps.data.screenshots" value="3">
-          <AccordionHeader>Screenshots</AccordionHeader>
+          <AccordionHeader>{{ $t('general.screenshots') }}</AccordionHeader>
           <AccordionContent>
             <div>{{ slotProps.data.screenshots }}</div>
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel value="4">
-          <AccordionHeader>File List</AccordionHeader>
+          <AccordionHeader>{{ $t('torrent.file_list') }}</AccordionHeader>
           <AccordionContent>
             <DataTable :value="slotProps.data.file_list.files" tableStyle="min-width: 50rem">
               <Column
                 field="name"
                 :header="(slotProps.data.file_list.parent_folder ?? '') + '/'"
               ></Column>
-              <Column field="size" header="Size">
+              <Column field="size" :header="$t('torrent.size')">
                 <template #body="slotProps">
                   {{ $bytesToReadable(slotProps.data.size) }}
                 </template>
@@ -147,12 +153,18 @@
       </Accordion>
     </template>
   </DataTable>
-  <Dialog closeOnEscape modal header="Report torrent" v-model:visible="reportTorrentDialogVisible">
+  <Dialog
+    closeOnEscape
+    modal
+    :header="$t('torrent.report_torrent')"
+    v-model:visible="reportTorrentDialogVisible"
+  >
     <ReportTorrentDialog :torrentId="reportingTorrentId" @reported="torrentReported" />
   </Dialog>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import DOMPurify from 'dompurify'
@@ -164,7 +176,7 @@ import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
 import Dialog from 'primevue/dialog'
 import { downloadTorrent } from '@/services/api/torrentService'
 
-export default {
+export default defineComponent({
   components: {
     DataTable,
     Column,
@@ -234,7 +246,7 @@ export default {
       }
     },
   },
-}
+})
 </script>
 <style scoped>
 .feature {

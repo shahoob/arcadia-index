@@ -2,18 +2,19 @@
   <div class="report-torrent">
     <FloatLabel>
       <Textarea class="description" name="description" v-model="report.description" rows="5" />
-      <label for="description">Description</label>
+      <label for="description">{{ $t('general.description') }}</label>
     </FloatLabel>
     <Button label="Send report" size="small" :loading @click="sendReport()" />
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { reportTorrent } from '@/services/api/torrentService'
 import { Textarea, FloatLabel } from 'primevue'
 import Button from 'primevue/button'
 
-export default {
+export default defineComponent({
   components: { Textarea, FloatLabel, Button },
   props: { torrentId: {} },
   data() {
@@ -32,7 +33,7 @@ export default {
       })
     },
   },
-}
+})
 </script>
 
 <style scoped>

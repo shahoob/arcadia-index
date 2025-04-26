@@ -2,6 +2,7 @@ mod handlers;
 mod models;
 mod repositories;
 mod routes;
+mod services;
 mod tracker;
 
 use actix_cors::Cors;
@@ -9,15 +10,19 @@ use actix_web::{App, HttpServer, middleware, web::Data};
 use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
-use std::env;
+use std::{collections::HashSet, env};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use arcadia_index::{Arcadia, Error, OpenSignups, Result, api_doc::ApiDoc};
+use arcadia_backend::{Arcadia, Error, OpenSignups, Result, api_doc::ApiDoc};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    dotenvy::dotenv().expect("Failed to load .env");
+    if let Ok(env_path) = dotenvy::dotenv() {
+        println!("Loading environment from {}", env_path.display());
+    } else {
+        println!("No .env present");
+    }
 
     env_logger::init_from_env(env_logger::Env::default().default_filter_or("debug"));
 
@@ -51,6 +56,15 @@ async fn main() -> std::io::Result<()> {
         .and_then(|s| Url::parse(&s).ok())
         .expect("ARCADIA_TRACKER_URL malformed or missing");
 
+    let allowed_torrent_clients = env::var("ARCADIA_ALLOWED_TORRENT_CLIENTS")
+        .ok()
+        .map(|s| {
+            s.split(',')
+                .map(|s| s.trim().as_bytes().to_vec())
+                .collect::<HashSet<Vec<u8>>>()
+        })
+        .expect("ARCADIA_ALLOWED_TORRENT_CLIENTS env var is not set");
+
     HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
@@ -62,6 +76,7 @@ async fn main() -> std::io::Result<()> {
                 tracker_name: tracker_name.clone(),
                 frontend_url: frontend_url.clone(),
                 tracker_url: tracker_url.clone(),
+                allowed_torrent_clients: allowed_torrent_clients.clone(),
             }))
             .configure(init) // Initialize routes
             .service(

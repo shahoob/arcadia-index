@@ -37,7 +37,6 @@ import CreateOrSelectEditionGroup from '@/components/edition_group/CreateOrSelec
 import CreateOrEditTorrent from '@/components/torrent/CreateOrEditTorrent.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { $t } from '@primeuix/themes'
 
 export default {
   components: {

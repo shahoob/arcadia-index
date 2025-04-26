@@ -17,12 +17,15 @@
         </Image>
       </template>
     </Galleria>
-    <ContentContainer container-title="Links">
+    <ContentContainer :container-title="$t('general.link', 2)">
       <div class="external-links links">
         <ExternalLink v-for="link in title_group.external_links" :key="link.url" :link="link" />
       </div>
     </ContentContainer>
-    <ContentContainer container-title="Artists" v-if="title_group.affiliated_artists.length != 0">
+    <ContentContainer
+      :container-title="$t('artist.artist', 2)"
+      v-if="title_group.affiliated_artists.length != 0"
+    >
       <div class="affiliated-artists">
         <AffiliatedArtist
           v-for="artist in title_group.affiliated_artists"
@@ -32,7 +35,7 @@
       </div>
     </ContentContainer>
     <ContentContainer
-      :container-title="`In same master group (${title_group.master_group_id})`"
+      :container-title="`${$t('master_group.in_same_master_group')} (${title_group.master_group_id})`"
       v-if="title_group.in_same_master_group.length != 0"
     >
       <div class="flex justify-content-center links">
@@ -43,10 +46,10 @@
         />
       </div>
     </ContentContainer>
-    <ContentContainer container-title="Series" v-if="title_group.series.id">
+    <ContentContainer :container-title="$t('general.series')" v-if="title_group.series.id">
       <a :href="'/series?id=' + title_group.series.id">{{ title_group.series.name }}</a>
     </ContentContainer>
-    <ContentContainer container-title="Tags">
+    <ContentContainer :container-title="$t('general.tags')">
       <div class="tags">
         <div v-for="tag in title_group.tags" :key="tag">{{ tag }}</div>
       </div>
@@ -54,6 +57,7 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
@@ -61,7 +65,7 @@ import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 
-export default {
+export default defineComponent({
   components: {
     Galleria,
     Image,
@@ -73,7 +77,7 @@ export default {
   props: {
     title_group: {},
   },
-}
+})
 </script>
 <style scoped>
 #title-group-sidebar {

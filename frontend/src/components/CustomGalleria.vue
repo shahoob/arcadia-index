@@ -26,11 +26,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { Galleria } from 'primevue'
 
-export default {
+export default defineComponent({
   components: { Galleria },
-  props: { images: {} },
+  props: { images: [] },
   data() {
     return {
       modalVisible: false,
@@ -43,7 +44,7 @@ export default {
       this.modalVisible = true
     },
   },
-}
+})
 </script>
 
 <style scoped>

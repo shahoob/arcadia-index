@@ -12,7 +12,7 @@
       <div>
         <FloatLabel>
           <InputText size="small" v-model="editionGroupForm.name" name="name" />
-          <label for="name">{{ $t('edition_group.name') }}</label>
+          <label for="name">{{ $t('general.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
@@ -164,6 +164,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -172,9 +173,8 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { Form } from '@primevue/forms'
-import { $t } from '@primeuix/themes'
 
-export default {
+export default defineComponent({
   components: {
     Form,
     DatePicker,
@@ -275,7 +275,7 @@ export default {
       this.editionGroupForm.additional_information.catalogue_number = ''
     }
   },
-}
+})
 </script>
 <style scoped>
 .description {

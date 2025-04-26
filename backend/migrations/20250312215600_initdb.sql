@@ -432,6 +432,7 @@ CREATE TABLE notifications (
 );
 CREATE TABLE peers (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT,
     torrent_id BIGINT NOT NULL,
     peer_id BYTEA NOT NULL,
     ip INET NOT NULL,
@@ -442,23 +443,9 @@ CREATE TABLE peers (
     PRIMARY KEY (id),
 
     FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
 
     UNIQUE (torrent_id, peer_id, ip, port)
-);
-CREATE TABLE user_peers (
-    id BIGINT GENERATED ALWAYS AS IDENTITY,
-    user_id BIGINT NOT NULL,
-    peer_id BIGINT NOT NULL,
-
-    PRIMARY KEY (id),
-
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE,
-
-    FOREIGN KEY (peer_id) REFERENCES peers(id)
-    ON DELETE CASCADE,
-
-    UNIQUE (user_id, peer_id)
 );
 CREATE TABLE entities (
     id BIGSERIAL PRIMARY KEY,
@@ -573,3 +560,63 @@ LEFT JOIN
     torrent_reports tr ON t.id = tr.reported_torrent_id
 GROUP BY
     t.id;
+
+CREATE OR REPLACE VIEW title_groups_and_edition_group_and_torrents_lite AS
+SELECT
+    tg.id AS title_group_id,
+    jsonb_build_object(
+        'id', tg.id,
+        'name', tg.name,
+        'covers', tg.covers,
+        'category', tg.category,
+        'content_type', tg.content_type,
+        'tags', tg.tags,
+        'original_release_date', tg.original_release_date
+    ) || jsonb_build_object(
+        'edition_groups', COALESCE((
+            SELECT jsonb_agg(
+                jsonb_build_object(
+                    'id', eg.id,
+                    'title_group_id', eg.title_group_id,
+                    'name', eg.name,
+                    'release_date', eg.release_date,
+                    'distributor', eg.distributor,
+                    'covers', eg.covers,
+                    'source', eg.source,
+                    'additional_information', eg.additional_information,
+                    'torrents', COALESCE((
+                        SELECT jsonb_agg(
+                            jsonb_build_object(
+                                'id', t.id,
+                                'edition_group_id', t.edition_group_id,
+                                'created_at', t.created_at,
+                                'release_name', t.release_name,
+                                'release_group', t.release_group,
+                                'file_amount_per_type', t.file_amount_per_type,
+                                'trumpable', t.trumpable,
+                                'staff_checked', t.staff_checked,
+                                'languages', t.languages,
+                                'container', t.container,
+                                'size', t.size,
+                                'duration', t.duration,
+                                'audio_codec', t.audio_codec,
+                                'audio_bitrate', t.audio_bitrate,
+                                'audio_bitrate_sampling', t.audio_bitrate_sampling,
+                                'audio_channels', t.audio_channels,
+                                'video_codec', t.video_codec,
+                                'features', t.features,
+                                'subtitle_languages', t.subtitle_languages,
+                                'video_resolution', t.video_resolution,
+                                'reports', t.reports
+                            )
+                        )
+                        FROM torrents_and_reports t
+                        WHERE t.edition_group_id = eg.id
+                    ), '[]'::jsonb)
+                )
+            )
+            FROM edition_groups eg
+            WHERE eg.title_group_id = tg.id
+        ), '[]'::jsonb)
+    ) AS title_group_data
+FROM title_groups tg;

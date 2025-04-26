@@ -7,10 +7,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { ref } from 'vue'
 import { Button } from 'primevue'
 
-export default {
+export default defineComponent({
   components: { Button },
   setup() {
     const menuItems = ref([
@@ -31,7 +32,7 @@ export default {
       document.documentElement.classList.toggle('dark-theme')
     },
   },
-}
+})
 </script>
 
 <style scoped>

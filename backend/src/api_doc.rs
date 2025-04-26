@@ -6,13 +6,14 @@ use crate::{
         torrent_handler::DownloadTorrentQuery,
     },
     models::{
-        artist::{AffiliatedArtist, Artist, ArtistLite},
+        artist::{AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite},
         edition_group::EditionGroup,
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
-        series::{Series, UserCreatedSeries},
+        series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
+        title_group::{TitleGroupAndAssociatedData, TitleGroupHierarchy, TitleGroupInfoLite},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
-        torrent::TorrentSearch,
+        torrent::{Torrent, TorrentSearch, TorrentSearchResults, UploadedTorrent},
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
@@ -22,7 +23,7 @@ use crate::{
 
 #[derive(OpenApi)]
 #[openapi(
-    info(title = "arcadia-index API",),
+    info(title = "arcadia-backend API",),
     paths(
         crate::handlers::auth_handler::register,
         crate::handlers::auth_handler::login,
@@ -30,6 +31,7 @@ use crate::{
         crate::handlers::artist_handler::add_artist,
         crate::handlers::artist_handler::add_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
+        crate::handlers::torrent_handler::upload_torrent,
         crate::handlers::torrent_handler::find_torrents,
         crate::handlers::torrent_report_handler::add_torrent_report,
         crate::handlers::edition_group_handler::add_edition_group,
@@ -75,7 +77,15 @@ use crate::{
         UserCreatedTorrentRequestVote,
         UserCreatedTorrentReport,
         TorrentReport,
-        ArtistLite
+        ArtistLite,
+        SeriesAndTitleGroupHierarchyLite,
+        ArtistAndTitleGroupsLite,
+        TitleGroupHierarchy,
+        TitleGroupInfoLite,
+        TorrentSearchResults,
+        TitleGroupAndAssociatedData,
+        UploadedTorrent,
+        Torrent
     ),)
 )]
 pub struct ApiDoc;

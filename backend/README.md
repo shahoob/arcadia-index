@@ -1,4 +1,4 @@
-# arcadia-index
+# arcadia-backend
 Arcadia's backend
 
 <p align="center">

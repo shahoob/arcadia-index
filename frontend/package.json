@@ -1,5 +1,5 @@
 {
-  "name": "arcadia-client",
+  "name": "arcadia-frontend",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -51,6 +51,7 @@
     "jiti": "^2.4.2",
     "jsdom": "^26.0.0",
     "npm-run-all2": "^7.0.2",
+    "openapi-typescript": "^7.6.1",
     "oxlint": "^0.15.13",
     "prettier": "3.5.3",
     "sass-embedded": "^1.85.1",

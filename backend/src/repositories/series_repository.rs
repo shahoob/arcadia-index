@@ -37,37 +37,24 @@ pub async fn create_series(
 pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value> {
     let found_series = sqlx::query!(
         r#"
-            WITH title_group_data AS (
-                SELECT
-                    tg.series_id,
-                    jsonb_agg(
-                        to_jsonb(tg) || jsonb_build_object(
-                            'edition_groups', (
-                                SELECT COALESCE(jsonb_agg(
-                                    to_jsonb(eg) || jsonb_build_object(
-                                        'torrents', (
-                                            SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb)
-                                            FROM torrents_and_reports t
-                                            WHERE t.edition_group_id = eg.id
-                                        )
-                                    )
-                                ), '[]'::jsonb)
-                                FROM edition_groups eg
-                                WHERE eg.title_group_id = tg.id
-                            )
-                        )
-                    ) AS title_groups
-                FROM title_groups tg
-                WHERE tg.series_id = $1
-                GROUP BY tg.series_id
-            )
-            SELECT jsonb_build_object(
-                'series', to_jsonb(s),
-                'title_groups', COALESCE(tg_data.title_groups, '[]'::jsonb)
-            ) AS series_and_groups
-            FROM series s
-            LEFT JOIN title_group_data tg_data ON tg_data.series_id = s.id
-            WHERE s.id = $1
+            SELECT
+                jsonb_build_object(
+                    'series', to_jsonb(s),
+                    'title_groups', COALESCE(
+                        jsonb_agg(tgd.title_group_data),
+                        '[]'::jsonb
+                    )
+                ) AS series_and_title_groups
+            FROM
+                series s
+            LEFT JOIN
+                title_groups tg ON s.id = tg.series_id
+            LEFT JOIN
+                title_groups_and_edition_group_and_torrents_lite tgd ON tg.id = tgd.title_group_id
+            WHERE
+                s.id = $1
+            GROUP BY
+                s.id, s.*;
         "#,
         series_id
     )
@@ -75,5 +62,6 @@ pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value> {
     .await
     .map_err(|_| Error::SeriesWithIdNotFound(*series_id))?;
 
-    Ok(found_series.series_and_groups.unwrap())
+    // Ok(serde_json::from_value(found_series.series_and_groups.unwrap()).unwrap())
+    Ok(found_series.series_and_title_groups.unwrap())
 }

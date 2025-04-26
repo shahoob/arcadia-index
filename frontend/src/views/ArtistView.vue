@@ -36,41 +36,32 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-
-const userStore = useUserStore()
-</script>
-<script lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
 import ArtistSidebar from '@/components/artist/ArtistSidebar.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import ArtistFullHeader from '@/components/artist/ArtistFullHeader.vue'
 import ArtistSlimHeader from '@/components/artist/ArtistSlimHeader.vue'
-import { getArtist } from '@/services/api/artistService'
-export default {
-  components: {
-    ArtistFullHeader,
-    ContentContainer,
-    TitleGroupPreviewCoverOnly,
-    TitleGroupPreviewTable,
-    ArtistSidebar,
-    ArtistSlimHeader,
-  },
-  data() {
-    return {
-      artist: null,
-      title_groups: [],
-      title_group_preview_mode: 'table', // TODO: make a select button to switch from cover-only to table
-    }
-  },
-  created() {
-    getArtist(this.$route.query.id).then((data) => {
-      this.artist = data.artist
-      this.title_groups = data.title_groups
-    })
-  },
-}
+import { getArtist, type Artist, type TitleGroupHierarchyLite } from '@/services/api/artistService'
+
+const route = useRoute()
+const userStore = useUserStore()
+
+const artist = ref<Artist>()
+const title_groups = ref<TitleGroupHierarchyLite[]>([])
+const title_group_preview_mode = ref<'table' | 'cover-only'>('table')
+
+onMounted(async () => {
+  const artistData = await getArtist(
+    // TODO: typed routes
+    route.query.id,
+  )
+  artist.value = artistData.artist
+  title_groups.value = artistData.title_groups
+})
 </script>
 
 <style scoped>

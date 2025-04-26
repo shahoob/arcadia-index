@@ -1,8 +1,12 @@
+import type { components } from '@/api-schema/schema'
 import api from './api.ts'
 
-export const getSeries = async (id: string | number) => {
+export type SeriesAndTitleGroupHierarchyLite =
+  components['schemas']['SeriesAndTitleGroupHierarchyLite']
+
+export const getSeries = async (id: number): Promise<SeriesAndTitleGroupHierarchyLite> => {
   try {
-    return (await api.get('/series?id=' + id)).data
+    return (await api.get<SeriesAndTitleGroupHierarchyLite>('/series?id=' + id)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error

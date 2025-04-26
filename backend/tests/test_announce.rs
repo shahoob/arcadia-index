@@ -2,10 +2,10 @@ use actix_web::test;
 use serde::Deserialize;
 use sqlx::PgPool;
 
-mod common;
+pub mod common;
 
-use arcadia_index::OpenSignups;
-use arcadia_index::tracker::announce;
+use arcadia_backend::OpenSignups;
+use arcadia_backend::tracker::announce;
 
 #[derive(Debug, Deserialize)]
 struct WrappedError {
@@ -83,7 +83,12 @@ async fn test_announce_unknown_torrent(pool: PgPool) {
         .expect("expected failure message");
 }
 
-#[sqlx::test(fixtures("with_test_user", "with_test_torrent"))]
+#[sqlx::test(fixtures(
+    "with_test_user",
+    "with_test_title_group",
+    "with_test_edition_group",
+    "with_test_torrent"
+))]
 async fn test_announce_known_torrent(pool: PgPool) {
     let service = common::create_test_app(pool, OpenSignups::Enabled).await;
     let req = test::TestRequest::get()
@@ -121,6 +126,8 @@ async fn test_announce_known_torrent(pool: PgPool) {
 
 #[sqlx::test(fixtures(
     "with_test_user",
+    "with_test_title_group",
+    "with_test_edition_group",
     "with_test_torrent",
     "with_test_user2",
     "with_test_peers"

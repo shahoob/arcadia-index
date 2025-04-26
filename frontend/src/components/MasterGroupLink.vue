@@ -8,12 +8,14 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: {
     title_group: {},
   },
   methods: {},
-}
+})
 </script>
 <style scoped>
 img {
