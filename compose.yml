@@ -30,7 +30,9 @@ services:
     build:
       context: backend
       dockerfile: Dockerfile
-    command: sh -c "/init_db.sh" 
+      target: prebuild
+    command: sh -c "/init_db.sh"
+    working_dir: /app
     volumes:
       - ./backend/scripts/init_db.sh:/init_db.sh
     depends_on:

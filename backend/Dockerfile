@@ -21,7 +21,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y libssl-dev openssl curl pkg-config
 
-# RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
+COPY migrations/ migrations/
+
+RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
 # The dummy file is our only way to build only the dependencies before the app itself.
 RUN mkdir ./src && \
