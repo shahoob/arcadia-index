@@ -13,10 +13,7 @@ RUN npx vite build
 
 FROM nginx:stable-alpine-slim
 
-ENV ASSETS=/usr/share/nginx/html
-ENV NGINX_DEFAULT_SITE_CONFIG=/etc/nginx/conf.d/default.conf
-
-COPY --from=build /home/node/app/dist/ ${ASSETS}
-COPY ./docker/nginx.conf ${NGINX_DEFAULT_SITE_CONFIG}
+COPY --from=build /home/node/app/dist/ /usr/share/nginx/html
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
