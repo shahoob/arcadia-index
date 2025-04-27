@@ -76,6 +76,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5173:80
+    depends_on:
+      backend:
+        condition: service_started
     develop:
       watch:
         - path: ./frontend/dist
