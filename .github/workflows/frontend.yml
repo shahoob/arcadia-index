@@ -30,7 +30,7 @@ jobs:
 
     - run: npm ci
     - run: npm run lint
-      if: always()
+      if: ${{ !cancelled() }}
     - run: npm run check-format
-      if: always()
+      if: ${{ !cancelled() }}
     
