@@ -22,6 +22,8 @@ pub struct Arcadia {
     pub frontend_url: Url,
     pub tracker_url: Url,
     pub allowed_torrent_clients: HashSet<Vec<u8>>,
+    pub global_upload_factor: f64,
+    pub global_download_factor: f64,
 }
 
 impl Arcadia {

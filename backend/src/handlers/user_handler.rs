@@ -5,6 +5,7 @@ use crate::{
 };
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
+use serde_json::json;
 use utoipa::IntoParams;
 
 #[derive(Debug, Deserialize, IntoParams)]
@@ -38,5 +39,5 @@ pub async fn get_user(
 )]
 pub async fn get_me(mut current_user: User) -> HttpResponse {
     current_user.password_hash = String::from("");
-    HttpResponse::Ok().json(current_user)
+    HttpResponse::Ok().json(json!({"user": current_user}))
 }

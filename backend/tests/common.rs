@@ -17,6 +17,8 @@ use sqlx::PgPool;
 pub async fn create_test_app(
     pool: PgPool,
     open_signups: OpenSignups,
+    global_upload_factor: f64,
+    global_download_factor: f64,
 ) -> impl Service<Request, Response = ServiceResponse, Error = Error> {
     let arc = Arcadia {
         pool,
@@ -25,6 +27,8 @@ pub async fn create_test_app(
         frontend_url: Url::parse("http://testurl").unwrap(),
         tracker_url: Url::parse("http://testurl").unwrap(),
         allowed_torrent_clients: ["lt0F01".as_bytes().to_vec()].into_iter().collect(),
+        global_upload_factor,
+        global_download_factor,
     };
 
     // TODO: CORS?
@@ -39,11 +43,19 @@ pub async fn create_test_app(
 // Requires "with_test_user" fixture.
 pub async fn create_test_app_and_login(
     pool: PgPool,
+    global_upload_factor: f64,
+    global_download_factor: f64,
 ) -> (
     impl Service<Request, Response = ServiceResponse, Error = Error>,
     impl TryIntoHeaderPair,
 ) {
-    let service = create_test_app(pool, OpenSignups::Disabled).await;
+    let service = create_test_app(
+        pool,
+        OpenSignups::Disabled,
+        global_upload_factor,
+        global_download_factor,
+    )
+    .await;
 
     // Login first
     let req = test::TestRequest::post()

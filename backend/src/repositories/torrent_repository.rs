@@ -96,6 +96,7 @@ pub async fn create_torrent(
             torrent_form
                 .features
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| Features::from_str(f).ok().unwrap())
                 .collect::<Vec<Features>>(),
         )
@@ -104,6 +105,7 @@ pub async fn create_torrent(
                 .subtitle_languages
                 .0
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
@@ -114,6 +116,7 @@ pub async fn create_torrent(
                 .languages
                 .0
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
@@ -184,7 +187,8 @@ pub async fn get_torrent(
     let info = Info::from_bytes(torrent.info_dict).map_err(|_| Error::TorrentFileInvalid)?;
 
     let tracker_url = {
-        let passkey = ((user.passkey_upper as u128) << 64) | (user.passkey_lower as u128);
+        let passkey =
+            ((user.passkey_upper as u64 as u128) << 64) | (user.passkey_lower as u64 as u128);
 
         format!("{}announce/{:x}", tracker_url, passkey)
     };
@@ -210,93 +214,41 @@ pub async fn get_torrent(
 pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
     let search_results = sqlx::query!(
         r#"
-           WITH title_group_search AS (
-    SELECT
-        id AS title_group_id,
-        CASE
-            WHEN $1 = '' THEN NULL
-            ELSE ts_rank_cd(to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')), plainto_tsquery('simple', $1))
-        END AS relevance
-    FROM title_groups
-    WHERE $1 = '' OR to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
-),
-title_group_data AS (
-    SELECT
-        jsonb_build_object(
-            'id', tg.id,
-            'name', tg.name,
-            'covers', tg.covers,
-            'category', tg.category,
-            'platform', tg.platform,
-            'content_type', tg.content_type,
-            'tags', tg.tags,
-            'original_release_date', tg.original_release_date,
-            'affiliated_artists', COALESCE((
-                SELECT jsonb_agg(
-                    jsonb_build_object(
-                        'id', ar.id,
-                        'name', ar.name
-                    )
-                )
-                FROM affiliated_artists aa
-                JOIN artists ar ON aa.artist_id = ar.id
-                WHERE aa.title_group_id = tg.id
-            ), '[]'::jsonb),
-            'edition_groups', (
-                SELECT COALESCE(jsonb_agg(
-                    jsonb_build_object(
-                        'id', eg.id,
-                        'title_group_id', eg.title_group_id,
-                        'name', eg.name,
-                        'release_date', eg.release_date,
-                        'distributor', eg.distributor,
-                        'covers', eg.covers,
-                        'source', eg.source,
-                        'additional_information', eg.additional_information,
-                        'torrents', (
-                            SELECT COALESCE(jsonb_agg(
+            WITH title_group_search AS (
+                SELECT
+                    id AS title_group_id,
+                    CASE
+                        WHEN $1 = '' THEN NULL
+                        ELSE ts_rank_cd(to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')), plainto_tsquery('simple', $1))
+                    END AS relevance
+                FROM title_groups
+                WHERE $1 = '' OR to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
+            ),
+            title_group_data AS (
+                SELECT
+                    tgl.title_group_data || jsonb_build_object(
+                        'affiliated_artists', COALESCE((
+                            SELECT jsonb_agg(
                                 jsonb_build_object(
-                                    'id', t.id,
-                                    'edition_group_id', t.edition_group_id,
-                                    'created_at', t.created_at,
-                                    'release_name', t.release_name,
-                                    'release_group', t.release_group,
-                                    'file_amount_per_type', t.file_amount_per_type,
-                                    'trumpable', t.trumpable,
-                                    'staff_checked', t.staff_checked,
-                                    'languages', t.languages,
-                                    'container', t.container,
-                                    'size', t.size,
-                                    'duration', t.duration,
-                                    'audio_codec', t.audio_codec,
-                                    'audio_bitrate', t.audio_bitrate,
-                                    'audio_bitrate_sampling', t.audio_bitrate_sampling,
-                                    'audio_channels', t.audio_channels,
-                                    'video_codec', t.video_codec,
-                                    'features', t.features,
-                                    'subtitle_languages', t.subtitle_languages,
-                                    'video_resolution', t.video_resolution,
-                                    'reports', t.reports
+                                    'id', ar.id,
+                                    'name', ar.name
                                 )
-                            ), '[]'::jsonb)
-                            FROM torrents_and_reports t
-                            WHERE t.edition_group_id = eg.id
-                        )
-                    )
-                ), '[]'::jsonb)
-                FROM edition_groups eg
-                WHERE eg.title_group_id = tg.id
+                            )
+                            FROM affiliated_artists aa
+                            JOIN artists ar ON aa.artist_id = ar.id
+                            WHERE aa.title_group_id = tgl.title_group_id
+                        ), '[]'::jsonb)
+                    ) AS lite_title_group,
+                    CASE
+                        WHEN $1 = '' THEN EXTRACT(EPOCH FROM tg.created_at)
+                        ELSE tgs.relevance
+                    END AS sort_order
+                FROM title_groups_and_edition_group_and_torrents_lite tgl
+                JOIN title_groups tg ON tgl.title_group_id = tg.id
+                JOIN title_group_search tgs ON tg.id = tgs.title_group_id
             )
-        ) AS lite_title_group,
-        CASE
-            WHEN $1 = '' THEN EXTRACT(EPOCH FROM tg.created_at)
-            ELSE tgs.relevance
-        END AS sort_order
-    FROM title_groups tg
-    JOIN title_group_search tgs ON tg.id = tgs.title_group_id
-)
-SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
-FROM title_group_data;
+            SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
+            FROM title_group_data;
         "#,
         torrent_search.title_group_name
     )
