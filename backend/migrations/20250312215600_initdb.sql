@@ -161,9 +161,9 @@ CREATE TABLE title_groups (
     tagline TEXT,
     tags VARCHAR(50) [] NOT NULL,
     country_from TEXT,
-    covers TEXT [],
+    covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
-    embedded_links JSONB,
+    embedded_links JSONB NOT NULL,
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
@@ -560,7 +560,7 @@ SELECT
     t.video_resolution,
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
-        ELSE NULL
+        ELSE '[]'::json
     END AS reports
 FROM
     torrents t
