@@ -57,6 +57,7 @@
   "user": {
     "username": "Username",
     "password": "Password",
+    "password_verify": "Verify password",
     "email": "E-mail",
     "user": "User | Users"
   },

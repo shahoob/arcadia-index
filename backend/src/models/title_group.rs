@@ -8,6 +8,7 @@ use super::{
     artist::AffiliatedArtistHierarchy,
     edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
     series::SeriesLite,
+    title_group_comment::TitleGroupCommentHierarchy,
     torrent_request::TorrentRequest,
 };
 
@@ -214,7 +215,7 @@ pub struct TitleGroupAndAssociatedData {
     pub title_group: TitleGroupHierarchy,
     pub series: SeriesLite,
     pub affiliated_artists: AffiliatedArtistHierarchy,
-    pub title_group_comments: Vec<TitleGroupHierarchy>,
+    pub title_group_comments: Vec<TitleGroupCommentHierarchy>,
     pub torrent_requests: Vec<TorrentRequest>,
     pub is_subscribed: bool,
     pub in_same_master_group: Vec<TitleGroupLite>,

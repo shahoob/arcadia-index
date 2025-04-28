@@ -22,11 +22,16 @@
       <Checkbox class="form-item" v-model="form.remember_me" binary />
       <label for="ingredient1"> {{ $t('auth.remember_me') }} </label>
     </div>
-    <Button class="form-item" type="submit" severity="secondary" label="Submit" @click="login" />
+    <Button
+      class="form-item"
+      type="submit"
+      severity="secondary"
+      label="Submit"
+      @click="handleLogin"
+    />
   </Form>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import { Form } from '@primevue/forms'
@@ -34,28 +39,23 @@ import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import { login } from '@/services/api/authService'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
-export default defineComponent({
-  components: { Button, InputText, Checkbox, Password, Form },
-  data() {
-    return {
-      form: {
-        username: '',
-        password: '',
-        remember_me: false,
-      },
-    }
-  },
-  methods: {
-    login() {
-      login(this.form).then((data) => {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        const userStore = useUserStore()
-        userStore.setUser(data.user)
-        this.$router.push('/')
-      })
-    },
-  },
-})
+const form = {
+  username: '',
+  password: '',
+  remember_me: false,
+}
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const handleLogin = () => {
+  login(form).then((data) => {
+    localStorage.setItem('token', data.token)
+    localStorage.setItem('user', JSON.stringify(data.user))
+    userStore.setUser(data.user)
+    router.push('/')
+  })
+}
 </script>

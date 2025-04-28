@@ -33,38 +33,46 @@
         $form.email.error?.message
       }}</Message> -->
   </div>
+  <div class="flex flex-col gap-1">
+    <InputText
+      class="form-item"
+      name="password_verify"
+      type="text"
+      :placeholder="$t('user.password_verify')"
+      v-model="form.password_verify"
+    />
+    <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
+        $form.email.error?.message
+      }}</Message> -->
+  </div>
   <Button
     class="form-item"
     type="submit"
     severity="secondary"
     :label="$t('general.submit')"
-    @click="login"
+    @click="handleRegister"
   />
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { register } from '@/services/api/authService'
 
-export default defineComponent({
-  components: { Button, InputText },
-  data() {
-    return {
-      form: {
-        email: '',
-        username: '',
-        password: '',
-      },
-    }
-  },
-  methods: {
-    login() {
-      register(this.form).then((data) => {
-        localStorage.setItem('token', data.token)
-        this.$router.push('/')
-      })
-    },
-  },
+const form = ref({
+  email: '',
+  username: '',
+  password: '',
+  password_verify: '',
 })
+
+const router = useRouter()
+
+const handleRegister = () => {
+  register(form.value).then((data) => {
+    localStorage.setItem('token', data.token)
+    router.push('/')
+  })
+}
 </script>

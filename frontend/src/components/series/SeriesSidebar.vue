@@ -11,15 +11,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
+import type { Series } from '@/services/api/seriesService'
 import { Image } from 'primevue'
 
-export default defineComponent({
-  components: { ContentContainer, Image },
-  props: { series: {} },
-})
+defineProps<{
+  series: Series
+}>()
 </script>
 
 <style scoped>

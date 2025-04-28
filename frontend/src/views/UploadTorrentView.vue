@@ -40,6 +40,7 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import type { EditionGroupInfoLite } from '@/services/api/torrentService'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -59,9 +60,9 @@ const titleGroupDone = () => {
   uploadStep.value = 2
 }
 
-const editionGroupDone = (editionGroup: object) => {
-  editionGroup.value = editionGroup
-  editionGroupStore.id = editionGroup.id
+const editionGroupDone = (eg: EditionGroupInfoLite) => {
+  editionGroup.value = eg
+  editionGroupStore.id = eg.id
   editionGroupAccordionValue.value = ''
   torrentAccordionValue.value = '0'
   uploadStep.value = 3

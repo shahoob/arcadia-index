@@ -54,7 +54,7 @@ CREATE TABLE artists (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    pictures TEXT [],
+    pictures TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
@@ -344,7 +344,7 @@ CREATE TABLE torrents (
 
     -- video
     video_codec video_codec_enum,
-    features features_enum [],
+    features features_enum [] NOT NULL,
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
 
@@ -384,7 +384,7 @@ CREATE TABLE torrent_requests (
     audio_channels VARCHAR(8),
     -- Video
     video_codec video_codec_enum,
-    features features_enum[],
+    features features_enum[] NOT NULL,
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,

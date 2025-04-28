@@ -367,7 +367,7 @@ export interface components {
             /** Format: int32 */
             leechers_amount: number;
             name: string;
-            pictures?: string[] | null;
+            pictures: string[];
             /** Format: int32 */
             seeders_amount: number;
             /** Format: int32 */
@@ -385,7 +385,7 @@ export interface components {
             /** Format: int64 */
             id: number;
             name: string;
-            pictures?: string[] | null;
+            pictures: string[];
         };
         /** @enum {string} */
         ArtistRole: "Main" | "Producer" | "Guest" | "Composer" | "Conductor" | "DjCompiler" | "Remixer" | "Arranger" | "Director" | "Cinematographer" | "Actor" | "Author";
@@ -543,6 +543,10 @@ export interface components {
             leeching: number;
             /** Format: double */
             ratio: number;
+            /** Format: int64 */
+            real_downloaded: number;
+            /** Format: int64 */
+            real_uploaded: number;
             /** Format: int32 */
             request_comments: number;
             /** Format: int64 */
@@ -639,7 +643,7 @@ export interface components {
             is_subscribed: boolean;
             series: components["schemas"]["SeriesLite"];
             title_group: components["schemas"]["TitleGroupHierarchy"];
-            title_group_comments: components["schemas"]["TitleGroupHierarchy"][];
+            title_group_comments: components["schemas"]["TitleGroupCommentHierarchy"][];
             torrent_requests: components["schemas"]["TorrentRequest"][];
         };
         /** @enum {string} */
@@ -650,6 +654,24 @@ export interface components {
             content: string;
             /** Format: date-time */
             created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            refers_to_torrent_id?: number | null;
+            /** Format: int64 */
+            title_group_id: number;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        TitleGroupCommentHierarchy: {
+            /** Format: int64 */
+            answers_to_comment_id?: number | null;
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLiteAvatar"];
             /** Format: int64 */
             created_by_id: number;
             /** Format: int64 */
@@ -730,6 +752,8 @@ export interface components {
             /** Format: int64 */
             created_by_id: number;
             description?: string | null;
+            /** Format: double */
+            download_factor: number;
             /** Format: int32 */
             duration?: number | null;
             /** Format: int64 */
@@ -750,6 +774,8 @@ export interface components {
             trumpable?: string | null;
             /** Format: date-time */
             updated_at: string;
+            /** Format: double */
+            upload_factor: number;
             uploaded_as_anonymous: boolean;
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
@@ -766,6 +792,8 @@ export interface components {
             /** Format: int64 */
             created_by_id: number;
             description?: string | null;
+            /** Format: double */
+            download_factor: number;
             /** Format: int32 */
             duration?: number | null;
             /** Format: int64 */
@@ -786,6 +814,8 @@ export interface components {
             trumpable?: string | null;
             /** Format: date-time */
             updated_at: string;
+            /** Format: double */
+            upload_factor: number;
             uploaded_as_anonymous: boolean;
             uploader: components["schemas"]["UserLite"];
             video_codec?: null | components["schemas"]["VideoCodec"];
@@ -800,6 +830,8 @@ export interface components {
             container: string;
             /** Format: date-time */
             created_at: string;
+            /** Format: double */
+            download_factor: number;
             /** Format: int32 */
             duration?: number | null;
             /** Format: int64 */
@@ -815,6 +847,8 @@ export interface components {
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
+            /** Format: double */
+            upload_factor: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
         };
@@ -940,6 +974,10 @@ export interface components {
             password_hash: string;
             /** Format: double */
             ratio: number;
+            /** Format: int64 */
+            real_downloaded: number;
+            /** Format: int64 */
+            real_uploaded: number;
             /** Format: 0.0.0.0 */
             registered_from_ip: string;
             /** Format: int32 */
@@ -974,7 +1012,7 @@ export interface components {
         UserCreatedArtist: {
             description: string;
             name: string;
-            pictures?: string[] | null;
+            pictures: string[];
         };
         UserCreatedEditionGroup: {
             additional_information: unknown;
@@ -1064,6 +1102,12 @@ export interface components {
             torrent_request_id: number;
         };
         UserLite: {
+            /** Format: int64 */
+            id: number;
+            username: string;
+        };
+        UserLiteAvatar: {
+            avatar?: string | null;
             /** Format: int64 */
             id: number;
             username: string;
