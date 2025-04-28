@@ -1,5 +1,5 @@
 <template>
-  <DataTable :value="torrent_requests" size="small">
+  <DataTable :value="torrentRequests" size="small">
     <Column header="Requirements">
       <!-- TODO: Add more details -->
       <template #body="slotProps">
@@ -19,14 +19,12 @@
   </DataTable>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { Column, DataTable } from 'primevue'
-export default defineComponent({
-  components: { DataTable, Column },
-  props: {
-    torrent_requests: {},
-  },
-})
+import type { TorrentRequest } from '@/services/api/torrentRequestService'
+
+defineProps<{
+  torrentRequests: TorrentRequest[]
+}>()
 </script>
 <style scoped></style>

@@ -18,12 +18,12 @@
       >
         <template #option="slotProps">
           <div>
-            {{ $getEditionGroupSlug(slotProps.option) }}
+            {{ getEditionGroupSlug(slotProps.option) }}
           </div>
         </template>
         <template #value="slotProps" v-if="selected_edition_group.id">
           <div>
-            {{ $getEditionGroupSlug(slotProps.value) }}
+            {{ getEditionGroupSlug(slotProps.value) }}
           </div>
         </template>
       </Select>
@@ -40,62 +40,59 @@
       />
     </div>
   </div>
-  <div v-if="action == 'create'">
+  <div v-if="action === 'create'">
     <div v-if="step > 0">
       <CreateOrEditEditionGroup :titleGroup @validated="sendEditionGroup" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import { createEditionGroup } from '@/services/api/torrentService'
+import {
+  createEditionGroup,
+  type EditionGroup,
+  type EditionGroupInfoLite,
+  type UserCreatedEditionGroup,
+} from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
+import { getEditionGroupSlug } from '@/services/helpers'
 
-export default defineComponent({
-  components: {
-    Button,
-    FloatLabel,
-    Select,
-    CreateOrEditEditionGroup,
-  },
-  data() {
-    return {
-      action: 'select', // create | select
-      step: 1,
-      manualCreation: false,
-      titleGroup: { edition_groups: [] },
-      selected_edition_group: {},
-      editionGroupId: '',
-      creatingEditionGroup: false,
-    }
-  },
-  methods: {
-    sendEditionGroup(editionGroupForm) {
-      if (this.action == 'select') {
-        this.$emit('done', this.selected_edition_group)
-      } else {
-        this.creatingEditionGroup = true
-        const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
-        // otherwise there is a json parse error, last char is "Z"
-        formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
-        createEditionGroup(formattededitionGroupForm).then((data) => {
-          this.creatingEditionGroup = false
-          this.$emit('done', data)
-        })
-      }
-    },
-  },
-  created() {
-    const titleGroupStore = useTitleGroupStore()
-    if (titleGroupStore.id) {
-      this.titleGroup = titleGroupStore
-    }
-  },
+// eslint-disable-next-line prefer-const
+let action = ref('select') // create | select
+const step = 1
+let titleGroup = ref({ edition_groups: [] })
+const selected_edition_group: EditionGroupInfoLite = ref({})
+let creatingEditionGroup = false
+
+const emit = defineEmits<{
+  done: [editionGroup: EditionGroupInfoLite]
+}>()
+
+const sendEditionGroup = (editionGroupForm: UserCreatedEditionGroup) => {
+  if (action.value == 'select') {
+    emit('done', selected_edition_group.value)
+  } else {
+    creatingEditionGroup = true
+    const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
+    // otherwise there is a json parse error, last char is "Z"
+    formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
+    createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
+      creatingEditionGroup = false
+      emit('done', data)
+    })
+  }
+}
+
+onMounted(() => {
+  const titleGroupStore = useTitleGroupStore()
+  if (titleGroupStore.id) {
+    titleGroup.value = titleGroupStore
+  }
 })
 </script>
 <style scoped>

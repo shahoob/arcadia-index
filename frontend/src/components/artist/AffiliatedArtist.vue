@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
+import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import { Image } from 'primevue'
 
 defineProps<{
-  // TODO: type properly
-  affiliated_artist: Record<string, any>
+  affiliated_artist: AffiliatedArtistHierarchy
 }>()
 </script>
 <style scoped>

@@ -31,7 +31,11 @@ import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import GeneralComment from './GeneralComment.vue'
 import { Button } from 'primevue'
-import { postTitleGroupComment } from '@/services/api/commentService'
+import {
+  postTitleGroupComment,
+  type TitleGroupCommentHierarchy,
+  type UserCreatedTitleGroupComment,
+} from '@/services/api/commentService'
 import { type TitleGroupHierarchy } from '@/services/api/torrentService'
 import BBCodeEditor from './BBCodeEditor.vue'
 import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
@@ -47,23 +51,16 @@ const { t } = useI18n()
 
 const route = useRoute()
 
-type NewComment = {
-  content: string
-  refers_to_torrent_id: number | null
-  answers_to_comment_id: number | null
-  title_group_id: number | null
-}
-
-const new_comment = ref<NewComment>({
+const new_comment = ref<UserCreatedTitleGroupComment>({
   content: '',
   refers_to_torrent_id: null,
   answers_to_comment_id: null,
-  title_group_id: null,
+  title_group_id: 0,
 })
 const sending_comment = ref(false)
 
-const resolver = ({ values }: FormResolverOptions): Record<string, any> => {
-  const errors: Record<string, any> = {}
+const resolver = ({ values }: FormResolverOptions) => {
+  const errors: Partial<Record<keyof UserCreatedTitleGroupComment, { message: string }[]>> = {}
 
   if (values.content.length < 5) {
     errors.content = [{ message: t('error.write_more_than_x_chars', [5]) }]
@@ -87,14 +84,16 @@ const newCommentUpdated = (content: string) => {
 const sendComment = async () => {
   sending_comment.value = true
   new_comment.value.title_group_id = parseInt(route.params.id as string)
-  let data = await postTitleGroupComment(new_comment.value)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const created_comment: TitleGroupCommentHierarchy = {
+    ...(await postTitleGroupComment(new_comment.value)),
+    created_by: useUserStore(),
+  }
   new_comment.value.content = ''
   new_comment.value.refers_to_torrent_id = null
   new_comment.value.answers_to_comment_id = null
-  data.created_by = {}
-  data.created_by = useUserStore()
-  // eslint-disable-next-line vue/no-mutating-props -- TODO: don't mutate the prop
-  // this.comments.push(data)
+  // TODO: use created_comment to update the comments list
+  // this.comments.push(created_comment)
   sending_comment.value = false
 }
 </script>

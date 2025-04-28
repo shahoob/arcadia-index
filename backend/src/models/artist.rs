@@ -13,7 +13,7 @@ pub struct Artist {
     pub created_at: NaiveDateTime,
     pub created_by_id: i64,
     pub description: String,
-    pub pictures: Option<Vec<String>>,
+    pub pictures: Vec<String>,
     pub title_groups_amount: i32,
     pub edition_groups_amount: i32,
     pub torrents_amount: i32,
@@ -32,14 +32,14 @@ pub struct SimilarArtists {
 pub struct UserCreatedArtist {
     pub name: String,
     pub description: String,
-    pub pictures: Option<Vec<String>>,
+    pub pictures: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct ArtistLite {
     pub id: i64,
     pub name: String,
-    pub pictures: Option<Vec<String>>,
+    pub pictures: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]

@@ -60,7 +60,7 @@
                 'pi-spin': gettingExternalDatabaseData,
                 'cursor-pointer': true,
               }"
-              @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/movie')"
+              @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/movie')"
             />
           </IconField>
         </FloatLabel>
@@ -88,7 +88,7 @@
                 'pi-spin': gettingExternalDatabaseData,
                 'cursor-pointer': true,
               }"
-              @click="getExternalDatabaseData(external_database_ids.tmdb, 'tmdb/tv')"
+              @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/tv')"
             />
           </IconField>
         </FloatLabel>
@@ -127,7 +127,7 @@
 
                 'cursor-pointer': true,
               }"
-              @click="getExternalDatabaseData(external_database_ids.openlibrary, 'openlibrary')"
+              @click="getExternalDBData(external_database_ids.openlibrary, 'openlibrary')"
             />
           </IconField>
         </FloatLabel>
@@ -154,8 +154,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
@@ -164,96 +164,86 @@ import Button from 'primevue/button'
 import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
-import { createTitleGroup, getTitleGroupLite } from '@/services/api/torrentService'
+import {
+  createTitleGroup,
+  getTitleGroupLite,
+  type ContentType,
+  type TitleGroup,
+  type UserCreatedEditionGroup,
+  type UserCreatedTitleGroup,
+} from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
 
-export default defineComponent({
-  components: {
-    CreateOrEditTitleGroup,
-    Button,
-    InputNumber,
-    FloatLabel,
-    InputText,
-    Select,
-    InputIcon,
-    IconField,
-  },
-  props: {},
-  data() {
-    return {
-      action: 'select', // create | select
-      titleGroupId: '',
-      step: 1,
-      manualCreation: false,
-      selectableContentTypes: ['movie', 'tv_show', 'music', 'software', 'book', 'collection'],
-      content_type: '',
-      gettingTitleGroupInfo: false,
-      sendingTitleGroup: false,
-      initialTitleGroupForm: {},
-      external_database_ids: {
-        openlibrary: '',
-        tmdb: '',
-        imdb: '',
-        musicbrainz: '',
-      },
-      gettingExternalDatabaseData: false,
+const action = ref('select') // create | select
+const titleGroupId = ref<number | null>(null)
+const step = ref(1)
+const manualCreation = ref(false)
+const selectableContentTypes = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
+const content_type: ContentType = ''
+let gettingTitleGroupInfo = false
+let sendingTitleGroup = false
+let initialTitleGroupForm = {}
+const external_database_ids = {
+  openlibrary: '',
+  tmdb: '',
+  imdb: '',
+  musicbrainz: '',
+}
+let gettingExternalDatabaseData = false
+const titleGroupStore = useTitleGroupStore()
+
+const emit = defineEmits<{
+  gotEditionData: [editionGroup: UserCreatedEditionGroup]
+  done: [titleGroup?: TitleGroup]
+}>()
+
+const getExternalDBData = (item_id: string | number, database: string) => {
+  gettingExternalDatabaseData = true
+  getExternalDatabaseData(item_id, database).then((data) => {
+    data.title_group.original_release_date = new Date(data.title_group.original_release_date)
+    initialTitleGroupForm = data.title_group
+    // if the api also returns some info about the specific edition, pass it to the edition component
+    if (data.edition_group) {
+      emit('gotEditionData', data.edition_group)
     }
-  },
-  setup() {
-    const titleGroupStore = useTitleGroupStore()
-    // const createOrEditTitleGroupRef = ref(null)
-    return { titleGroupStore }
-  },
-  methods: {
-    getExternalDatabaseData(item_id: string | number, database: string) {
-      this.gettingExternalDatabaseData = true
-      getExternalDatabaseData(item_id, database).then((data) => {
-        data.title_group.original_release_date = new Date(data.title_group.original_release_date)
-        this.initialTitleGroupForm = data.title_group
-        // if the api also returns some info about the specific edition, pass it to the edition component
-        if (data.edition_group) {
-          this.$emit('gotEditionData', data.edition_group)
-        }
-        this.step = 3
-        this.gettingExternalDatabaseData = false
-      })
-    },
-    async sendTitleGroup(titleGroupForm: object) {
-      if (this.action == 'select') {
-        this.gettingTitleGroupInfo = true
-        if (!this.titleGroupStore.id) {
-          const titleGroupLite = await getTitleGroupLite(this.titleGroupId)
-          this.titleGroupStore.id = titleGroupLite.id
-          this.titleGroupStore.edition_groups = titleGroupLite.edition_groups
-          this.titleGroupStore.content_type = titleGroupLite.content_type
-        }
-        this.$emit('done')
-        this.gettingTitleGroupInfo = false
-      } else {
-        this.sendingTitleGroup = true
-        titleGroupForm.content_type = this.content_type
-        const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
-        formattedTitleGroupForm.tags =
-          formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
-        // otherwise there is a json parse error, last char is "Z"
-        formattedTitleGroupForm.original_release_date =
-          formattedTitleGroupForm.original_release_date.slice(0, -1)
-        createTitleGroup(formattedTitleGroupForm).then((data) => {
-          // this.creatingTitleGroup = false
-          this.sendingTitleGroup = false
-          this.titleGroupStore.id = data.id
-          this.titleGroupStore.content_type = data.content_type
-          this.$emit('done', data)
-        })
-      }
-    },
-  },
-  created() {
-    if (this.titleGroupStore.id) {
-      this.titleGroupId = this.titleGroupStore.id.toString()
+    step.value = 3
+    gettingExternalDatabaseData = false
+  })
+}
+const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
+  if (action.value == 'select') {
+    gettingTitleGroupInfo = true
+    if (!titleGroupStore.id) {
+      const titleGroupLite = await getTitleGroupLite(titleGroupId.value)
+      titleGroupStore.id = titleGroupLite.id
+      titleGroupStore.edition_groups = titleGroupLite.edition_groups
+      titleGroupStore.content_type = titleGroupLite.content_type
     }
-  },
+    emit('done')
+    gettingTitleGroupInfo = false
+  } else {
+    sendingTitleGroup = true
+    titleGroupForm.content_type = content_type
+    const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
+    formattedTitleGroupForm.tags =
+      formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
+    // otherwise there is a json parse error, last char is "Z"
+    formattedTitleGroupForm.original_release_date =
+      formattedTitleGroupForm.original_release_date.slice(0, -1)
+    createTitleGroup(formattedTitleGroupForm).then((data) => {
+      // this.creatingTitleGroup = false
+      sendingTitleGroup = false
+      titleGroupStore.id = data.id
+      titleGroupStore.content_type = data.content_type
+      emit('done', data)
+    })
+  }
+}
+onMounted(() => {
+  if (titleGroupStore.id) {
+    titleGroupId.value = titleGroupStore.id
+  }
 })
 </script>
 <style scoped>
