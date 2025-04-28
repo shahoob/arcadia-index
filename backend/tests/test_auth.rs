@@ -25,7 +25,7 @@ struct RegisterResponse {
 
 #[sqlx::test]
 async fn test_open_registration(pool: PgPool) {
-    let service = common::create_test_app(pool, OpenSignups::Enabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Enabled, 1.0, 1.0).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -61,7 +61,7 @@ async fn test_open_registration(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_failures(pool: PgPool) {
-    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled, 1.0, 1.0).await;
 
     // No key specified.  Should fail.
     let req = test::TestRequest::post()
@@ -108,7 +108,7 @@ async fn test_closed_registration_failures(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_success(pool: PgPool) {
-    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled, 1.0, 1.0).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -161,7 +161,7 @@ async fn test_closed_registration_success(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user", "with_expired_test_user_invite"))]
 async fn test_closed_registration_expired_failure(pool: PgPool) {
-    let service = common::create_test_app(pool, OpenSignups::Disabled).await;
+    let service = common::create_test_app(pool, OpenSignups::Disabled, 1.0, 1.0).await;
 
     let req = test::TestRequest::post()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -186,7 +186,7 @@ async fn test_closed_registration_expired_failure(pool: PgPool) {
 
 #[sqlx::test(fixtures("with_test_user"))]
 async fn test_authorized_endpoint_after_login(pool: PgPool) {
-    let (service, token) = common::create_test_app_and_login(pool).await;
+    let (service, token) = common::create_test_app_and_login(pool, 1.0, 1.0).await;
 
     let req = test::TestRequest::get()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))

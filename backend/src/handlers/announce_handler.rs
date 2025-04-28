@@ -118,21 +118,23 @@ async fn handle_announce(
     // assuming that the client either sends both downloaded/uploaded
     // or none of them
     if let (Some(real_uploaded), Some(real_downloaded)) = (ann.uploaded, ann.downloaded) {
-        let factor = if arc.global_upload_factor != 1.0 {
+        let upload_factor = if arc.global_upload_factor != 1.0 {
             arc.global_upload_factor
         } else {
             torrent.upload_factor
         };
-        let upload_to_credit =
-            ((real_uploaded as i64 - old_real_uploaded) as f64 * factor as f64).ceil() as i64;
+        let upload_to_credit = ((real_uploaded as i64 - old_real_uploaded) as f64
+            * upload_factor as f64)
+            .ceil() as i64;
 
-        let factor = if arc.global_download_factor != 1.0 {
+        let download_factor = if arc.global_download_factor != 1.0 {
             arc.global_download_factor
         } else {
             torrent.download_factor
         };
-        let download_to_credit =
-            ((real_downloaded as i64 - old_real_downloaded) as f64 * factor as f64).ceil() as i64;
+        let download_to_credit = ((real_downloaded as i64 - old_real_downloaded) as f64
+            * download_factor as f64)
+            .ceil() as i64;
 
         credit_user_upload_download(
             &arc.pool,
