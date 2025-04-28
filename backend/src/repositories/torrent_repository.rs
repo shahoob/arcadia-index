@@ -6,7 +6,7 @@ use crate::{
     },
 };
 
-use bip_metainfo::{Info, Metainfo, MetainfoBuilder, PieceLength};
+use bip_metainfo::{Info, InfoBuilder, InfoHash, Metainfo, MetainfoBuilder, PieceLength};
 use serde_json::{Value, json};
 use sqlx::PgPool;
 use std::str::FromStr;
@@ -45,7 +45,16 @@ pub async fn create_torrent(
 
     let info = metainfo.info();
 
-    // TODO: need to ensure private is set
+    // We cannot trust that the uploader has set the private field properly,
+    // so we need to recreate the info db with it forced, which requires a
+    // recomputation of info hash
+    let info_normalized = InfoBuilder::new()
+        .set_private_flag(Some(true))
+        .set_piece_length(PieceLength::Custom(info.piece_length() as usize))
+        .build(1, info, |_| {})
+        .map_err(|_| Error::TorrentFileInvalid)?;
+
+    let info_hash = InfoHash::from_bytes(&info_normalized);
 
     // TODO: torrent metadata extraction should be done on the client side
     let parent_folder = info.directory().map(|d| d.to_str().unwrap()).unwrap_or("");
@@ -120,7 +129,7 @@ pub async fn create_torrent(
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
-        .bind(info.info_hash().as_ref())
+        .bind(info_hash.as_ref())
         .bind(info.to_bytes())
         .fetch_one(pool)
         .await
