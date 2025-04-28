@@ -187,7 +187,8 @@ pub async fn get_torrent(
     let info = Info::from_bytes(torrent.info_dict).map_err(|_| Error::TorrentFileInvalid)?;
 
     let tracker_url = {
-        let passkey = ((user.passkey_upper as u128) << 64) | (user.passkey_lower as u128);
+        let passkey =
+            ((user.passkey_upper as u64 as u128) << 64) | (user.passkey_lower as u64 as u128);
 
         format!("{}announce/{:x}", tracker_url, passkey)
     };
