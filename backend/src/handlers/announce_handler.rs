@@ -52,6 +52,9 @@ pub enum Error {
     #[error("invalid info_hash")]
     InvalidInfoHash,
 
+    #[error("invalid user id")]
+    InvalidUserId,
+
     #[error("torrent client not in whitelist")]
     TorrentClientNotInWhitelist,
 }
@@ -136,7 +139,7 @@ async fn handle_announce(
             * download_factor as f64)
             .ceil() as i64;
 
-        credit_user_upload_download(
+        let _ = credit_user_upload_download(
             &arc.pool,
             upload_to_credit,
             download_to_credit,

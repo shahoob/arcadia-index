@@ -1,4 +1,4 @@
-use sqlx::PgPool;
+use sqlx::{PgPool, postgres::PgQueryResult};
 
 use crate::handlers::announce_handler::Error;
 
@@ -57,7 +57,7 @@ pub async fn credit_user_upload_download(
     real_uploaded: i64,
     real_downloaded: i64,
     user_id: i64,
-) {
+) -> Result<PgQueryResult, Error> {
     sqlx::query!(
         r#"
         UPDATE users
@@ -75,5 +75,5 @@ pub async fn credit_user_upload_download(
     )
     .execute(pool)
     .await
-    .expect("invalid user id");
+    .map_err(|_| Error::InvalidUserId)
 }
