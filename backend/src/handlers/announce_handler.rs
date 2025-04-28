@@ -110,17 +110,8 @@ async fn handle_announce(
         todo!();
     }
 
-    let (old_real_uploaded, old_real_downloaded) = insert_or_update_peer(
-        &arc.pool,
-        &torrent.id,
-        &ann.peer_id,
-        &ip,
-        ann.port,
-        &current_user.id,
-        ann.uploaded.unwrap_or(0) as i64,
-        ann.downloaded.unwrap_or(0) as i64,
-    )
-    .await;
+    let (old_real_uploaded, old_real_downloaded) =
+        insert_or_update_peer(&arc.pool, &torrent.id, &ip, &current_user.id, &ann).await;
 
     let peers = find_torrent_peers(&arc.pool, &torrent.id, &current_user.id).await;
 
