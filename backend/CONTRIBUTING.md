@@ -43,7 +43,6 @@ You can optionally add "fake" data to the database by running the `fixtures.sql`
 Here is how to insert them if you are using docker :
 
 ```bash
-
 docker exec -i arcadia_db psql -U arcadia -d arcadia < backend/migrations/fixtures/fixtures.sql
 ```
 
