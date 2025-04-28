@@ -96,6 +96,7 @@ pub async fn create_torrent(
             torrent_form
                 .features
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| Features::from_str(f).ok().unwrap())
                 .collect::<Vec<Features>>(),
         )
@@ -104,6 +105,7 @@ pub async fn create_torrent(
                 .subtitle_languages
                 .0
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
@@ -114,6 +116,7 @@ pub async fn create_torrent(
                 .languages
                 .0
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
