@@ -11,7 +11,7 @@ pub mod common;
     "with_test_torrent"
 ))]
 async fn test_valid_torrent(pool: PgPool) {
-    let (service, token) = common::create_test_app_and_login(pool).await;
+    let (service, token) = common::create_test_app_and_login(pool, 1.0, 1.0).await;
 
     let req = test::TestRequest::get()
         .insert_header(("X-Forwarded-For", "10.10.4.88"))
@@ -91,7 +91,7 @@ async fn test_upload_torrent(pool: PgPool) {
         .await
         .unwrap();
 
-    let (service, token) = common::create_test_app_and_login(pool).await;
+    let (service, token) = common::create_test_app_and_login(pool, 1.0, 1.0).await;
 
     let req = test::TestRequest::post()
         .uri("/api/torrent")
