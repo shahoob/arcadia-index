@@ -96,6 +96,7 @@ pub async fn create_torrent(
             torrent_form
                 .features
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| Features::from_str(f).ok().unwrap())
                 .collect::<Vec<Features>>(),
         )
@@ -104,6 +105,7 @@ pub async fn create_torrent(
                 .subtitle_languages
                 .0
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
@@ -114,6 +116,7 @@ pub async fn create_torrent(
                 .languages
                 .0
                 .split(',')
+                .filter(|f| !f.is_empty())
                 .map(|f| f.trim())
                 .collect::<Vec<&str>>(),
         )
@@ -184,7 +187,8 @@ pub async fn get_torrent(
     let info = Info::from_bytes(torrent.info_dict).map_err(|_| Error::TorrentFileInvalid)?;
 
     let tracker_url = {
-        let passkey = ((user.passkey_upper as u128) << 64) | (user.passkey_lower as u128);
+        let passkey =
+            ((user.passkey_upper as u64 as u128) << 64) | (user.passkey_lower as u64 as u128);
 
         format!("{}announce/{:x}", tracker_url, passkey)
     };

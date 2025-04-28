@@ -100,8 +100,6 @@ async fn handle_announce(
 
     let torrent = find_torrent_with_id(&arc.pool, &ann.info_hash).await?;
 
-    // TODO check peer id prefix
-
     let ip = conn
         .realip_remote_addr()
         .and_then(|ip| ip.parse::<IpNetwork>().ok())
