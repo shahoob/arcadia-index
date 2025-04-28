@@ -4,9 +4,9 @@ use crate::{
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
 
-use musicbrainz_rs::{client::MUSICBRAINZ_CLIENT, entity::{
+use musicbrainz_rs::{ entity::{
     artist::Artist, coverart::Coverart, release::Release, release_group::{ReleaseGroup, ReleaseGroupPrimaryType}
-}};
+}, Error as MBError};
 use musicbrainz_rs::prelude::*;
 
 // TODO: Make this configurable incase user wants different musicbrainz instance
@@ -17,10 +17,24 @@ struct MusicBrainzQuery {
     id: String,
 }
 
+impl actix_web::ResponseError for MBError {
+    fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
+        match self {
+            Error::MusicbrainzError(musicbrainz_error) => todo!(),
+            Error::NotFound(query) => actix_web::HttpResponse::build(actix_web::http::StatusCode::NOT_FOUND).json(serde_json::json!({
+                "error": format!("MusicBrainz could not find your requested item for query: {}", query),
+            })),
+            _ => actix_web::HttpResponse::build(actix_web::http::StatusCode::I).json(serde_json::json!({
+                "error": format!("MusicBrainz could not find your requested item for query: {}", query),
+            }))
+        }
+    }
+}
+
 pub async fn get_musicbrainz_release_group_info(query: web::Query<MusicBrainzQuery>) -> Result<HttpResponse> {
     let release_group = ReleaseGroup::fetch()
     .id(&query.id)
-    .execute().await.expect("Couldn't fetch release group");
+    .execute().await?;
 
     let mut urls: Vec<String> = vec![format!("{}/release_group/{}", MUSICBRAINZ_WEB_SERVICE_URL, query.id)];
 
