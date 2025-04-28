@@ -72,7 +72,7 @@ const router = useRouter()
 const handleRegister = () => {
   register(form.value).then((data) => {
     localStorage.setItem('token', data.token)
-    router.push('/')
+    router.push('/login')
   })
 }
 </script>

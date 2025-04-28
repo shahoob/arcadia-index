@@ -70,27 +70,18 @@
     </div>
   </ContentContainer>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
 
 import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
+import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 
-export default defineComponent({
-  components: {
-    ContentContainer,
-    Galleria,
-    Image,
-    AffiliatedArtist,
-    ExternalLink,
-  },
-  props: {
-    title_group: {},
-  },
-})
+defineProps<{
+  title_group: TitleGroupAndAssociatedData
+}>()
 </script>
 <style scoped>
 #title-group-header {

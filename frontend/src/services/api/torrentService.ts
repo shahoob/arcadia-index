@@ -121,9 +121,11 @@ export const searchTorrents = async (searchOptions: TorrentSearch) => {
 
 export type UserCreatedTorrentReport = components['schemas']['UserCreatedTorrentReport']
 
+export type TorrentReport = components['schemas']['TorrentReport']
+
 export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => {
   try {
-    return (await api.post('/report/torrent', torrentReport)).data
+    return (await api.post<TorrentReport>('/report/torrent', torrentReport)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error

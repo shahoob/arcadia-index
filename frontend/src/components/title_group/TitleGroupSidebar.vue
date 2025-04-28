@@ -19,7 +19,7 @@
     </Galleria>
     <ContentContainer :container-title="$t('general.link', 2)">
       <div class="external-links links">
-        <ExternalLink v-for="link in title_group.external_links" :key="link.url" :link="link" />
+        <ExternalLink v-for="link in title_group.external_links" :key="link" :link="link" />
       </div>
     </ContentContainer>
     <ContentContainer
@@ -56,28 +56,18 @@
     </ContentContainer>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
+import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 
-export default defineComponent({
-  components: {
-    Galleria,
-    Image,
-    AffiliatedArtist,
-    ExternalLink,
-    MasterGroupLink,
-    ContentContainer,
-  },
-  props: {
-    title_group: {},
-  },
-})
+defineProps<{
+  title_group: TitleGroupAndAssociatedData
+}>()
 </script>
 <style scoped>
 #title-group-sidebar {

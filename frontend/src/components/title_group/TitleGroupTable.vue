@@ -50,7 +50,9 @@
           <span v-if="slotProps.data.trumpable != ''">
             / <span class="warning">Trumpable</span>
           </span>
-          <span v-if="slotProps.data.reports"> / <span class="danger">Reported</span> </span>
+          <span v-if="slotProps.data.reports.length !== 0">
+            / <span class="danger">Reported</span>
+          </span>
         </a>
       </template>
     </Column>
@@ -99,7 +101,13 @@
     </Column>
     <template #groupheader="slotProps" v-if="isGrouped">
       <div class="edition-group-header">
-        {{ getEditionGroupSlug(slotProps.data.edition_group_id) }}
+        {{
+          getEditionGroupSlug(
+            title_group.edition_groups.find(
+              (group: object) => group.id === slotProps.data.edition_group_id,
+            ),
+          )
+        }}
       </div>
     </template>
     <template #expansion="slotProps" v-if="!preview">
@@ -161,8 +169,8 @@
   </Dialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import DOMPurify from 'dompurify'
@@ -172,79 +180,65 @@ import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
 import Dialog from 'primevue/dialog'
-import { downloadTorrent } from '@/services/api/torrentService'
+import {
+  downloadTorrent,
+  type TitleGroupAndAssociatedData,
+  type TorrentReport,
+} from '@/services/api/torrentService'
+import { useRoute } from 'vue-router'
+import { getEditionGroupSlug } from '@/services/helpers'
 
-export default defineComponent({
-  components: {
-    DataTable,
-    Column,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
-    Accordion,
-    ReportTorrentDialog,
-    Dialog,
-  },
-  props: {
-    title_group: {},
-    preview: { default: false },
-    sortBy: { default: 'edition' },
-  },
-  data() {
-    return { expandedRows: [], reportTorrentDialogVisible: false, reportingTorrentId: 0 }
-  },
-  methods: {
-    torrentReported(torrentReport) {
-      this.reportTorrentDialogVisible = false
-      const reportedTorrent = this.title_group.edition_groups
-        .flatMap((edition_group) => edition_group.torrents)
-        .find((torrent) => torrent.id == torrentReport.reported_torrent_id)
-      if (reportedTorrent.reports) {
-        reportedTorrent.reports.push(torrentReport)
-      } else {
-        reportedTorrent.reports = [torrentReport]
-      }
-    },
-    reportTorrent(id: number) {
-      this.reportingTorrentId = id
-      this.reportTorrentDialogVisible = true
-    },
-    toggleRow(torrent) {
-      if (!this.expandedRows.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {
-        this.expandedRows = [...this.expandedRows, torrent]
-      } else {
-        this.expandedRows = this.expandedRows.filter((t) => t.id !== torrent.id)
-      }
-    },
-    purifyHtml(html: string) {
-      return DOMPurify.sanitize(html)
-    },
-    downloadTorrent(torrentId: number) {
-      downloadTorrent(torrentId)
-    },
-  },
-  created() {
-    if (this.$route.query.torrentId) {
-      this.toggleRow(
-        this.title_group.edition_groups
-          .flatMap((edition_group) => edition_group.torrents)
-          .find((torrent) => torrent.id == this.$route.query.torrentId),
-      )
+interface Props {
+  title_group: TitleGroupAndAssociatedData
+  preview: boolean
+  sortBy: string
+}
+const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
+
+const reportTorrentDialogVisible = ref(false)
+const expandedRows = ref([])
+const reportingTorrentId = ref(0)
+const route = useRoute()
+
+const torrentReported = (torrentReport: TorrentReport) => {
+  reportTorrentDialogVisible.value = false
+  const reportedTorrent = title_group.edition_groups
+    .flatMap((edition_group) => edition_group.torrents)
+    .find((torrent) => torrent.id == torrentReport.reported_torrent_id)
+  if (reportedTorrent) {
+    if (reportedTorrent.reports) {
+      reportedTorrent.reports.push(torrentReport)
+    } else {
+      reportedTorrent.reports = [torrentReport]
     }
-  },
-  computed: {
-    isGrouped() {
-      return this.sortBy === 'edition'
-    },
-    getEditionGroupSlug() {
-      return (id: number) => {
-        return this.$getEditionGroupSlug(
-          this.title_group.edition_groups.find((group: object) => group.id === id),
-        )
-      }
-    },
-  },
+  } else {
+    console.error('torrent to report not found !')
+  }
+}
+const reportTorrent = (id: number) => {
+  reportingTorrentId.value = id
+  reportTorrentDialogVisible.value = true
+}
+const toggleRow = (torrent) => {
+  if (!expandedRows.value.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {
+    expandedRows.value = [...expandedRows.value, torrent]
+  } else {
+    expandedRows.value = expandedRows.value.filter((t) => t.id !== torrent.id)
+  }
+}
+const purifyHtml = (html: string) => {
+  return DOMPurify.sanitize(html)
+}
+onMounted(() => {
+  if (route.query.torrentId) {
+    toggleRow(
+      title_group.edition_groups
+        .flatMap((edition_group) => edition_group.torrents)
+        .find((torrent) => torrent.id === parseInt(route.query.torrentId?.toString())),
+    )
+  }
 })
+const isGrouped = computed(() => sortBy === 'edition')
 </script>
 <style scoped>
 .feature {

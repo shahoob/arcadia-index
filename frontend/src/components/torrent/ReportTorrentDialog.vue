@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { reportTorrent } from '@/services/api/torrentService'
+import { reportTorrent, type TorrentReport } from '@/services/api/torrentService'
 import { Textarea, FloatLabel } from 'primevue'
 import Button from 'primevue/button'
 
@@ -27,7 +27,7 @@ export default defineComponent({
     sendReport() {
       this.loading = true
       this.report.reported_torrent_id = this.torrentId
-      reportTorrent(this.report).then((data) => {
+      reportTorrent(this.report).then((data: TorrentReport) => {
         this.loading = false
         this.$emit('reported', data)
       })

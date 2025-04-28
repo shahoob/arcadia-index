@@ -7,7 +7,7 @@ use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
-use super::{title_group::TitleGroupHierarchyLite, user::UserLite};
+use super::{title_group::TitleGroupHierarchyLite, torrent_report::TorrentReport, user::UserLite};
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_codec_enum")]
@@ -339,6 +339,7 @@ pub struct TorrentHierarchy {
     pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>,
     pub uploader: UserLite,
+    pub reports: Vec<TorrentReport>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

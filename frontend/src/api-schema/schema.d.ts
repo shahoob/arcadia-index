@@ -610,7 +610,7 @@ export interface components {
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
-            covers?: string[] | null;
+            covers: string[];
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
@@ -639,12 +639,41 @@ export interface components {
         };
         TitleGroupAndAssociatedData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"];
+            category?: null | components["schemas"]["TitleGroupCategory"];
+            content_type: components["schemas"]["ContentType"];
+            country_from?: string | null;
+            covers: string[];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            description: string;
+            edition_groups: components["schemas"]["EditionGroupHierarchy"][];
+            embedded_links: unknown;
+            external_links: string[];
+            /** Format: int64 */
+            id: number;
             in_same_master_group: components["schemas"]["TitleGroupLite"][];
             is_subscribed: boolean;
+            /** Format: int64 */
+            master_group_id?: number | null;
+            name: string;
+            name_aliases: string[];
+            original_language?: string | null;
+            /** Format: date-time */
+            original_release_date: string;
+            platform?: null | components["schemas"]["Platform"];
+            public_ratings: unknown;
+            screenshots: string[];
             series: components["schemas"]["SeriesLite"];
-            title_group: components["schemas"]["TitleGroupHierarchy"];
+            /** Format: int64 */
+            series_id?: number | null;
+            tagline?: string | null;
+            tags: string[];
             title_group_comments: components["schemas"]["TitleGroupCommentHierarchy"][];
             torrent_requests: components["schemas"]["TorrentRequest"][];
+            /** Format: date-time */
+            updated_at: string;
         };
         /** @enum {string} */
         TitleGroupCategory: "Ep" | "Album" | "Single" | "Soundtrack" | "Anthology" | "Compilation" | "Remix" | "Bootleg" | "Mixtape" | "ConcertRecording" | "DjMix" | "FeatureFilm" | "ShortFilm" | "Game" | "Program" | "Illustrated" | "Periodical" | "Book" | "Article" | "Manual" | "Other";
@@ -687,7 +716,7 @@ export interface components {
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
-            covers?: string[] | null;
+            covers: string[];
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
@@ -718,7 +747,7 @@ export interface components {
         TitleGroupHierarchyLite: {
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
-            covers?: string[] | null;
+            covers: string[];
             edition_groups: components["schemas"]["EditionGroupHierarchyLite"][];
             /** Format: int64 */
             id: number;
@@ -726,12 +755,6 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             tags: string[];
-        };
-        TitleGroupInfoLite: {
-            content_type: components["schemas"]["ContentType"];
-            /** Format: int64 */
-            id: number;
-            name: string;
         };
         TitleGroupLite: {
             content_type: components["schemas"]["ContentType"];
@@ -807,6 +830,7 @@ export interface components {
             mediainfo: string;
             release_group?: string | null;
             release_name?: string | null;
+            reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
             size: number;
             staff_checked: boolean;
@@ -1042,7 +1066,7 @@ export interface components {
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
-            covers?: string[] | null;
+            covers: string[];
             description: string;
             embedded_links: unknown;
             external_links: string[];
@@ -1576,7 +1600,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TitleGroupInfoLite"];
+                    "application/json": components["schemas"]["TitleGroupLite"];
                 };
             };
         };
