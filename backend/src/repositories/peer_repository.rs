@@ -70,10 +70,9 @@ pub async fn insert_or_update_peer(
     .await
     .expect("failed");
 
-    match existing {
-        Some(row) => (row.real_uploaded, row.real_downloaded),
-        None => (0, 0),
-    }
+    existing
+        .map(|row| (row.real_uploaded, row.real_downloaded))
+        .unwrap_or((0, 0))
 }
 
 pub async fn find_torrent_peers(
