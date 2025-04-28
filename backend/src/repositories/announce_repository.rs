@@ -1,4 +1,4 @@
-use sqlx::PgPool;
+use sqlx::{PgPool, postgres::PgQueryResult};
 
 use crate::handlers::announce_handler::Error;
 
@@ -29,6 +29,8 @@ pub async fn find_user_with_passkey(
 #[derive(sqlx::FromRow)]
 pub struct TorrentCompact {
     pub id: i64,
+    pub upload_factor: f64,
+    pub download_factor: f64,
 }
 
 pub async fn find_torrent_with_id(
@@ -38,7 +40,7 @@ pub async fn find_torrent_with_id(
     sqlx::query_as!(
         TorrentCompact,
         r#"
-            SELECT id FROM torrents
+            SELECT id, upload_factor, download_factor FROM torrents
             WHERE info_hash = $1
         "#,
         info_hash
@@ -46,4 +48,32 @@ pub async fn find_torrent_with_id(
     .fetch_one(pool)
     .await
     .map_err(|_| Error::InvalidInfoHash)
+}
+
+pub async fn credit_user_upload_download(
+    pool: &PgPool,
+    uploaded: i64,
+    downloaded: i64,
+    real_uploaded: i64,
+    real_downloaded: i64,
+    user_id: i64,
+) -> Result<PgQueryResult, Error> {
+    sqlx::query!(
+        r#"
+        UPDATE users
+        SET uploaded = uploaded + $1,
+            downloaded = downloaded + $2,
+            real_uploaded = real_uploaded + $3,
+            real_downloaded = real_downloaded + $4
+        WHERE id = $5
+        "#,
+        uploaded,
+        downloaded,
+        real_uploaded,
+        real_downloaded,
+        user_id
+    )
+    .execute(pool)
+    .await
+    .map_err(|_| Error::InvalidUserId)
 }

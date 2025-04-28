@@ -8,8 +8,10 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description TEXT NOT NULL DEFAULT '',
     uploaded BIGINT NOT NULL DEFAULT 0,
+    real_uploaded BIGINT NOT NULL DEFAULT 0,
     -- 1 byte downloaded
     downloaded BIGINT NOT NULL DEFAULT 1,
+    real_downloaded BIGINT NOT NULL DEFAULT 1,
     ratio FLOAT NOT NULL DEFAULT 0.0,
     required_ratio FLOAT NOT NULL DEFAULT 0.0,
     last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -306,6 +308,8 @@ CREATE TYPE language_enum AS ENUM(
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
+    upload_factor FLOAT NOT NULL DEFAULT 1.0,
+    download_factor FLOAT NOT NULL DEFAULT 1.0,
     edition_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -439,6 +443,8 @@ CREATE TABLE peers (
     port INTEGER NOT NULL,
     first_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    real_uploaded BIGINT NOT NULL DEFAULT 0,
+    real_downloaded BIGINT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id),
 
@@ -521,6 +527,8 @@ CREATE TABLE collage_entity_entry (
 CREATE VIEW torrents_and_reports AS
 SELECT
     t.id,
+    t.upload_factor,
+    t.download_factor,
     t.edition_group_id,
     t.created_at,
     t.updated_at,
@@ -588,6 +596,8 @@ SELECT
                         SELECT jsonb_agg(
                             jsonb_build_object(
                                 'id', t.id,
+                                'upload_factor', t.upload_factor,
+                                'download_factor', t.download_factor,
                                 'edition_group_id', t.edition_group_id,
                                 'created_at', t.created_at,
                                 'release_name', t.release_name,
