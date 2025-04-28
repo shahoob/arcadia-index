@@ -1,6 +1,6 @@
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 
-use crate::tracker::announce::{self, PeerCompact};
+use crate::tracker::announce::{self, Announce, PeerCompact};
 
 pub async fn remove_peer(
     pool: &PgPool,
@@ -28,12 +28,9 @@ pub async fn remove_peer(
 pub async fn insert_or_update_peer(
     pool: &PgPool,
     torrent_id: &i64,
-    peer_id: &[u8; 20],
     ip: &IpNetwork,
-    port: u16,
     user_id: &i64,
-    uploaded: i64,
-    downloaded: i64,
+    ann: &Announce,
 ) -> (i64, i64) {
     let existing = sqlx::query!(
         r#"
@@ -42,9 +39,9 @@ pub async fn insert_or_update_peer(
         WHERE torrent_id = $1 AND peer_id = $2 AND ip = $3 AND port = $4 AND user_id = $5
         "#,
         torrent_id,
-        peer_id,
+        &ann.peer_id,
         ip,
-        port as i32,
+        ann.port as i32,
         user_id
     )
     .fetch_optional(pool)
@@ -62,12 +59,12 @@ pub async fn insert_or_update_peer(
             real_downloaded = $7
         "#,
         torrent_id,
-        peer_id,
+        &ann.peer_id,
         ip,
-        port as i32,
+        ann.port as i32,
         user_id,
-        uploaded,
-        downloaded
+        ann.uploaded.unwrap_or(0) as i64,
+        ann.downloaded.unwrap_or(0) as i64
     )
     .execute(pool)
     .await
