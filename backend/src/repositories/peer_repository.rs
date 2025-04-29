@@ -96,6 +96,8 @@ pub async fn find_torrent_peers(
     .await
     .expect("failed");
 
+    println!("{:?}", peers);
+
     peers
         .into_iter()
         .map(|p| {

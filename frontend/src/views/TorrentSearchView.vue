@@ -9,9 +9,11 @@
     <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
       <div class="title-groups">
         <TitleGroupPreviewCoverOnly
-          v-for="title_group in title_groups"
+          v-for="title_group in search_results.title_groups"
           :key="title_group.id"
-          :title_group="title_group"
+          :id="title_group.id"
+          :name="title_group.name"
+          :cover="title_group.covers[0]"
         />
       </div>
     </ContentContainer>
@@ -26,41 +28,32 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
-import { searchTorrents } from '@/services/api/torrentService'
-import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
-export default {
-  components: {
-    ContentContainer,
-    TitleGroupPreviewCoverOnly,
-    TitleGroupPreviewTable,
-    TorrentSearchInputs,
-  },
-  data() {
-    return {
-      search_results: null,
-      title_group_preview_mode: 'table', // TODO: make a select button to switch from cover-only to table
-      loading: false,
-      initialTitleGroupName: '',
-    }
-  },
-  methods: {
-    search(searchForm) {
-      this.loading = true
-      searchTorrents(searchForm).then((data) => {
-        this.search_results = data
-        this.loading = false
-      })
-    },
-  },
-  created() {
-    this.initialTitleGroupName = this.$route.query.title_group_name ?? ''
-    this.search({ title_group_name: this.initialTitleGroupName })
-  },
+import { searchTorrents, type TorrentSearchResults } from '@/services/api/torrentService'
+import TorrentSearchInputs, { type SearchForm } from '@/components/torrent/TorrentSearchInputs.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const search_results = ref<TorrentSearchResults>()
+const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
+const loading = ref(false)
+const initialTitleGroupName = ref('')
+
+const search = async (searchForm: SearchForm) => {
+  loading.value = true
+  search_results.value = await searchTorrents(searchForm)
+  loading.value = false
 }
+
+onMounted(async () => {
+  initialTitleGroupName.value = route.query.title_group_name?.toString() ?? ''
+  search({ title_group_name: initialTitleGroupName.value, tags: '' })
+})
 </script>
 
 <style scoped>

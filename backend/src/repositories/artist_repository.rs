@@ -21,7 +21,7 @@ pub async fn create_artist(
         "#,
         artist.name,
         artist.description,
-        artist.pictures.as_deref(),
+        &artist.pictures,
         current_user_id
     )
     .fetch_one(pool)

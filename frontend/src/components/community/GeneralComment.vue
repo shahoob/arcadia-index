@@ -21,16 +21,13 @@
   </ContentContainer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
+import { type TitleGroupHierarchy } from '@/services/api/torrentService'
 
-export default defineComponent({
-  components: { ContentContainer },
-  props: {
-    comment: {},
-  },
-})
+defineProps<{
+  comment: TitleGroupHierarchy
+}>()
 </script>
 
 <style scoped>

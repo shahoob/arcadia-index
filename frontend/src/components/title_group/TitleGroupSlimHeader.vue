@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <span v-if="title_group.series?.id">
-      <a class="prefix" :href="`/series?id=${title_group.series.id}`"
+      <a class="prefix" :href="`/series/${title_group.series.id}`"
         >{{ title_group.series.name }}
       </a>
       -
@@ -16,15 +16,12 @@
     <span class="year">({{ title_group.original_release_date.substring(0, 4) }})</span>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 
-export default defineComponent({
-  components: {},
-  props: {
-    title_group: {},
-  },
-})
+defineProps<{
+  title_group: TitleGroupAndAssociatedData
+}>()
 </script>
 <style scoped>
 .title {

@@ -8,6 +8,7 @@ use super::{
     artist::AffiliatedArtistHierarchy,
     edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
     series::SeriesLite,
+    title_group_comment::TitleGroupCommentHierarchy,
     torrent_request::TorrentRequest,
 };
 
@@ -15,24 +16,24 @@ use super::{
 #[sqlx(type_name = "content_type_enum")]
 pub enum ContentType {
     #[sqlx(rename = "movie")]
-    #[serde(alias = "movie")]
+    #[serde(rename = "movie")]
     Movie,
     #[sqlx(rename = "tv_show")]
-    #[serde(alias = "tv_show")]
+    #[serde(rename = "tv_show")]
     TVShow,
     #[sqlx(rename = "music")]
-    #[serde(alias = "music")]
+    #[serde(rename = "music")]
     Music,
     #[sqlx(rename = "software")]
-    #[serde(alias = "software")]
+    #[serde(rename = "software")]
     Software,
     #[sqlx(rename = "book")]
-    #[serde(alias = "book")]
+    #[serde(rename = "book")]
     Book,
     // aka SiteRip, but also includes packs of other content than website dumps (books, etc.)
     // this allows users to group content (when possible), which lowers the load on the tracker and makes the upload process faster (1 announce instead of multiple)
     #[sqlx(rename = "collection")]
-    #[serde(alias = "collection")]
+    #[serde(rename = "collection")]
     Collection,
 }
 
@@ -99,14 +100,14 @@ pub struct TitleGroup {
     pub original_release_date: NaiveDateTime,
     pub tagline: Option<String>, // catchy sentence that represents the general idea of the title
     pub country_from: Option<String>,
-    pub covers: Option<Vec<String>>,
+    pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
-    #[schema(value_type = Value)]
-    pub embedded_links: Option<Json<Value>>, // {name: link} (trailer, preview, etc.)
+    #[schema(value_type = HashMap<String, String>)]
+    pub embedded_links: Json<Value>, // {name: link} (trailer, preview, etc.)
     pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
     pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub public_ratings: Option<Json<Value>>, // {service: rating}
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -125,10 +126,10 @@ pub struct UserCreatedTitleGroup {
     pub description: String,
     pub original_language: Option<String>,
     pub country_from: Option<String>,
-    pub covers: Option<Vec<String>>,
+    pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = Value)]
-    pub embedded_links: Option<Json<Value>>,
+    #[schema(value_type = HashMap<String, String>)]
+    pub embedded_links: Json<Value>,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
     pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
@@ -138,7 +139,7 @@ pub struct UserCreatedTitleGroup {
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub affiliated_artists: Vec<Json<Value>>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -151,13 +152,13 @@ pub struct UserCreatedTitleGroup {
 pub struct TitleGroupHierarchyLite {
     pub id: i64,
     pub name: String,
-    pub covers: Option<Vec<String>>,
+    pub covers: Vec<String>,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
-    // #[schema(value_type = Value)]
+    // #[schema(value_type = HashMap<String, String>)]
     // pub affiliated_artists: Vec<Json<Value>>,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
 }
@@ -195,14 +196,14 @@ pub struct TitleGroupHierarchy {
     pub original_release_date: NaiveDateTime,
     pub tagline: Option<String>,
     pub country_from: Option<String>,
-    pub covers: Option<Vec<String>>,
+    pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = Value)]
-    pub embedded_links: Option<Json<Value>>,
+    #[schema(value_type = HashMap<String, String>)]
+    pub embedded_links: Json<Value>,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub public_ratings: Option<Json<Value>>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -211,10 +212,37 @@ pub struct TitleGroupHierarchy {
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TitleGroupAndAssociatedData {
-    pub title_group: TitleGroupHierarchy,
+    pub id: i64,
+    pub master_group_id: Option<i64>,
+    pub name: String,
+    pub name_aliases: Vec<String>,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: NaiveDateTime,
+    #[schema(value_type = String, format = DateTime)]
+    pub updated_at: NaiveDateTime,
+    pub created_by_id: i64,
+    pub description: String,
+    pub platform: Option<Platform>,
+    pub original_language: Option<String>,
+    #[schema(value_type = String, format = DateTime)]
+    pub original_release_date: NaiveDateTime,
+    pub tagline: Option<String>,
+    pub country_from: Option<String>,
+    pub covers: Vec<String>,
+    pub external_links: Vec<String>,
+    #[schema(value_type = HashMap<String, String>)]
+    pub embedded_links: Json<Value>,
+    pub category: Option<TitleGroupCategory>,
+    pub content_type: ContentType,
+    pub tags: Vec<String>,
+    #[schema(value_type = HashMap<String, String>)]
+    pub public_ratings: Option<Json<Value>>,
+    pub series_id: Option<i64>,
+    pub screenshots: Vec<String>,
+    pub edition_groups: Vec<EditionGroupHierarchy>,
     pub series: SeriesLite,
-    pub affiliated_artists: AffiliatedArtistHierarchy,
-    pub title_group_comments: Vec<TitleGroupHierarchy>,
+    pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
+    pub title_group_comments: Vec<TitleGroupCommentHierarchy>,
     pub torrent_requests: Vec<TorrentRequest>,
     pub is_subscribed: bool,
     pub in_same_master_group: Vec<TitleGroupLite>,
@@ -227,9 +255,9 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         description: String::from("No description provided"),
         original_language: None,
         country_from: None,
-        covers: Some(vec!["".to_string()]),
+        covers: vec!["".to_string()],
         external_links: vec!["".to_string()],
-        embedded_links: Some(Json(json!({}))),
+        embedded_links: Json(json!({})),
         category: None,
         content_type: ContentType::Book,
         tags: Vec::new(),

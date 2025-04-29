@@ -54,7 +54,7 @@ CREATE TABLE artists (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    pictures TEXT [],
+    pictures TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
@@ -161,9 +161,9 @@ CREATE TABLE title_groups (
     tagline TEXT,
     tags VARCHAR(50) [] NOT NULL,
     country_from TEXT,
-    covers TEXT [],
+    covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
-    embedded_links JSONB,
+    embedded_links JSONB NOT NULL,
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
@@ -344,7 +344,7 @@ CREATE TABLE torrents (
 
     -- video
     video_codec video_codec_enum,
-    features features_enum [],
+    features features_enum [] NOT NULL,
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
 
@@ -384,7 +384,7 @@ CREATE TABLE torrent_requests (
     audio_channels VARCHAR(8),
     -- Video
     video_codec video_codec_enum,
-    features features_enum[],
+    features features_enum[] NOT NULL,
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
@@ -560,7 +560,7 @@ SELECT
     t.video_resolution,
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
-        ELSE NULL
+        ELSE '[]'::json
     END AS reports
 FROM
     torrents t

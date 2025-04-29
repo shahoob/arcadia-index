@@ -66,7 +66,7 @@ pub async fn get_artist_publications(
 ) -> Result<HttpResponse> {
     let artist_publication = find_artist_publications(&arc.pool, &query.id).await?;
 
-    Ok(HttpResponse::Created().json(artist_publication))
+    Ok(HttpResponse::Ok().json(artist_publication))
 }
 
 #[derive(Debug, Deserialize, ToSchema, IntoParams)]
@@ -89,5 +89,5 @@ pub async fn get_artists_lite(
 ) -> Result<HttpResponse> {
     let artists = find_artists_lite(&arc.pool, &query.name).await?;
 
-    Ok(HttpResponse::Created().json(artists))
+    Ok(HttpResponse::Ok().json(artists))
 }

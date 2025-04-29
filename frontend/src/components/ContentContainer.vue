@@ -5,13 +5,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'ContentContainer',
-  props: { containerTitle: {}, slotClass: {} },
-})
+<script setup lang="ts">
+defineProps<{
+  containerTitle: string
+}>()
 </script>
 
 <style scoped>
