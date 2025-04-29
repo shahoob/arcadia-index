@@ -11,7 +11,7 @@
       </Image>
       <div class="right">
         <div class="title">
-          <a :href="'/title-group/' + title_group.id">{{ title_group.name }}</a>
+          <RouterLink :to="`/title-group/${title_group.id}`">{{ title_group.name }}</RouterLink>
           <span class="year">({{ title_group.original_release_date.substring(0, 4) }})</span>
         </div>
         <TitleGroupTable

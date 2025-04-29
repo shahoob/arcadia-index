@@ -1,15 +1,15 @@
 <template>
   <div class="title">
     <span v-if="title_group.series?.id">
-      <a class="prefix" :href="`/series/${title_group.series.id}`"
+      <RouterLink class="prefix" :to="`/series/${title_group.series.id}`"
         >{{ title_group.series.name }}
-      </a>
+      </RouterLink>
       -
     </span>
     <span v-if="title_group.platform">
-      <a class="prefix" :href="`/platform?name=${title_group.platform}`">
+      <RouterLink class="prefix" :to="`/platform?name=${title_group.platform}`">
         {{ title_group.platform }}
-      </a>
+      </RouterLink>
       -
     </span>
     <span class="title-group-name">{{ title_group.name }}</span>

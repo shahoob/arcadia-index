@@ -33,7 +33,10 @@
         />
       </div>
     </div>
-    <SeriesSidebar :series />
+    <SeriesSidebar
+      :series
+      v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')"
+    />
   </div>
 </template>
 
