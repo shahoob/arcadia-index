@@ -278,187 +278,172 @@
   </Form>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
-import FileUpload from 'primevue/fileupload'
+import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import MultiSelect from 'primevue/multiselect'
 import Message from 'primevue/message'
-import { FormField, type FormResolverOptions } from '@primevue/forms'
+import { FormField, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
-import { uploadTorrent } from '@/services/api/torrentService'
+import { uploadTorrent, type Torrent, type UploadedTorrent } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import { useI18n } from 'vue-i18n'
 
-export default defineComponent({
-  components: {
-    Form,
-    Message,
-    FormField,
-    Button,
-    MultiSelect,
-    FileUpload,
-    FloatLabel,
-    InputText,
-    Textarea,
-    Select,
-    Checkbox,
-  },
-  props: {},
-  data() {
-    return {
-      step: 1,
-      torrentForm: {
-        edition_group_id: '',
-        release_name: '',
-        release_group: '',
-        mediainfo: '',
-        description: '',
-        languages: [],
-        container: '',
-        video_codec: null,
-        video_resolution: null,
-        duration: null,
-        audio_codec: null,
-        audio_bitrate: null,
-        subtitle_languages: [],
-        features: [],
-        audio_channels: null,
-        audio_bitrate_sampling: null,
-        torrent_file: null,
-        uploaded_as_anonymous: false,
-      },
-      // TODO : move all the selectable* arrays to an helper function
-      selectableVideoCodecs: [
-        'mpeg1',
-        'mpeg2',
-        'divX',
-        'DivX',
-        'h264',
-        'h265',
-        'vc-1',
-        'vp9',
-        'BD50',
-        'UHD100',
-      ],
-      selectableVideoResolutions: ['2160p', '1440p', '1080p', '720p', 'SD'],
-      selectableAudioCodecs: [
-        'Aac',
-        'Opus',
-        'Mp3',
-        'Mp2',
-        'Aac',
-        'Ac3',
-        'Dts',
-        'Flac',
-        'Pcm',
-        'true-hd',
-        'Dsd',
-      ],
-      selectableAudioBitrateSamplings: [
-        '192',
-        '256',
-        '320',
-        'APS (VBR)',
-        'V2 (VBR)',
-        'V1 (VBR)',
-        'V0 (VBR)',
-        'APX (VBR)',
-        'Lossless',
-        '24bit Lossless',
-        'DSD64',
-        'DSD128',
-        'DSD256',
-        'DSD512',
-        'Other',
-      ],
-      selectableAudioChannels: ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1'],
-      uploadingTorrent: false,
-      content_type: '',
-    }
-  },
-  methods: {
-    resolver({ values }: FormResolverOptions) {
-      const errors = {}
+const torrentFile = ref(null)
+const step = ref(1)
+const torrentForm = {
+  edition_group_id: '',
+  release_name: '',
+  release_group: '',
+  mediainfo: '',
+  description: '',
+  languages: [],
+  container: '',
+  video_codec: null,
+  video_resolution: null,
+  duration: null,
+  audio_codec: null,
+  audio_bitrate: null,
+  subtitle_languages: [],
+  features: [],
+  audio_channels: null,
+  audio_bitrate_sampling: null,
+  torrent_file: null,
+  uploaded_as_anonymous: false,
+}
+// TODO : move all the selectable* arrays to an helper function
+const selectableVideoCodecs = [
+  'mpeg1',
+  'mpeg2',
+  'divX',
+  'DivX',
+  'h264',
+  'h265',
+  'vc-1',
+  'vp9',
+  'BD50',
+  'UHD100',
+]
+const selectableVideoResolutions = ['2160p', '1440p', '1080p', '720p', 'SD']
+const selectableAudioCodecs = [
+  'Aac',
+  'Opus',
+  'Mp3',
+  'Mp2',
+  'Aac',
+  'Ac3',
+  'Dts',
+  'Flac',
+  'Pcm',
+  'true-hd',
+  'Dsd',
+]
+const selectableAudioBitrateSamplings = [
+  '192',
+  '256',
+  '320',
+  'APS (VBR)',
+  'V2 (VBR)',
+  'V1 (VBR)',
+  'V0 (VBR)',
+  'APX (VBR)',
+  'Lossless',
+  '24bit Lossless',
+  'DSD64',
+  'DSD128',
+  'DSD256',
+  'DSD512',
+  'Other',
+]
+const selectableAudioChannels = ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1']
+const uploadingTorrent = ref(false)
+let content_type = ''
 
-      if (values.release_name.length < 5) {
-        errors.release_name = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
-      }
-      // if (values.release_group.length < 2) {
-      //   errors.release_group = [{ message: 'Write more than 2 characters' }]
-      // }
-      // if (values.description == '') {
-      //   errors.description = [{ message: 'Write a description' }]
-      // }
-      if (values.container == '') {
-        errors.container = [{ message: this.$t('error.select_container') }]
-      }
-      if (!values.video_codec) {
-        errors.video_codec = [{ message: this.$t('error.select_codec') }]
-      }
-      if (!values.video_resolution) {
-        errors.video_resolution = [{ message: this.$t('error.select_resolution') }]
-      }
-      if (!values.audio_codec) {
-        errors.audio_codec = [{ message: this.$t('error.select_codec') }]
-      }
-      if (!values.audio_bitrate_sampling) {
-        errors.audio_bitrate_sampling = [{ message: this.$t('error.select_bitrate') }]
-      }
-      if (values.languages && values.languages.length === 0) {
-        errors.languages = [{ message: this.$t('error.select_at_least_x_language', [1]) }]
-      }
-      if (!this.torrentForm.torrent_file) {
-        errors.torrent_file = [{ message: this.$t('error.select_torrent_file') }]
-      }
+const { t } = useI18n()
 
-      return {
-        errors,
-      }
-    },
-    onFormSubmit({ valid }) {
-      if (valid) {
-        this.sendTorrent()
-      }
-    },
-    onFileSelect(event) {
-      if (event.files && event.files.length > 0) {
-        // keep a single file
-        const torrentFile = event.files[event.files.length - 1]
-        this.$refs.torrentFile.clear()
-        this.$refs.torrentFile.files = [torrentFile]
-        this.torrentForm.torrent_file = torrentFile
-      }
-    },
-    mediainfoUpdated() {
-      const mediainfoExtractedInfo = getFileInfo(this.torrentForm.mediainfo)
-      console.log(mediainfoExtractedInfo)
-      this.step = 2
-    },
-    sendTorrent() {
-      this.uploadingTorrent = true
-      console.log(this.torrentForm.features)
-      uploadTorrent(this.torrentForm)
-        .then((data) => {
-          this.$emit('done', data)
-        })
-        .finally(() => {
-          this.uploadingTorrent = false
-        })
-    },
-  },
-  created() {
-    this.content_type = useTitleGroupStore().content_type
-    const editionGroupStore = useEditionGroupStore()
-    this.torrentForm.edition_group_id = editionGroupStore.id
-    console.log(this.content_type)
-  },
+const emit = defineEmits<{
+  done: [torrent: Torrent]
+}>()
+
+const resolver = ({ values }: FormResolverOptions) => {
+  const errors: Partial<Record<keyof UploadedTorrent, { message: string }[]>> = {}
+
+  if (values.release_name.length < 5) {
+    errors.release_name = [{ message: t('error.write_more_than_x_chars', [5]) }]
+  }
+  // if (values.release_group.length < 2) {
+  //   errors.release_group = [{ message: 'Write more than 2 characters' }]
+  // }
+  // if (values.description == '') {
+  //   errors.description = [{ message: 'Write a description' }]
+  // }
+  if (values.container == '') {
+    errors.container = [{ message: t('error.select_container') }]
+  }
+  if (!values.video_codec) {
+    errors.video_codec = [{ message: t('error.select_codec') }]
+  }
+  if (!values.video_resolution) {
+    errors.video_resolution = [{ message: t('error.select_resolution') }]
+  }
+  if (!values.audio_codec) {
+    errors.audio_codec = [{ message: t('error.select_codec') }]
+  }
+  if (!values.audio_bitrate_sampling) {
+    errors.audio_bitrate_sampling = [{ message: t('error.select_bitrate') }]
+  }
+  if (values.languages && values.languages.length === 0) {
+    errors.languages = [{ message: t('error.select_at_least_x_language', [1]) }]
+  }
+  if (!torrentForm.torrent_file) {
+    errors.torrent_file = [{ message: t('error.select_torrent_file') }]
+  }
+
+  return {
+    errors,
+  }
+}
+const onFormSubmit = ({ valid }: FormSubmitEvent) => {
+  if (valid) {
+    sendTorrent()
+  }
+}
+const onFileSelect = (event: FileUploadSelectEvent) => {
+  if (event.files && event.files.length > 0) {
+    // keep a single file
+    const torrentFile = event.files[event.files.length - 1]
+    torrentFile.clear()
+    torrentFile.files = [torrentFile]
+    torrentForm.torrent_file = torrentFile
+  }
+}
+const mediainfoUpdated = () => {
+  const mediainfoExtractedInfo = getFileInfo(torrentForm.mediainfo)
+  console.log(mediainfoExtractedInfo)
+  step.value = 2
+}
+const sendTorrent = () => {
+  uploadingTorrent.value = true
+  uploadTorrent(torrentForm)
+    .then((data) => {
+      emit('done', data)
+    })
+    .finally(() => {
+      uploadingTorrent.value = false
+    })
+}
+onMounted(() => {
+  content_type = useTitleGroupStore().content_type
+  const editionGroupStore = useEditionGroupStore()
+  torrentForm.edition_group_id = editionGroupStore.id.toString()
 })
 </script>
 <style scoped>

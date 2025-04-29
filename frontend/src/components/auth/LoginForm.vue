@@ -31,7 +31,7 @@
     />
   </Form>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import { Form } from '@primevue/forms'

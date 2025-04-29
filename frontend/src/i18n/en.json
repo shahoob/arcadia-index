@@ -82,7 +82,8 @@
       "movie": "Movie",
       "tv_show": "TV Show",
       "book": "Book",
-      "software": "Software"
+      "software": "Software",
+      "collection": "Collection"
     }
   },
   "edition_group": {

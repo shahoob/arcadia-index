@@ -8,32 +8,35 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { reportTorrent, type TorrentReport } from '@/services/api/torrentService'
+<script setup lang="ts">
+import {
+  reportTorrent,
+  type TorrentReport,
+  type UserCreatedTorrentReport,
+} from '@/services/api/torrentService'
 import { Textarea, FloatLabel } from 'primevue'
 import Button from 'primevue/button'
+import { ref } from 'vue'
 
-export default defineComponent({
-  components: { Textarea, FloatLabel, Button },
-  props: { torrentId: {} },
-  data() {
-    return {
-      report: { description: '', reported_torrent_id: 0 },
-      loading: false,
-    }
-  },
-  methods: {
-    sendReport() {
-      this.loading = true
-      this.report.reported_torrent_id = this.torrentId
-      reportTorrent(this.report).then((data: TorrentReport) => {
-        this.loading = false
-        this.$emit('reported', data)
-      })
-    },
-  },
-})
+const report = ref<UserCreatedTorrentReport>({ description: '', reported_torrent_id: 0 })
+const loading = ref(false)
+
+const props = defineProps<{
+  torrentId: number
+}>()
+
+const emit = defineEmits<{
+  reported: [torrentReport: TorrentReport]
+}>()
+
+const sendReport = () => {
+  loading.value = true
+  report.value.reported_torrent_id = props.torrentId
+  reportTorrent(report.value).then((data: TorrentReport) => {
+    loading.value = false
+    emit('reported', data)
+  })
+}
 </script>
 
 <style scoped>

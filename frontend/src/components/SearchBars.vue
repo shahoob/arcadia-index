@@ -34,25 +34,17 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import InputText from 'primevue/inputtext'
+import { ref } from 'vue'
 
-export default defineComponent({
-  components: { InputText },
-  data() {
-    return {
-      searchForm: {
-        torrents: '',
-        artists: '',
-        series: '',
-        requests: '',
-        forums: '',
-        users: '',
-      },
-    }
-  },
-  methods: {},
+const searchForm = ref({
+  torrents: '',
+  artists: '',
+  series: '',
+  requests: '',
+  forums: '',
+  users: '',
 })
 </script>
 
