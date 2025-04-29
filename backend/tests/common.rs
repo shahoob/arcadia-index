@@ -107,6 +107,8 @@ where
 {
     let resp = test::call_service(&service, req).await;
 
+    println!("{:?}", resp.response());
+
     assert_eq!(
         resp.status(),
         status_code,
