@@ -1,6 +1,7 @@
 use crate::Result;
 use actix_web::{HttpResponse, web};
 use chrono::NaiveDate;
+use opentelemetry::{trace::{FutureExt, TraceContextExt, Tracer, TracerProvider}, Context};
 use serde::Deserialize;
 
 use crate::models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group};
@@ -55,9 +56,16 @@ pub struct GetOpenLibraryQuery {
 }
 
 pub async fn get_open_library_data(query: web::Query<GetOpenLibraryQuery>) -> Result<HttpResponse> {
+    let tracer_provider = opentelemetry::global::tracer_provider();
+
+    let tracer = tracer_provider.tracer("open-library_scraper");
+
     let url = format!("https://openlibrary.org/works/{}.json", query.id);
 
-    let work = reqwest::get(&url).await?.json::<Work>().await?;
+    let request_span = tracer.start("fetch-work");
+
+    let work = reqwest::get(&url).await?.json::<Work>()
+        .with_context(Context::current_with_span(request_span)).await?;
 
     // TODO: kill unwrap and make date nullable
     let original_release_date = work

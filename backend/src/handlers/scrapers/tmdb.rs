@@ -3,6 +3,7 @@ use crate::{
     models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
 };
 use actix_web::{HttpResponse, web};
+use opentelemetry::{global::ObjectSafeSpan, trace::{FutureExt, TraceContextExt, Tracer, TracerProvider}, Context};
 use serde::{Deserialize, de::DeserializeOwned};
 
 #[derive(Debug, Deserialize)]
@@ -75,12 +76,19 @@ struct Tmdb {
     client: reqwest::Client,
     bearer: String,
     config: Configuration,
+    tracer: opentelemetry::global::BoxedTracer,
 }
 
 const BASE_URL: &str = "https://api.themoviedb.org/3";
 
 impl Tmdb {
     async fn new(bearer: impl Into<String>) -> Result<Self> {
+        let tracer_provider = opentelemetry::global::tracer_provider();
+
+        let tracer = tracer_provider.tracer("tmdb_scraper");
+
+        let mut config_span = tracer.start("configuration");
+
         let client = reqwest::Client::new();
         let bearer = bearer.into();
 
@@ -92,19 +100,25 @@ impl Tmdb {
             .json::<Configuration>()
             .await?;
 
+        config_span.end();
+
         Ok(Tmdb {
             client,
             bearer,
             config,
+            tracer,
         })
     }
 
     async fn call_endpoint<T: DeserializeOwned>(&self, endpoint: impl AsRef<str>) -> Result<T> {
+        let span = self.tracer.start("fetch-data");
+
         let resp = self
             .client
             .get(endpoint.as_ref())
             .bearer_auth(&self.bearer)
             .send()
+            .with_context(Context::current_with_span(span))
             .await?
             .json::<T>()
             .await?;
@@ -138,12 +152,18 @@ pub struct TmdbQuery {
 }
 
 pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpResponse> {
+    let tracer = opentelemetry::global::tracer("tmdb_scraper_handler");
+
     let token = std::env::var("TMDB_API_TOKEN").expect("TMDB_API_TOKEN must be set");
+
+    let mut fetch_span = tracer.start("fetch-data");
 
     // TODO: create this only once.
     let tmdb = Tmdb::new(token).await?;
 
     let movie = tmdb.movie_by_id(query.id).await?;
+
+    fetch_span.end(); fetch_span.set_status(opentelemetry::trace::Status::Ok);
 
     let name_aliases = if movie.title != movie.original_title {
         vec![movie.original_title]
@@ -177,17 +197,24 @@ pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpRes
 }
 
 pub async fn get_tmdb_tv_data(query: web::Query<TmdbQuery>) -> Result<HttpResponse> {
+    let tracer = opentelemetry::global::tracer("tmdb_scraper_handler");
+
     let token = std::env::var("TMDB_API_TOKEN").expect("TMDB_API_TOKEN must be set");
+
+    let mut fetch_span = tracer.start("fetch-data");
 
     // TODO: create this only once.
     let tmdb = Tmdb::new(token).await?;
 
     let tvshow = tmdb.tvshow_by_id(query.id).await?;
 
+    
     let covers = tvshow
         .poster_path
         .as_ref()
         .map(|p| tmdb.get_image_urls(p).collect());
+    
+    fetch_span.end(); fetch_span.set_status(opentelemetry::trace::Status::Ok);
 
     let mut external_links = vec![format!("https://www.themoviedb.org/tv/{}", query.id)];
 
