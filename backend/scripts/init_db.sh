@@ -7,4 +7,4 @@ if [ -z ${DATABASE_URL+x} ]; then
   exit 1;
 fi
 
-./sqlx database setup --source ./migrations
+cargo sqlx database setup --source ./migrations
