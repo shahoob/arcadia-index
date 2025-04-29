@@ -171,7 +171,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import { Form, type FormResolverOptions } from '@primevue/forms'
+import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import { useI18n } from 'vue-i18n'
 import { isValidUrl } from '@/services/helpers'
 import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
@@ -245,7 +245,7 @@ const resolver = ({ values }: FormResolverOptions) => {
   }
 }
 
-const onFormSubmit = ({ valid }) => {
+const onFormSubmit = ({ valid }: FormSubmitEvent) => {
   if (valid) {
     emit('validated', editionGroupForm)
   }

@@ -1,5 +1,5 @@
 <template>
-  <a target="_blank" :href="link"><img :src="'logos/external_links/' + getLinkLogo()" /></a>
+  <a target="_blank" :href="link"><img :src="'/logos/external_links/' + getLinkLogo()" /></a>
 </template>
 
 <script setup lang="ts">

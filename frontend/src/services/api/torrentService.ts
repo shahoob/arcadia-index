@@ -64,7 +64,9 @@ export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) 
   }
 }
 
-// TODO: type uploadTorrent.
+export type UploadedTorrent = components['schemas']['UploadedTorrent']
+
+export type Torrent = components['schemas']['Torrent']
 
 export const uploadTorrent = async (torrentForm: object) => {
   try {
@@ -75,7 +77,7 @@ export const uploadTorrent = async (torrentForm: object) => {
       }
     }
     return (
-      await api.post('/torrent', formData, {
+      await api.post<Torrent>('/torrent', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -110,9 +112,11 @@ export const downloadTorrent = async (torrentId: number) => {
 
 export type TorrentSearch = components['schemas']['TorrentSearch']
 
+export type TorrentSearchResults = components['schemas']['TorrentSearchResults']
+
 export const searchTorrents = async (searchOptions: TorrentSearch) => {
   try {
-    return (await api.post('/search/torrent', searchOptions)).data
+    return (await api.post<TorrentSearchResults>('/search/torrent', searchOptions)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error

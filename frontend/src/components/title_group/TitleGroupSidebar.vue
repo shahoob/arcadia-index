@@ -29,7 +29,7 @@
       <div class="affiliated-artists">
         <AffiliatedArtist
           v-for="artist in title_group.affiliated_artists"
-          :key="artist.id"
+          :key="artist.artist_id"
           :affiliated_artist="artist"
         />
       </div>

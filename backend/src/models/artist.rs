@@ -47,43 +47,43 @@ pub struct ArtistLite {
 pub enum ArtistRole {
     // general roles
     #[sqlx(rename = "main")]
-    #[serde(alias = "main")]
+    #[serde(rename = "main")]
     Main,
     #[sqlx(rename = "producer")]
-    #[serde(alias = "producer")]
+    #[serde(rename = "producer")]
     Producer,
     // music roles
     #[sqlx(rename = "guest")]
-    #[serde(alias = "guest")]
+    #[serde(rename = "guest")]
     Guest,
     #[sqlx(rename = "composer")]
-    #[serde(alias = "composer")]
+    #[serde(rename = "composer")]
     Composer,
     #[sqlx(rename = "conductor")]
-    #[serde(alias = "conductor")]
+    #[serde(rename = "conductor")]
     Conductor,
     #[sqlx(rename = "dj_compiler")]
-    #[serde(alias = "dj_compiler")]
+    #[serde(rename = "dj_compiler")]
     DjCompiler,
     #[sqlx(rename = "remixer")]
-    #[serde(alias = "remixer")]
+    #[serde(rename = "remixer")]
     Remixer,
     #[sqlx(rename = "arranger")]
-    #[serde(alias = "arranger")]
+    #[serde(rename = "arranger")]
     Arranger,
     // movie/tv roles
     #[sqlx(rename = "director")]
-    #[serde(alias = "director")]
+    #[serde(rename = "director")]
     Director,
     #[sqlx(rename = "cinematographer")]
-    #[serde(alias = "cinematographer")]
+    #[serde(rename = "cinematographer")]
     Cinematographer,
     #[sqlx(rename = "actor")]
-    #[serde(alias = "actor")]
+    #[serde(rename = "actor")]
     Actor,
     // book roles
     #[sqlx(rename = "author")]
-    #[serde(alias = "author")]
+    #[serde(rename = "author")]
     Author,
 }
 

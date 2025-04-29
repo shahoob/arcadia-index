@@ -40,7 +40,7 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import type { EditionGroupInfoLite } from '@/services/api/torrentService'
+import type { EditionGroupInfoLite, Torrent } from '@/services/api/torrentService'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -68,7 +68,7 @@ const editionGroupDone = (eg: EditionGroupInfoLite) => {
   uploadStep.value = 3
 }
 
-const torrentDone = (torrent) => {
+const torrentDone = (torrent: Torrent) => {
   router.push('/title-group/' + titleGroupStore.id + '?torrentId=' + torrent.id)
 }
 </script>

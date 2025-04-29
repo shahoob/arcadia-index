@@ -16,24 +16,24 @@ use super::{
 #[sqlx(type_name = "content_type_enum")]
 pub enum ContentType {
     #[sqlx(rename = "movie")]
-    #[serde(alias = "movie")]
+    #[serde(rename = "movie")]
     Movie,
     #[sqlx(rename = "tv_show")]
-    #[serde(alias = "tv_show")]
+    #[serde(rename = "tv_show")]
     TVShow,
     #[sqlx(rename = "music")]
-    #[serde(alias = "music")]
+    #[serde(rename = "music")]
     Music,
     #[sqlx(rename = "software")]
-    #[serde(alias = "software")]
+    #[serde(rename = "software")]
     Software,
     #[sqlx(rename = "book")]
-    #[serde(alias = "book")]
+    #[serde(rename = "book")]
     Book,
     // aka SiteRip, but also includes packs of other content than website dumps (books, etc.)
     // this allows users to group content (when possible), which lowers the load on the tracker and makes the upload process faster (1 announce instead of multiple)
     #[sqlx(rename = "collection")]
-    #[serde(alias = "collection")]
+    #[serde(rename = "collection")]
     Collection,
 }
 
@@ -102,12 +102,12 @@ pub struct TitleGroup {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub embedded_links: Json<Value>, // {name: link} (trailer, preview, etc.)
     pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
     pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub public_ratings: Option<Json<Value>>, // {service: rating}
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -128,7 +128,7 @@ pub struct UserCreatedTitleGroup {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub embedded_links: Json<Value>,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
@@ -139,7 +139,7 @@ pub struct UserCreatedTitleGroup {
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub affiliated_artists: Vec<Json<Value>>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -158,7 +158,7 @@ pub struct TitleGroupHierarchyLite {
     pub tags: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: NaiveDateTime,
-    // #[schema(value_type = Value)]
+    // #[schema(value_type = HashMap<String, String>)]
     // pub affiliated_artists: Vec<Json<Value>>,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
 }
@@ -198,12 +198,12 @@ pub struct TitleGroupHierarchy {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub embedded_links: Json<Value>,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub public_ratings: Option<Json<Value>>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -230,18 +230,18 @@ pub struct TitleGroupAndAssociatedData {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub embedded_links: Json<Value>,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub public_ratings: Option<Json<Value>>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     pub edition_groups: Vec<EditionGroupHierarchy>,
     pub series: SeriesLite,
-    pub affiliated_artists: AffiliatedArtistHierarchy,
+    pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
     pub title_group_comments: Vec<TitleGroupCommentHierarchy>,
     pub torrent_requests: Vec<TorrentRequest>,
     pub is_subscribed: bool,

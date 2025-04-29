@@ -6,33 +6,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'primevue'
 
-export default defineComponent({
-  components: { Button },
-  setup() {
-    const menuItems = ref([
-      { label: 'Torrents', route: '/torrents' },
-      { label: 'Collages' },
-      { label: 'Requests' },
-      { label: 'Forums' },
-      { label: 'IRC' },
-      { label: 'Top 10' },
-      { label: 'Rules' },
-      { label: 'Wiki' },
-    ])
-
-    return { menuItems }
-  },
-  methods: {
-    toggleDarkMode() {
-      document.documentElement.classList.toggle('dark-theme')
-    },
-  },
-})
+const menuItems = ref([
+  { label: 'Torrents', route: '/torrents' },
+  { label: 'Collages' },
+  { label: 'Requests' },
+  { label: 'Forums' },
+  { label: 'IRC' },
+  { label: 'Top 10' },
+  { label: 'Rules' },
+  { label: 'Wiki' },
+])
 </script>
 
 <style scoped>

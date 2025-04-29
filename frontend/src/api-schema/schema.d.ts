@@ -388,21 +388,23 @@ export interface components {
             pictures: string[];
         };
         /** @enum {string} */
-        ArtistRole: "Main" | "Producer" | "Guest" | "Composer" | "Conductor" | "DjCompiler" | "Remixer" | "Arranger" | "Director" | "Cinematographer" | "Actor" | "Author";
+        ArtistRole: "main" | "producer" | "guest" | "composer" | "conductor" | "dj_compiler" | "remixer" | "arranger" | "director" | "cinematographer" | "actor" | "author";
         /** @enum {string} */
-        AudioBitrateSampling: "Bitrate192" | "Bitrate256" | "Bitrate320" | "ApsVbr" | "V2Vbr" | "V1Vbr" | "ApxVbr" | "V0Vbr" | "Lossless" | "Lossless24Bit" | "Dsd64" | "Dsd128" | "Dsd256" | "Dsd512" | "Other";
+        AudioBitrateSampling: "192" | "256" | "320" | "APS (VBR)" | "V2 (VBR)" | "V1 (VBR)" | "APX (VBR)" | "V0 (VBR)" | "Lossless" | "24bit Lossless" | "DSD64" | "DSD128" | "DSD256" | "DSD512" | "Other";
         /** @enum {string} */
-        AudioChannels: "OneDotZero" | "TwoDotZero" | "TwoDotOne" | "FiveDotZero" | "FiveDotOne" | "SevenDotOne";
+        AudioChannels: "1.0" | "2.0" | "2.1" | "5.0" | "5.1" | "7.1";
         /** @enum {string} */
-        AudioCodec: "Mp2" | "Mp3" | "Aac" | "Ac3" | "Dts" | "Flac" | "Pcm" | "TrueHd" | "Opus" | "Dsd";
+        AudioCodec: "mp2" | "mp3" | "aac" | "ac3" | "dts" | "flac" | "pcm" | "true-hd" | "opus" | "dsd";
         /** @enum {string} */
-        ContentType: "Movie" | "TVShow" | "Music" | "Software" | "Book" | "Collection";
+        ContentType: "movie" | "tv_show" | "music" | "software" | "book" | "collection";
         DownloadTorrentQuery: {
             /** Format: int64 */
             id: number;
         };
         EditionGroup: {
-            additional_information: unknown;
+            additional_information: {
+                [key: string]: string;
+            };
             covers: string[];
             /** Format: date-time */
             created_at: string;
@@ -423,7 +425,9 @@ export interface components {
             updated_at: string;
         };
         EditionGroupHierarchy: {
-            additional_information: unknown;
+            additional_information: {
+                [key: string]: string;
+            };
             covers: string[];
             /** Format: date-time */
             created_at: string;
@@ -445,7 +449,9 @@ export interface components {
             updated_at: string;
         };
         EditionGroupHierarchyLite: {
-            additional_information: unknown;
+            additional_information: {
+                [key: string]: string;
+            };
             covers: string[];
             distributor?: string | null;
             /** Format: int64 */
@@ -459,7 +465,9 @@ export interface components {
             torrents: components["schemas"]["TorrentLite"][];
         };
         EditionGroupInfoLite: {
-            additional_information: unknown;
+            additional_information: {
+                [key: string]: string;
+            };
             distributor?: string | null;
             /** Format: int64 */
             id: number;
@@ -469,7 +477,7 @@ export interface components {
             source?: null | components["schemas"]["Source"];
         };
         /** @enum {string} */
-        Features: "Hdr" | "Dv" | "Commentary" | "Remux" | "ThreeD" | "Booklet" | "Cue";
+        Features: "HDR" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
         GetArtistPublicationsQuery: {
             /** Format: int64 */
             id: number;
@@ -605,7 +613,7 @@ export interface components {
             name: string;
         };
         /** @enum {string} */
-        Source: "Cd" | "Dvd5" | "Dvd9" | "Vinyl" | "Web" | "Soundboard" | "Sacd" | "Dat" | "Cassette" | "BluRay" | "LaserDisc" | "Hddvd" | "Hdtv" | "Pdtv" | "Tv" | "Vhs" | "Mixed" | "PhysicalBook";
+        Source: "CD" | "DVD5" | "DVD9" | "Vinyl" | "Web" | "Soundboard" | "SACD" | "DAT" | "Cassette" | "Blu-Ray" | "LaserDisc" | "HD-DVD" | "HDTV" | "PDTV" | "TV" | "VHS" | "Mixed" | "Physical Book";
         TitleGroup: {
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
@@ -616,7 +624,9 @@ export interface components {
             /** Format: int64 */
             created_by_id: number;
             description: string;
-            embedded_links: unknown;
+            embedded_links: {
+                [key: string]: string;
+            };
             external_links: string[];
             /** Format: int64 */
             id: number;
@@ -628,7 +638,9 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: unknown;
+            public_ratings: {
+                [key: string]: string;
+            };
             screenshots: string[];
             /** Format: int64 */
             series_id?: number | null;
@@ -638,7 +650,7 @@ export interface components {
             updated_at: string;
         };
         TitleGroupAndAssociatedData: {
-            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"];
+            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
@@ -649,7 +661,9 @@ export interface components {
             created_by_id: number;
             description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
-            embedded_links: unknown;
+            embedded_links: {
+                [key: string]: string;
+            };
             external_links: string[];
             /** Format: int64 */
             id: number;
@@ -663,7 +677,9 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: unknown;
+            public_ratings: {
+                [key: string]: string;
+            };
             screenshots: string[];
             series: components["schemas"]["SeriesLite"];
             /** Format: int64 */
@@ -723,7 +739,9 @@ export interface components {
             created_by_id: number;
             description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
-            embedded_links: unknown;
+            embedded_links: {
+                [key: string]: string;
+            };
             external_links: string[];
             /** Format: int64 */
             id: number;
@@ -735,7 +753,9 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: unknown;
+            public_ratings: {
+                [key: string]: string;
+            };
             screenshots: string[];
             /** Format: int64 */
             series_id?: number | null;
@@ -782,8 +802,12 @@ export interface components {
             /** Format: int64 */
             edition_group_id: number;
             features?: components["schemas"]["Features"][] | null;
-            file_amount_per_type: unknown;
-            file_list: unknown;
+            file_amount_per_type: {
+                [key: string]: string;
+            };
+            file_list: {
+                [key: string]: string;
+            };
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
@@ -822,8 +846,12 @@ export interface components {
             /** Format: int64 */
             edition_group_id: number;
             features?: components["schemas"]["Features"][] | null;
-            file_amount_per_type: unknown;
-            file_list: unknown;
+            file_amount_per_type: {
+                [key: string]: string;
+            };
+            file_list: {
+                [key: string]: string;
+            };
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
@@ -861,7 +889,9 @@ export interface components {
             /** Format: int64 */
             edition_group_id: number;
             features?: components["schemas"]["Features"][] | null;
-            file_amount_per_type: unknown;
+            file_amount_per_type: {
+                [key: string]: string;
+            };
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
@@ -1039,7 +1069,9 @@ export interface components {
             pictures: string[];
         };
         UserCreatedEditionGroup: {
-            additional_information: unknown;
+            additional_information: {
+                [key: string]: string;
+            };
             covers: string[];
             description?: string | null;
             distributor?: string | null;
@@ -1062,13 +1094,17 @@ export interface components {
             tags: string[];
         };
         UserCreatedTitleGroup: {
-            affiliated_artists: unknown;
+            affiliated_artists: {
+                [key: string]: string;
+            };
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
             covers: string[];
             description: string;
-            embedded_links: unknown;
+            embedded_links: {
+                [key: string]: string;
+            };
             external_links: string[];
             /** Format: int64 */
             master_group_id?: number | null;
@@ -1137,7 +1173,7 @@ export interface components {
             username: string;
         };
         /** @enum {string} */
-        VideoCodec: "Mpeg1" | "Mpeg2" | "Xvid" | "DivX" | "H264" | "H265" | "Vc1" | "Vp9" | "BD50" | "UHD100";
+        VideoCodec: "mpeg1" | "mpeg2" | "Xvid" | "divX" | "h264" | "h265" | "vc-1" | "vp9" | "BD50" | "UHD100";
     };
     responses: never;
     parameters: never;

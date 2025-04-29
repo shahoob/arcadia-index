@@ -14,23 +14,13 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 import MenuBar from './components/MenuBar.vue'
 import TopBar from './components/TopBar.vue'
 import SearchBars from './components/SearchBars.vue'
 import { useUserStore } from './stores/user'
 
-export default {
-  name: 'App',
-  components: {
-    MenuBar,
-    TopBar,
-    SearchBars,
-  },
-}
-</script>
-<script setup lang="ts">
 // enable dark mode by default
 document.documentElement.classList.add('dark-theme')
 

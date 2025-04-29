@@ -180,10 +180,10 @@ const titleGroupId = ref<number | null>(null)
 const step = ref(1)
 const manualCreation = ref(false)
 const selectableContentTypes = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
-const content_type: ContentType = ''
+const content_type = ref<ContentType>('')
 let gettingTitleGroupInfo = false
 let sendingTitleGroup = false
-let initialTitleGroupForm = {}
+let initialTitleGroupForm: UserCreatedTitleGroup | null = null
 const external_database_ids = {
   openlibrary: '',
   tmdb: '',
@@ -224,20 +224,22 @@ const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
     gettingTitleGroupInfo = false
   } else {
     sendingTitleGroup = true
-    titleGroupForm.content_type = content_type
+    titleGroupForm.content_type = content_type.value
+    console.log(content_type.value)
     const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
-    formattedTitleGroupForm.tags =
-      formattedTitleGroupForm.tags == '' ? [] : formattedTitleGroupForm.tags.split(',')
     // otherwise there is a json parse error, last char is "Z"
     formattedTitleGroupForm.original_release_date =
       formattedTitleGroupForm.original_release_date.slice(0, -1)
-    createTitleGroup(formattedTitleGroupForm).then((data) => {
-      // this.creatingTitleGroup = false
-      sendingTitleGroup = false
-      titleGroupStore.id = data.id
-      titleGroupStore.content_type = data.content_type
-      emit('done', data)
-    })
+    createTitleGroup(formattedTitleGroupForm)
+      .then((data) => {
+        // this.creatingTitleGroup = false
+        titleGroupStore.id = data.id
+        titleGroupStore.content_type = data.content_type
+        emit('done', data)
+      })
+      .finally(() => {
+        sendingTitleGroup = false
+      })
   }
 }
 onMounted(() => {
