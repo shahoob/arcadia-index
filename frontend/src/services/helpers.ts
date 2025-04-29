@@ -1,8 +1,4 @@
-import type {
-  EditionGroup,
-  EditionGroupHierarchyLite,
-  EditionGroupInfoLite,
-} from './api/torrentService'
+import type { EditionGroupInfoLite } from './api/torrentService'
 
 export const timeAgo = (date: string) => {
   const diff = (Date.now() - new Date(date).getTime()) / 1000
