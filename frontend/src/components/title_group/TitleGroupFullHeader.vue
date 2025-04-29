@@ -51,7 +51,9 @@
           </div>
           <div v-if="title_group.series.id" class="information-line series">
             <span class="item-title">{{ $t('general.series') }}:</span>
-            <a :href="'/series/' + title_group.series.id">{{ title_group.series.name }}</a>
+            <RouterLink :to="`/series/${title_group.series.id}`">
+              {{ title_group.series.name }}
+            </RouterLink>
           </div>
           <div class="information-line link-logos">
             <div v-for="link in title_group.external_links" :key="link">

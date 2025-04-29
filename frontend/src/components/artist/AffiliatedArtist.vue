@@ -5,9 +5,9 @@
         <i class="pi pi-search"></i>
       </template>
     </Image>
-    <a :href="'/artist/' + affiliated_artist.artist.id">
+    <RouterLink :to="`/artist/${affiliated_artist.artist.id}`">
       <div class="name">{{ affiliated_artist.artist.name }}</div>
-    </a>
+    </RouterLink>
     <div class="roles">
       <span v-for="(role, i) in affiliated_artist.roles" :key="role">
         <span v-if="i != 0">, </span><span class="role">{{ $t(`artist.role.${role}`) }} </span>

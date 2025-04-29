@@ -1,17 +1,17 @@
 <template>
-  <a
+  <RouterLink
     v-tooltip.top="title_group.platform ?? title_group.name"
-    :href="`/title-group/${title_group.id}`"
+    :to="`/title-group/${title_group.id}`"
   >
     <img :src="`/logos/platforms/${title_group.platform ?? title_group.content_type}.svg`" />
-  </a>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
-import { type TitleGroupLite } from '@/services/api/torrentService'
+import { type TitleGroup } from '@/services/api/torrentService'
 
 defineProps<{
-  title_group: TitleGroupLite
+  title_group: TitleGroup
 }>()
 </script>
 <style scoped>

@@ -21,7 +21,9 @@
     </div>
     <div class="right">
       <div class="actions">
-        <a href="/upload"><Button icon="pi pi-upload" severity="secondary" size="small" /></a>
+        <RouterLink to="/upload">
+          <Button icon="pi pi-upload" severity="secondary" size="small" />
+        </RouterLink>
         <Button icon="pi pi-moon" @click="toggleDarkMode()" severity="secondary" size="small" />
       </div>
     </div>

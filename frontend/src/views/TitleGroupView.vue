@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import GeneralComments from '@/components/community/GeneralComments.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
@@ -141,8 +141,12 @@ const title_group = ref<TitleGroupAndAssociatedData>()
 const sortBy = ref('edition')
 
 onMounted(async () => {
-  title_group.value = await getTitleGroup(parseInt(route.params.id.toString()))
+  await fetchTitleGroup()
 })
+
+const fetchTitleGroup = async () => {
+  title_group.value = await getTitleGroup(parseInt(route.params.id.toString()))
+}
 
 const uploadTorrent = () => {
   titleGroupStore.id = title_group.value.id
@@ -160,6 +164,8 @@ const unsubscribe = async () => {
   await unsubscribeToItem(parseInt(route.params.id.toString()), 'title_group')
   title_group.value.is_subscribed = false
 }
+
+watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 </script>
 
 <style scoped>

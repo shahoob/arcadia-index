@@ -47,7 +47,9 @@
       </div>
     </ContentContainer>
     <ContentContainer :container-title="$t('general.series')" v-if="title_group.series.id">
-      <a :href="'/series/' + title_group.series.id">{{ title_group.series.name }}</a>
+      <RouterLink :to="`/series/${title_group.series.id}`">
+        {{ title_group.series.name }}
+      </RouterLink>
     </ContentContainer>
     <ContentContainer :container-title="$t('general.tags')">
       <div class="tags">
