@@ -11,7 +11,7 @@
         <label for="title_group_name">{{ t('general.search_terms') }}</label>
       </FloatLabel>
       <FloatLabel>
-        <!-- <InputText class="tags" size="small" v-model="searchForm.tags" name="tags" /> -->
+        <InputText class="tags" size="small" v-model="searchForm.tags" name="tags" />
         <label for="tags">{{ t('general.tags_comma_separated') }}</label>
       </FloatLabel>
       <div class="flex justify-content-center" style="margin-top: 15px">
