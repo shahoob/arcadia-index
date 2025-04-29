@@ -169,6 +169,9 @@ const unsubscribe = async () => {
 .main.with-sidebar {
   width: 75%;
 }
+.sidebar {
+  width: 25%;
+}
 .actions {
   display: flex;
   justify-content: space-between;
