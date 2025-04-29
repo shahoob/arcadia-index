@@ -16,8 +16,27 @@ use utoipa_swagger_ui::SwaggerUi;
 
 use arcadia_backend::{Arcadia, Error, OpenSignups, Result, api_doc::ApiDoc};
 
+use opentelemetry::{global::{self, ObjectSafeSpan}, trace::{self, Tracer}};
+use opentelemetry_stdout;
+use opentelemetry_sdk::trace::SdkTracerProvider;
+use actix_web_opentelemetry::RequestTracing;
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let exporter = opentelemetry_stdout::SpanExporter::default();
+
+    let provider = SdkTracerProvider::builder()
+        .with_simple_exporter(exporter)
+        .build();
+
+    global::set_tracer_provider(provider);
+
+    let config_tracer = global::tracer("configuration");
+
+    let mut main_config_span = config_tracer.start("app_config");
+
+    let active = trace::mark_span_as_active(main_config_span);
+
     if let Ok(env_path) = dotenvy::dotenv() {
         println!("Loading environment from {}", env_path.display());
     } else {
@@ -26,6 +45,8 @@ async fn main() -> std::io::Result<()> {
 
     env_logger::init_from_env(env_logger::Env::default().default_filter_or("debug"));
 
+    let mut db_config_span = config_tracer.start("db_config");
+
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = PgPoolOptions::new()
         .max_connections(5)
@@ -33,9 +54,11 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Error building a connection pool");
 
+    db_config_span.end();
+
     let host = env::var("ACTIX_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("ACTIX_PORT").unwrap_or_else(|_| "8080".to_string());
-    println!("Server running at http://{}:{}", host, port);
+    println!("Server set to run at http://{}:{}", host, port);
 
     let open_signups = if env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true" {
         OpenSignups::Enabled
@@ -75,9 +98,10 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f64");
 
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
+            .wrap(RequestTracing::new())
             .wrap(middleware::Logger::default())
             .wrap(cors)
             .app_data(Data::new(Arcadia {
@@ -96,7 +120,9 @@ async fn main() -> std::io::Result<()> {
                     .url("/swagger-json/openapi.json", ApiDoc::openapi()),
             )
     })
-    .bind(format!("{}:{}", host, port))?
-    .run()
-    .await
+    .bind(format!("{}:{}", host, port));
+
+    drop(active);
+
+    server.expect("Could not construct server").run().await
 }

@@ -37,6 +37,12 @@ percent-encoding = "2.3.1"
 serde_bencode = "0.2.4"
 actix-web-httpauth = "0.8.2"
 
+opentelemetry = "0.29.1"
+opentelemetry-stdout = "0.29.0"
+opentelemetry-otlp = "0.29.0"
+opentelemetry_sdk = "0.29.0"
+actix-web-opentelemetry = "0.22.0"
+
 [patch.crates-io]
 bip_metainfo = { path = "vendored/bip_metainfo" }
 
