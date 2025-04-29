@@ -28,10 +28,10 @@
 import { Image } from 'primevue'
 import TitleGroupTable from './TitleGroupTable.vue'
 import ContentContainer from '../ContentContainer.vue'
-import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 
 defineProps<{
-  title_group: TitleGroupAndAssociatedData
+  title_group: TitleGroupHierarchyLite
 }>()
 </script>
 <style scoped>

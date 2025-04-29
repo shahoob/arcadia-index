@@ -4,7 +4,7 @@ use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
-use super::torrent::{TorrentHierarchy, TorrentLite};
+use super::torrent::{TorrentHierarchy, TorrentHierarchyLite};
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
@@ -110,7 +110,7 @@ pub struct EditionGroupHierarchyLite {
     pub source: Option<Source>,
     #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
-    pub torrents: Vec<TorrentLite>,
+    pub torrents: Vec<TorrentHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

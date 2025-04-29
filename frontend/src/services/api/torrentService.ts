@@ -47,6 +47,10 @@ export type EditionGroup = components['schemas']['EditionGroup']
 
 export type EditionGroupInfoLite = components['schemas']['EditionGroupInfoLite']
 
+export type EditionGroupHierarchyLite = components['schemas']['EditionGroupHierarchyLite']
+
+export type EditionGroupHierarchy = components['schemas']['EditionGroupHierarchy']
+
 export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) => {
   try {
     editionGroup.additional_information = Object.fromEntries(
@@ -67,6 +71,10 @@ export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) 
 export type UploadedTorrent = components['schemas']['UploadedTorrent']
 
 export type Torrent = components['schemas']['Torrent']
+
+export type TorrentHierarchyLite = components['schemas']['TorrentHierarchyLite']
+
+export type TorrentHierarchy = components['schemas']['TorrentHierarchy']
 
 export const uploadTorrent = async (torrentForm: object) => {
   try {
