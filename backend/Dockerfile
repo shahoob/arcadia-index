@@ -1,3 +1,9 @@
+FROM debian:bookworm-slim AS debian-base
+
+RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+FROM alpine:3 AS alpine-base
+
 FROM rust:1.86-slim-bookworm AS prebuild
 # Don't delete any downloaded packages, we'd be using BuildKit cache mounts later!
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
@@ -14,6 +20,8 @@ COPY Cargo.toml Cargo.lock ./
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y libssl-dev openssl curl pkg-config
+
+COPY migrations/ migrations/
 
 RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
@@ -43,26 +51,44 @@ COPY . .
 
 RUN SQLX_OFFLINE=true cargo build
 
+FROM alpine-base AS debug-alpine
+
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+COPY --chmod=777 --from=build-debug /app/target/debug/arcadia-backend .
+CMD ["./arcadia-backend"]
+
+FROM alpine-base AS alpine
+
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+COPY --chmod=777 --from=build-prod /app/target/release/arcadia-backend .
+CMD ["./arcadia-backend"]
+
 # use --target debug when you want to build the debug variant
-FROM debian:bookworm-slim AS debug
+FROM debian-base AS debug
 WORKDIR /app
 
 COPY --chmod=755 --from=build-debug /app/target/debug/arcadia-backend .
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
       apt-get update && apt-get install -y openssl
+
 CMD ["./arcadia-backend"]
 
-FROM debian:bookworm-slim
+FROM debian-base
 WORKDIR /app
 
 COPY --chmod=755 --from=build-prod /app/target/release/arcadia-backend .
-COPY --from=prebuild /usr/local/cargo/bin/sqlx .
-COPY  ./migrations ./migrations
+# COPY --from=prebuild /usr/local/cargo/bin/sqlx .
+# COPY  ./migrations ./migrations
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
       apt-get update && apt-get install -y openssl
 
-# ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["./arcadia-backend"]
