@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  containerTitle: string
+  containerTitle?: string
 }>()
 </script>
 

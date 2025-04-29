@@ -57,7 +57,7 @@
           <label for="sort_by">{{ $t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :title_group="title_group" :sortBy />
+      <TitleGroupTable :title_group="title_group" :sortBy :preview="false" />
       <ContentContainer
         :container-title="$t('general.screenshots')"
         class="screenshots"
@@ -77,10 +77,7 @@
             }})</AccordionHeader
           >
           <AccordionContent>
-            <TorrentRequestsTable
-              :torrent_requests="title_group.torrent_requests"
-              :title_group="title_group"
-            />
+            <TorrentRequestsTable :torrentRequests="title_group.torrent_requests" />
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
@@ -144,7 +141,7 @@ const title_group = ref<TitleGroupAndAssociatedData>()
 const sortBy = ref('edition')
 
 onMounted(async () => {
-  title_group.value = await getTitleGroup(route.params.id)
+  title_group.value = await getTitleGroup(parseInt(route.params.id.toString()))
 })
 
 const uploadTorrent = () => {
@@ -155,12 +152,12 @@ const uploadTorrent = () => {
 }
 
 const subscribe = async () => {
-  await subscribeToItem(route.params.id, 'title_group')
+  await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
   title_group.value.is_subscribed = true
 }
 
 const unsubscribe = async () => {
-  await unsubscribeToItem(route.params.id, 'title_group')
+  await unsubscribeToItem(parseInt(route.params.id.toString()), 'title_group')
   title_group.value.is_subscribed = false
 }
 </script>

@@ -19,7 +19,6 @@
           :title_group="title_group"
           :edition_groups="title_group.edition_groups"
           :preview="true"
-          sortBy="edition"
         />
       </div>
     </div>

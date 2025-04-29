@@ -1,71 +1,73 @@
 <template>
-  <ContentContainer id="title-group-header">
-    <div class="left">
-      <Galleria
-        :value="title_group.covers"
-        :numVisible="1"
-        :circular="true"
-        :showItemNavigators="false"
-        :showThumbnails="false"
-        :showIndicators="true"
-        class="carousel"
-      >
-        <template #item="slotProps">
-          <Image :src="slotProps.item" preview>
-            <template #previewicon>
-              <i class="pi pi-search"></i>
-            </template>
-          </Image>
-        </template>
-      </Galleria>
-      <div class="textual-information">
-        <div class="title">
-          {{ title_group.name }}
-          <span class="title-metadata">
-            ({{ title_group.original_release_date.substring(0, 4) }})
-          </span>
-        </div>
-        <div class="information-line">
-          <span class="item-title">{{ $t('general.tags') }}:</span>
-          <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
-            {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
-          </div>
-        </div>
-        <div
-          class="information-line"
-          v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
+  <ContentContainer>
+    <div id="title-group-header">
+      <div class="left">
+        <Galleria
+          :value="title_group.covers"
+          :numVisible="1"
+          :circular="true"
+          :showItemNavigators="false"
+          :showThumbnails="false"
+          :showIndicators="true"
+          class="carousel"
         >
-          <span class="item-title">{{ $t('general.alias', 2) }}:</span>
-          <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
-            {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
+          <template #item="slotProps">
+            <Image :src="slotProps.item" preview>
+              <template #previewicon>
+                <i class="pi pi-search"></i>
+              </template>
+            </Image>
+          </template>
+        </Galleria>
+        <div class="textual-information">
+          <div class="title">
+            {{ title_group.name }}
+            <span class="title-metadata">
+              ({{ title_group.original_release_date.substring(0, 4) }})
+            </span>
           </div>
-        </div>
-        <div class="information-line">
-          <span class="item-title">{{ $t('general.original_language') }}:</span>
-          {{ title_group.original_language }}
-        </div>
-        <div class="information-line">
-          <span class="item-title">{{ $t('general.country') }}:</span>
-          {{ title_group.country_from }}
-        </div>
-        <div v-if="title_group.series.id" class="information-line series">
-          <span class="item-title">{{ $t('general.series') }}:</span>
-          <a :href="'/series/' + title_group.series.id">{{ title_group.series.name }}</a>
-        </div>
-        <div class="information-line link-logos">
-          <div v-for="link in title_group.external_links" :key="link">
-            <ExternalLink :link="link" class="link-logo" />
+          <div class="information-line">
+            <span class="item-title">{{ $t('general.tags') }}:</span>
+            <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
+              {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
+            </div>
+          </div>
+          <div
+            class="information-line"
+            v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
+          >
+            <span class="item-title">{{ $t('general.alias', 2) }}:</span>
+            <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
+              {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
+            </div>
+          </div>
+          <div class="information-line">
+            <span class="item-title">{{ $t('general.original_language') }}:</span>
+            {{ title_group.original_language }}
+          </div>
+          <div class="information-line">
+            <span class="item-title">{{ $t('general.country') }}:</span>
+            {{ title_group.country_from }}
+          </div>
+          <div v-if="title_group.series.id" class="information-line series">
+            <span class="item-title">{{ $t('general.series') }}:</span>
+            <a :href="'/series/' + title_group.series.id">{{ title_group.series.name }}</a>
+          </div>
+          <div class="information-line link-logos">
+            <div v-for="link in title_group.external_links" :key="link">
+              <ExternalLink :link="link" class="link-logo" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="right">
-      <div class="affiliated_artists">
-        <AffiliatedArtist
-          v-for="affiliated_artist in title_group.affiliated_artists"
-          :key="affiliated_artist.artist.id"
-          :affiliated_artist="affiliated_artist"
-        />
+      <div class="right">
+        <div class="affiliated_artists">
+          <AffiliatedArtist
+            v-for="affiliated_artist in title_group.affiliated_artists"
+            :key="affiliated_artist.artist.id"
+            :affiliated_artist="affiliated_artist"
+          />
+        </div>
       </div>
     </div>
   </ContentContainer>
