@@ -3,6 +3,8 @@ import api from './api.ts'
 
 export type Artist = components['schemas']['Artist']
 
+export type AffiliatedArtistHierarchy = components['schemas']['AffiliatedArtistHierarchy']
+
 export type ArtistAndTitleGroupsLite = components['schemas']['ArtistAndTitleGroupsLite']
 
 export type TitleGroupHierarchyLite = components['schemas']['TitleGroupHierarchyLite']

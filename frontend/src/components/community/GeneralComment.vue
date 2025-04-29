@@ -4,7 +4,7 @@
       <div class="user">
         <img
           class="avatar"
-          :src="comment.created_by.avatar"
+          :src="comment.created_by.avatar ?? '/default_user_avatar.svg'"
           :alt="comment.created_by.username + '\'s avatar'"
         />
         <span class="username">
@@ -21,16 +21,13 @@
   </ContentContainer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
+import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 
-export default defineComponent({
-  components: { ContentContainer },
-  props: {
-    comment: {},
-  },
-})
+defineProps<{
+  comment: TitleGroupCommentHierarchy
+}>()
 </script>
 
 <style scoped>

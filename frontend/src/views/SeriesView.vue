@@ -18,7 +18,9 @@
           <TitleGroupPreviewCoverOnly
             v-for="title_group in title_groups"
             :key="title_group.id"
-            :title_group="title_group"
+            :id="title_group.id"
+            :name="title_group.name"
+            :cover="title_group.covers[0]"
           />
         </div>
       </ContentContainer>
@@ -31,7 +33,10 @@
         />
       </div>
     </div>
-    <SeriesSidebar :series />
+    <SeriesSidebar
+      :series
+      v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')"
+    />
   </div>
 </template>
 
@@ -52,13 +57,12 @@ const route = useRoute()
 
 const series = ref(null)
 const title_groups = ref([])
-const title_group_preview_mode = ref('table') // TODO: make a select button to switch from cover-only to table
+const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
 
-onMounted(() => {
-  getSeries(route.query.id as string).then((data) => {
-    series.value = data.series
-    title_groups.value = data.title_groups
-  })
+onMounted(async () => {
+  const data = await getSeries(route.params.id)
+  series.value = data.series
+  title_groups.value = data.title_groups
 })
 </script>
 

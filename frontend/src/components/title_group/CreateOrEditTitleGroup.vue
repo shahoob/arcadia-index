@@ -47,7 +47,7 @@
       </div>
       <div class="tags">
         <FloatLabel>
-          <InputText size="small" v-model="titleGroupForm.tags" name="tags" />
+          <InputText size="small" v-model="tagsString" name="tags" />
           <label for="tags">{{ $t('general.tags_comma_separated') }}</label>
         </FloatLabel>
         <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
@@ -232,9 +232,9 @@
     </div>
   </Form>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { Form } from '@primevue/forms'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -243,142 +243,141 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
+import type { ContentType, UserCreatedTitleGroup } from '@/services/api/torrentService'
+import { useI18n } from 'vue-i18n'
+import { isValidUrl } from '@/services/helpers'
 
-export default defineComponent({
-  components: {
-    Form,
-    DatePicker,
-    Button,
-    FloatLabel,
-    InputText,
-    Textarea,
-    Select,
-    Message,
-    InputNumber,
-  },
-  props: {
-    content_type: {},
-    initialTitleGroupForm: { default: {} },
-    sendingTitleGroup: { default: false },
-  },
-  data() {
-    return {
-      titleGroupForm: {
-        name: '',
-        description: '',
-        original_language: '',
-        original_release_date: null,
-        covers: [''],
-        screenshots: [''],
-        external_links: [''],
-        category: '',
-        country_from: '',
-        name_aliases: [],
-        affiliated_artists: [],
-        tags: '',
-        master_group_id: null,
-        platform: null,
-      },
-      selectableCountries: ['France', 'UK', 'USA', 'Scotland'],
-      selectableCategories: {
-        book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
-        music: ['Single', 'Album', 'Ep'],
-        movie: ['FeatureFilm', 'ShortFilm'],
-        software: ['Program', 'Game'],
-        collection: ['Other'],
-      },
+interface Props {
+  content_type: ContentType
+  initialTitleGroupForm: UserCreatedTitleGroup | null
+  sendingTitleGroup: boolean
+}
+const {
+  content_type,
+  initialTitleGroupForm = null,
+  sendingTitleGroup = false,
+} = defineProps<Props>()
+
+const titleGroupForm = ref<UserCreatedTitleGroup>({
+  name: '',
+  description: '',
+  original_language: '',
+  original_release_date: '',
+  covers: [''],
+  screenshots: [''],
+  external_links: [''],
+  category: '',
+  country_from: '',
+  name_aliases: [],
+  affiliated_artists: {},
+  tags: [],
+  master_group_id: null,
+  platform: null,
+  embedded_links: {},
+})
+const tagsString = ref('')
+const selectableCountries = ['France', 'UK', 'USA', 'Scotland']
+const selectableCategories = {
+  book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
+  music: ['Single', 'Album', 'Ep'],
+  movie: ['FeatureFilm', 'ShortFilm'],
+  software: ['Program', 'Game'],
+  collection: ['Other'],
+}
+
+const { t } = useI18n()
+
+const emit = defineEmits<{
+  validated: [titleGroup: UserCreatedTitleGroup]
+}>()
+
+const resolver = ({ values }: FormResolverOptions) => {
+  const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
+
+  if (values.name.length < 5) {
+    errors.name = [{ message: t('error.write_more_than_x_chars', [5]) }]
+  }
+  if (values.category == '') {
+    errors.category = [{ message: t('error.select_category') }]
+  }
+  //TODO config: the minimum amount of tags required should be taken from the global config file
+  if (values.tags == '' || values.tags.split(',').length - 1 < 1) {
+    errors.tags = [{ message: t('error.enter_at_least_x_tags', [2]) }]
+  }
+  if (values.description.length < 10) {
+    errors.description = [{ message: t('error.write_more_than_x_chars', [10]) }]
+  }
+  if (values.platform == '') {
+    errors.platform = [{ message: t('error.select_platform') }]
+  }
+  if (content_type !== 'music' && values.original_language == '') {
+    errors.original_language = [{ message: t('error.select_language') }]
+  }
+  if (values.country_from == '') {
+    errors.country_from = [{ message: t('error.select_country') }]
+  }
+  if (values.original_release_date == '') {
+    errors.original_release_date = [{ message: t('error.select_date') }]
+  }
+  values.external_links.forEach((link: string, index: number) => {
+    if (!isValidUrl(link)) {
+      if (!('external_links' in errors)) {
+        errors.external_links = []
+      }
+      errors.external_links[index] = [{ message: t('error.invalid_url') }]
     }
-  },
-
-  methods: {
-    resolver({ values }) {
-      const errors = {}
-
-      if (values.name.length < 5) {
-        errors.name = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
+  })
+  values.covers.forEach((link: string, index: number) => {
+    if (!isValidUrl(link)) {
+      if (!('covers' in errors)) {
+        errors.covers = []
       }
-      if (values.category == '') {
-        errors.category = [{ message: this.$t('error.select_category') }]
-      }
-      //TODO config: the minimum amount of tags required should be taken from the global config file
-      if (values.tags == '' || values.tags.split(',').length - 1 < 1) {
-        errors.tags = [{ message: this.$t('error.enter_at_least_x_tags', [2]) }]
-      }
-      if (values.description.length < 10) {
-        errors.description = [{ message: this.$t('error.write_more_than_x_chars', [10]) }]
-      }
-      if (values.platform == '') {
-        errors.platform = [{ message: this.$t('error.select_platform') }]
-      }
-      if (this.content_type !== 'music' && values.original_language == '') {
-        errors.original_language = [{ message: this.$t('error.select_language') }]
-      }
-      if (values.country_from == '') {
-        errors.country_from = [{ message: this.$t('error.select_country') }]
-      }
-      if (!values.original_release_date || values.original_release_date == '') {
-        errors.original_release_date = [{ message: this.$t('error.select_date') }]
-      }
-      values.external_links.forEach((link, index) => {
-        if (!this.$isValidUrl(link)) {
-          if (!('external_links' in errors)) {
-            errors.external_links = []
-          }
-          errors.external_links[index] = [{ message: this.$t('error.invalid_url') }]
-        }
-      })
-      values.covers.forEach((link, index) => {
-        if (!this.$isValidUrl(link)) {
-          if (!('covers' in errors)) {
-            errors.covers = []
-          }
-          errors.covers[index] = [{ message: this.$t('error.invalid_url') }]
-        }
-      })
-      if (values.screenshots) {
-        values.screenshots.forEach((link, index) => {
-          if (!this.$isValidUrl(link)) {
-            if (!('screenshots' in errors)) {
-              errors.screenshots = []
-            }
-            errors.screenshots[index] = [{ message: this.$t('error.invalid_url') }]
-          }
-        })
-      }
-      console.log(errors)
-      return {
-        errors,
-      }
-    },
-    onFormSubmit({ valid }) {
-      if (valid) {
-        this.$emit('validated', this.titleGroupForm)
-      }
-    },
-    addLink() {
-      this.titleGroupForm.external_links.push('')
-    },
-    removeLink(index: number) {
-      this.titleGroupForm.external_links.splice(index, 1)
-    },
-    addCover() {
-      this.titleGroupForm.covers.push('')
-    },
-    removeCover(index: number) {
-      this.titleGroupForm.covers.splice(index, 1)
-    },
-    addScreenshot() {
-      this.titleGroupForm.screenshots.push('')
-    },
-    removeScreenshot(index: number) {
-      this.titleGroupForm.screenshots.splice(index, 1)
-    },
-  },
-  created() {
-    if (Object.keys(this.initialTitleGroupForm).length > 0) {
-      this.titleGroupForm = this.initialTitleGroupForm
+      errors.covers[index] = [{ message: t('error.invalid_url') }]
     }
-  },
+  })
+  if (values.screenshots) {
+    values.screenshots.forEach((link: string, index: number) => {
+      if (!isValidUrl(link)) {
+        if (!('screenshots' in errors)) {
+          errors.screenshots = []
+        }
+        errors.screenshots[index] = [{ message: t('error.invalid_url') }]
+      }
+    })
+  }
+  return {
+    errors,
+  }
+}
+const onFormSubmit = ({ valid }: FormSubmitEvent) => {
+  if (valid) {
+    titleGroupForm.value.tags = tagsString.value.trim().split(',')
+    emit('validated', titleGroupForm.value)
+    console.log('validated')
+  }
+}
+const addLink = () => {
+  titleGroupForm.value.external_links.push('')
+}
+const removeLink = (index: number) => {
+  titleGroupForm.value.external_links.splice(index, 1)
+}
+const addCover = () => {
+  titleGroupForm.value.covers.push('')
+}
+const removeCover = (index: number) => {
+  titleGroupForm.value.covers.splice(index, 1)
+}
+const addScreenshot = () => {
+  titleGroupForm.value.screenshots.push('')
+}
+const removeScreenshot = (index: number) => {
+  titleGroupForm.value.screenshots.splice(index, 1)
+}
+onMounted(() => {
+  if (initialTitleGroupForm !== null) {
+    titleGroupForm.value = initialTitleGroupForm
+  }
 })
 </script>
 <style scoped>

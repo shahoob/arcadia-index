@@ -14,15 +14,14 @@
   </ContentContainer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
+import type { Series } from '@/services/api/seriesService'
 import { Image } from 'primevue'
 
-export default defineComponent({
-  components: { ContentContainer, Image },
-  props: { series: {} },
-})
+defineProps<{
+  series: Series
+}>()
 </script>
 
 <style scoped>
@@ -42,8 +41,9 @@ export default defineComponent({
 </style>
 <style>
 #series-full-header .series-covers img {
-  max-width: 30em;
-  max-height: 30em;
+  width: 100%;
+  height: auto;
   border-radius: 7px;
+  object-fit: contain;
 }
 </style>

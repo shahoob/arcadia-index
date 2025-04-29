@@ -4,10 +4,10 @@
     <div class="user-stats">
       <div class="stat" v-tooltip.bottom="'Uploaded'">
         <i class="pi pi-upload" />
-        {{ $bytesToReadable(user.uploaded) }}
+        {{ bytesToReadable(user.uploaded) }}
       </div>
       <span class="stat" v-tooltip.bottom="'Downloaded'">
-        <i class="pi pi-download" />{{ $bytesToReadable(user.downloaded) }}
+        <i class="pi pi-download" />{{ bytesToReadable(user.downloaded) }}
       </span>
       <span class="stat" v-tooltip.bottom="'Ratio'">
         <i class="pi pi-wave-pulse" />{{ user.ratio }}
@@ -21,34 +21,25 @@
     </div>
     <div class="right">
       <div class="actions">
-        <a href="/upload"><Button icon="pi pi-upload" severity="secondary" size="small" /></a>
+        <RouterLink to="/upload">
+          <Button icon="pi pi-upload" severity="secondary" size="small" />
+        </RouterLink>
         <Button icon="pi pi-moon" @click="toggleDarkMode()" severity="secondary" size="small" />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { Button } from 'primevue'
+import { bytesToReadable } from '@/services/helpers'
 
-export default defineComponent({
-  components: { Button },
-  data() {
-    return {
-      user: {},
-    }
-  },
-  methods: {
-    toggleDarkMode() {
-      document.documentElement.classList.toggle('dark-theme')
-    },
-  },
-  created() {
-    this.user = useUserStore()
-  },
-})
+const user = useUserStore()
+
+const toggleDarkMode = () => {
+  document.documentElement.classList.toggle('dark-theme')
+}
 </script>
 
 <style scoped>

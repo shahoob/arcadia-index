@@ -1,21 +1,18 @@
 <template>
-  <a
+  <RouterLink
     v-tooltip.top="title_group.platform ?? title_group.name"
-    :href="`/title-group?id=${title_group.id}`"
+    :to="`/title-group/${title_group.id}`"
   >
-    <img :src="`logos/platforms/${title_group.platform ?? title_group.content_type}.svg`" />
-  </a>
+    <img :src="`/logos/platforms/${title_group.platform ?? title_group.content_type}.svg`" />
+  </RouterLink>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { type TitleGroup, type TitleGroupLite } from '@/services/api/torrentService'
 
-export default defineComponent({
-  props: {
-    title_group: {},
-  },
-  methods: {},
-})
+defineProps<{
+  title_group: TitleGroup | TitleGroupLite
+}>()
 </script>
 <style scoped>
 img {

@@ -10,13 +10,13 @@ use utoipa::ToSchema;
 // #[sqlx(type_name = "item_detail_layout")]
 // pub enum ItemDetailLayout {
 // #[sqlx(rename = "header")]
-// #[serde(alias = "header")]
+// #[serde(rename = "header")]
 //     Header,
 // #[sqlx(rename = "sidebar_right")]
-// #[serde(alias = "sidebar_right")]
+// #[serde(rename = "sidebar_right")]
 //     SideBarRight,
 // #[sqlx(rename = "sidebar_left")]
-// #[serde(alias = "sidebar_left")]
+// #[serde(rename = "sidebar_left")]
 //     SideBarLeft,
 // }
 
