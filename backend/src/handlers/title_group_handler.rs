@@ -6,7 +6,7 @@ use crate::{
     Arcadia, Result,
     models::{
         title_group::{
-            TitleGroup, TitleGroupAndAssociatedData, TitleGroupInfoLite, UserCreatedTitleGroup,
+            TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite, UserCreatedTitleGroup,
         },
         user::User,
     },
@@ -55,19 +55,19 @@ pub async fn get_title_group(
     Ok(HttpResponse::Ok().json(title_group))
 }
 
-pub type GetTitleGroupInfoLiteQuery = GetTitleGroupQuery;
+pub type GetTitleGroupLiteQuery = GetTitleGroupQuery;
 
 #[utoipa::path(
     get,
     path = "/api/title-group/lite",
-    params(GetTitleGroupInfoLiteQuery),
+    params(GetTitleGroupLiteQuery),
     responses(
-        (status = 200, description = "Successfully got the title_group (lite info)", body=TitleGroupInfoLite),
+        (status = 200, description = "Successfully got the title_group (lite info)", body=TitleGroupLite),
     )
 )]
 pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
-    query: web::Query<GetTitleGroupInfoLiteQuery>,
+    query: web::Query<GetTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
     let title_group = find_title_group_info_lite(&arc.pool, query.id).await?;
 

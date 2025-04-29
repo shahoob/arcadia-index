@@ -1,16 +1,12 @@
 <template>
   <div class="name">{{ artist.name }}</div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { type Artist } from '@/services/api/artistService'
 
-export default defineComponent({
-  components: {},
-  props: { artist: {} },
-  data() {
-    return {}
-  },
-})
+defineProps<{
+  artist: Artist
+}>()
 </script>
 <style scoped>
 .name {

@@ -1,3 +1,5 @@
+use std::vec;
+
 use crate::{
     Result,
     models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
@@ -154,7 +156,8 @@ pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpRes
     let covers = movie
         .poster_path
         .as_ref()
-        .map(|p| tmdb.get_image_urls(p).collect());
+        .map(|p| tmdb.get_image_urls(p).collect())
+        .unwrap_or(vec![]);
 
     let original_release_date = chrono::NaiveDate::parse_from_str(&movie.release_date, "%Y-%m-%d")
         .unwrap()
@@ -187,7 +190,8 @@ pub async fn get_tmdb_tv_data(query: web::Query<TmdbQuery>) -> Result<HttpRespon
     let covers = tvshow
         .poster_path
         .as_ref()
-        .map(|p| tmdb.get_image_urls(p).collect());
+        .map(|p| tmdb.get_image_urls(p).collect())
+        .unwrap_or(vec![]);
 
     let mut external_links = vec![format!("https://www.themoviedb.org/tv/{}", query.id)];
 

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="title">{{ $t('torrent.upload_torrent') }}</div>
+    <div class="title">{{ t('torrent.upload_torrent') }}</div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 1">
-        <AccordionHeader>{{ $t('title_group.title') }}</AccordionHeader>
+        <AccordionHeader>{{ t('title_group.title') }}</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectTitleGroup @done="titleGroupDone" />
         </AccordionContent>
@@ -11,7 +11,7 @@
     </Accordion>
     <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 2">
-        <AccordionHeader>{{ $t('torrent.edition') }}</AccordionHeader>
+        <AccordionHeader>{{ t('torrent.edition') }}</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectEditionGroup v-if="uploadStep > 1" @done="editionGroupDone" />
         </AccordionContent>
@@ -19,7 +19,7 @@
     </Accordion>
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="uploadStep != 3">
-        <AccordionHeader>{{ $t('torrent.torrent') }}</AccordionHeader>
+        <AccordionHeader>{{ t('torrent.torrent') }}</AccordionHeader>
         <AccordionContent>
           <CreateOrEditTorrent v-if="uploadStep > 2" @done="torrentDone" />
         </AccordionContent>
@@ -27,7 +27,8 @@
     </Accordion>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
@@ -37,45 +38,38 @@ import CreateOrSelectEditionGroup from '@/components/edition_group/CreateOrSelec
 import CreateOrEditTorrent from '@/components/torrent/CreateOrEditTorrent.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import type { EditionGroupInfoLite, Torrent } from '@/services/api/torrentService'
 
-export default {
-  components: {
-    CreateOrSelectTitleGroup,
-    CreateOrSelectEditionGroup,
-    Accordion,
-    AccordionContent,
-    AccordionHeader,
-    AccordionPanel,
-    CreateOrEditTorrent,
-  },
-  data() {
-    return {
-      titleGroupAccordionValue: '0',
-      editionGroupAccordionValue: '',
-      torrentAccordionValue: '',
-      uploadStep: 1,
-      editionGroup: {},
-    }
-  },
-  created() {},
-  methods: {
-    titleGroupDone() {
-      this.titleGroupAccordionValue = ''
-      this.editionGroupAccordionValue = '0'
-      this.uploadStep = 2
-    },
-    editionGroupDone(editionGroup: object) {
-      this.editionGroup = editionGroup
-      const editionGroupStore = useEditionGroupStore()
-      editionGroupStore.id = editionGroup.id
-      this.editionGroupAccordionValue = ''
-      this.torrentAccordionValue = '0'
-      this.uploadStep = 3
-    },
-    torrentDone(torrent) {
-      this.$router.push('/title-group?id=' + useTitleGroupStore().id + '&torrentId=' + torrent.id)
-    },
-  },
+const router = useRouter()
+const { t } = useI18n()
+
+const editionGroupStore = useEditionGroupStore()
+const titleGroupStore = useTitleGroupStore()
+
+const titleGroupAccordionValue = ref('0')
+const editionGroupAccordionValue = ref('')
+const torrentAccordionValue = ref('')
+const uploadStep = ref(1)
+const editionGroup = ref({})
+
+const titleGroupDone = () => {
+  titleGroupAccordionValue.value = ''
+  editionGroupAccordionValue.value = '0'
+  uploadStep.value = 2
+}
+
+const editionGroupDone = (eg: EditionGroupInfoLite) => {
+  editionGroup.value = eg
+  editionGroupStore.id = eg.id
+  editionGroupAccordionValue.value = ''
+  torrentAccordionValue.value = '0'
+  uploadStep.value = 3
+}
+
+const torrentDone = (torrent: Torrent) => {
+  router.push('/title-group/' + titleGroupStore.id + '?torrentId=' + torrent.id)
 }
 </script>
 

@@ -5,7 +5,7 @@
         <i class="pi pi-search"></i>
       </template>
     </Image>
-    <a :href="'/artist?id=' + affiliated_artist.artist.id">
+    <a :href="'/artist/' + affiliated_artist.artist.id">
       <div class="name">{{ affiliated_artist.artist.name }}</div>
     </a>
     <div class="roles">
@@ -16,16 +16,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import { Image } from 'primevue'
 
-export default defineComponent({
-  components: { Image },
-  props: {
-    affiliated_artist: {},
-  },
-})
+defineProps<{
+  affiliated_artist: AffiliatedArtistHierarchy
+}>()
 </script>
 <style scoped>
 .affiliated-artist {

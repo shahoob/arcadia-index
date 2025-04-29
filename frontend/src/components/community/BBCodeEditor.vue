@@ -12,17 +12,13 @@
   </FloatLabel>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { FloatLabel, Textarea } from 'primevue'
 
-export default defineComponent({
-  components: { FloatLabel, Textarea },
-  props: { label: {} },
-  data() {
-    return {
-      content: '',
-    }
-  },
-})
+defineProps<{
+  label: string
+}>()
+
+const content = ref('')
 </script>
