@@ -1,6 +1,6 @@
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 
-use crate::tracker::announce::{self, Announce, PeerCompact};
+use crate::tracker::announce::{self, Announce, Peer};
 
 pub async fn remove_peer(
     pool: &PgPool,
@@ -75,11 +75,7 @@ pub async fn insert_or_update_peer(
         .unwrap_or((0, 0))
 }
 
-pub async fn find_torrent_peers(
-    pool: &PgPool,
-    torrent_id: &i64,
-    user_id: &i64,
-) -> Vec<PeerCompact> {
+pub async fn find_torrent_peers(pool: &PgPool, torrent_id: &i64, user_id: &i64) -> Vec<Peer> {
     let peers = sqlx::query!(
         r#"
         SELECT peers.ip AS ip, peers.port AS port
@@ -96,8 +92,6 @@ pub async fn find_torrent_peers(
     .await
     .expect("failed");
 
-    println!("{:?}", peers);
-
     peers
         .into_iter()
         .map(|p| {
@@ -105,7 +99,7 @@ pub async fn find_torrent_peers(
                 panic!("oops");
             };
 
-            announce::PeerCompact {
+            announce::Peer {
                 ip: ipv4,
                 port: p.port as u16,
             }
