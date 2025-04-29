@@ -462,7 +462,7 @@ export interface components {
             source?: null | components["schemas"]["Source"];
             /** Format: int64 */
             title_group_id: number;
-            torrents: components["schemas"]["TorrentLite"][];
+            torrents: components["schemas"]["TorrentHierarchyLite"][];
         };
         EditionGroupInfoLite: {
             additional_information: {
@@ -782,6 +782,7 @@ export interface components {
             /** Format: int64 */
             id: number;
             name: string;
+            platform?: null | components["schemas"]["Platform"];
         };
         Torrent: {
             /** Format: int32 */
@@ -873,7 +874,7 @@ export interface components {
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
         };
-        TorrentLite: {
+        TorrentHierarchyLite: {
             /** Format: int32 */
             audio_bitrate?: number | null;
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
@@ -896,6 +897,7 @@ export interface components {
             id: number;
             languages?: components["schemas"]["Language"][] | null;
             release_name?: string | null;
+            reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
             size: number;
             staff_checked: boolean;

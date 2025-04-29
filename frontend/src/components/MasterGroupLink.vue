@@ -8,10 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import { type TitleGroup } from '@/services/api/torrentService'
+import { type TitleGroup, type TitleGroupLite } from '@/services/api/torrentService'
 
 defineProps<{
-  title_group: TitleGroup
+  title_group: TitleGroup | TitleGroupLite
 }>()
 </script>
 <style scoped>

@@ -1,9 +1,13 @@
 <template>
   <DataTable
     v-model:expandedRows="expandedRows"
-    :value="title_group.edition_groups.flatMap((edition_group: Object) => edition_group.torrents)"
+    :value="
+      title_group.edition_groups.flatMap(
+        (edition_group: EditionGroupHierarchyLite) => edition_group.torrents,
+      )
+    "
     rowGroupMode="subheader"
-    :groupRowsBy="isGrouped ? 'edition_group_id' : null"
+    :groupRowsBy="isGrouped ? 'edition_group_id' : undefined"
     sortMode="single"
     :sortField="sortBy == 'edition' ? '' : sortBy"
     :sortOrder="1"
@@ -16,7 +20,9 @@
     <Column :header="$t('torrent.properties')" style="min-width: 300px">
       <template #body="slotProps">
         <a
-          :href="preview ? `/title-group/${title_group.id}?torrentId=${slotProps.data.id}` : null"
+          :href="
+            preview ? `/title-group/${title_group.id}?torrentId=${slotProps.data.id}` : undefined
+          "
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
@@ -82,21 +88,21 @@
     </Column>
     <!-- TODO: replace with real data from the tracker -->
     <Column style="width: 2.5em">
-      <template #header
-        ><i class="pi pi-replay" v-tooltip.top="$t('torrent.completed')"
-      /></template>
+      <template #header>
+        <i class="pi pi-replay" v-tooltip.top="$t('torrent.completed')" />
+      </template>
       <template #body>10</template>
     </Column>
     <Column style="width: 2.5em">
-      <template #header
-        ><i class="pi pi-arrow-up" v-tooltip.top="$t('torrent.seeders')"
-      /></template>
+      <template #header>
+        <i class="pi pi-arrow-up" v-tooltip.top="$t('torrent.seeders')" />
+      </template>
       <template #body><span style="color: green">5</span></template>
     </Column>
     <Column style="width: 2.5em">
-      <template #header
-        ><i class="pi pi-arrow-down" v-tooltip.top="$t('torrent.leechers')"
-      /></template>
+      <template #header>
+        <i class="pi pi-arrow-down" v-tooltip.top="$t('torrent.leechers')" />
+      </template>
       <template #body>0</template>
     </Column>
     <template #groupheader="slotProps" v-if="isGrouped">
@@ -104,7 +110,7 @@
         {{
           getEditionGroupSlug(
             title_group.edition_groups.find(
-              (group: object) => group.id === slotProps.data.edition_group_id,
+              (group: EditionGroupInfoLite) => group.id === slotProps.data.edition_group_id,
             ),
           )
         }}
@@ -113,7 +119,7 @@
     <template #expansion="slotProps" v-if="!preview">
       <div class="pre-style release-name">{{ slotProps.data.release_name }}</div>
       <Accordion :value="[]" multiple class="dense-accordion">
-        <AccordionPanel value="0" v-if="slotProps.data.reports">
+        <AccordionPanel value="0" v-if="slotProps.data.reports.length !== 0">
           <AccordionHeader>Report information</AccordionHeader>
           <AccordionContent>
             <div class="report" v-for="report in slotProps.data.reports" :key="report.id">
@@ -182,21 +188,26 @@ import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
 import Dialog from 'primevue/dialog'
 import {
   downloadTorrent,
+  type EditionGroupHierarchyLite,
+  type EditionGroupInfoLite,
   type TitleGroupAndAssociatedData,
+  type Torrent,
+  type TorrentHierarchyLite,
   type TorrentReport,
 } from '@/services/api/torrentService'
 import { useRoute } from 'vue-router'
 import { getEditionGroupSlug } from '@/services/helpers'
+import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 
 interface Props {
-  title_group: TitleGroupAndAssociatedData
+  title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
   preview: boolean
   sortBy?: string
 }
 const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
 
 const reportTorrentDialogVisible = ref(false)
-const expandedRows = ref([])
+const expandedRows = ref<Torrent[]>([])
 const reportingTorrentId = ref(0)
 const route = useRoute()
 
@@ -204,7 +215,7 @@ const torrentReported = (torrentReport: TorrentReport) => {
   reportTorrentDialogVisible.value = false
   const reportedTorrent = title_group.edition_groups
     .flatMap((edition_group) => edition_group.torrents)
-    .find((torrent) => torrent.id == torrentReport.reported_torrent_id)
+    .find((torrent: TorrentHierarchyLite) => torrent.id == torrentReport.reported_torrent_id)
   if (reportedTorrent) {
     if (reportedTorrent.reports) {
       reportedTorrent.reports.push(torrentReport)
@@ -219,7 +230,7 @@ const reportTorrent = (id: number) => {
   reportingTorrentId.value = id
   reportTorrentDialogVisible.value = true
 }
-const toggleRow = (torrent) => {
+const toggleRow = (torrent: Torrent) => {
   if (!expandedRows.value.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {
     expandedRows.value = [...expandedRows.value, torrent]
   } else {
@@ -234,7 +245,7 @@ onMounted(() => {
     toggleRow(
       title_group.edition_groups
         .flatMap((edition_group) => edition_group.torrents)
-        .find((torrent) => torrent.id === parseInt(route.query.torrentId?.toString())),
+        .find((torrent) => torrent.id === parseInt(route.query.torrentId.toString())),
     )
   }
 })

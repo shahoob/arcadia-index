@@ -21,7 +21,7 @@
             {{ getEditionGroupSlug(slotProps.option) }}
           </div>
         </template>
-        <template #value="slotProps" v-if="selected_edition_group.id">
+        <template #value="slotProps" v-if="selected_edition_group">
           <div>
             {{ getEditionGroupSlug(slotProps.value) }}
           </div>
@@ -66,7 +66,7 @@ import { getEditionGroupSlug } from '@/services/helpers'
 let action = ref('select') // create | select
 const step = 1
 const titleGroup = ref({ edition_groups: [] })
-const selected_edition_group: EditionGroupInfoLite = ref({})
+const selected_edition_group = ref<EditionGroupInfoLite | null>(null)
 let creatingEditionGroup = false
 
 const emit = defineEmits<{

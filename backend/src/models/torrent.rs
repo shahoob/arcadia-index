@@ -278,7 +278,7 @@ pub struct TorrentSearch {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
-pub struct TorrentLite {
+pub struct TorrentHierarchyLite {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
@@ -302,6 +302,7 @@ pub struct TorrentLite {
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Option<Vec<Language>>,
     pub video_resolution: Option<String>,
+    pub reports: Vec<TorrentReport>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

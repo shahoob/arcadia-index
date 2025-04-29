@@ -1,3 +1,9 @@
+import type {
+  EditionGroup,
+  EditionGroupHierarchyLite,
+  EditionGroupInfoLite,
+} from './api/torrentService'
+
 export const timeAgo = (date: string) => {
   const diff = (Date.now() - new Date(date).getTime()) / 1000
   return diff < 60
@@ -20,7 +26,7 @@ export const bytesToReadable = (bytes: number): string => {
 
   return `${size.toFixed(2)} ${units[unitIndex]}`
 }
-export const getEditionGroupSlug = (editionGroup: string): string => {
+export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string => {
   let slug = ''
 
   if (editionGroup.additional_information?.date_from) {

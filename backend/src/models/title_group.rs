@@ -169,6 +169,7 @@ pub struct TitleGroupLite {
     pub name: String,
     pub content_type: ContentType,
     pub edition_groups: Vec<EditionGroupInfoLite>,
+    pub platform: Option<Platform>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

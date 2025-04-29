@@ -269,11 +269,11 @@ const titleGroupForm = ref<UserCreatedTitleGroup>({
   category: '',
   country_from: '',
   name_aliases: [],
-  affiliated_artists: [],
+  affiliated_artists: {},
   tags: [],
   master_group_id: null,
   platform: null,
-  embedded_links: [],
+  embedded_links: {},
 })
 const tagsString = ref('')
 const selectableCountries = ['France', 'UK', 'USA', 'Scotland']
