@@ -25,26 +25,21 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { Galleria } from 'primevue'
 
-export default defineComponent({
-  components: { Galleria },
-  props: { images: [] },
-  data() {
-    return {
-      modalVisible: false,
-      activeIndex: 0,
-    }
-  },
-  methods: {
-    imageClicked(index: number) {
-      this.activeIndex = index
-      this.modalVisible = true
-    },
-  },
-})
+defineProps<{
+  images: string[]
+}>()
+
+const modalVisible = ref(false)
+const activeIndex = ref(0)
+
+const imageClicked = (index: number) => {
+  activeIndex.value = index
+  modalVisible.value = true
+}
 </script>
 
 <style scoped>

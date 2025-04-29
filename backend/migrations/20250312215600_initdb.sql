@@ -8,8 +8,10 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description TEXT NOT NULL DEFAULT '',
     uploaded BIGINT NOT NULL DEFAULT 0,
+    real_uploaded BIGINT NOT NULL DEFAULT 0,
     -- 1 byte downloaded
     downloaded BIGINT NOT NULL DEFAULT 1,
+    real_downloaded BIGINT NOT NULL DEFAULT 1,
     ratio FLOAT NOT NULL DEFAULT 0.0,
     required_ratio FLOAT NOT NULL DEFAULT 0.0,
     last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -52,7 +54,7 @@ CREATE TABLE artists (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    pictures TEXT [],
+    pictures TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
@@ -159,9 +161,9 @@ CREATE TABLE title_groups (
     tagline TEXT,
     tags VARCHAR(50) [] NOT NULL,
     country_from TEXT,
-    covers TEXT [],
+    covers TEXT [] NOT NULL,
     external_links TEXT [] NOT NULL,
-    embedded_links JSONB,
+    embedded_links JSONB NOT NULL,
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
     public_ratings JSONB,
@@ -306,6 +308,8 @@ CREATE TYPE language_enum AS ENUM(
 CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
+    upload_factor FLOAT NOT NULL DEFAULT 1.0,
+    download_factor FLOAT NOT NULL DEFAULT 1.0,
     edition_group_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -340,7 +344,7 @@ CREATE TABLE torrents (
 
     -- video
     video_codec video_codec_enum,
-    features features_enum [],
+    features features_enum [] NOT NULL,
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
 
@@ -380,7 +384,7 @@ CREATE TABLE torrent_requests (
     audio_channels VARCHAR(8),
     -- Video
     video_codec video_codec_enum,
-    features features_enum[],
+    features features_enum[] NOT NULL,
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
@@ -439,6 +443,8 @@ CREATE TABLE peers (
     port INTEGER NOT NULL,
     first_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    real_uploaded BIGINT NOT NULL DEFAULT 0,
+    real_downloaded BIGINT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id),
 
@@ -521,6 +527,8 @@ CREATE TABLE collage_entity_entry (
 CREATE VIEW torrents_and_reports AS
 SELECT
     t.id,
+    t.upload_factor,
+    t.download_factor,
     t.edition_group_id,
     t.created_at,
     t.updated_at,
@@ -552,7 +560,7 @@ SELECT
     t.video_resolution,
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
-        ELSE NULL
+        ELSE '[]'::json
     END AS reports
 FROM
     torrents t
@@ -588,6 +596,8 @@ SELECT
                         SELECT jsonb_agg(
                             jsonb_build_object(
                                 'id', t.id,
+                                'upload_factor', t.upload_factor,
+                                'download_factor', t.download_factor,
                                 'edition_group_id', t.edition_group_id,
                                 'created_at', t.created_at,
                                 'release_name', t.release_name,

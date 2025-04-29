@@ -4,52 +4,52 @@ use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
-use super::torrent::{TorrentHierarchy, TorrentLite};
+use super::torrent::{TorrentHierarchy, TorrentHierarchyLite};
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
 #[sqlx(type_name = "source_enum")]
 pub enum Source {
     #[sqlx(rename = "CD")]
-    #[serde(alias = "CD")]
+    #[serde(rename = "CD")]
     Cd,
     #[sqlx(rename = "DVD5")]
-    #[serde(alias = "DVD5")]
+    #[serde(rename = "DVD5")]
     Dvd5,
     #[sqlx(rename = "DVD9")]
-    #[serde(alias = "DVD9")]
+    #[serde(rename = "DVD9")]
     Dvd9,
     Vinyl,
     Web,
     Soundboard,
     #[sqlx(rename = "SACD")]
-    #[serde(alias = "SACD")]
+    #[serde(rename = "SACD")]
     Sacd,
     #[sqlx(rename = "DAT")]
-    #[serde(alias = "DAT")]
+    #[serde(rename = "DAT")]
     Dat,
     Cassette,
     #[sqlx(rename = "Blu-Ray")]
-    #[serde(alias = "Blu-Ray")]
+    #[serde(rename = "Blu-Ray")]
     BluRay,
     LaserDisc,
     #[sqlx(rename = "HD-DVD")]
-    #[serde(alias = "HD-DVD")]
+    #[serde(rename = "HD-DVD")]
     Hddvd,
     #[sqlx(rename = "HDTV")]
-    #[serde(alias = "HDTV")]
+    #[serde(rename = "HDTV")]
     Hdtv,
     #[sqlx(rename = "PDTV")]
-    #[serde(alias = "PDTV")]
+    #[serde(rename = "PDTV")]
     Pdtv,
     #[sqlx(rename = "TV")]
-    #[serde(alias = "TV")]
+    #[serde(rename = "TV")]
     Tv,
     #[sqlx(rename = "VHS")]
-    #[serde(alias = "VHS")]
+    #[serde(rename = "VHS")]
     Vhs,
     Mixed,
     #[sqlx(rename = "Physical Book")]
-    #[serde(alias = "Physical Book")]
+    #[serde(rename = "Physical Book")]
     PhysicalBook,
 }
 
@@ -77,7 +77,7 @@ pub struct EditionGroup {
     // this information will appea in the "title bar" of the edition
     // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: numer/name of the last item)
     // for music: (label, catalogue_number)
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
 }
 
@@ -91,7 +91,7 @@ pub struct UserCreatedEditionGroup {
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
     pub source: Option<Source>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
     // one of them should be given
     pub title_group_id: Option<i64>,
@@ -108,9 +108,9 @@ pub struct EditionGroupHierarchyLite {
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub source: Option<Source>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
-    pub torrents: Vec<TorrentLite>,
+    pub torrents: Vec<TorrentHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -130,7 +130,7 @@ pub struct EditionGroupHierarchy {
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
     pub source: Option<Source>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
     pub torrents: Vec<TorrentHierarchy>,
 }
@@ -143,6 +143,6 @@ pub struct EditionGroupInfoLite {
     pub release_date: NaiveDateTime,
     pub distributor: Option<String>,
     pub source: Option<Source>,
-    #[schema(value_type = Value)]
+    #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
 }

@@ -2,12 +2,12 @@
   <div class="name">{{ series.name }}</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import type { Series } from '@/services/api/seriesService'
 
-export default defineComponent({
-  props: { series: {} },
-})
+defineProps<{
+  series: Series
+}>()
 </script>
 
 <style scoped>

@@ -10,13 +10,13 @@ use utoipa::ToSchema;
 // #[sqlx(type_name = "item_detail_layout")]
 // pub enum ItemDetailLayout {
 // #[sqlx(rename = "header")]
-// #[serde(alias = "header")]
+// #[serde(rename = "header")]
 //     Header,
 // #[sqlx(rename = "sidebar_right")]
-// #[serde(alias = "sidebar_right")]
+// #[serde(rename = "sidebar_right")]
 //     SideBarRight,
 // #[sqlx(rename = "sidebar_left")]
-// #[serde(alias = "sidebar_left")]
+// #[serde(rename = "sidebar_left")]
 //     SideBarLeft,
 // }
 
@@ -44,7 +44,9 @@ pub struct User {
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
+    pub real_uploaded: i64,
     pub downloaded: i64,
+    pub real_downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
@@ -102,7 +104,9 @@ pub struct PublicUser {
     pub created_at: NaiveDateTime,
     pub description: String,
     pub uploaded: i64,
+    pub real_uploaded: i64,
     pub downloaded: i64,
+    pub real_downloaded: i64,
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]

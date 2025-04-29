@@ -162,9 +162,8 @@
     </div>
   </Form>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onMounted } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -172,109 +171,109 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import { Form } from '@primevue/forms'
+import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
+import { useI18n } from 'vue-i18n'
+import { isValidUrl } from '@/services/helpers'
+import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
 
-export default defineComponent({
-  components: {
-    Form,
-    DatePicker,
-    Button,
-    FloatLabel,
-    InputText,
-    Textarea,
-    Select,
-    Message,
-  },
-  props: {
-    titleGroup: {},
-    sendingEditionGroup: { default: false },
-    initialEditionGroupForm: { default: {} },
-  },
-  data() {
-    return {
-      editionGroupForm: {
-        name: '',
-        description: null,
-        external_links: [''],
-        covers: [''],
-        release_date: null,
-        title_group_id: 0,
-        source: null,
-        distributor: '',
-        additional_information: {},
-      },
-    }
-  },
-  methods: {
-    resolver({ values }) {
-      const errors = {}
+interface Props {
+  titleGroup: TitleGroupLite
+  sendingEditionGroup: boolean
+  initialEditionGroupForm: UserCreatedEditionGroup | null
+}
+const {
+  titleGroup,
+  sendingEditionGroup = false,
+  initialEditionGroupForm = null,
+} = defineProps<Props>()
 
-      if (values.name.length < 5) {
-        errors.name = [{ message: this.$t('error.write_more_than_x_chars', [5]) }]
-      }
-      // if (values.distributor.length < 2) {
-      //   errors.distributor = [{ message: 'Write more than 2 characters' }]
-      // }
-      // if (values.source == '') {
-      //   errors.source = [{ message: 'Select a source' }]
-      // }
-      if (!values.release_date) {
-        errors.release_date = [{ message: this.$t('error.select_date') }]
-      }
-      // if (values.description.length < 10) {
-      //   errors.description = [{ message: 'Write more than 10 characters' }]
-      // }
-      values.external_links.forEach((link, index) => {
-        if (!this.$isValidUrl(link) && link != '') {
-          if (!('external_links' in errors)) {
-            errors.external_links = []
-          }
-          errors.external_links[index] = [{ message: this.$t('error.invalid_url') }]
-        }
-      })
-      values.covers.forEach((link, index) => {
-        if (!this.$isValidUrl(link) && link != '') {
-          if (!('covers' in errors)) {
-            errors.covers = []
-          }
-          errors.covers[index] = [{ message: this.$t('error.invalid_url') }]
-        }
-      })
+const { t } = useI18n()
 
-      return {
-        errors,
+const emit = defineEmits<{
+  validated: [editionGroup: UserCreatedEditionGroup]
+}>()
+
+let editionGroupForm: UserCreatedEditionGroup = {
+  name: '',
+  description: null,
+  external_links: [''],
+  covers: [''],
+  release_date: '',
+  title_group_id: 0,
+  source: null,
+  distributor: '',
+  additional_information: {},
+}
+
+const resolver = ({ values }: FormResolverOptions) => {
+  const errors: Partial<Record<keyof UserCreatedEditionGroup, { message: string }[]>> = {}
+
+  if (values.name.length < 5) {
+    errors.name = [{ message: t('error.write_more_than_x_chars', [5]) }]
+  }
+  // if (values.distributor.length < 2) {
+  //   errors.distributor = [{ message: 'Write more than 2 characters' }]
+  // }
+  // if (values.source == '') {
+  //   errors.source = [{ message: 'Select a source' }]
+  // }
+  if (values.release_date === '') {
+    errors.release_date = [{ message: t('error.select_date') }]
+  }
+  // if (values.description.length < 10) {
+  //   errors.description = [{ message: 'Write more than 10 characters' }]
+  // }
+  values.external_links.forEach((link: string, index: number) => {
+    if (!isValidUrl(link) && link != '') {
+      if (!('external_links' in errors)) {
+        errors.external_links = []
       }
-    },
-    onFormSubmit({ valid }) {
-      if (valid) {
-        this.$emit('validated', this.editionGroupForm)
+      errors.external_links[index] = [{ message: t('error.invalid_url') }]
+    }
+  })
+  values.covers.forEach((link: string, index: number) => {
+    if (!isValidUrl(link) && link != '') {
+      if (!('covers' in errors)) {
+        errors.covers = []
       }
-    },
-    addCover() {
-      this.editionGroupForm.covers.push('')
-    },
-    removeCover(index: number) {
-      this.editionGroupForm.covers.splice(index, 1)
-    },
-    addLink() {
-      this.editionGroupForm.external_links.push('')
-    },
-    removeLink(index: number) {
-      this.editionGroupForm.external_links.splice(index, 1)
-    },
-  },
-  created() {
-    if (this.titleGroup.id) {
-      this.editionGroupForm.title_group_id = this.titleGroup.id
+      errors.covers[index] = [{ message: t('error.invalid_url') }]
     }
-    if (Object.keys(this.initialEditionGroupForm).length > 0) {
-      this.editionGroupForm = this.initialEditionGroupForm
-    }
-    if (this.titleGroup.content_type == 'music') {
-      this.editionGroupForm.additional_information.label = ''
-      this.editionGroupForm.additional_information.catalogue_number = ''
-    }
-  },
+  })
+
+  return {
+    errors,
+  }
+}
+
+const onFormSubmit = ({ valid }: FormSubmitEvent) => {
+  if (valid) {
+    emit('validated', editionGroupForm)
+  }
+}
+const addCover = () => {
+  editionGroupForm.covers.push('')
+}
+const removeCover = (index: number) => {
+  editionGroupForm.covers.splice(index, 1)
+}
+const addLink = () => {
+  editionGroupForm.external_links.push('')
+}
+const removeLink = (index: number) => {
+  editionGroupForm.external_links.splice(index, 1)
+}
+
+onMounted(() => {
+  if (titleGroup.id !== 0) {
+    editionGroupForm.title_group_id = titleGroup.id
+  }
+  if (initialEditionGroupForm !== null) {
+    editionGroupForm = initialEditionGroupForm
+  }
+  if (titleGroup.content_type == 'music') {
+    editionGroupForm.additional_information.label = ''
+    editionGroupForm.additional_information.catalogue_number = ''
+  }
 })
 </script>
 <style scoped>

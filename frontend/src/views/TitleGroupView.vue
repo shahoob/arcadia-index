@@ -57,11 +57,11 @@
           <label for="sort_by">{{ $t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :title_group="title_group" :sortBy />
+      <TitleGroupTable :title_group="title_group" :sortBy :preview="false" />
       <ContentContainer
         :container-title="$t('general.screenshots')"
         class="screenshots"
-        v-if="title_group.screenshots && title_group.screenshots?.length !== 0"
+        v-if="title_group.screenshots.length !== 0"
       >
         <CustomGalleria :images="title_group.screenshots" />
       </ContentContainer>
@@ -77,10 +77,7 @@
             }})</AccordionHeader
           >
           <AccordionContent>
-            <TorrentRequestsTable
-              :torrent_requests="title_group.torrent_requests"
-              :title_group="title_group"
-            />
+            <TorrentRequestsTable :torrentRequests="title_group.torrent_requests" />
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
@@ -111,15 +108,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
-
-const userStore = useUserStore()
-</script>
-<script lang="ts">
 import GeneralComments from '@/components/community/GeneralComments.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
-import { getTitleGroup } from '@/services/api/torrentService'
+import { getTitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 import TitleGroupTable from '@/components/title_group/TitleGroupTable.vue'
 import TorrentRequestsTable from '@/components/request/TorrentRequestsTable.vue'
 import Accordion from 'primevue/accordion'
@@ -133,62 +127,53 @@ import { useTitleGroupStore } from '@/stores/titleGroup'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import CustomGalleria from '@/components/CustomGalleria.vue'
+import { useRoute, useRouter } from 'vue-router'
 
-export default {
-  components: {
-    ContentContainer,
-    TitleGroupSlimHeader,
-    TitleGroupTable,
-    FloatLabel,
-    Select,
-    GeneralComments,
-    TorrentRequestsTable,
-    Accordion,
-    AccordionContent,
-    AccordionHeader,
-    AccordionPanel,
-    TitleGroupFullHeader,
-    TitleGroupSidebar,
-    CustomGalleria,
-  },
-  data() {
-    return {
-      title_group: null,
-      subscription_loading: false,
-      sortBy: 'edition',
-      selectableSortingOptions: ['edition', 'size', 'seeders', 'completed', 'created_at'],
-    }
-  },
-  created() {
-    getTitleGroup(this.$route.query.id?.toString()).then((data) => {
-      this.title_group = data
-    })
-  },
-  methods: {
-    uploadTorrent() {
-      const titleGroupStore = useTitleGroupStore()
-      titleGroupStore.id = this.title_group.id
-      titleGroupStore.edition_groups = this.title_group.edition_groups
-      titleGroupStore.content_type = this.title_group.content_type
-      this.$router.push({ path: '/upload' })
-    },
-    subscribe() {
-      subscribeToItem(this.$route.query.id, 'title_group').then(() => {
-        this.title_group.is_subscribed = true
-      })
-    },
-    unsubscribe() {
-      unsubscribeToItem(this.$route.query.id, 'title_group').then(() => {
-        this.title_group.is_subscribed = false
-      })
-    },
-  },
+const router = useRouter()
+const route = useRoute()
+
+const userStore = useUserStore()
+const titleGroupStore = useTitleGroupStore()
+
+const selectableSortingOptions = ['edition', 'size', 'seeders', 'completed', 'created_at']
+
+const title_group = ref<TitleGroupAndAssociatedData>()
+const sortBy = ref('edition')
+
+onMounted(async () => {
+  await fetchTitleGroup()
+})
+
+const fetchTitleGroup = async () => {
+  title_group.value = await getTitleGroup(parseInt(route.params.id.toString()))
 }
+
+const uploadTorrent = () => {
+  titleGroupStore.id = title_group.value.id
+  titleGroupStore.edition_groups = title_group.value.edition_groups
+  titleGroupStore.content_type = title_group.value.content_type
+  router.push({ path: '/upload' })
+}
+
+const subscribe = async () => {
+  await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
+  title_group.value.is_subscribed = true
+}
+
+const unsubscribe = async () => {
+  await unsubscribeToItem(parseInt(route.params.id.toString()), 'title_group')
+  title_group.value.is_subscribed = false
+}
+
+watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 </script>
 
 <style scoped>
 .main.with-sidebar {
   width: 75%;
+}
+.sidebar {
+  width: 25%;
 }
 .actions {
   display: flex;

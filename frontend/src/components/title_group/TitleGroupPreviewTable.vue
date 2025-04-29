@@ -11,7 +11,7 @@
       </Image>
       <div class="right">
         <div class="title">
-          <a :href="'/title-group?id=' + title_group.id">{{ title_group.name }}</a>
+          <RouterLink :to="`/title-group/${title_group.id}`">{{ title_group.name }}</RouterLink>
           <span class="year">({{ title_group.original_release_date.substring(0, 4) }})</span>
         </div>
         <TitleGroupTable
@@ -24,21 +24,15 @@
     </div>
   </ContentContainer>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { Image } from 'primevue'
 import TitleGroupTable from './TitleGroupTable.vue'
 import ContentContainer from '../ContentContainer.vue'
+import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 
-export default defineComponent({
-  components: { Image, TitleGroupTable, ContentContainer },
-  props: {
-    title_group: {},
-  },
-  methods: {
-    titleGroupClicked() {},
-  },
-})
+defineProps<{
+  title_group: TitleGroupHierarchyLite
+}>()
 </script>
 <style scoped>
 .title-group-preview-table {

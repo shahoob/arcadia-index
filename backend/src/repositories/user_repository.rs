@@ -13,6 +13,8 @@ pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
                 description,
                 uploaded,
                 downloaded,
+                real_uploaded,
+                real_downloaded,
                 ratio,
                 required_ratio,
                 last_seen,

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                id,\n                username,\n                avatar,\n                created_at,\n                description,\n                uploaded,\n                downloaded,\n                ratio,\n                required_ratio,\n                last_seen,\n                class,\n                forum_posts,\n                forum_threads,\n                group_comments,\n                torrent_comments,\n                request_comments,\n                artist_comments,\n                seeding,\n                leeching,\n                snatched,\n                seeding_size,\n                requests_filled,\n                collages_started,\n                requests_voted,\n                average_seeding_time,\n                invited,\n                invitations,\n                bonus_points\n            FROM users\n            WHERE id = $1\n        ",
+  "query": "\n            SELECT\n                id,\n                username,\n                avatar,\n                created_at,\n                description,\n                uploaded,\n                downloaded,\n                real_uploaded,\n                real_downloaded,\n                ratio,\n                required_ratio,\n                last_seen,\n                class,\n                forum_posts,\n                forum_threads,\n                group_comments,\n                torrent_comments,\n                request_comments,\n                artist_comments,\n                seeding,\n                leeching,\n                snatched,\n                seeding_size,\n                requests_filled,\n                collages_started,\n                requests_voted,\n                average_seeding_time,\n                invited,\n                invitations,\n                bonus_points\n            FROM users\n            WHERE id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -40,106 +40,116 @@
       },
       {
         "ordinal": 7,
+        "name": "real_uploaded",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 8,
+        "name": "real_downloaded",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 9,
         "name": "ratio",
         "type_info": "Float8"
       },
       {
-        "ordinal": 8,
+        "ordinal": 10,
         "name": "required_ratio",
         "type_info": "Float8"
       },
       {
-        "ordinal": 9,
+        "ordinal": 11,
         "name": "last_seen",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 10,
+        "ordinal": 12,
         "name": "class",
         "type_info": "Varchar"
       },
       {
-        "ordinal": 11,
+        "ordinal": 13,
         "name": "forum_posts",
         "type_info": "Int4"
       },
       {
-        "ordinal": 12,
+        "ordinal": 14,
         "name": "forum_threads",
         "type_info": "Int4"
       },
       {
-        "ordinal": 13,
+        "ordinal": 15,
         "name": "group_comments",
         "type_info": "Int4"
       },
       {
-        "ordinal": 14,
+        "ordinal": 16,
         "name": "torrent_comments",
         "type_info": "Int4"
       },
       {
-        "ordinal": 15,
+        "ordinal": 17,
         "name": "request_comments",
         "type_info": "Int4"
       },
       {
-        "ordinal": 16,
+        "ordinal": 18,
         "name": "artist_comments",
         "type_info": "Int8"
       },
       {
-        "ordinal": 17,
+        "ordinal": 19,
         "name": "seeding",
         "type_info": "Int4"
       },
       {
-        "ordinal": 18,
+        "ordinal": 20,
         "name": "leeching",
         "type_info": "Int4"
       },
       {
-        "ordinal": 19,
+        "ordinal": 21,
         "name": "snatched",
         "type_info": "Int4"
       },
       {
-        "ordinal": 20,
+        "ordinal": 22,
         "name": "seeding_size",
         "type_info": "Int8"
       },
       {
-        "ordinal": 21,
+        "ordinal": 23,
         "name": "requests_filled",
         "type_info": "Int8"
       },
       {
-        "ordinal": 22,
+        "ordinal": 24,
         "name": "collages_started",
         "type_info": "Int8"
       },
       {
-        "ordinal": 23,
+        "ordinal": 25,
         "name": "requests_voted",
         "type_info": "Int8"
       },
       {
-        "ordinal": 24,
+        "ordinal": 26,
         "name": "average_seeding_time",
         "type_info": "Int8"
       },
       {
-        "ordinal": 25,
+        "ordinal": 27,
         "name": "invited",
         "type_info": "Int8"
       },
       {
-        "ordinal": 26,
+        "ordinal": 28,
         "name": "invitations",
         "type_info": "Int2"
       },
       {
-        "ordinal": 27,
+        "ordinal": 29,
         "name": "bonus_points",
         "type_info": "Int8"
       }
@@ -177,8 +187,10 @@
       false,
       false,
       false,
+      false,
+      false,
       false
     ]
   },
-  "hash": "5b1f28ee27141763c1fe3f87d0b4bdd5fd51768d751bdf4aec508b38106b4f49"
+  "hash": "e11c78a0d31d0555becab218379f30a568cd5c68957f96d2cbaacba290586595"
 }

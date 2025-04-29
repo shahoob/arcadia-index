@@ -1,6 +1,6 @@
 <template>
   <div class="artist-sidebar">
-    <Image class="artist-pictures" :src="artist.pictures[0]" preview>
+    <Image class="artist-pictures" v-if="artist.pictures?.length" :src="artist.pictures[0]" preview>
       <template #previewicon>
         <i class="pi pi-search"></i>
       </template>
@@ -10,18 +10,14 @@
     </ContentContainer>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
+import { type Artist } from '@/services/api/artistService'
 import { Image } from 'primevue'
 
-export default defineComponent({
-  components: { ContentContainer, Image },
-  props: { artist: {} },
-  data() {
-    return {}
-  },
-})
+defineProps<{
+  artist: Artist
+}>()
 </script>
 <style scoped>
 .artist-sidebar {

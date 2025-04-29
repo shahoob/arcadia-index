@@ -8,7 +8,7 @@ use utoipa::ToSchema;
 pub enum CollageCategory {
     Personal,
     #[sqlx(rename = "Staff Picks")]
-    #[serde(alias = "Staff Picks")]
+    #[serde(rename = "Staff Picks")]
     StaffPicks,
     External, // replicates a collage from somewhere else (yt playlist, magazine's picks, etc.)
     Theme,

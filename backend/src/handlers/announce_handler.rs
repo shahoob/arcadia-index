@@ -1,4 +1,4 @@
-use crate::repositories::announce_repository::find_torrent_with_id;
+use crate::repositories::announce_repository::{credit_user_upload_download, find_torrent_with_id};
 use crate::repositories::peer_repository::{
     find_torrent_peers, insert_or_update_peer, remove_peer,
 };
@@ -52,6 +52,9 @@ pub enum Error {
     #[error("invalid info_hash")]
     InvalidInfoHash,
 
+    #[error("invalid user id")]
+    InvalidUserId,
+
     #[error("torrent client not in whitelist")]
     TorrentClientNotInWhitelist,
 }
@@ -97,8 +100,6 @@ async fn handle_announce(
 
     let torrent = find_torrent_with_id(&arc.pool, &ann.info_hash).await?;
 
-    // TODO check peer id prefix
-
     let ip = conn
         .realip_remote_addr()
         .and_then(|ip| ip.parse::<IpNetwork>().ok())
@@ -110,20 +111,45 @@ async fn handle_announce(
         todo!();
     }
 
-    insert_or_update_peer(
-        &arc.pool,
-        &torrent.id,
-        &ann.peer_id,
-        &ip,
-        ann.port,
-        &current_user.id,
-    )
-    .await;
+    let (old_real_uploaded, old_real_downloaded) =
+        insert_or_update_peer(&arc.pool, &torrent.id, &ip, &current_user.id, &ann).await;
 
     let peers = find_torrent_peers(&arc.pool, &torrent.id, &current_user.id).await;
 
+    // assuming that the client either sends both downloaded/uploaded
+    // or none of them
+    if let (Some(real_uploaded), Some(real_downloaded)) = (ann.uploaded, ann.downloaded) {
+        let upload_factor = if arc.global_upload_factor != 1.0 {
+            arc.global_upload_factor
+        } else {
+            torrent.upload_factor
+        };
+        let upload_to_credit = ((real_uploaded as i64 - old_real_uploaded) as f64
+            * upload_factor as f64)
+            .ceil() as i64;
+
+        let download_factor = if arc.global_download_factor != 1.0 {
+            arc.global_download_factor
+        } else {
+            torrent.download_factor
+        };
+        let download_to_credit = ((real_downloaded as i64 - old_real_downloaded) as f64
+            * download_factor as f64)
+            .ceil() as i64;
+
+        let _ = credit_user_upload_download(
+            &arc.pool,
+            upload_to_credit,
+            download_to_credit,
+            real_uploaded as i64,
+            real_downloaded as i64,
+            current_user.id,
+        )
+        .await;
+    }
+
     let resp = announce::AnnounceResponse {
-        peers,
+        peers: peers.into(),
         ..Default::default()
     };
 
