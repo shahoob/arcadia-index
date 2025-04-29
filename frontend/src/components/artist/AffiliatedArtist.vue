@@ -5,7 +5,7 @@
         <i class="pi pi-search"></i>
       </template>
     </Image>
-    <a :href="'/artist?id=' + affiliated_artist.artist.id">
+    <a :href="'/artist/' + affiliated_artist.artist.id">
       <div class="name">{{ affiliated_artist.artist.name }}</div>
     </a>
     <div class="roles">

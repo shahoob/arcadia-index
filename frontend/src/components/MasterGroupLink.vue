@@ -3,7 +3,7 @@
     v-tooltip.top="title_group.platform ?? title_group.name"
     :href="`/title-group/${title_group.id}`"
   >
-    <img :src="`logos/platforms/${title_group.platform ?? title_group.content_type}.svg`" />
+    <img :src="`/logos/platforms/${title_group.platform ?? title_group.content_type}.svg`" />
   </a>
 </template>
 

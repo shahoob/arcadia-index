@@ -297,9 +297,9 @@ import { uploadTorrent, type Torrent, type UploadedTorrent } from '@/services/ap
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useI18n } from 'vue-i18n'
 
-const torrentFile = ref(null)
+const torrentFile = ref({ files: [] })
 const step = ref(1)
-const torrentForm = {
+const torrentForm = ref({
   edition_group_id: '',
   release_name: '',
   release_group: '',
@@ -318,7 +318,7 @@ const torrentForm = {
   audio_bitrate_sampling: null,
   torrent_file: null,
   uploaded_as_anonymous: false,
-}
+})
 // TODO : move all the selectable* arrays to an helper function
 const selectableVideoCodecs = [
   'mpeg1',
@@ -334,17 +334,17 @@ const selectableVideoCodecs = [
 ]
 const selectableVideoResolutions = ['2160p', '1440p', '1080p', '720p', 'SD']
 const selectableAudioCodecs = [
-  'Aac',
-  'Opus',
-  'Mp3',
-  'Mp2',
-  'Aac',
-  'Ac3',
-  'Dts',
-  'Flac',
-  'Pcm',
+  'aac',
+  'opus',
+  'mp3',
+  'mp2',
+  'aac',
+  'ac3',
+  'dts',
+  'flac',
+  'pcm',
   'true-hd',
-  'Dsd',
+  'dsd',
 ]
 const selectableAudioBitrateSamplings = [
   '192',
@@ -403,7 +403,7 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.languages && values.languages.length === 0) {
     errors.languages = [{ message: t('error.select_at_least_x_language', [1]) }]
   }
-  if (!torrentForm.torrent_file) {
+  if (!torrentForm.value.torrent_file) {
     errors.torrent_file = [{ message: t('error.select_torrent_file') }]
   }
 
@@ -419,20 +419,20 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
 const onFileSelect = (event: FileUploadSelectEvent) => {
   if (event.files && event.files.length > 0) {
     // keep a single file
-    const torrentFile = event.files[event.files.length - 1]
-    torrentFile.clear()
-    torrentFile.files = [torrentFile]
-    torrentForm.torrent_file = torrentFile
+    const file = event.files[event.files.length - 1]
+    // torrentFile.value.files.clear()
+    torrentFile.value.files = [file]
+    torrentForm.value.torrent_file = file
   }
 }
 const mediainfoUpdated = () => {
-  const mediainfoExtractedInfo = getFileInfo(torrentForm.mediainfo)
+  const mediainfoExtractedInfo = getFileInfo(torrentForm.value.mediainfo)
   console.log(mediainfoExtractedInfo)
   step.value = 2
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true
-  uploadTorrent(torrentForm)
+  uploadTorrent(torrentForm.value)
     .then((data) => {
       emit('done', data)
     })
@@ -443,7 +443,7 @@ const sendTorrent = () => {
 onMounted(() => {
   content_type = useTitleGroupStore().content_type
   const editionGroupStore = useEditionGroupStore()
-  torrentForm.edition_group_id = editionGroupStore.id.toString()
+  torrentForm.value.edition_group_id = editionGroupStore.id.toString()
 })
 </script>
 <style scoped>
