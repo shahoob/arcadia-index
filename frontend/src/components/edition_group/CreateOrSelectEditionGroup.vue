@@ -65,7 +65,7 @@ import { getEditionGroupSlug } from '@/services/helpers'
 // eslint-disable-next-line prefer-const
 let action = ref('select') // create | select
 const step = 1
-let titleGroup = ref({ edition_groups: [] })
+const titleGroup = ref({ edition_groups: [] })
 const selected_edition_group: EditionGroupInfoLite = ref({})
 let creatingEditionGroup = false
 

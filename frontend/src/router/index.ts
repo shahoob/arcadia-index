@@ -1,13 +1,8 @@
-import { createRouter, createWebHistory, type RouteRecordInfo, type ParamValue } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordInfo } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 export interface RouteNamedMap {
-  TitleGroup: RouteRecordInfo<
-    'TitleGroup',
-    '/title-group/:id',
-    { id: string | number },
-    { id: number }
-  >
+  TitleGroup: RouteRecordInfo<'TitleGroup', '/title-group/:id', { id: string | number }>
   Series: RouteRecordInfo<'Series', '/series/:id', { id: string | number }, { id: string }>
   Artist: RouteRecordInfo<'Artist', '/artist/:id', { id: string | number }, { id: string }>
 }
