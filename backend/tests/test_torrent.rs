@@ -70,7 +70,7 @@ async fn test_upload_torrent(pool: PgPool) {
     form.add_text("audio_bitrate", "1200");
     form.add_text("audio_channels", "5.1");
     form.add_text("audio_bitrate_sampling", "256");
-    form.add_text("video_codec", "H264");
+    form.add_text("video_codec", "h264");
     form.add_text("features", "DV,HDR");
     form.add_text("subtitle_languages", "English,French");
     form.add_text("video_resolution", "1080p");
