@@ -36,7 +36,6 @@ import {
   type TitleGroupCommentHierarchy,
   type UserCreatedTitleGroupComment,
 } from '@/services/api/commentService'
-import { type TitleGroupHierarchy } from '@/services/api/torrentService'
 import BBCodeEditor from './BBCodeEditor.vue'
 import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import Message from 'primevue/message'
@@ -44,7 +43,7 @@ import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
 
 defineProps<{
-  comments: TitleGroupHierarchy[]
+  comments: TitleGroupCommentHierarchy[]
 }>()
 
 const { t } = useI18n()

@@ -191,7 +191,7 @@ import { getEditionGroupSlug } from '@/services/helpers'
 interface Props {
   title_group: TitleGroupAndAssociatedData
   preview: boolean
-  sortBy: string
+  sortBy?: string
 }
 const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
 

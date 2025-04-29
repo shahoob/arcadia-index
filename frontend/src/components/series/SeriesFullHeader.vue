@@ -41,8 +41,9 @@ defineProps<{
 </style>
 <style>
 #series-full-header .series-covers img {
-  max-width: 30em;
-  max-height: 30em;
+  width: 100%;
+  height: auto;
   border-radius: 7px;
+  object-fit: contain;
 }
 </style>
