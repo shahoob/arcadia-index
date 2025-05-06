@@ -22,15 +22,17 @@ import SearchBars from './components/SearchBars.vue'
 import { useUserStore } from './stores/user'
 import { getMe } from './services/api/userService'
 import { onBeforeMount, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 // enable dark mode by default
 document.documentElement.classList.add('dark-theme')
 
 const isAppReady = ref(false)
+const route = useRoute()
 
 onBeforeMount(async () => {
   const user = localStorage.getItem('user')
-  if (user) {
+  if (user && route.name !== 'Login' && route.name !== 'Register') {
     // refresh user on page reload
     const profile = await getMe()
     localStorage.setItem('user', JSON.stringify(profile.user))
