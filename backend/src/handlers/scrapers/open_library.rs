@@ -49,8 +49,7 @@ fn parse_date(date: &str) -> Option<DateTime<Local>> {
         .ok()
         .and_then(|y| NaiveDate::from_ymd_opt(y, 1, 1))
         .or_else(|| NaiveDate::parse_from_str(date, "%B %d, %Y").ok())
-        .map(|nd| nd.and_hms_opt(0, 0, 0))
-        .flatten()
+        .and_then(|nd| nd.and_hms_opt(0, 0, 0))
         .map(|ndt| DateTime::<Local>::from_naive_utc_and_offset(ndt, *Local::now().offset()))
 }
 
@@ -80,7 +79,7 @@ pub async fn get_open_library_data(query: web::Query<GetOpenLibraryQuery>) -> Re
         name: work.title,
         description,
         external_links: vec![format!("https://openlibrary.org/works/{}", query.id)],
-        original_release_date: original_release_date.into(),
+        original_release_date,
         content_type: ContentType::Book,
         ..create_default_title_group()
     };
