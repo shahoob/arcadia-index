@@ -1,4 +1,4 @@
-// use chrono::NaiveDateTime;
+// use chrono::{DateTime,Local};
 
 // #[derive(Debug)]
 // pub struct Peer {
@@ -10,6 +10,6 @@
 //     pub port: u16,
 //     pub uploaded: i64,
 //     pub downloaded: i64,
-//     pub first_seen_at: NaiveDateTime,
-//     pub last_seen_at: NaiveDateTime,
+//     pub first_seen_at: DateTime<Local>,
+//     pub last_seen_at: DateTime<Local>,
 // }

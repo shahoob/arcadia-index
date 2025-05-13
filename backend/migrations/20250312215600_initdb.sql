@@ -5,7 +5,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     registered_from_ip INET NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description TEXT NOT NULL DEFAULT '',
     uploaded BIGINT NOT NULL DEFAULT 0,
     real_uploaded BIGINT NOT NULL DEFAULT 0,
@@ -14,7 +14,7 @@ CREATE TABLE users (
     real_downloaded BIGINT NOT NULL DEFAULT 1,
     ratio FLOAT NOT NULL DEFAULT 0.0,
     required_ratio FLOAT NOT NULL DEFAULT 0.0,
-    last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_seen TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     class VARCHAR(50) NOT NULL DEFAULT 'newbie',
     forum_posts INTEGER NOT NULL DEFAULT 0,
     forum_threads INTEGER NOT NULL DEFAULT 0,
@@ -42,8 +42,8 @@ CREATE TABLE users (
 );
 CREATE TABLE invitations (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
     invitation_key VARCHAR(50) NOT NULL,
     message TEXT NOT NULL,
     sender_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -57,7 +57,7 @@ CREATE TABLE artists (
     description TEXT NOT NULL,
     pictures TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
     edition_groups_amount INT NOT NULL DEFAULT 0,
     torrents_amount INT NOT NULL DEFAULT 0,
@@ -77,8 +77,8 @@ CREATE TABLE master_groups (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255),
     -- name_aliases VARCHAR(255)[],
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     -- description TEXT NOT NULL,
     -- original_language VARCHAR(50) NOT NULL,
@@ -106,8 +106,8 @@ CREATE TABLE series (
     covers TEXT [] NOT NULL,
     banners TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TYPE content_type_enum AS ENUM (
@@ -143,7 +143,7 @@ CREATE TYPE title_group_category_enum AS ENUM (
 );
 CREATE TYPE platform_enum AS ENUM(
     'Linux',
-    'MacOS', 
+    'MacOS',
     'Windows',
     'Xbox'
 );
@@ -152,13 +152,13 @@ CREATE TABLE title_groups (
     master_group_id BIGINT,
     name TEXT NOT NULL,
     name_aliases TEXT [],
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     description TEXT NOT NULL,
     platform platform_enum,
     original_language TEXT,
-    original_release_date TIMESTAMP NOT NULL,
+    original_release_date TIMESTAMP WITH TIME ZONE NOT NULL,
     tagline TEXT,
     tags VARCHAR(50) [] NOT NULL,
     country_from TEXT,
@@ -204,7 +204,7 @@ CREATE TABLE affiliated_artists (
     roles artist_role_enum[] NOT NULL,
     nickname VARCHAR(255),
     created_by_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE
@@ -235,9 +235,9 @@ CREATE TABLE edition_groups (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
     name TEXT NOT NULL,
-    release_date TIMESTAMP NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    release_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     description TEXT,
     distributor VARCHAR(255),
@@ -312,8 +312,8 @@ CREATE TABLE torrents (
     upload_factor FLOAT NOT NULL DEFAULT 1.0,
     download_factor FLOAT NOT NULL DEFAULT 1.0,
     edition_group_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     info_hash BYTEA NOT NULL CHECK(octet_length(info_hash) = 20),
     info_dict BYTEA NOT NULL,
@@ -356,8 +356,8 @@ CREATE TABLE torrents (
 CREATE TABLE title_group_comments (
     id BIGSERIAL PRIMARY KEY,
     content TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     title_group_id BIGINT NOT NULL,
     refers_to_torrent_id BIGINT,
@@ -370,8 +370,8 @@ CREATE TABLE title_group_comments (
 CREATE TABLE torrent_requests (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     edition_name TEXT,
     release_group VARCHAR(20),
@@ -394,7 +394,7 @@ CREATE TABLE torrent_requests (
 CREATE TABLE torrent_request_votes(
     id BIGSERIAL PRIMARY KEY,
     torrent_request_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     bounty_upload BIGINT NOT NULL DEFAULT 0,
     bounty_bonus_points BIGINT NOT NULL DEFAULT 0,
@@ -403,7 +403,7 @@ CREATE TABLE torrent_request_votes(
 );
 CREATE TABLE torrent_reports (
     id BIGSERIAL PRIMARY KEY,
-    reported_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    reported_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     reported_by_id BIGINT NOT NULL,
     description TEXT NOT NULL,
     reported_torrent_id BIGINT NOT NULL,
@@ -413,7 +413,7 @@ CREATE TABLE torrent_reports (
 CREATE TABLE title_group_subscriptions (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
-    subscribed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    subscribed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     subscriber_id BIGINT NOT NULL,
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL,
@@ -421,12 +421,12 @@ CREATE TABLE title_group_subscriptions (
 );
 CREATE TYPE notification_item_enum AS ENUM (
     'TitleGroup',
-    'Artist', 
+    'Artist',
     'Collage'
 );
 CREATE TABLE notifications (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     receiver BIGINT NOT NULL,
     title TEXT NOT NULL,
     message TEXT NOT NULL,
@@ -442,8 +442,8 @@ CREATE TABLE peers (
     peer_id BYTEA NOT NULL CHECK(octet_length(peer_id) = 20),
     ip INET NOT NULL,
     port INTEGER NOT NULL,
-    first_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_seen_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    first_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    last_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     real_uploaded BIGINT NOT NULL DEFAULT 0,
     real_downloaded BIGINT NOT NULL DEFAULT 0,
     user_agent TEXT,
@@ -461,7 +461,7 @@ CREATE TABLE entities (
     description TEXT NOT NULL,
     pictures TEXT [],
     created_by_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
     edition_groups_amount INT NOT NULL DEFAULT 0,
     torrents_amount INT NOT NULL DEFAULT 0,
@@ -483,7 +483,7 @@ CREATE TYPE collage_type_enum AS ENUM (
 );
 CREATE TABLE collage (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     created_by_id BIGINT NOT NULL,
     name VARCHAR NOT NULL,
     covers VARCHAR NOT NULL,
@@ -495,7 +495,7 @@ CREATE TABLE collage (
 );
 CREATE TABLE collage_title_group_entry (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     created_by_id BIGINT NOT NULL,
     title_group_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
@@ -505,7 +505,7 @@ CREATE TABLE collage_title_group_entry (
 );
 CREATE TABLE collage_artist_entry (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     created_by_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
@@ -515,7 +515,7 @@ CREATE TABLE collage_artist_entry (
 );
 CREATE TABLE collage_entity_entry (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     created_by_id BIGINT NOT NULL,
     entity_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,

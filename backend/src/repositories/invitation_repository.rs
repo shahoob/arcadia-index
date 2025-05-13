@@ -24,7 +24,7 @@ pub async fn create_invitation(
         Invitation,
         r#"
             INSERT INTO invitations (message, invitation_key, sender_id, receiver_email, expires_at)
-            VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP + INTERVAL '3 days')
+            VALUES ($1, $2, $3, $4, NOW() + INTERVAL '3 days')
             RETURNING *
         "#,
         invitation.message,
@@ -48,7 +48,7 @@ pub async fn does_unexpired_invitation_exist(
         r#"
            SELECT * FROM invitations
            WHERE invitation_key = $1
-           AND expires_at > CURRENT_TIMESTAMP
+           AND expires_at > NOW()
         "#,
         invitation_key
     )

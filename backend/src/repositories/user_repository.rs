@@ -50,7 +50,7 @@ pub async fn update_last_seen(pool: &PgPool, id: i64) -> Result<()> {
     let _ = sqlx::query!(
         r#"
             UPDATE users
-            SET last_seen = CURRENT_TIMESTAMP
+            SET last_seen = NOW()
             WHERE id = $1
         "#,
         id

@@ -1,6 +1,8 @@
 use crate::Result;
 use actix_web::{HttpResponse, web};
-use chrono::NaiveDate;
+// Datelike and Timelike are needed in the tests, even though they are not directly referenced
+#[allow(unused_imports)]
+use chrono::{DateTime, Datelike, Local, NaiveDate, Timelike};
 use serde::Deserialize;
 
 use crate::models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group};
@@ -42,11 +44,14 @@ struct Work {
     first_publish_date: Option<String>,
 }
 
-fn parse_date(date: &str) -> Option<NaiveDate> {
+fn parse_date(date: &str) -> Option<DateTime<Local>> {
     date.parse::<i32>()
         .ok()
         .and_then(|y| NaiveDate::from_ymd_opt(y, 1, 1))
         .or_else(|| NaiveDate::parse_from_str(date, "%B %d, %Y").ok())
+        .map(|nd| nd.and_hms_opt(0, 0, 0))
+        .flatten()
+        .map(|ndt| DateTime::<Local>::from_naive_utc_and_offset(ndt, *Local::now().offset()))
 }
 
 #[derive(Debug, Deserialize)]
@@ -125,10 +130,32 @@ mod tests {
     fn test_parse_date() {
         // OpenLibrary published date is not normalized, try a couple varieties.
 
-        let date = parse_date("1970");
-        assert_eq!(date, NaiveDate::from_ymd_opt(1970, 1, 1));
+        let local_offset_hours = Local::now().offset().local_minus_utc() / 3600;
 
-        let date = parse_date("February 19, 1994");
-        assert_eq!(date, NaiveDate::from_ymd_opt(1994, 2, 19));
+        let date1 = parse_date("1970").unwrap();
+        assert_eq!(
+            (
+                date1.year(),
+                date1.month(),
+                date1.day(),
+                date1.hour(),
+                date1.minute(),
+                date1.second(),
+            ),
+            (1970, 1, 1, local_offset_hours as u32, 0, 0)
+        );
+
+        let date2 = parse_date("February 19, 1994").unwrap();
+        assert_eq!(
+            (
+                date2.year(),
+                date2.month(),
+                date2.day(),
+                date2.hour(),
+                date2.minute(),
+                date2.second(),
+            ),
+            (1994, 2, 19, local_offset_hours as u32, 0, 0)
+        );
     }
 }

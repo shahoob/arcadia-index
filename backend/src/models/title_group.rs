@@ -1,4 +1,4 @@
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
@@ -89,15 +89,15 @@ pub struct TitleGroup {
     pub name: String,
     pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub description: String,
     pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: NaiveDateTime,
+    pub original_release_date: DateTime<Local>,
     pub tagline: Option<String>, // catchy sentence that represents the general idea of the title
     pub country_from: Option<String>,
     pub covers: Vec<String>,
@@ -138,7 +138,7 @@ pub struct UserCreatedTitleGroup {
     pub tagline: Option<String>,
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: NaiveDateTime,
+    pub original_release_date: DateTime<Local>,
     #[schema(value_type = HashMap<String, String>)]
     pub affiliated_artists: Vec<Json<Value>>,
     pub series_id: Option<i64>,
@@ -157,7 +157,7 @@ pub struct TitleGroupHierarchyLite {
     pub content_type: ContentType,
     pub tags: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: NaiveDateTime,
+    pub original_release_date: DateTime<Local>,
     // #[schema(value_type = HashMap<String, String>)]
     // pub affiliated_artists: Vec<Json<Value>>,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
@@ -186,15 +186,15 @@ pub struct TitleGroupHierarchy {
     pub name: String,
     pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub description: String,
     pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: NaiveDateTime,
+    pub original_release_date: DateTime<Local>,
     pub tagline: Option<String>,
     pub country_from: Option<String>,
     pub covers: Vec<String>,
@@ -218,15 +218,15 @@ pub struct TitleGroupAndAssociatedData {
     pub name: String,
     pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub description: String,
     pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: NaiveDateTime,
+    pub original_release_date: DateTime<Local>,
     pub tagline: Option<String>,
     pub country_from: Option<String>,
     pub covers: Vec<String>,
@@ -264,10 +264,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         tags: Vec::new(),
         tagline: None,
         platform: None,
-        original_release_date: NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d")
-            .unwrap()
-            .and_hms_opt(0, 0, 0)
-            .unwrap(),
+        original_release_date: Local::now(),
         affiliated_artists: Vec::new(),
         series_id: None,
         screenshots: Vec::new(),

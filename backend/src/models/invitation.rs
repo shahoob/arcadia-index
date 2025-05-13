@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
@@ -7,9 +7,9 @@ use utoipa::ToSchema;
 pub struct Invitation {
     pub id: i64,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub expires_at: NaiveDateTime,
+    pub expires_at: DateTime<Local>,
     pub message: String,
     pub invitation_key: String,
     pub sender_id: i64,

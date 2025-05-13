@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use sqlx::types::ipnetwork::IpNetwork;
@@ -43,7 +43,7 @@ pub struct User {
     #[schema(value_type = String, format = "0.0.0.0")]
     pub registered_from_ip: IpNetwork,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     pub description: String,
     pub uploaded: i64,
     pub real_uploaded: i64,
@@ -52,7 +52,7 @@ pub struct User {
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
-    pub last_seen: NaiveDateTime,
+    pub last_seen: DateTime<Local>,
     pub class: String,
     pub forum_posts: i32,
     pub forum_threads: i32,
@@ -104,7 +104,7 @@ pub struct PublicUser {
     pub username: String,
     pub avatar: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     pub description: String,
     pub uploaded: i64,
     pub real_uploaded: i64,
@@ -113,7 +113,7 @@ pub struct PublicUser {
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
-    pub last_seen: NaiveDateTime,
+    pub last_seen: DateTime<Local>,
     pub class: String,
     pub forum_posts: i32,
     pub forum_threads: i32,

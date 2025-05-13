@@ -160,8 +160,14 @@ pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpRes
         .unwrap_or(vec![]);
 
     let original_release_date = chrono::NaiveDate::parse_from_str(&movie.release_date, "%Y-%m-%d")
-        .unwrap()
-        .and_hms_opt(0, 0, 0)
+        .ok()
+        .and_then(|nd| nd.and_hms_opt(0, 0, 0))
+        .map(|ndt| {
+            chrono::DateTime::<chrono::Local>::from_naive_utc_and_offset(
+                ndt,
+                *chrono::Local::now().offset(),
+            )
+        })
         .unwrap();
 
     let title_group = UserCreatedTitleGroup {
@@ -201,8 +207,14 @@ pub async fn get_tmdb_tv_data(query: web::Query<TmdbQuery>) -> Result<HttpRespon
 
     let original_release_date =
         chrono::NaiveDate::parse_from_str(&tvshow.first_air_date, "%Y-%m-%d")
-            .unwrap()
-            .and_hms_opt(0, 0, 0)
+            .ok()
+            .and_then(|nd| nd.and_hms_opt(0, 0, 0))
+            .map(|ndt| {
+                chrono::DateTime::<chrono::Local>::from_naive_utc_and_offset(
+                    ndt,
+                    *chrono::Local::now().offset(),
+                )
+            })
             .unwrap();
 
     let title_group = UserCreatedTitleGroup {

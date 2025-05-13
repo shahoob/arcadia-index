@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
@@ -63,11 +63,11 @@ pub struct EditionGroup {
     pub title_group_id: i64,
     pub name: String, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: NaiveDateTime, // public release, (also, for Collections, date of the last (chronologically) item included)
+    pub release_date: DateTime<Local>, // public release, (also, for Collections, date of the last (chronologically) item included)
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime, // database entry creation
+    pub created_at: DateTime<Local>, // database entry creation
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub description: Option<String>, // specific to the edition
     pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
@@ -85,7 +85,7 @@ pub struct EditionGroup {
 pub struct UserCreatedEditionGroup {
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: NaiveDateTime,
+    pub release_date: DateTime<Local>,
     pub description: Option<String>,
     pub distributor: Option<String>,
     pub covers: Vec<String>,
@@ -104,7 +104,7 @@ pub struct EditionGroupHierarchyLite {
     pub title_group_id: i64,
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: NaiveDateTime,
+    pub release_date: DateTime<Local>,
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub source: Option<Source>,
@@ -119,11 +119,11 @@ pub struct EditionGroupHierarchy {
     pub title_group_id: i64,
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: NaiveDateTime,
+    pub release_date: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub description: Option<String>,
     pub distributor: Option<String>,
@@ -140,7 +140,7 @@ pub struct EditionGroupInfoLite {
     pub id: i64,
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: NaiveDateTime,
+    pub release_date: DateTime<Local>,
     pub distributor: Option<String>,
     pub source: Option<Source>,
     #[schema(value_type = HashMap<String, String>)]

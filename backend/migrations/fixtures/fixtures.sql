@@ -440,4 +440,3 @@ SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 --
 -- PostgreSQL database dump complete
 --
-

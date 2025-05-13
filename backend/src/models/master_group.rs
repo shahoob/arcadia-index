@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
@@ -22,9 +22,9 @@ pub struct MasterGroup {
     pub name: Option<String>,
     // pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     // pub description: String,
     // pub original_language: String,

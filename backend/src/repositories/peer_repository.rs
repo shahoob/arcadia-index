@@ -81,7 +81,7 @@ pub async fn insert_or_update_peer(
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
         SET
-            last_seen_at = CURRENT_TIMESTAMP,
+            last_seen_at = NOW(),
             real_uploaded = $6,
             real_downloaded = $7
         "#,

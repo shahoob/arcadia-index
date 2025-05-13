@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use actix_multipart::form::{MultipartForm, bytes::Bytes, text::Text};
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
@@ -195,9 +195,9 @@ pub struct Torrent {
     pub download_factor: f64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub release_name: Option<String>,
     pub release_group: Option<String>,
@@ -284,7 +284,7 @@ pub struct TorrentHierarchyLite {
     pub download_factor: f64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     pub release_name: Option<String>,
     #[schema(value_type = HashMap<String, String>)]
     pub file_amount_per_type: Json<Value>,
@@ -312,9 +312,9 @@ pub struct TorrentHierarchy {
     pub download_factor: f64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: NaiveDateTime,
+    pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub release_name: Option<String>,
     pub release_group: Option<String>,

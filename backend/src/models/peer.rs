@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use sqlx::types::ipnetwork::IpNetwork;
 use utoipa::ToSchema;
@@ -9,9 +9,9 @@ pub struct Peer {
     pub ip: IpNetwork,
     pub port: i32,
     #[schema(value_type = String, format = DateTime)]
-    pub first_seen_at: NaiveDateTime,
+    pub first_seen_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
-    pub last_seen_at: NaiveDateTime,
+    pub last_seen_at: DateTime<Local>,
     pub real_uploaded: i64,
     pub real_downloaded: i64,
     pub user_agent: Option<String>,

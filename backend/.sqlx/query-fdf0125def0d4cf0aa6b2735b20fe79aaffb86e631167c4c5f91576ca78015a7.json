@@ -21,12 +21,12 @@
       {
         "ordinal": 3,
         "name": "first_seen_at!",
-        "type_info": "Timestamp"
+        "type_info": "Timestamptz"
       },
       {
         "ordinal": 4,
         "name": "last_seen_at!",
-        "type_info": "Timestamp"
+        "type_info": "Timestamptz"
       },
       {
         "ordinal": 5,
