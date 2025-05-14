@@ -463,6 +463,19 @@ CREATE TABLE peers (
 
     UNIQUE (torrent_id, peer_id, ip, port)
 );
+CREATE TABLE seeded_torrents (
+    id BIGSERIAL PRIMARY KEY,
+    torrent_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    first_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    last_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    total_seed_time BIGINT NOT NULL DEFAULT 0,
+
+    FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+
+    UNIQUE (torrent_id, user_id)
+);
 CREATE TABLE entities (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

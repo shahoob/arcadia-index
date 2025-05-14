@@ -7,6 +7,7 @@ pub mod invitation;
 pub mod master_group;
 pub mod notification;
 pub mod peer;
+pub mod seeded_torrent;
 pub mod series;
 pub mod title_group;
 pub mod title_group_comment;

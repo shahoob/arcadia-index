@@ -77,3 +77,32 @@ pub async fn credit_user_upload_download(
     .await
     .map_err(|_| Error::InvalidUserId)
 }
+
+pub async fn update_total_seedtime(
+    pool: &PgPool,
+    user_id: i64,
+    torrent_id: i64,
+    announce_interval: u32,
+) -> Result<PgQueryResult, Error> {
+    sqlx::query!(
+        r#"
+        INSERT INTO seeded_torrents(torrent_id, user_id)
+        VALUES ($1, $2)
+        ON CONFLICT (torrent_id, user_id) DO UPDATE
+        SET
+            total_seed_time = CASE
+                WHEN seeded_torrents.last_seen_at < NOW() - ($3 || ' seconds')::INTERVAL
+                THEN seeded_torrents.total_seed_time + EXTRACT(EPOCH FROM (NOW() - seeded_torrents.last_seen_at))::BIGINT
+                ELSE seeded_torrents.total_seed_time
+            END,
+            last_seen_at = NOW()
+        "#,
+        torrent_id,
+        user_id,
+        // grace period of 60 seconds in case there was network latency/server load
+        (announce_interval + 60).to_string()
+    )
+    .execute(pool)
+    .await
+    .map_err(|_| Error::InvalidUserIdOrTorrentId)
+}

@@ -56,6 +56,11 @@ async fn main() -> std::io::Result<()> {
         .and_then(|s| Url::parse(&s).ok())
         .expect("ARCADIA_TRACKER_URL malformed or missing");
 
+    let tracker_announce_interval: u32 = env::var("ARCADIA_TRACKER_ANNOUNCE_INTERVAL")
+        .expect("ARCADIA_TRACKER_ANNOUNCE_INTERVAL env var is not set")
+        .parse()
+        .expect("ARCADIA_TRACKER_ANNOUNCE_INTERVAL is not a valid u32");
+
     let allowed_torrent_clients = env::var("ARCADIA_ALLOWED_TORRENT_CLIENTS")
         .ok()
         .map(|s| {
@@ -86,6 +91,7 @@ async fn main() -> std::io::Result<()> {
                 tracker_name: tracker_name.clone(),
                 frontend_url: frontend_url.clone(),
                 tracker_url: tracker_url.clone(),
+                tracker_announce_interval,
                 allowed_torrent_clients: allowed_torrent_clients.clone(),
                 global_download_factor,
                 global_upload_factor,

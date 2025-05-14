@@ -21,6 +21,7 @@ pub struct Arcadia {
     pub tracker_name: String,
     pub frontend_url: Url,
     pub tracker_url: Url,
+    pub tracker_announce_interval: u32,
     pub allowed_torrent_clients: HashSet<Vec<u8>>,
     pub global_upload_factor: f64,
     pub global_download_factor: f64,
