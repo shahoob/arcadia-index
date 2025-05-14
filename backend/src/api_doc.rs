@@ -8,6 +8,7 @@ use crate::{
     models::{
         artist::{AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite},
         edition_group::EditionGroup,
+        gift::{Gift, UserCreatedGift},
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
@@ -50,6 +51,7 @@ use crate::{
         crate::handlers::user_handler::get_user,
         crate::handlers::user_handler::get_me,
         crate::handlers::artist_handler::get_artists_lite,
+        crate::handlers::gift_handler::send_gift,
     ),
     components(schemas(
         Register,
@@ -86,7 +88,9 @@ use crate::{
         UploadedTorrent,
         Torrent,
         Profile,
-        PublicProfile
+        PublicProfile,
+        Gift,
+        UserCreatedGift
     ),)
 )]
 pub struct ApiDoc;

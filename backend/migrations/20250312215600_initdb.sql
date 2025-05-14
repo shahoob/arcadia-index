@@ -48,8 +48,16 @@ CREATE TABLE invitations (
     message TEXT NOT NULL,
     sender_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     receiver_email VARCHAR(255) NOT NULL,
-    receiver_id BIGINT REFERENCES users(id) ON DELETE
-    SET NULL
+    receiver_id BIGINT REFERENCES users(id) ON DELETE SET NULL
+);
+CREATE TABLE gifts (
+    id BIGSERIAL PRIMARY KEY,
+    sent_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    message TEXT NOT NULL,
+    sender_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receiver_id BIGINT NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    bonus_points BIGINT NOT NULL DEFAULT 0,
+    freeleech_tokens INT NOT NULL DEFAULT 0
 );
 CREATE TABLE artists (
     id BIGSERIAL PRIMARY KEY,

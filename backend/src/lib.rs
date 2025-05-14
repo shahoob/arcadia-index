@@ -136,6 +136,15 @@ pub enum Error {
 
     #[error("unexpected third party response")]
     UnexpectedThirdPartyResponse(#[from] reqwest::Error),
+
+    #[error("not enough bonus points available")]
+    NotEnoughBonusPointsAvailable,
+
+    #[error("not enough freeleech tokens available")]
+    NotEnoughFreeleechTokensAvailable,
+
+    #[error("could not create gift")]
+    CouldNotCreateGift(#[source] sqlx::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
