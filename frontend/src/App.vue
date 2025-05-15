@@ -21,7 +21,7 @@ import TopBar from './components/TopBar.vue'
 import SearchBars from './components/SearchBars.vue'
 import { useUserStore } from './stores/user'
 import { getMe } from './services/api/userService'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 // enable dark mode by default
@@ -29,17 +29,18 @@ document.documentElement.classList.add('dark-theme')
 
 const isAppReady = ref(false)
 const route = useRoute()
+const router = useRouter()
 
-onBeforeMount(async () => {
+router.isReady().then(() => {
   const user = localStorage.getItem('user')
-  if (user && route.name !== 'Login' && route.name !== 'Register') {
+  if (user && route.path !== '/login' && route.path !== '/register') {
     // refresh user on page reload
-    const profile = await getMe()
-    localStorage.setItem('user', JSON.stringify(profile.user))
-    const userStore = useUserStore()
-    userStore.setUser(profile.user)
+    getMe().then((profile) => {
+      localStorage.setItem('user', JSON.stringify(profile.user))
+      const userStore = useUserStore()
+      userStore.setUser(profile.user)
+    })
   } else {
-    const router = useRouter()
     router.push('/login')
   }
   isAppReady.value = true
