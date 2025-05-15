@@ -43,6 +43,8 @@ async fn main() -> std::io::Result<()> {
         OpenSignups::Disabled
     };
 
+    let jwt_secret = env::var("JWT_SECRET").expect("JWT_SECRET env var is not set");
+
     let tracker_name =
         env::var("ARCADIA_TRACKER_NAME").expect("ARCADIA_TRACKER_NAME env var is not set");
 
@@ -83,6 +85,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(Arcadia {
                 pool: pool.clone(),
                 open_signups,
+                jwt_secret: jwt_secret.clone(),
                 tracker_name: tracker_name.clone(),
                 frontend_url: frontend_url.clone(),
                 tracker_url: tracker_url.clone(),

@@ -17,6 +17,7 @@ pub enum OpenSignups {
 
 pub struct Arcadia {
     pub pool: sqlx::PgPool,
+    pub jwt_secret: String,
     pub open_signups: OpenSignups,
     pub tracker_name: String,
     pub frontend_url: Url,
