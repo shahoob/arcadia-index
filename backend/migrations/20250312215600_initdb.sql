@@ -545,8 +545,8 @@ CREATE TABLE forum_sub_categories (
     name TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
-    thread_amount BIGINT NOT NULL,
-    post_amount BIGINT NOT NULL,
+    threads_amount BIGINT NOT NULL DEFAULT 0,
+    posts_amount BIGINT NOT NULL DEFAULT 0,
 
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_category_id) REFERENCES forum_categories(id)
@@ -557,7 +557,8 @@ CREATE TABLE forum_threads (
     name TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
-    post_amount BIGINT NOT NULL,
+    posts_amount BIGINT NOT NULL DEFAULT 0,
+    sticky BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_sub_category_id) REFERENCES forum_sub_categories(id)
@@ -569,6 +570,7 @@ CREATE TABLE forum_posts (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     content TEXT NOT NULL,
+    sticky BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_thread_id) REFERENCES forum_threads(id)

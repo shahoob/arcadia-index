@@ -20,8 +20,8 @@ pub struct ForumSubCategory {
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
     pub created_by_id: i64,
-    pub thread_amount: i64,
-    pub post_amount: i64,
+    pub threads_amount: i64,
+    pub posts_amount: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
@@ -32,7 +32,7 @@ pub struct ForumThread {
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
     pub created_by_id: i64,
-    pub post_amount: i64,
+    pub posts_amount: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]

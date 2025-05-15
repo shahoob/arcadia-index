@@ -25,5 +25,28 @@ pub async fn create_forum_post(
     .await
     .map_err(Error::CouldNotCreateForumPost)?;
 
+    sqlx::query!(
+        r#"
+        UPDATE forum_threads
+        SET posts_amount = posts_amount + 1
+        WHERE id = $1;
+        "#,
+        forum_post.forum_thread_id
+    )
+    .execute(pool)
+    .await
+    .map_err(Error::CouldNotCreateForumPost)?;
+
+    sqlx::query!(
+        r#"
+        UPDATE forum_sub_categories
+        SET posts_amount = posts_amount + 1
+        WHERE id = (SELECT forum_sub_category_id FROM forum_threads WHERE id = $1);
+        "#,
+        forum_post.forum_thread_id
+    )
+    .execute(pool)
+    .await
+    .map_err(Error::CouldNotCreateForumPost)?;
     Ok(forum_post)
 }
