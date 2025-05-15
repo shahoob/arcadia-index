@@ -2,6 +2,7 @@ pub mod artist;
 pub mod collage;
 pub mod edition_group;
 pub mod entity;
+pub mod forum;
 pub mod gift;
 pub mod invitation;
 pub mod master_group;

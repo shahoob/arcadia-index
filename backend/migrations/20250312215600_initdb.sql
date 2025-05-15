@@ -491,7 +491,7 @@ CREATE TYPE collage_type_enum AS ENUM (
 );
 CREATE TABLE collage (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     name VARCHAR NOT NULL,
     covers VARCHAR NOT NULL,
@@ -503,7 +503,7 @@ CREATE TABLE collage (
 );
 CREATE TABLE collage_title_group_entry (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     title_group_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
@@ -513,7 +513,7 @@ CREATE TABLE collage_title_group_entry (
 );
 CREATE TABLE collage_artist_entry (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
@@ -523,13 +523,55 @@ CREATE TABLE collage_artist_entry (
 );
 CREATE TABLE collage_entity_entry (
     id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     entity_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
     FOREIGN KEY (entity_id) REFERENCES entities(id),
     FOREIGN KEY (collage_id) REFERENCES users(id),
     FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE forum_categories (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by_id BIGINT NOT NULL,
+
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE forum_sub_categories (
+    id SERIAL PRIMARY KEY,
+    forum_category_id INT NOT NULL,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by_id BIGINT NOT NULL,
+    thread_amount BIGINT NOT NULL,
+    post_amount BIGINT NOT NULL,
+
+    FOREIGN KEY (created_by_id) REFERENCES users(id),
+    FOREIGN KEY (forum_category_id) REFERENCES forum_categories(id)
+);
+CREATE TABLE forum_threads (
+    id BIGSERIAL PRIMARY KEY,
+    forum_sub_category_id INT NOT NULL,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by_id BIGINT NOT NULL,
+    post_amount BIGINT NOT NULL,
+
+    FOREIGN KEY (created_by_id) REFERENCES users(id),
+    FOREIGN KEY (forum_sub_category_id) REFERENCES forum_sub_categories(id)
+);
+CREATE TABLE forum_posts (
+    id BIGSERIAL PRIMARY KEY,
+    forum_thread_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by_id BIGINT NOT NULL,
+    content TEXT NOT NULL,
+
+    FOREIGN KEY (created_by_id) REFERENCES users(id),
+    FOREIGN KEY (forum_thread_id) REFERENCES forum_threads(id)
 );
 
 -- Views

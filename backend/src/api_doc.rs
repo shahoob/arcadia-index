@@ -8,6 +8,7 @@ use crate::{
     models::{
         artist::{AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite},
         edition_group::EditionGroup,
+        forum::{ForumPost, UserCreatedForumPost},
         gift::{Gift, UserCreatedGift},
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
@@ -52,6 +53,7 @@ use crate::{
         crate::handlers::user_handler::get_me,
         crate::handlers::artist_handler::get_artists_lite,
         crate::handlers::gift_handler::send_gift,
+        crate::handlers::forum_handler::add_forum_post,
     ),
     components(schemas(
         Register,
@@ -90,7 +92,9 @@ use crate::{
         Profile,
         PublicProfile,
         Gift,
-        UserCreatedGift
+        UserCreatedGift,
+        ForumPost,
+        UserCreatedForumPost
     ),)
 )]
 pub struct ApiDoc;
