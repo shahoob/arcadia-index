@@ -37,8 +37,17 @@ CREATE TABLE users (
     settings JSONB NOT NULL DEFAULT '{}',
     passkey_upper BIGINT NOT NULL,
     passkey_lower BIGINT NOT NULL,
+    warned BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE(passkey_upper, passkey_lower)
+);
+CREATE TABLE user_warnings (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    reason TEXT NOT NULL,
+    created_by_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TABLE invitations (
     id BIGSERIAL PRIMARY KEY,

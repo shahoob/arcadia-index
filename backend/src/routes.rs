@@ -26,7 +26,7 @@ use crate::handlers::{
     torrent_report_handler::add_torrent_report,
     torrent_request_handler::add_torrent_request,
     torrent_request_vote_handler::add_torrent_request_vote,
-    user_handler::{get_me, get_user},
+    user_handler::{get_me, get_user, warn_user},
 };
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -36,6 +36,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/register", web::post().to(register))
             .route("/login", web::post().to(login))
             .route("/user", web::get().to(get_user))
+            .route("/user/warn", web::post().to(warn_user))
             .route("/me", web::get().to(get_me))
             .route("/invitation", web::post().to(send_invitation))
             .route("/master-group", web::post().to(add_master_group))

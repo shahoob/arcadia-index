@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                id,\n                username,\n                avatar,\n                created_at,\n                description,\n                uploaded,\n                downloaded,\n                real_uploaded,\n                real_downloaded,\n                ratio,\n                required_ratio,\n                last_seen,\n                class,\n                forum_posts,\n                forum_threads,\n                group_comments,\n                torrent_comments,\n                request_comments,\n                artist_comments,\n                seeding,\n                leeching,\n                snatched,\n                seeding_size,\n                requests_filled,\n                collages_started,\n                requests_voted,\n                average_seeding_time,\n                invited,\n                invitations,\n                bonus_points\n            FROM users\n            WHERE id = $1\n        ",
+  "query": "\n            SELECT\n                id,\n                username,\n                avatar,\n                created_at,\n                description,\n                uploaded,\n                downloaded,\n                real_uploaded,\n                real_downloaded,\n                ratio,\n                required_ratio,\n                last_seen,\n                class,\n                forum_posts,\n                forum_threads,\n                group_comments,\n                torrent_comments,\n                request_comments,\n                artist_comments,\n                seeding,\n                leeching,\n                snatched,\n                seeding_size,\n                requests_filled,\n                collages_started,\n                requests_voted,\n                average_seeding_time,\n                invited,\n                invitations,\n                bonus_points,\n                warned\n            FROM users\n            WHERE id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -152,6 +152,11 @@
         "ordinal": 29,
         "name": "bonus_points",
         "type_info": "Int8"
+      },
+      {
+        "ordinal": 30,
+        "name": "warned",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -189,8 +194,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "e11c78a0d31d0555becab218379f30a568cd5c68957f96d2cbaacba290586595"
+  "hash": "d28f5eb70da7c3895d2ecdaa4301a7bc0c247e51ebef97b8ec1acbd42f955857"
 }

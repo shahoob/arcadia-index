@@ -73,6 +73,7 @@ pub struct User {
     pub bonus_points: i64,
     pub freeleech_tokens: i32,
     pub settings: serde_json::Value,
+    pub warned: bool,
     pub passkey_upper: i64,
     pub passkey_lower: i64,
 }
@@ -132,6 +133,7 @@ pub struct PublicUser {
     pub invited: i64,
     pub invitations: i16,
     pub bonus_points: i64,
+    pub warned: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -151,9 +153,30 @@ pub struct UserLiteAvatar {
 pub struct Profile {
     pub user: User,
     pub peers: Vec<Peer>,
+    pub user_warnings: Vec<UserWarning>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct PublicProfile {
     pub user: PublicUser,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema, FromRow)]
+pub struct UserWarning {
+    pub id: i64,
+    pub user_id: i64,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: DateTime<Local>,
+    #[schema(value_type = String, format = DateTime)]
+    pub expires_at: DateTime<Local>,
+    pub reason: String,
+    pub created_by_id: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct UserCreatedUserWarning {
+    pub user_id: i64,
+    #[schema(value_type = String, format = DateTime)]
+    pub expires_at: DateTime<Local>,
+    pub reason: String,
 }

@@ -187,6 +187,11 @@
         "ordinal": 36,
         "name": "passkey_lower",
         "type_info": "Int8"
+      },
+      {
+        "ordinal": 37,
+        "name": "warned",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -204,6 +209,7 @@
       false,
       false,
       true,
+      false,
       false,
       false,
       false,

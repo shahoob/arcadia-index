@@ -333,7 +333,7 @@ pub async fn remove_torrent(
     notify_users(
         &mut tx,
         "torrent_deleted",
-        &torrent_to_delete.id,
+        &0,
         "Torrent deleted",
         torrent_to_delete.displayed_reason.as_ref().unwrap(),
     )

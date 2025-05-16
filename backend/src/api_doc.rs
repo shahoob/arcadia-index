@@ -20,7 +20,10 @@ use crate::{
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
-        user::{Login, Profile, PublicProfile, PublicUser, Register, User},
+        user::{
+            Login, Profile, PublicProfile, PublicUser, Register, User, UserCreatedUserWarning,
+            UserWarning,
+        },
     },
 };
 
@@ -53,6 +56,7 @@ use crate::{
         crate::handlers::torrent_request_handler::add_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
+        crate::handlers::user_handler::warn_user,
         crate::handlers::user_handler::get_me,
         crate::handlers::artist_handler::get_artists_lite,
         crate::handlers::gift_handler::send_gift,
@@ -99,7 +103,9 @@ use crate::{
         UserCreatedGift,
         GetTopTorrentsQuery,
         ForumPost,
-        UserCreatedForumPost
+        UserCreatedForumPost,
+        UserWarning,
+        UserCreatedUserWarning
     ),)
 )]
 pub struct ApiDoc;

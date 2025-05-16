@@ -1,4 +1,7 @@
-use crate::{Error, Result, models::user::PublicUser};
+use crate::{
+    Error, Result,
+    models::user::{PublicUser, UserCreatedUserWarning, UserWarning},
+};
 use sqlx::PgPool;
 
 pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
@@ -35,7 +38,8 @@ pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
                 average_seeding_time,
                 invited,
                 invitations,
-                bonus_points
+                bonus_points,
+                warned
             FROM users
             WHERE id = $1
         "#,
@@ -59,4 +63,57 @@ pub async fn update_last_seen(pool: &PgPool, id: i64) -> Result<()> {
     .await?;
 
     Ok(())
+}
+
+pub async fn create_user_warning(
+    pool: &PgPool,
+    current_user_id: i64,
+    user_warning: &UserCreatedUserWarning,
+) -> Result<UserWarning> {
+    let mut tx = pool.begin().await?;
+
+    let _ = sqlx::query!(
+        r#"
+            UPDATE users
+            SET warned = true
+            WHERE id = $1
+        "#,
+        user_warning.user_id
+    )
+    .execute(&mut *tx)
+    .await?;
+
+    let user_warning = sqlx::query_as!(
+        UserWarning,
+        r#"
+            INSERT INTO user_warnings (user_id, expires_at, reason, created_by_id)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        "#,
+        user_warning.user_id,
+        user_warning.expires_at,
+        user_warning.reason,
+        current_user_id,
+    )
+    .fetch_one(&mut *tx)
+    .await
+    .map_err(Error::CouldNotCreateGift)?;
+
+    tx.commit().await?;
+
+    Ok(user_warning)
+}
+
+pub async fn find_user_warnings(pool: &PgPool, user_id: i64) -> Vec<UserWarning> {
+    sqlx::query_as!(
+        UserWarning,
+        r#"
+            SELECT * FROM user_warnings
+            WHERE user_id = $1
+        "#,
+        user_id
+    )
+    .fetch_all(pool)
+    .await
+    .expect("failed to get user warnings")
 }

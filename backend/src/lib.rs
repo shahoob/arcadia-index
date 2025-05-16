@@ -156,6 +156,9 @@ pub enum Error {
 
     #[error("insufficient privileges")]
     InsufficientPrivileges,
+
+    #[error("could not warn user: '{0}'")]
+    CouldNotWarnUser(String),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
