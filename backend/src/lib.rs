@@ -136,6 +136,9 @@ pub enum Error {
     #[error("error while searching for torrents: '{0}'")]
     ErrorSearchingForTorrents(String),
 
+    #[error("error while deleting torrent: '{0}'")]
+    ErrorDeletingTorrent(String),
+
     #[error("unexpected third party response")]
     UnexpectedThirdPartyResponse(#[from] reqwest::Error),
 
@@ -150,6 +153,9 @@ pub enum Error {
 
     #[error("could not create forum post")]
     CouldNotCreateForumPost(#[source] sqlx::Error),
+
+    #[error("insufficient privileges")]
+    InsufficientPrivileges,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

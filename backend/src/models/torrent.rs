@@ -347,3 +347,10 @@ pub struct TorrentHierarchy {
 pub struct TorrentSearchResults {
     pub title_groups: Vec<TitleGroupHierarchyLite>,
 }
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct TorrentToDelete {
+    pub id: i64,
+    pub reason: String,
+    pub displayed_reason: Option<String>,
+}

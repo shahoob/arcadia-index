@@ -2,7 +2,7 @@ use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
 };
-use sqlx::PgPool;
+use sqlx::{PgPool, Postgres, Transaction};
 
 use crate::{
     Error, Result,
@@ -16,8 +16,9 @@ pub async fn create_invitation(
 ) -> Result<Invitation> {
     let invitation_key: String = Alphanumeric.sample_string(&mut rng(), 50);
 
-    // TODO: make this properly atomic with a db transaction
-    let _ = decrement_invitations_available(pool, current_user_id).await;
+    let mut tx = pool.begin().await?;
+
+    let _ = decrement_invitations_available(&mut tx, current_user_id).await;
 
     // TODO: make invitation expiration configurable
     let sent_invitation = sqlx::query_as!(
@@ -35,6 +36,8 @@ pub async fn create_invitation(
     .fetch_one(pool)
     .await
     .map_err(Error::CouldNotCreateInvitation)?;
+
+    tx.commit().await?;
 
     Ok(sent_invitation)
 }
@@ -59,7 +62,10 @@ pub async fn does_unexpired_invitation_exist(
     Ok(invitation)
 }
 
-pub async fn decrement_invitations_available(pool: &PgPool, current_user_id: i64) -> Result<()> {
+pub async fn decrement_invitations_available(
+    tx: &mut Transaction<'_, Postgres>,
+    current_user_id: i64,
+) -> Result<()> {
     sqlx::query!(
         r#"
            UPDATE users SET invitations = invitations - 1
@@ -67,7 +73,7 @@ pub async fn decrement_invitations_available(pool: &PgPool, current_user_id: i64
         "#,
         current_user_id
     )
-    .execute(pool)
+    .execute(&mut **tx)
     .await?;
 
     Ok(())

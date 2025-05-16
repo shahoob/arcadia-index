@@ -1,7 +1,7 @@
 use crate::{
     Error, Result,
     models::{
-        torrent::{Features, Torrent, TorrentSearch, UploadedTorrent},
+        torrent::{Features, Torrent, TorrentSearch, TorrentToDelete, UploadedTorrent},
         user::User,
     },
 };
@@ -24,6 +24,8 @@ pub async fn create_torrent(
     torrent_form: &UploadedTorrent,
     current_user: &User,
 ) -> Result<Torrent> {
+    let mut tx = pool.begin().await?;
+
     let create_torrent_query = r#"
         INSERT INTO torrents (
             edition_group_id, created_by_id, release_name, release_group, description,
@@ -131,7 +133,7 @@ pub async fn create_torrent(
         )
         .bind(info_hash.as_ref())
         .bind(info.to_bytes())
-        .fetch_one(pool)
+        .fetch_one(&mut *tx)
         .await
         .map_err(Error::CouldNotCreateTorrent)?;
 
@@ -145,11 +147,11 @@ pub async fn create_torrent(
         "#,
         torrent_form.edition_group_id.0
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await?;
 
     let _ = notify_users(
-        pool,
+        &mut tx,
         "torrent_uploaded",
         &title_group_info.id,
         "New torrent uploaded subscribed title group",
@@ -159,6 +161,8 @@ pub async fn create_torrent(
         ),
     )
     .await;
+
+    tx.commit().await?;
 
     Ok(uploaded_torrent)
 }
@@ -317,4 +321,47 @@ pub async fn find_top_torrents(pool: &PgPool, period: &str, amount: i64) -> Resu
     .map_err(|error| Error::ErrorSearchingForTorrents(error.to_string()))?;
 
     Ok(serde_json::json!({"title_groups": search_results.title_groups}))
+}
+
+pub async fn remove_torrent(
+    pool: &PgPool,
+    torrent_to_delete: &TorrentToDelete,
+    current_user_id: i64,
+) -> Result<()> {
+    let mut tx = pool.begin().await?;
+
+    notify_users(
+        &mut tx,
+        "torrent_deleted",
+        &torrent_to_delete.id,
+        "Torrent deleted",
+        torrent_to_delete.displayed_reason.as_ref().unwrap(),
+    )
+    .await?;
+
+    sqlx::query!(
+        r#"
+        INSERT INTO deleted_torrents (SELECT *, NOW() AS deleted_at, $1 AS deleted_by_id, $2 AS reason FROM torrents WHERE id = $3);
+        "#,
+        current_user_id,
+        torrent_to_delete.reason,
+        torrent_to_delete.id
+    )
+    .execute(&mut *tx)
+    .await
+    .map_err(|error| Error::ErrorDeletingTorrent(error.to_string()))?;
+
+    sqlx::query!(
+        r#"
+        DELETE FROM torrents WHERE id = $1;
+        "#,
+        torrent_to_delete.id
+    )
+    .execute(&mut *tx)
+    .await
+    .map_err(|error| Error::ErrorDeletingTorrent(error.to_string()))?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

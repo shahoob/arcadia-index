@@ -7,16 +7,17 @@ use actix_web::{
     web,
 };
 use serde::Deserialize;
+use serde_json::json;
 use utoipa::{IntoParams, ToSchema};
 
 use crate::{
-    Arcadia, Result,
+    Arcadia, Error, Result,
     models::{
-        torrent::{Torrent, TorrentSearch, TorrentSearchResults, UploadedTorrent},
+        torrent::{Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete, UploadedTorrent},
         user::User,
     },
     repositories::torrent_repository::{
-        create_torrent, find_top_torrents, get_torrent, search_torrents,
+        create_torrent, find_top_torrents, get_torrent, remove_torrent, search_torrents,
     },
 };
 
@@ -136,4 +137,41 @@ pub async fn get_top_torrents(
     let search_results = find_top_torrents(&arc.pool, &query.period, query.amount).await?;
 
     Ok(HttpResponse::Ok().json(search_results))
+}
+
+#[utoipa::path(
+    delete,
+    path = "/api/torrent",
+    responses(
+        (status = 200, description = "Torrent deleted"),
+    )
+)]
+pub async fn delete_torrent(
+    mut form: web::Json<TorrentToDelete>,
+    arc: web::Data<Arcadia>,
+    current_user: User,
+) -> Result<HttpResponse> {
+    if current_user.class != "staff" {
+        return Err(Error::InsufficientPrivileges);
+    }
+    let user_url = &arc
+        .frontend_url
+        .join(&format!("/user/{}", current_user.id))
+        .unwrap();
+    let displayed_reason = format!(
+        "A torrent you were a seeder on, has been deleted.
+Please remove it from your torrent client.
+
+Reason: {}
+
+Handled by: [url={}]{}[/url]",
+        &form.reason,
+        &user_url.as_str(),
+        current_user.username
+    );
+
+    form.displayed_reason = Some(displayed_reason);
+    remove_torrent(&arc.pool, &form, current_user.id).await?;
+
+    Ok(HttpResponse::Ok().json(json!({"result": "success"})))
 }
