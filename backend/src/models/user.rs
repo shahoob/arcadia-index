@@ -147,6 +147,7 @@ pub struct UserLiteAvatar {
     pub id: i64,
     pub username: String,
     pub avatar: Option<String>,
+    pub warned: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]

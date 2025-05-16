@@ -14,7 +14,7 @@ pub async fn create_title_group(
     current_user: &User,
 ) -> Result<TitleGroup> {
     let create_title_group_query = r#"
-        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline,platform,screenshots) 
+        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline,platform,screenshots)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::title_group_category_enum, $12::content_type_enum, $13, $14, $15, $16, $17)
         RETURNING *;
     "#;
@@ -94,7 +94,7 @@ pub async fn find_title_group(
                 SELECT
                     c.title_group_id,
                     jsonb_agg(
-                        to_jsonb(c) || jsonb_build_object('created_by', jsonb_build_object('id', u.id, 'username', u.username, 'avatar', u.avatar))
+                        to_jsonb(c) || jsonb_build_object('created_by', jsonb_build_object('id', u.id, 'username', u.username, 'avatar', u.avatar, 'warned', u.warned))
                         ORDER BY c.created_at
                     ) AS title_group_comments
                 FROM title_group_comments c
@@ -165,7 +165,7 @@ pub async fn find_title_group_info_lite(pool: &PgPool, title_group_id: i64) -> R
                 'source', eg.source,
                 'additional_information', eg.additional_information
             )
-        ) FILTER (WHERE eg.id IS NOT NULL), 
+        ) FILTER (WHERE eg.id IS NOT NULL),
         '[]'::jsonb
     )
 )
