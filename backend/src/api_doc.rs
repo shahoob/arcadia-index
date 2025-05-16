@@ -95,7 +95,7 @@ use crate::{
         PublicProfile,
         Gift,
         UserCreatedGift,
-        GetTopTorrentsQuery
+        GetTopTorrentsQuery,
         ForumPost,
         UserCreatedForumPost
     ),)

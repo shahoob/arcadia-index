@@ -32,6 +32,11 @@
         "ordinal": 5,
         "name": "content",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "sticky",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -42,6 +47,7 @@
       ]
     },
     "nullable": [
+      false,
       false,
       false,
       false,

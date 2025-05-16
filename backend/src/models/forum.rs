@@ -33,6 +33,7 @@ pub struct ForumThread {
     pub created_at: DateTime<Local>,
     pub created_by_id: i64,
     pub posts_amount: i64,
+    pub sticky: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
@@ -45,6 +46,7 @@ pub struct ForumPost {
     pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
     pub content: String,
+    pub sticky: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
