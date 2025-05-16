@@ -20,7 +20,6 @@ use chrono::prelude::Utc;
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::Deserialize;
 use sqlx::types::ipnetwork::IpNetwork;
-use std::env;
 use utoipa::ToSchema;
 
 #[derive(Debug, Deserialize, ToSchema)]
@@ -113,7 +112,7 @@ pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Res
     let token = encode(
         &Header::default(),
         &user_claims,
-        &EncodingKey::from_secret(env::var("JWT_SECRET").unwrap().as_bytes()),
+        &EncodingKey::from_secret(arc.jwt_secret.as_bytes()),
     )
     .unwrap();
 
@@ -146,7 +145,7 @@ pub async fn validate_bearer_auth(
         ));
     };
 
-    let decoding_key = DecodingKey::from_secret(std::env::var("JWT_SECRET").unwrap().as_ref());
+    let decoding_key = DecodingKey::from_secret(arc.jwt_secret.as_ref());
 
     let validation = Validation::default();
 

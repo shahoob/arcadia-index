@@ -23,6 +23,7 @@ pub async fn create_test_app(
     let arc = Arcadia {
         pool,
         open_signups,
+        jwt_secret: String::from("verysecurejwtstring"),
         tracker_name: String::from("Arcadia Test"),
         frontend_url: Url::parse("http://testurl").unwrap(),
         tracker_url: Url::parse("http://testurl").unwrap(),

@@ -17,6 +17,7 @@ pub enum OpenSignups {
 
 pub struct Arcadia {
     pub pool: sqlx::PgPool,
+    pub jwt_secret: String,
     pub open_signups: OpenSignups,
     pub tracker_name: String,
     pub frontend_url: Url,
@@ -146,6 +147,9 @@ pub enum Error {
 
     #[error("could not create gift")]
     CouldNotCreateGift(#[source] sqlx::Error),
+
+    #[error("could not create forum post")]
+    CouldNotCreateForumPost(#[source] sqlx::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

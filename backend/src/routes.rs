@@ -8,6 +8,7 @@ use crate::handlers::{
     },
     auth_handler::{login, register, validate_bearer_auth},
     edition_group_handler::add_edition_group,
+    forum_handler::add_forum_post,
     gift_handler::send_gift,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
@@ -69,6 +70,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/subscription", web::post().to(add_subscription))
             .route("/subscription", web::delete().to(remove_subscription))
             .route("/gift", web::post().to(send_gift))
+            .route("/forum/post", web::post().to(add_forum_post))
             .route(
                 "/external_db/open_library",
                 web::get().to(get_open_library_data),

@@ -53,6 +53,12 @@ username: picolo
 password: test
 ```
 
+If you wish to add some test data, you can dump it to a file with this command:
+
+```
+sudo docker exec -i arcadia_db pg_dump -U arcadia -d arcadia --data-only > backend/migrations/fixtures/fixtures.sql
+```
+
 ### Launch server
 
 ```bash
