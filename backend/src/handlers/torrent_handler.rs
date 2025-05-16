@@ -15,7 +15,9 @@ use crate::{
         torrent::{Torrent, TorrentSearch, TorrentSearchResults, UploadedTorrent},
         user::User,
     },
-    repositories::torrent_repository::{create_torrent, get_torrent, search_torrents},
+    repositories::torrent_repository::{
+        create_torrent, find_top_torrents, get_torrent, search_torrents,
+    },
 };
 
 #[utoipa::path(
@@ -97,6 +99,41 @@ pub async fn find_torrents(
     arc: web::Data<Arcadia>,
 ) -> Result<HttpResponse> {
     let search_results = search_torrents(&arc.pool, &form).await?;
+
+    Ok(HttpResponse::Ok().json(search_results))
+}
+
+// #[derive(Debug, Deserialize, ToSchema)]
+// pub enum SearchPeriod {
+//     #[serde(rename = "24 hours")]
+//     TwentyFourHours,
+//     #[serde(rename = "30 days")]
+//     ThirtyDays,
+//     #[serde(rename = "1 year")]
+//     OneYear,
+//     #[serde(rename = "all time")]
+//     AllTime,
+// }
+
+#[derive(Debug, Deserialize, IntoParams, ToSchema)]
+pub struct GetTopTorrentsQuery {
+    period: String,
+    amount: i64,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/torrent/top",
+    params(GetTopTorrentsQuery),
+    responses(
+        (status = 200, description = "Top torrents found (and their title/edition group), sorted by amount of users who seeded at some point in time", body=TorrentSearchResults),
+    )
+)]
+pub async fn get_top_torrents(
+    query: web::Query<GetTopTorrentsQuery>,
+    arc: web::Data<Arcadia>,
+) -> Result<HttpResponse> {
+    let search_results = find_top_torrents(&arc.pool, &query.period, query.amount).await?;
 
     Ok(HttpResponse::Ok().json(search_results))
 }

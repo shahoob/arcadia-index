@@ -2,8 +2,9 @@ use utoipa::OpenApi;
 
 use crate::{
     handlers::{
-        artist_handler::GetArtistPublicationsQuery, auth_handler::RegisterQuery,
-        torrent_handler::DownloadTorrentQuery,
+        artist_handler::GetArtistPublicationsQuery,
+        auth_handler::RegisterQuery,
+        torrent_handler::{DownloadTorrentQuery, GetTopTorrentsQuery},
     },
     models::{
         artist::{AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite},
@@ -35,6 +36,7 @@ use crate::{
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::upload_torrent,
         crate::handlers::torrent_handler::find_torrents,
+        crate::handlers::torrent_handler::get_top_torrents,
         crate::handlers::torrent_report_handler::add_torrent_report,
         crate::handlers::edition_group_handler::add_edition_group,
         crate::handlers::invitation_handler::send_invitation,
@@ -93,6 +95,7 @@ use crate::{
         PublicProfile,
         Gift,
         UserCreatedGift,
+        GetTopTorrentsQuery,
         ForumPost,
         UserCreatedForumPost
     ),)

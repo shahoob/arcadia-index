@@ -16,7 +16,7 @@ const menuItems = ref([
   { label: 'Requests', route: '' },
   { label: 'Forums', route: '' },
   { label: 'IRC', route: '' },
-  { label: 'Top 10', route: '' },
+  { label: 'Top', route: '' },
   { label: 'Rules', route: '' },
   { label: 'Wiki', route: '' },
 ])

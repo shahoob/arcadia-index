@@ -1,4 +1,6 @@
-use crate::repositories::announce_repository::{credit_user_upload_download, find_torrent_with_id};
+use crate::repositories::announce_repository::{
+    credit_user_upload_download, find_torrent_with_id, update_total_seedtime,
+};
 use crate::repositories::peer_repository::{
     find_torrent_peers, insert_or_update_peer, remove_peer,
 };
@@ -54,6 +56,9 @@ pub enum Error {
 
     #[error("invalid user id")]
     InvalidUserId,
+
+    #[error("invalid user id or torrent id")]
+    InvalidUserIdOrTorrentId,
 
     #[error("torrent client not in whitelist")]
     TorrentClientNotInWhitelist,
@@ -197,8 +202,19 @@ async fn handle_announce(
         .await;
     }
 
+    if ann.left == Some(0u64) {
+        let _ = update_total_seedtime(
+            &arc.pool,
+            current_user.id,
+            torrent.id,
+            arc.tracker_announce_interval,
+        )
+        .await;
+    }
+
     let resp = announce::AnnounceResponse {
         peers,
+        interval: arc.tracker_announce_interval,
         ..Default::default()
     };
 
