@@ -1,5 +1,6 @@
 <template>
   <div id="app-container" v-if="isAppReady">
+    <Toast />
     <div
       class="navbars-container"
       v-if="['/login', '/register'].indexOf($router.currentRoute.value.path) < 0"
@@ -19,6 +20,7 @@ import { useRouter } from 'vue-router'
 import MenuBar from './components/MenuBar.vue'
 import TopBar from './components/TopBar.vue'
 import SearchBars from './components/SearchBars.vue'
+import { Toast } from 'primevue'
 import { useUserStore } from './stores/user'
 import { getMe } from './services/api/userService'
 import { ref } from 'vue'

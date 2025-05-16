@@ -9,6 +9,7 @@ import router from './router'
 import 'primeicons/primeicons.css'
 import './assets/main.css'
 import Tooltip from 'primevue/tooltip'
+import ToastService from 'primevue/toastservice'
 import { definePreset } from '@primeuix/themes'
 import * as helpers from './services/helpers'
 import { createI18n } from 'vue-i18n'
@@ -51,6 +52,7 @@ app.use(PrimeVue, {
 })
 app.use(router)
 app.use(i18n)
+app.use(ToastService)
 app.directive('tooltip', Tooltip)
 
 Object.keys(helpers).forEach((key) => {

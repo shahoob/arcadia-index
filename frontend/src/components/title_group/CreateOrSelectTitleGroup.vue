@@ -164,6 +164,7 @@ import Button from 'primevue/button'
 import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
+import { useToast } from 'primevue/usetoast'
 import {
   createTitleGroup,
   getTitleGroupLite,
@@ -181,7 +182,7 @@ const step = ref(1)
 const manualCreation = ref(false)
 const selectableContentTypes = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
 const content_type = ref<ContentType>('')
-let gettingTitleGroupInfo = false
+let gettingTitleGroupInfo = ref(false)
 let sendingTitleGroup = false
 let initialTitleGroupForm: UserCreatedTitleGroup | null = null
 const external_database_ids = {
@@ -192,6 +193,7 @@ const external_database_ids = {
 }
 let gettingExternalDatabaseData = false
 const titleGroupStore = useTitleGroupStore()
+const toast = useToast()
 
 const emit = defineEmits<{
   gotEditionData: [editionGroup: UserCreatedEditionGroup]
@@ -213,15 +215,26 @@ const getExternalDBData = (item_id: string | number, database: string) => {
 }
 const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
   if (action.value == 'select') {
-    gettingTitleGroupInfo = true
+    gettingTitleGroupInfo.value = true
     if (!titleGroupStore.id) {
-      const titleGroupLite = await getTitleGroupLite(titleGroupId.value)
-      titleGroupStore.id = titleGroupLite.id
-      titleGroupStore.edition_groups = titleGroupLite.edition_groups
-      titleGroupStore.content_type = titleGroupLite.content_type
+      const titleGroupLite = await getTitleGroupLite(titleGroupId.value).catch((error) => {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response.data.error,
+          life: 4000,
+        })
+      })
+      if (titleGroupLite) {
+        titleGroupStore.id = titleGroupLite.id
+        titleGroupStore.edition_groups = titleGroupLite.edition_groups
+        titleGroupStore.content_type = titleGroupLite.content_type
+      }
     }
-    emit('done')
-    gettingTitleGroupInfo = false
+    if (titleGroupStore.id) {
+      emit('done')
+    }
+    gettingTitleGroupInfo.value = false
   } else {
     sendingTitleGroup = true
     titleGroupForm.content_type = content_type.value
