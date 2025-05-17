@@ -312,6 +312,7 @@ const emit = defineEmits<{
   validated: [titleGroup: UserCreatedTitleGroup]
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type FormErrors = {
   [key in keyof UserCreatedTitleGroup]: UserCreatedTitleGroup[key] extends Array<unknown>
     ? { message: string }[][]
