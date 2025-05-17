@@ -14,14 +14,27 @@
       <label for="id">{{ $t('title_group.title_group_id') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
-      <Button v-if="step == 3" :label="$t('general.submit')" @click="sendSelectedTitleGroup" icon="pi pi-check" size="small"
-        class="validate-button" :loading="gettingTitleGroupInfo" />
+      <Button
+        v-if="step == 3"
+        :label="$t('general.submit')"
+        @click="sendSelectedTitleGroup"
+        icon="pi pi-check"
+        size="small"
+        class="validate-button"
+        :loading="gettingTitleGroupInfo"
+      />
     </div>
   </div>
   <div id="create-title-group" v-if="action == 'create'">
     <FloatLabel>
-      <Select v-model="content_type" inputId="content_type" :options="selectableContentTypes" class="select"
-        size="small" @update:modelValue="(step = 2) && (manualCreation = false)">
+      <Select
+        v-model="content_type"
+        inputId="content_type"
+        :options="selectableContentTypes"
+        class="select"
+        size="small"
+        @update:modelValue="(step = 2) && (manualCreation = false)"
+      >
         <template #option="slotProps">
           <span>{{ $t(`title_group.content_type.${slotProps.option}`) }}</span>
         </template>
@@ -39,13 +52,16 @@
           <IconField>
             <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
             <label for="tmdb_id">TMDB id</label>
-            <InputIcon :class="{
-              pi: true,
-              'pi-search': !gettingExternalDatabaseData,
-              'pi-hourglass': gettingExternalDatabaseData,
-              'pi-spin': gettingExternalDatabaseData,
-              'cursor-pointer': true,
-            }" @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/movie')" />
+            <InputIcon
+              :class="{
+                pi: true,
+                'pi-search': !gettingExternalDatabaseData,
+                'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
+                'cursor-pointer': true,
+              }"
+              @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/movie')"
+            />
           </IconField>
         </FloatLabel>
         or
@@ -64,13 +80,16 @@
           <IconField>
             <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
             <label for="tmdb_id">TMDB id</label>
-            <InputIcon :class="{
-              pi: true,
-              'pi-search': !gettingExternalDatabaseData,
-              'pi-hourglass': gettingExternalDatabaseData,
-              'pi-spin': gettingExternalDatabaseData,
-              'cursor-pointer': true,
-            }" @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/tv')" />
+            <InputIcon
+              :class="{
+                pi: true,
+                'pi-search': !gettingExternalDatabaseData,
+                'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
+                'cursor-pointer': true,
+              }"
+              @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/tv')"
+            />
           </IconField>
         </FloatLabel>
         or
@@ -93,30 +112,44 @@
       <div class="external-db-inputs" v-if="content_type == 'book'">
         <FloatLabel>
           <IconField>
-            <InputText size="small" name="openlibrary_id" v-model="external_database_ids.openlibrary" />
+            <InputText
+              size="small"
+              name="openlibrary_id"
+              v-model="external_database_ids.openlibrary"
+            />
             <label for="openlibrary_id">Open Library id</label>
-            <InputIcon :class="{
-              pi: true,
-              'pi-search': !gettingExternalDatabaseData,
-              'pi-hourglass': gettingExternalDatabaseData,
-              'pi-spin': gettingExternalDatabaseData,
+            <InputIcon
+              :class="{
+                pi: true,
+                'pi-search': !gettingExternalDatabaseData,
+                'pi-hourglass': gettingExternalDatabaseData,
+                'pi-spin': gettingExternalDatabaseData,
 
-              'cursor-pointer': true,
-            }" @click="getExternalDBData(external_database_ids.openlibrary, 'openlibrary')" />
+                'cursor-pointer': true,
+              }"
+              @click="getExternalDBData(external_database_ids.openlibrary, 'openlibrary')"
+            />
           </IconField>
         </FloatLabel>
       </div>
       <div v-if="step == 2" class="external-db-inputs" style="margin-left: 5px">
         or
-        <span class="cursor-pointer" style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
-          @click="(step = 3) && (manualCreation = true)">
+        <span
+          class="cursor-pointer"
+          style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
+          @click="(step = 3) && (manualCreation = true)"
+        >
           create the title manually
         </span>
       </div>
     </div>
     <div v-if="step > 2">
-      <CreateOrEditTitleGroup :content_type="content_type" @validated="sendTitleGroup" :initialTitleGroupForm
-        :sendingTitleGroup />
+      <CreateOrEditTitleGroup
+        :content_type="content_type"
+        @validated="sendTitleGroup"
+        :initialTitleGroupForm
+        :sendingTitleGroup
+      />
     </div>
   </div>
 </template>
@@ -147,9 +180,16 @@ const action = ref('select') // create | select
 const titleGroupId = ref<number | null>(null)
 const step = ref(1)
 const manualCreation = ref(false)
-const selectableContentTypes: ContentType[] = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
+const selectableContentTypes: ContentType[] = [
+  'movie',
+  'tv_show',
+  'music',
+  'software',
+  'book',
+  'collection',
+]
 const content_type = ref<ContentType>('movie') // consider either
-let gettingTitleGroupInfo = ref(false)
+const gettingTitleGroupInfo = ref(false)
 let sendingTitleGroup = false
 let initialTitleGroupForm: UserCreatedTitleGroup | null = null
 const external_database_ids = {

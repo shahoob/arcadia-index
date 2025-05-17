@@ -419,7 +419,7 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
 const onFileSelect = (event: FileUploadSelectEvent) => {
   if (event.files && event.files.length > 0) {
     // keep a single file
-    const file = event.files[event.files.length - 1] as string;
+    const file = event.files[event.files.length - 1] as string
     // torrentFile.value.files.clear()
     torrentFile.value.files = [file]
     torrentForm.value.torrent_file = file

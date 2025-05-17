@@ -49,4 +49,3 @@ export const getFileInfo = (text: string) => {
       return null
   }
 }
-

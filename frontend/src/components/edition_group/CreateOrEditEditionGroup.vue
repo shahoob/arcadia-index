@@ -1,6 +1,13 @@
 <template>
-  <Form v-slot="$form" :initialValues="editionGroupForm" :resolver @submit="onFormSubmit" validateOnSubmit
-    :validateOnValueUpdate="false" validateOnBlur>
+  <Form
+    v-slot="$form"
+    :initialValues="editionGroupForm"
+    :resolver
+    @submit="onFormSubmit"
+    validateOnSubmit
+    :validateOnValueUpdate="false"
+    validateOnBlur
+  >
     <div class="line">
       <div>
         <FloatLabel>
@@ -22,7 +29,11 @@
       </div>
       <div v-if="titleGroup.content_type == 'music'">
         <FloatLabel>
-          <InputText size="small" v-model="editionGroupForm.additional_information.label" name="label" />
+          <InputText
+            size="small"
+            v-model="editionGroupForm.additional_information.label"
+            name="label"
+          />
           <label for="label">{{ $t('edition_group.label') }}</label>
         </FloatLabel>
         <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
@@ -31,8 +42,11 @@
       </div>
       <div v-if="titleGroup.content_type == 'music'">
         <FloatLabel>
-          <InputText size="small" v-model="editionGroupForm.additional_information.catalogue_number"
-            name="catalogue_number" />
+          <InputText
+            size="small"
+            v-model="editionGroupForm.additional_information.catalogue_number"
+            name="catalogue_number"
+          />
           <label for="catalogue_number">{{ $t('edition_group.catalogue_number') }}</label>
         </FloatLabel>
         <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
@@ -41,8 +55,14 @@
       </div>
       <div>
         <FloatLabel>
-          <Select v-model="editionGroupForm.source" inputId="source" :options="$getSources(titleGroup.content_type)"
-            class="select-source" size="small" name="source" />
+          <Select
+            v-model="editionGroupForm.source"
+            inputId="source"
+            :options="$getSources(titleGroup.content_type)"
+            class="select-source"
+            size="small"
+            name="source"
+          />
           <label for="source">{{ $t('edition_group.source') }}</label>
         </FloatLabel>
         <Message v-if="$form.source?.invalid" severity="error" size="small" variant="simple">
@@ -52,7 +72,13 @@
     </div>
     <div>
       <FloatLabel>
-        <Textarea v-model="editionGroupForm.description" name="description" class="description" autoResize rows="5" />
+        <Textarea
+          v-model="editionGroupForm.description"
+          name="description"
+          class="description"
+          autoResize
+          rows="5"
+        />
         <label for="description">{{ $t('general.description') }}</label>
       </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
@@ -61,8 +87,15 @@
     </div>
     <div class="release-date">
       <label for="release_date" class="block">{{ $t('general.release_date') }}</label>
-      <DatePicker v-model="release_date" showIcon :showOnFocus="false" inputId="release_date"
-        size="small" dateFormat="yy-mm-dd" name="release_date" />
+      <DatePicker
+        v-model="release_date"
+        showIcon
+        :showOnFocus="false"
+        inputId="release_date"
+        size="small"
+        dateFormat="yy-mm-dd"
+        name="release_date"
+      />
       <Message v-if="$form.release_date?.invalid" severity="error" size="small" variant="simple">
         {{ $form.release_date.error?.message }}
       </Message>
@@ -70,12 +103,24 @@
     <div class="covers input-list">
       <label>{{ $t('general.cover', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.covers" :key="index">
-        <InputText size="small" v-model="editionGroupForm.covers[index]" :name="`covers[${index}]`" />
+        <InputText
+          size="small"
+          v-model="editionGroupForm.covers[index]"
+          :name="`covers[${index}]`"
+        />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
-        <Button v-if="index != 0 || editionGroupForm.covers.length > 1" @click="removeCover(index)" icon="pi pi-minus"
-          size="small" />
-        <Message v-if="($form.covers as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small"
-          variant="simple">
+        <Button
+          v-if="index != 0 || editionGroupForm.covers.length > 1"
+          @click="removeCover(index)"
+          icon="pi pi-minus"
+          size="small"
+        />
+        <Message
+          v-if="($form.covers as unknown as FormFieldState[])?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
           {{ ($form.covers as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
@@ -83,19 +128,37 @@
     <div class="external-links input-list">
       <label>{{ $t('general.external_link', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.external_links" :key="index">
-        <InputText size="small" v-model="editionGroupForm.external_links[index]" :name="`external_links[${index}]`" />
+        <InputText
+          size="small"
+          v-model="editionGroupForm.external_links[index]"
+          :name="`external_links[${index}]`"
+        />
         <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
-        <Button v-if="index != 0 || editionGroupForm.external_links.length > 1" @click="removeLink(index)"
-          icon="pi pi-minus" size="small" />
-        <Message v-if="($form.external_links as unknown as FormFieldState[])?.[index]?.invalid" severity="error"
-          size="small" variant="simple">
+        <Button
+          v-if="index != 0 || editionGroupForm.external_links.length > 1"
+          @click="removeLink(index)"
+          icon="pi pi-minus"
+          size="small"
+        />
+        <Message
+          v-if="($form.external_links as unknown as FormFieldState[])?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
           {{ ($form.external_links as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
     </div>
     <div class="flex justify-content-center">
-      <Button label="Validate edition" icon="pi pi-check" size="small" class="validate-button" type="submit"
-        :loading="sendingEditionGroup" />
+      <Button
+        label="Validate edition"
+        icon="pi pi-check"
+        size="small"
+        class="validate-button"
+        type="submit"
+        :loading="sendingEditionGroup"
+      />
     </div>
   </Form>
 </template>
@@ -108,7 +171,12 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import { Form, type FormFieldState, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
+import {
+  Form,
+  type FormFieldState,
+  type FormResolverOptions,
+  type FormSubmitEvent,
+} from '@primevue/forms'
 import { useI18n } from 'vue-i18n'
 import { isValidUrl } from '@/services/helpers'
 import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
@@ -130,7 +198,7 @@ const emit = defineEmits<{
   validated: [editionGroup: UserCreatedEditionGroup]
 }>()
 
-let editionGroupForm = ref<UserCreatedEditionGroup>({
+const editionGroupForm = ref<UserCreatedEditionGroup>({
   name: '',
   description: null,
   external_links: [''],
@@ -144,7 +212,7 @@ let editionGroupForm = ref<UserCreatedEditionGroup>({
 
 const release_date = computed({
   get() {
-    const date = new Date(editionGroupForm.value.release_date);
+    const date = new Date(editionGroupForm.value.release_date)
     if (!isNaN(date.getTime())) {
       return date
     }
@@ -152,7 +220,7 @@ const release_date = computed({
   },
   set(date) {
     editionGroupForm.value.release_date = date.toISOString()
-  }
+  },
 })
 
 const resolver = ({ values }: FormResolverOptions) => {
