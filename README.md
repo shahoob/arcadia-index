@@ -12,6 +12,30 @@ For contributions see [backend/CONTRIBUTING.md](backend/CONTRIBUTING.md) or [fro
 
 Here are some examples of what type of content can be hosted with Arcadia, and how it can look like.
 
+### Movies
+
+![](media/movie.png)
+
+### TV Shows
+
+#### Season entry
+
+![](media/tvshow.png)
+
+#### Series view
+
+![](media/tvshow-series.png)
+
+### Software
+
+#### Video-Game
+
+![](media/software-game.png)
+
+### Music
+
+![](media/music.png)
+
 ### Books (ebooks and audiobooks)
 
 ![](media/book.png)
@@ -25,30 +49,6 @@ Here are some examples of what type of content can be hosted with Arcadia, and h
 #### Series view
 
 ![](media/book-illustrated-series.png)
-
-### Movies
-
-![](media/movie.png)
-
-### Software
-
-#### Video-Game
-
-![](media/software-game.png)
-
-### Music
-
-![](media/music.png)
-
-### TV Shows
-
-#### Season entry
-
-![](media/tvshow.png)
-
-#### Series view
-
-![](media/tvshow-series.png)
 
 ### Collections
 
