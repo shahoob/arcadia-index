@@ -22,7 +22,7 @@ SET row_security = off;
 --
 
 COPY public._sqlx_migrations (version, description, installed_on, success, checksum, execution_time) FROM stdin;
-20250312215600	initdb	2025-05-15 13:08:27.650797+00	t	\\x90973280475921b658cc751702857257857cf991c82c0ad4e66a22350ddc0e83baed9c1b67e03133d89a296086c38f98	35049807
+20250312215600	initdb	2025-05-17 07:49:22.688341+00	t	\\x1f240e9eed1cf9143a3f2d0c9dee597237266639f1c5b3424b0b3409cfffb1f4485f9e380c37a4849f88e32ac5ca1a8f	33366282
 \.
 
 
@@ -30,11 +30,11 @@ COPY public._sqlx_migrations (version, description, installed_on, success, check
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.users (id, username, avatar, email, password_hash, registered_from_ip, created_at, description, uploaded, real_uploaded, downloaded, real_downloaded, ratio, required_ratio, last_seen, class, forum_posts, forum_threads, group_comments, torrent_comments, request_comments, artist_comments, seeding, leeching, snatched, seeding_size, requests_filled, collages_started, requests_voted, average_seeding_time, invited, invitations, bonus_points, freeleech_tokens, settings, passkey_upper, passkey_lower) FROM stdin;
-2	waterbottle	https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg	user2@example.com	hashedpassword2	192.168.1.2	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	5493004881313328037	2566432999990446913
-3	coolguy	https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg	user3@example.com	hashedpassword3	192.168.1.3	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	2274483400846363122	1270934296711348124
-4	test	\N	test@test.tsttt	$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M	127.0.0.1	2025-04-10 19:15:51.036818+00		0	0	1	1	0	0	2025-04-10 19:15:51.036818+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-7167291202215854785	1526268353104531819
-1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-04-21 12:07:33.795558+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682
+COPY public.users (id, username, avatar, email, password_hash, registered_from_ip, created_at, description, uploaded, real_uploaded, downloaded, real_downloaded, ratio, required_ratio, last_seen, class, forum_posts, forum_threads, group_comments, torrent_comments, request_comments, artist_comments, seeding, leeching, snatched, seeding_size, requests_filled, collages_started, requests_voted, average_seeding_time, invited, invitations, bonus_points, freeleech_tokens, settings, passkey_upper, passkey_lower, warned) FROM stdin;
+2	waterbottle	https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg	user2@example.com	hashedpassword2	192.168.1.2	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	5493004881313328037	2566432999990446913	f
+3	coolguy	https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg	user3@example.com	hashedpassword3	192.168.1.3	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	2274483400846363122	1270934296711348124	f
+1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-04-21 12:07:33.795558+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
+4	test	\N	test@test.tsttt	$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M	127.0.0.1	2025-04-10 19:15:51.036818+00		0	0	1	1	0	0	2025-05-17 07:50:13.218053+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-7167291202215854785	1526268353104531819	f
 \.
 
 
@@ -141,6 +141,14 @@ COPY public.collage_title_group_entry (id, created_at, created_by_id, title_grou
 
 
 --
+-- Data for Name: deleted_torrents; Type: TABLE DATA; Schema: public; Owner: arcadia
+--
+
+COPY public.deleted_torrents (id, upload_factor, download_factor, edition_group_id, created_at, updated_at, created_by_id, info_hash, info_dict, languages, release_name, release_group, description, file_amount_per_type, uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked, container, size, duration, audio_codec, audio_bitrate, audio_bitrate_sampling, audio_channels, video_codec, features, subtitle_languages, video_resolution, deleted_at, deleted_by_id, reason) FROM stdin;
+\.
+
+
+--
 -- Data for Name: edition_groups; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
@@ -161,12 +169,12 @@ COPY public.edition_groups (id, title_group_id, name, release_date, created_at, 
 15	6	Original edition	2018-12-22 00:00:00+00	2025-03-31 13:52:36.241175+00	2025-03-31 13:52:36.241175+00	1		casefilepodcast	{""}	{""}	Web	{"date_from": "2018-01-13", "last_item": "Case 104", "first_item": "Case 72"}
 14	6	Original edition	2017-12-16 00:00:00+00	2025-03-31 13:47:36.883244+00	2025-03-31 13:47:36.883244+00	1		casefilepodcast	{""}	{""}	Web	{"date_from": "2017-01-07", "last_item": "Case 71", "first_item": "Case 41"}
 18	8	Extras	2004-03-04 00:00:00+00	2025-03-31 18:49:20.421903+00	2025-03-31 18:49:20.421903+00	1	Contains deleted scenes and behind the scenes		{""}	{""}	DVD9	{}
-17	8	Season 1	2004-03-04 00:00:00+00	2025-03-31 18:39:35.622903+00	2025-03-31 18:39:35.622903+00	1		Amazon	{""}	{""}	Web	{}
 19	9	Original edition	2004-10-24 00:00:00+00	2025-04-02 10:38:30.04944+00	2025-04-02 10:38:30.04944+00	1		Amazon	{""}	{""}	Web	{}
 20	10	Original edition	1999-03-22 00:00:00+00	2025-04-19 11:02:10.743205+00	2025-04-19 11:02:10.743205+00	1	\N	\N	{}	{}	\N	{}
 21	11	Deluxe edition	1999-03-22 00:00:00+00	2025-04-19 11:49:10.594347+00	2025-04-19 11:49:10.594347+00	1	This game wasn't officially released on linux, this is just some example data	\N	{}	{}	\N	{}
 22	12	Original edition	2003-03-25 00:00:00+00	2025-04-19 14:00:30.080243+00	2025-04-19 14:00:30.080243+00	1	\N	\N	{}	{}	\N	{}
 23	13	Original edition	2022-01-01 00:00:00+00	2025-04-20 18:51:13.549488+00	2025-04-20 18:51:13.549488+00	1	\N	\N	{}	{}	Web	{}
+17	8	Original edition	2004-03-04 00:00:00+00	2025-03-31 18:39:35.622903+00	2025-03-31 18:39:35.622903+00	1		Amazon	{""}	{""}	Web	{}
 \.
 
 
@@ -192,8 +200,8 @@ COPY public.forum_sub_categories (id, forum_category_id, name, created_at, creat
 -- Data for Name: forum_threads; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_by_id, posts_amount) FROM stdin;
-1	4	Welcome to the site	2025-05-15 13:23:37.770668+00	1	0
+COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_by_id, posts_amount, sticky) FROM stdin;
+1	4	Welcome to the site	2025-05-15 13:23:37.770668+00	1	0	f
 \.
 
 
@@ -201,8 +209,8 @@ COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_
 -- Data for Name: forum_posts; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.forum_posts (id, forum_thread_id, created_at, updated_at, created_by_id, content) FROM stdin;
-1	1	2025-05-15 13:24:07.981379+00	2025-05-15 13:24:07.981379+00	1	Welcome to the site everyone !
+COPY public.forum_posts (id, forum_thread_id, created_at, updated_at, created_by_id, content, sticky) FROM stdin;
+1	1	2025-05-15 13:24:07.981379+00	2025-05-15 13:24:07.981379+00	1	Welcome to the site everyone !	f
 \.
 
 
@@ -276,6 +284,14 @@ COPY public.peers (id, user_id, torrent_id, peer_id, ip, port, first_seen_at, la
 
 
 --
+-- Data for Name: seeded_torrents; Type: TABLE DATA; Schema: public; Owner: arcadia
+--
+
+COPY public.seeded_torrents (id, torrent_id, user_id, first_seen_at, last_seen_at, total_seed_time) FROM stdin;
+\.
+
+
+--
 -- Data for Name: similar_artists; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
@@ -337,6 +353,14 @@ COPY public.torrent_requests (id, title_group_id, created_at, updated_at, create
 --
 
 COPY public.torrent_request_votes (id, torrent_request_id, created_at, created_by_id, bounty_upload, bounty_bonus_points) FROM stdin;
+\.
+
+
+--
+-- Data for Name: user_warnings; Type: TABLE DATA; Schema: public; Owner: arcadia
+--
+
+COPY public.user_warnings (id, user_id, created_at, expires_at, reason, created_by_id) FROM stdin;
 \.
 
 
@@ -453,6 +477,13 @@ SELECT pg_catalog.setval('public.peers_id_seq', 1, false);
 
 
 --
+-- Name: seeded_torrents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
+--
+
+SELECT pg_catalog.setval('public.seeded_torrents_id_seq', 1, false);
+
+
+--
 -- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
@@ -506,6 +537,13 @@ SELECT pg_catalog.setval('public.torrent_requests_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.torrents_id_seq', 37, true);
+
+
+--
+-- Name: user_warnings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
+--
+
+SELECT pg_catalog.setval('public.user_warnings_id_seq', 1, false);
 
 
 --

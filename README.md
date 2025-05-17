@@ -30,6 +30,12 @@ Here are some examples of what type of content can be hosted with Arcadia, and h
 
 ![](media/movie.png)
 
+### Software
+
+#### Video-Game
+
+![](media/software-game.png)
+
 ### Music
 
 ![](media/music.png)
