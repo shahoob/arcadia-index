@@ -1,4 +1,8 @@
-# arcadia
+# Arcadia
+
+Arcadia is a torrent site and tracker, aiming at providing an **easy to setup** and **configurable**, **highly organized** and **content agnostic** platform.
+
+The backend is built with Rust for speed and safety. The frontend is built with Typescript and VueJS, redered client-side. 
 
 <p align="center">
   <a href="https://discord.gg/amYWVk7pS3">
