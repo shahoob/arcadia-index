@@ -3,7 +3,7 @@
     <Toast />
     <div
       class="navbars-container"
-      v-if="['/login', '/register'].indexOf($router.currentRoute.value.path) < 0"
+      v-if="['/login', '/register'].indexOf(router.currentRoute.value.path) < 0"
     >
       <TopBar />
       <MenuBar class="menu-bar" />

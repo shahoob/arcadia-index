@@ -12,7 +12,7 @@
       <div>
         <FloatLabel>
           <InputText size="small" v-model="editionGroupForm.name" name="name" />
-          <label for="name">{{ $t('general.name') }}</label>
+          <label for="name">{{ t('general.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
@@ -21,7 +21,7 @@
       <div>
         <FloatLabel>
           <InputText size="small" v-model="editionGroupForm.distributor" name="distributor" />
-          <label for="distributor">{{ $t('edition_group.distributor') }}</label>
+          <label for="distributor">{{ t('edition_group.distributor') }}</label>
         </FloatLabel>
         <Message v-if="$form.distributor?.invalid" severity="error" size="small" variant="simple">
           {{ $form.distributor.error?.message }}
@@ -34,7 +34,7 @@
             v-model="editionGroupForm.additional_information.label"
             name="label"
           />
-          <label for="label">{{ $t('edition_group.label') }}</label>
+          <label for="label">{{ t('edition_group.label') }}</label>
         </FloatLabel>
         <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
           {{ $form.label.error?.message }}
@@ -47,7 +47,7 @@
             v-model="editionGroupForm.additional_information.catalogue_number"
             name="catalogue_number"
           />
-          <label for="catalogue_number">{{ $t('edition_group.catalogue_number') }}</label>
+          <label for="catalogue_number">{{ t('edition_group.catalogue_number') }}</label>
         </FloatLabel>
         <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
           {{ $form.label.error?.message }}
@@ -58,12 +58,12 @@
           <Select
             v-model="editionGroupForm.source"
             inputId="source"
-            :options="$getSources(titleGroup.content_type)"
+            :options="getSources(titleGroup.content_type)"
             class="select-source"
             size="small"
             name="source"
           />
-          <label for="source">{{ $t('edition_group.source') }}</label>
+          <label for="source">{{ t('edition_group.source') }}</label>
         </FloatLabel>
         <Message v-if="$form.source?.invalid" severity="error" size="small" variant="simple">
           {{ $form.source.error?.message }}
@@ -79,14 +79,14 @@
           autoResize
           rows="5"
         />
-        <label for="description">{{ $t('general.description') }}</label>
+        <label for="description">{{ t('general.description') }}</label>
       </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
       </Message>
     </div>
     <div class="release-date">
-      <label for="release_date" class="block">{{ $t('general.release_date') }}</label>
+      <label for="release_date" class="block">{{ t('general.release_date') }}</label>
       <DatePicker
         v-model="release_date"
         showIcon
@@ -101,7 +101,7 @@
       </Message>
     </div>
     <div class="covers input-list">
-      <label>{{ $t('general.cover', 2) }}</label>
+      <label>{{ t('general.cover', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.covers" :key="index">
         <InputText
           size="small"
@@ -126,7 +126,7 @@
       </div>
     </div>
     <div class="external-links input-list">
-      <label>{{ $t('general.external_link', 2) }}</label>
+      <label>{{ t('general.external_link', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.external_links" :key="index">
         <InputText
           size="small"
@@ -178,7 +178,7 @@ import {
   type FormSubmitEvent,
 } from '@primevue/forms'
 import { useI18n } from 'vue-i18n'
-import { isValidUrl } from '@/services/helpers'
+import { getSources, isValidUrl } from '@/services/helpers'
 import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
 
 interface Props {

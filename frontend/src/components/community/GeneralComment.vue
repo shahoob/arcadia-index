@@ -13,7 +13,7 @@
           </span>
         </RouterLink>
         <span class="time-ago">
-          {{ $timeAgo(comment.created_at) }}
+          {{ timeAgo(comment.created_at) }}
         </span>
       </div>
       <div class="comment-body">
@@ -27,6 +27,7 @@
 import ContentContainer from '@/components/ContentContainer.vue'
 import BBCodeRenderer from '@/components/BBCodeRenderer.vue'
 import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
+import { timeAgo } from '@/services/helpers'
 
 defineProps<{
   comment: TitleGroupCommentHierarchy

@@ -1,11 +1,11 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    {{ $t('edition_group.select_edition') }}
-    <span class="alternative" @click="action = 'create'">({{ $t('general.or_create_one') }})</span>
+    {{ t('edition_group.select_edition') }}
+    <span class="alternative" @click="action = 'create'">({{ t('general.or_create_one') }})</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    {{ $t('edition_group.create_edition') }}
-    <span class="alternative" @click="action = 'select'">({{ $t('general.or_select_one') }})</span>
+    {{ t('edition_group.create_edition') }}
+    <span class="alternative" @click="action = 'select'">({{ t('general.or_select_one') }})</span>
   </div>
   <div id="select-edition-group" v-if="action == 'select'">
     <FloatLabel>
@@ -27,7 +27,7 @@
           </div>
         </template>
       </Select>
-      <label for="edition_group">{{ $t('torrent.edition') }}</label>
+      <label for="edition_group">{{ t('torrent.edition') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
       <Button
@@ -61,6 +61,7 @@ import {
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 import { getEditionGroupSlug } from '@/services/helpers'
+import { useI18n } from 'vue-i18n'
 
 // eslint-disable-next-line prefer-const
 let action = ref('select') // create | select
@@ -69,6 +70,8 @@ const step = 1
 const titleGroup = useTitleGroupStore()
 const selected_edition_group = ref<EditionGroupInfoLite | null>(null)
 let creatingEditionGroup = false
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   done: [editionGroup: EditionGroupInfoLite]
@@ -84,7 +87,7 @@ const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
     creatingEditionGroup = true
     const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
     // otherwise there is a json parse error, last char is "Z"
-    formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
+    // formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
     createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
       creatingEditionGroup = false
       emit('done', data)

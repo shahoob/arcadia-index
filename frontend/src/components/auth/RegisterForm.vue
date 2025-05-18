@@ -4,7 +4,7 @@
       class="form-item"
       name="email"
       type="text"
-      :placeholder="$t('user.email')"
+      :placeholder="t('user.email')"
       v-model="form.email"
     />
     <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
@@ -15,7 +15,7 @@
     class="form-item"
     name="username"
     type="text"
-    :placeholder="$t('user.username')"
+    :placeholder="t('user.username')"
     v-model="form.username"
   />
   <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
@@ -26,7 +26,7 @@
       class="form-item"
       name="password"
       type="text"
-      :placeholder="$t('user.password')"
+      :placeholder="t('user.password')"
       v-model="form.password"
     />
     <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
@@ -38,7 +38,7 @@
       class="form-item"
       name="password_verify"
       type="text"
-      :placeholder="$t('user.password_verify')"
+      :placeholder="t('user.password_verify')"
       v-model="form.password_verify"
     />
     <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
@@ -49,7 +49,7 @@
     class="form-item"
     type="submit"
     severity="secondary"
-    :label="$t('general.submit')"
+    :label="t('general.submit')"
     @click="handleRegister"
   />
 </template>
@@ -59,6 +59,9 @@ import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '@/services/api/authService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const form = ref({
   email: '',

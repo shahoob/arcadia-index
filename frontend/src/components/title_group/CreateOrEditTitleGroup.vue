@@ -16,14 +16,14 @@
           name="master_group_id"
           :format="false"
         />
-        <label for="master_group_id">{{ $t('master_group.master_group_id') }}</label>
+        <label for="master_group_id">{{ t('master_group.master_group_id') }}</label>
       </FloatLabel>
     </div>
     <div class="line">
       <div class="name">
         <FloatLabel>
           <InputText size="small" v-model="titleGroupForm.name" name="name" />
-          <label for="name">{{ $t('general.name') }}</label>
+          <label for="name">{{ t('general.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
@@ -39,7 +39,7 @@
             name="category"
             class="select"
           />
-          <label for="category">{{ $t('general.category') }}</label>
+          <label for="category">{{ t('general.category') }}</label>
         </FloatLabel>
         <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">
           {{ $form.category.error?.message }}
@@ -48,7 +48,7 @@
       <div class="tags">
         <FloatLabel>
           <InputText size="small" v-model="tagsString" name="tags" />
-          <label for="tags">{{ $t('general.tags_comma_separated') }}</label>
+          <label for="tags">{{ t('general.tags_comma_separated') }}</label>
         </FloatLabel>
         <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
           {{ $form.tags.error?.message }}
@@ -64,7 +64,7 @@
           autoResize
           rows="5"
         />
-        <label for="description">{{ $t('general.description') }}</label>
+        <label for="description">{{ t('general.description') }}</label>
       </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
@@ -76,13 +76,13 @@
           <Select
             v-model="titleGroupForm.platform"
             inputId="platform"
-            :options="$getPlatforms()"
+            :options="getPlatforms()"
             class="select"
             size="small"
             name="platform"
             filter
           />
-          <label for="platform">{{ $t('title_group.platform') }}</label>
+          <label for="platform">{{ t('title_group.platform') }}</label>
         </FloatLabel>
         <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
           {{ $form.platform.error?.message }}
@@ -93,13 +93,13 @@
           <Select
             v-model="titleGroupForm.original_language"
             inputId="original_language"
-            :options="$getLanguages()"
+            :options="getLanguages()"
             class="select"
             size="small"
             name="original_language"
             filter
           />
-          <label for="original_language">{{ $t('general.original_language') }}</label>
+          <label for="original_language">{{ t('general.original_language') }}</label>
         </FloatLabel>
         <Message
           v-if="$form.original_language?.invalid"
@@ -121,7 +121,7 @@
             name="country_from"
             filter
           />
-          <label for="country_from">{{ $t('general.country') }}</label>
+          <label for="country_from">{{ t('general.country') }}</label>
         </FloatLabel>
         <Message v-if="$form.country_from?.invalid" severity="error" size="small" variant="simple">
           {{ $form.country_from.error?.message }}
@@ -130,7 +130,7 @@
     </div>
     <div class="original-release-date">
       <label for="original_release_date" class="block">{{
-        $t('title_group.original_release_date')
+        t('title_group.original_release_date')
       }}</label>
       <DatePicker
         v-model="original_release_date"
@@ -150,7 +150,7 @@
       </Message>
     </div>
     <div class="covers input-list">
-      <label>{{ $t('general.cover', 2) }}</label>
+      <label>{{ t('general.cover', 2) }}</label>
       <div v-for="(_link, index) in titleGroupForm.covers" :key="index">
         <InputText size="small" v-model="titleGroupForm.covers[index]" :name="`covers[${index}]`" />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
@@ -171,7 +171,7 @@
       </div>
     </div>
     <div class="screenshots input-list" v-if="content_type == 'software'">
-      <label>{{ $t('general.screenshots') }}</label>
+      <label>{{ t('general.screenshots') }}</label>
       <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
         <InputText
           size="small"
@@ -196,7 +196,7 @@
       </div>
     </div>
     <div class="external-links input-list">
-      <label>{{ $t('general.external_link', 2) }}</label>
+      <label>{{ t('general.external_link', 2) }}</label>
       <div v-for="(_link, index) in titleGroupForm.external_links" :key="index">
         <InputText
           size="small"
@@ -254,7 +254,7 @@ import type {
   UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
-import { isValidUrl } from '@/services/helpers'
+import { getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
 
 interface Props {
   content_type: ContentType
@@ -278,7 +278,7 @@ const titleGroupForm = ref<Omit<UserCreatedTitleGroup, 'content_type'>>({
   category: 'Ep',
   country_from: '',
   name_aliases: [],
-  affiliated_artists: {},
+  affiliated_artists: [],
   tags: [],
   master_group_id: null,
   platform: null,
@@ -380,7 +380,6 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
   if (valid) {
     titleGroupForm.value.tags = tagsString.value.trim().split(',')
     emit('validated', { ...titleGroupForm.value, content_type })
-    console.log('validated')
   }
 }
 const addLink = () => {

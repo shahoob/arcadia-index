@@ -23,21 +23,21 @@
         <div>
           <i
             v-if="title_group.is_subscribed"
-            v-tooltip.top="$t('general.unsubscribe')"
+            v-tooltip.top="t('general.unsubscribe')"
             @click="unsubscribe"
             class="pi pi-bell-slash"
           />
-          <i v-else v-tooltip.top="$t('general.subscribe')" @click="subscribe" class="pi pi-bell" />
-          <i v-tooltip.top="$t('general.bookmark')" class="pi pi-bookmark" />
+          <i v-else v-tooltip.top="t('general.subscribe')" @click="subscribe" class="pi pi-bell" />
+          <i v-tooltip.top="t('general.bookmark')" class="pi pi-bookmark" />
         </div>
         <div>
-          <i v-tooltip.top="$t('general.edit')" class="pi pi-pen-to-square" />
+          <i v-tooltip.top="t('general.edit')" class="pi pi-pen-to-square" />
           <i
             @click="uploadTorrent"
-            v-tooltip.top="$t('torrent.upload_torrent')"
+            v-tooltip.top="t('torrent.upload_torrent')"
             class="pi pi-upload"
           />
-          <i v-tooltip.top="$t('torrent.request_format')" class="pi pi-shopping-cart" />
+          <i v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
         </div>
         <FloatLabel class="sort-by-select" variant="on">
           <Select
@@ -48,18 +48,18 @@
             size="small"
           >
             <template #option="slotProps">
-              <span>{{ $t(`torrent.${slotProps.option}`) }}</span>
+              <span>{{ t(`torrent.${slotProps.option}`) }}</span>
             </template>
             <template #value="slotProps">
-              <span>{{ $t(`torrent.${slotProps.value}`) }}</span>
+              <span>{{ t(`torrent.${slotProps.value}`) }}</span>
             </template>
           </Select>
-          <label for="sort_by">{{ $t('general.sort_by') }}</label>
+          <label for="sort_by">{{ t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
       <TitleGroupTable :title_group="title_group" :sortBy :preview="false" />
       <ContentContainer
-        :container-title="$t('general.screenshots')"
+        :container-title="t('general.screenshots')"
         class="screenshots"
         v-if="title_group.screenshots.length !== 0"
       >
@@ -72,7 +72,7 @@
       >
         <AccordionPanel value="0">
           <AccordionHeader
-            >{{ $t('torrent.requests') }} ({{
+            >{{ t('torrent.requests') }} ({{
               title_group.torrent_requests.length
             }})</AccordionHeader
           >
@@ -84,14 +84,14 @@
       <ContentContainer
         class="description"
         v-if="title_group"
-        :container-title="$t('title_group.description')"
+        :container-title="t('title_group.description')"
       >
         <div class="title-group-description">
           {{ title_group.description }}
         </div>
         <div v-for="edition_group in title_group.edition_groups" :key="edition_group.id">
           <div v-if="edition_group.description" class="edition-description">
-            <div class="edition-group-slug">{{ $getEditionGroupSlug(edition_group) }}</div>
+            <div class="edition-group-slug">{{ getEditionGroupSlug(edition_group) }}</div>
             {{ edition_group.description }}
           </div>
         </div>
@@ -128,9 +128,12 @@ import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import CustomGalleria from '@/components/CustomGalleria.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getEditionGroupSlug } from '@/services/helpers'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()

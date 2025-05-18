@@ -55,8 +55,4 @@ app.use(i18n)
 app.use(ToastService)
 app.directive('tooltip', Tooltip)
 
-Object.keys(helpers).forEach((key) => {
-  app.config.globalProperties[`$${key}`] = helpers[key as keyof typeof helpers]
-})
-
 app.mount('#app')

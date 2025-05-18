@@ -51,6 +51,7 @@ const search = async (searchForm: SearchForm) => {
 }
 
 onMounted(async () => {
+  // TODO: fix the search input not being populated
   initialTitleGroupName.value = route.query.title_group_name?.toString() ?? ''
   search({ title_group_name: initialTitleGroupName.value, tags: '' })
 })

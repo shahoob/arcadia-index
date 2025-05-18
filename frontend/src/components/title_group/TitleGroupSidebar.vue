@@ -17,13 +17,13 @@
         </Image>
       </template>
     </Galleria>
-    <ContentContainer :container-title="$t('general.link', 2)">
+    <ContentContainer :container-title="t('general.link', 2)">
       <div class="external-links links">
         <ExternalLink v-for="link in title_group.external_links" :key="link" :link="link" />
       </div>
     </ContentContainer>
     <ContentContainer
-      :container-title="$t('artist.artist', 2)"
+      :container-title="t('artist.artist', 2)"
       v-if="title_group.affiliated_artists.length != 0"
     >
       <div class="affiliated-artists">
@@ -35,7 +35,7 @@
       </div>
     </ContentContainer>
     <ContentContainer
-      :container-title="`${$t('master_group.in_same_master_group')} (${title_group.master_group_id})`"
+      :container-title="`${t('master_group.in_same_master_group')} (${title_group.master_group_id})`"
       v-if="title_group.in_same_master_group.length != 0"
     >
       <div class="flex justify-content-center links">
@@ -46,12 +46,12 @@
         />
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="$t('general.series')" v-if="title_group.series.id">
+    <ContentContainer :container-title="t('general.series')" v-if="title_group.series.id">
       <RouterLink :to="`/series/${title_group.series.id}`">
         {{ title_group.series.name }}
       </RouterLink>
     </ContentContainer>
-    <ContentContainer :container-title="$t('general.tags')">
+    <ContentContainer :container-title="t('general.tags')">
       <div class="tags">
         <div v-for="tag in title_group.tags" :key="tag">{{ tag }}</div>
       </div>
@@ -66,6 +66,9 @@ import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps<{
   title_group: TitleGroupAndAssociatedData

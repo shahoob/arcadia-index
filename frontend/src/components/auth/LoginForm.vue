@@ -5,7 +5,7 @@
         class="form-item"
         name="username"
         type="text"
-        :placeholder="$t('user.username')"
+        :placeholder="t('user.username')"
         v-model="form.username"
       />
     </div>
@@ -14,13 +14,13 @@
         class="form-item"
         name="password"
         v-model="form.password"
-        :placeholder="$t('user.password')"
+        :placeholder="t('user.password')"
         :feedback="false"
       />
     </div>
     <div>
       <Checkbox class="form-item" v-model="form.remember_me" binary />
-      <label for="ingredient1"> {{ $t('auth.remember_me') }} </label>
+      <label for="ingredient1"> {{ t('auth.remember_me') }} </label>
     </div>
     <Button
       class="form-item"
@@ -41,6 +41,7 @@ import { login } from '@/services/api/authService'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { getMe } from '@/services/api/userService'
+import { useI18n } from 'vue-i18n'
 
 const form = {
   username: '',
@@ -50,6 +51,7 @@ const form = {
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 
 const handleLogin = async () => {
   login(form).then(async (data) => {

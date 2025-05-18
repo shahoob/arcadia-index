@@ -27,7 +27,7 @@
             </span>
           </div>
           <div class="information-line">
-            <span class="item-title">{{ $t('general.tags') }}:</span>
+            <span class="item-title">{{ t('general.tags') }}:</span>
             <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
               {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
             </div>
@@ -36,21 +36,21 @@
             class="information-line"
             v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
           >
-            <span class="item-title">{{ $t('general.alias', 2) }}:</span>
+            <span class="item-title">{{ t('general.alias', 2) }}:</span>
             <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
               {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>
             </div>
           </div>
           <div class="information-line">
-            <span class="item-title">{{ $t('general.original_language') }}:</span>
+            <span class="item-title">{{ t('general.original_language') }}:</span>
             {{ title_group.original_language }}
           </div>
           <div class="information-line">
-            <span class="item-title">{{ $t('general.country') }}:</span>
+            <span class="item-title">{{ t('general.country') }}:</span>
             {{ title_group.country_from }}
           </div>
           <div v-if="title_group.series.id" class="information-line series">
-            <span class="item-title">{{ $t('general.series') }}:</span>
+            <span class="item-title">{{ t('general.series') }}:</span>
             <RouterLink :to="`/series/${title_group.series.id}`">
               {{ title_group.series.name }}
             </RouterLink>
@@ -82,6 +82,9 @@ import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps<{
   title_group: TitleGroupAndAssociatedData

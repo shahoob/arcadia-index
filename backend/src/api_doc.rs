@@ -7,7 +7,10 @@ use crate::{
         torrent_handler::{DownloadTorrentQuery, GetTopTorrentsQuery},
     },
     models::{
-        artist::{AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite},
+        artist::{
+            AffiliatedArtist, AffiliatedArtistHierarchy, Artist, ArtistAndTitleGroupsLite,
+            ArtistLite,
+        },
         edition_group::EditionGroup,
         forum::{ForumPost, UserCreatedForumPost},
         gift::{Gift, UserCreatedGift},
@@ -71,6 +74,7 @@ use crate::{
         TorrentSearch,
         Artist,
         AffiliatedArtist,
+        AffiliatedArtistHierarchy,
         User,
         PublicUser,
         EditionGroup,

@@ -1,22 +1,22 @@
 <template>
   <div class="title" v-if="action == 'select'">
-    {{ $t('title_group.select_title') }}
-    <span class="alternative" @click="action = 'create'">({{ $t('general.or_create_one') }})</span>
+    {{ t('title_group.select_title') }}
+    <span class="alternative" @click="action = 'create'">({{ t('general.or_create_one') }})</span>
   </div>
   <div class="title" v-if="action == 'create'">
-    {{ $t('title_group.create_title') }}
-    <span class="alternative" @click="action = 'select'">({{ $t('general.or_select_one') }})</span>
+    {{ t('title_group.create_title') }}
+    <span class="alternative" @click="action = 'select'">({{ t('general.or_select_one') }})</span>
   </div>
 
   <div id="select-title-group" v-if="action == 'select'">
     <FloatLabel>
       <InputNumber size="small" v-model="titleGroupId" name="id" :format="false" />
-      <label for="id">{{ $t('title_group.title_group_id') }}</label>
+      <label for="id">{{ t('title_group.title_group_id') }}</label>
     </FloatLabel>
     <div class="flex justify-content-center">
       <Button
-        v-if="step == 3"
-        :label="$t('general.submit')"
+        v-if="action == 'select'"
+        :label="t('general.submit')"
         @click="sendSelectedTitleGroup"
         icon="pi pi-check"
         size="small"
@@ -36,17 +36,17 @@
         @update:modelValue="(step = 2) && (manualCreation = false)"
       >
         <template #option="slotProps">
-          <span>{{ $t(`title_group.content_type.${slotProps.option}`) }}</span>
+          <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
         </template>
         <template #value="slotProps">
           <span v-if="slotProps.value">
-            {{ $t(`title_group.content_type.${slotProps.value}`) }}
+            {{ t(`title_group.content_type.${slotProps.value}`) }}
           </span>
         </template>
       </Select>
-      <label for="content_type">{{ $t('title_group.content_type.content_type') }}</label>
+      <label for="content_type">{{ t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
-    <div class="external-db-inputs-wrapper" v-if="step > 1 && !manualCreation">
+    <div class="external-db-inputs-wrapper" v-if="!manualCreation">
       <div class="external-db-inputs" v-if="content_type == 'movie'">
         <FloatLabel>
           <IconField>
@@ -175,6 +175,7 @@ import {
 } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
+import { useI18n } from 'vue-i18n'
 
 const action = ref('select') // create | select
 const titleGroupId = ref<number | null>(null)
@@ -201,6 +202,8 @@ const external_database_ids = {
 let gettingExternalDatabaseData = false
 const titleGroupStore = useTitleGroupStore()
 const toast = useToast()
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   gotEditionData: [editionGroup: UserCreatedEditionGroup]
@@ -250,8 +253,8 @@ const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
   console.log(content_type.value)
   const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
   // otherwise there is a json parse error, last char is "Z"
-  formattedTitleGroupForm.original_release_date =
-    formattedTitleGroupForm.original_release_date.slice(0, -1)
+  // formattedTitleGroupForm.original_release_date =
+  //   formattedTitleGroupForm.original_release_date.slice(0, -1)
   createTitleGroup(formattedTitleGroupForm)
     .then((data) => {
       // this.creatingTitleGroup = false
