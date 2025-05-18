@@ -1,15 +1,15 @@
 <template>
   <div class="auth-form">
-    <LoginForm v-if="$router.currentRoute.value.path.includes('login')" />
-    <RegisterForm v-if="$router.currentRoute.value.path.includes('register')" />
+    <LoginForm v-if="router.currentRoute.value.path.includes('login')" />
+    <RegisterForm v-if="router.currentRoute.value.path.includes('register')" />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
-export default {
-  components: { LoginForm, RegisterForm },
-}
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 </script>
 
 <style>

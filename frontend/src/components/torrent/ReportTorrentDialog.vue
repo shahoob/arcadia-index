@@ -2,7 +2,7 @@
   <div class="report-torrent">
     <FloatLabel>
       <Textarea class="description" name="description" v-model="report.description" rows="5" />
-      <label for="description">{{ $t('general.description') }}</label>
+      <label for="description">{{ t('general.description') }}</label>
     </FloatLabel>
     <Button label="Send report" size="small" :loading @click="sendReport()" />
   </div>
@@ -17,6 +17,9 @@ import {
 import { Textarea, FloatLabel } from 'primevue'
 import Button from 'primevue/button'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const report = ref<UserCreatedTorrentReport>({ description: '', reported_torrent_id: 0 })
 const loading = ref(false)

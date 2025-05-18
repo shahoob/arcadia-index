@@ -16,14 +16,14 @@
           name="master_group_id"
           :format="false"
         />
-        <label for="master_group_id">{{ $t('master_group.master_group_id') }}</label>
+        <label for="master_group_id">{{ t('master_group.master_group_id') }}</label>
       </FloatLabel>
     </div>
     <div class="line">
       <div class="name">
         <FloatLabel>
           <InputText size="small" v-model="titleGroupForm.name" name="name" />
-          <label for="name">{{ $t('general.name') }}</label>
+          <label for="name">{{ t('general.name') }}</label>
         </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
@@ -39,7 +39,7 @@
             name="category"
             class="select"
           />
-          <label for="category">{{ $t('general.category') }}</label>
+          <label for="category">{{ t('general.category') }}</label>
         </FloatLabel>
         <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">
           {{ $form.category.error?.message }}
@@ -48,7 +48,7 @@
       <div class="tags">
         <FloatLabel>
           <InputText size="small" v-model="tagsString" name="tags" />
-          <label for="tags">{{ $t('general.tags_comma_separated') }}</label>
+          <label for="tags">{{ t('general.tags_comma_separated') }}</label>
         </FloatLabel>
         <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
           {{ $form.tags.error?.message }}
@@ -64,7 +64,7 @@
           autoResize
           rows="5"
         />
-        <label for="description">{{ $t('general.description') }}</label>
+        <label for="description">{{ t('general.description') }}</label>
       </FloatLabel>
       <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
         {{ $form.description.error?.message }}
@@ -76,13 +76,13 @@
           <Select
             v-model="titleGroupForm.platform"
             inputId="platform"
-            :options="$getPlatforms()"
+            :options="getPlatforms()"
             class="select"
             size="small"
             name="platform"
             filter
           />
-          <label for="platform">{{ $t('title_group.platform') }}</label>
+          <label for="platform">{{ t('title_group.platform') }}</label>
         </FloatLabel>
         <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
           {{ $form.platform.error?.message }}
@@ -93,13 +93,13 @@
           <Select
             v-model="titleGroupForm.original_language"
             inputId="original_language"
-            :options="$getLanguages()"
+            :options="getLanguages()"
             class="select"
             size="small"
             name="original_language"
             filter
           />
-          <label for="original_language">{{ $t('general.original_language') }}</label>
+          <label for="original_language">{{ t('general.original_language') }}</label>
         </FloatLabel>
         <Message
           v-if="$form.original_language?.invalid"
@@ -121,7 +121,7 @@
             name="country_from"
             filter
           />
-          <label for="country_from">{{ $t('general.country') }}</label>
+          <label for="country_from">{{ t('general.country') }}</label>
         </FloatLabel>
         <Message v-if="$form.country_from?.invalid" severity="error" size="small" variant="simple">
           {{ $form.country_from.error?.message }}
@@ -130,10 +130,10 @@
     </div>
     <div class="original-release-date">
       <label for="original_release_date" class="block">{{
-        $t('title_group.original_release_date')
+        t('title_group.original_release_date')
       }}</label>
       <DatePicker
-        v-model="titleGroupForm.original_release_date"
+        v-model="original_release_date"
         showIcon
         :showOnFocus="false"
         inputId="original_release_date"
@@ -150,8 +150,8 @@
       </Message>
     </div>
     <div class="covers input-list">
-      <label>{{ $t('general.cover', 2) }}</label>
-      <div v-for="(link, index) in titleGroupForm.covers" :key="index">
+      <label>{{ t('general.cover', 2) }}</label>
+      <div v-for="(_link, index) in titleGroupForm.covers" :key="index">
         <InputText size="small" v-model="titleGroupForm.covers[index]" :name="`covers[${index}]`" />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
         <Button
@@ -161,18 +161,18 @@
           size="small"
         />
         <Message
-          v-if="$form.covers?.[index]?.invalid"
+          v-if="($form.covers as unknown as FormFieldState[])?.[index]?.invalid"
           severity="error"
           size="small"
           variant="simple"
         >
-          {{ $form.covers[index].error?.message }}
+          {{ ($form.covers as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
     </div>
     <div class="screenshots input-list" v-if="content_type == 'software'">
-      <label>{{ $t('general.screenshots') }}</label>
-      <div v-for="(link, index) in titleGroupForm.screenshots" :key="index">
+      <label>{{ t('general.screenshots') }}</label>
+      <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
         <InputText
           size="small"
           v-model="titleGroupForm.screenshots[index]"
@@ -186,18 +186,18 @@
           size="small"
         />
         <Message
-          v-if="$form.screenshots?.[index]?.invalid"
+          v-if="($form.screenshots as unknown as FormFieldState[])?.[index]?.invalid"
           severity="error"
           size="small"
           variant="simple"
         >
-          {{ $form.screenshots[index].error?.message }}
+          {{ ($form.screenshots as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
     </div>
     <div class="external-links input-list">
-      <label>{{ $t('general.external_link', 2) }}</label>
-      <div v-for="(link, index) in titleGroupForm.external_links" :key="index">
+      <label>{{ t('general.external_link', 2) }}</label>
+      <div v-for="(_link, index) in titleGroupForm.external_links" :key="index">
         <InputText
           size="small"
           v-model="titleGroupForm.external_links[index]"
@@ -211,12 +211,12 @@
           size="small"
         />
         <Message
-          v-if="$form.external_links?.[index]?.invalid"
+          v-if="($form.external_links as unknown as FormFieldState[])?.[index]?.invalid"
           severity="error"
           size="small"
           variant="simple"
         >
-          {{ $form.external_links[index].error?.message }}
+          {{ ($form.external_links as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
     </div>
@@ -233,8 +233,13 @@
   </Form>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
+import { onMounted, ref, computed } from 'vue'
+import {
+  Form,
+  type FormFieldState,
+  type FormResolverOptions,
+  type FormSubmitEvent,
+} from '@primevue/forms'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -243,9 +248,13 @@ import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
-import type { ContentType, UserCreatedTitleGroup } from '@/services/api/torrentService'
+import type {
+  ContentType,
+  TitleGroupCategory,
+  UserCreatedTitleGroup,
+} from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
-import { isValidUrl } from '@/services/helpers'
+import { getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
 
 interface Props {
   content_type: ContentType
@@ -258,7 +267,7 @@ const {
   sendingTitleGroup = false,
 } = defineProps<Props>()
 
-const titleGroupForm = ref<UserCreatedTitleGroup>({
+const titleGroupForm = ref<Omit<UserCreatedTitleGroup, 'content_type'>>({
   name: '',
   description: '',
   original_language: '',
@@ -266,23 +275,35 @@ const titleGroupForm = ref<UserCreatedTitleGroup>({
   covers: [''],
   screenshots: [''],
   external_links: [''],
-  category: '',
+  category: 'Ep',
   country_from: '',
   name_aliases: [],
-  affiliated_artists: {},
+  affiliated_artists: [],
   tags: [],
   master_group_id: null,
   platform: null,
   embedded_links: {},
 })
+
+const original_release_date = computed({
+  get() {
+    const isValidDateStr = !isNaN(Date.parse(titleGroupForm.value.original_release_date ?? ''))
+    return isValidDateStr ? new Date(titleGroupForm.value.original_release_date ?? '') : null
+  },
+  set(newValue) {
+    titleGroupForm.value.original_release_date = newValue?.toISOString() ?? ''
+  },
+})
+
 const tagsString = ref('')
 const selectableCountries = ['France', 'UK', 'USA', 'Scotland']
-const selectableCategories = {
+const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
   book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
   music: ['Single', 'Album', 'Ep'],
   movie: ['FeatureFilm', 'ShortFilm'],
   software: ['Program', 'Game'],
   collection: ['Other'],
+  tv_show: [],
 }
 
 const { t } = useI18n()
@@ -291,6 +312,12 @@ const emit = defineEmits<{
   validated: [titleGroup: UserCreatedTitleGroup]
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type FormErrors = {
+  [key in keyof UserCreatedTitleGroup]: UserCreatedTitleGroup[key] extends Array<unknown>
+    ? { message: string }[][]
+    : { message: string }[]
+}
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
 
@@ -324,7 +351,7 @@ const resolver = ({ values }: FormResolverOptions) => {
       if (!('external_links' in errors)) {
         errors.external_links = []
       }
-      errors.external_links[index] = [{ message: t('error.invalid_url') }]
+      errors.external_links![index] = { message: t('error.invalid_url') }
     }
   })
   values.covers.forEach((link: string, index: number) => {
@@ -332,7 +359,7 @@ const resolver = ({ values }: FormResolverOptions) => {
       if (!('covers' in errors)) {
         errors.covers = []
       }
-      errors.covers[index] = [{ message: t('error.invalid_url') }]
+      errors.covers![index] = { message: t('error.invalid_url') }
     }
   })
   if (values.screenshots) {
@@ -341,7 +368,7 @@ const resolver = ({ values }: FormResolverOptions) => {
         if (!('screenshots' in errors)) {
           errors.screenshots = []
         }
-        errors.screenshots[index] = [{ message: t('error.invalid_url') }]
+        errors.screenshots![index] = { message: t('error.invalid_url') }
       }
     })
   }
@@ -352,8 +379,7 @@ const resolver = ({ values }: FormResolverOptions) => {
 const onFormSubmit = ({ valid }: FormSubmitEvent) => {
   if (valid) {
     titleGroupForm.value.tags = tagsString.value.trim().split(',')
-    emit('validated', titleGroupForm.value)
-    console.log('validated')
+    emit('validated', { ...titleGroupForm.value, content_type })
   }
 }
 const addLink = () => {
@@ -385,37 +411,48 @@ onMounted(() => {
   width: 100%;
   height: 10em;
 }
+
 .name {
   width: 50%;
+
   input {
     width: 100%;
   }
 }
+
 .tags {
   width: 50%;
+
   input {
     width: 100%;
   }
 }
+
 .select {
   width: 200px;
 }
+
 .p-floatlabel {
   margin-top: 30px;
 }
+
 .original-release-date {
   margin-top: 30px;
 }
+
 .input-list {
   margin-top: 15px;
 }
+
 .input-list .p-component {
   margin-right: 5px;
   margin-bottom: 5px;
 }
+
 .input-list input {
   width: 400px;
 }
+
 .validate-button {
   margin-top: 20px;
 }

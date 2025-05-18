@@ -119,7 +119,7 @@ pub struct SimilarTitleGroups {
     pub group_2: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserCreatedTitleGroup {
     pub name: String,
     pub name_aliases: Vec<String>,
@@ -139,8 +139,7 @@ pub struct UserCreatedTitleGroup {
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: DateTime<Local>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub affiliated_artists: Vec<Json<Value>>,
+    pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     // one of them should be given, if master groups are required for this type of content

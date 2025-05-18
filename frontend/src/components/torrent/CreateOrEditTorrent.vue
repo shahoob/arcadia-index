@@ -29,7 +29,7 @@
           <div class="release-name">
             <FloatLabel>
               <InputText v-model="torrentForm.release_name" size="small" name="release_name" />
-              <label for="release_name">{{ $t('torrent.release_name') }}</label>
+              <label for="release_name">{{ t('torrent.release_name') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.release_name?.invalid"
@@ -43,7 +43,7 @@
           <div>
             <FloatLabel>
               <InputText v-model="torrentForm.release_group" size="small" name="release_group" />
-              <label for="release_group">{{ $t('torrent.release_group') }}</label>
+              <label for="release_group">{{ t('torrent.release_group') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.release_group?.invalid"
@@ -64,7 +64,7 @@
               autoResize
               rows="5"
             />
-            <label for="description">{{ $t('general.description') }}</label>
+            <label for="description">{{ t('general.description') }}</label>
           </FloatLabel>
           <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
             {{ $form.release_name.error?.message }}
@@ -74,7 +74,7 @@
           <div>
             <FloatLabel>
               <InputText v-model="torrentForm.container" size="small" name="container" />
-              <label for="container">{{ $t('torrent.container') }}</label>
+              <label for="container">{{ t('torrent.container') }}</label>
             </FloatLabel>
             <Message v-if="$form.container?.invalid" severity="error" size="small" variant="simple">
               {{ $form.container.error?.message }}
@@ -90,7 +90,7 @@
                 size="small"
                 name="video_codec"
               />
-              <label for="video_coded">{{ $t('torrent.video_codec') }}</label>
+              <label for="video_coded">{{ t('torrent.video_codec') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.video_codec?.invalid"
@@ -111,7 +111,7 @@
                 size="small"
                 name="video_resolution"
               />
-              <label for="video_resolution">{{ $t('torrent.video_resolution') }}</label>
+              <label for="video_resolution">{{ t('torrent.video_resolution') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.video_resolution?.invalid"
@@ -134,7 +134,7 @@
                 size="small"
                 name="audio_codec"
               />
-              <label for="audio_codec">{{ $t('torrent.audio_codec') }}</label>
+              <label for="audio_codec">{{ t('torrent.audio_codec') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.audio_codec?.invalid"
@@ -157,7 +157,7 @@
                 size="small"
                 name="audio_bitrate_sampling"
               />
-              <label for="audio_bitrate_sampling">{{ $t('torrent.audio_bitrate_sampling') }}</label>
+              <label for="audio_bitrate_sampling">{{ t('torrent.audio_bitrate_sampling') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.audio_bitrate_sampling?.invalid"
@@ -178,7 +178,7 @@
                 size="small"
                 name="audio_channels"
               />
-              <label for="audio_channels">{{ $t('torrent.audio_channels') }}</label>
+              <label for="audio_channels">{{ t('torrent.audio_channels') }}</label>
             </FloatLabel>
             <Message
               v-if="$form.audio_channels?.invalid"
@@ -197,14 +197,14 @@
             <MultiSelect
               v-model="torrentForm.languages"
               inputId="languages"
-              :options="$getLanguages()"
+              :options="getLanguages()"
               class="select"
               size="small"
               display="chip"
               filter
               name="languages"
             />
-            <label for="languages">{{ $t('general.language', 2) }}</label>
+            <label for="languages">{{ t('general.language', 2) }}</label>
           </FloatLabel>
           <Message v-if="$form.languages?.invalid" severity="error" size="small" variant="simple">
             {{ $form.languages.error?.message }}
@@ -214,12 +214,12 @@
           <MultiSelect
             v-model="torrentForm.features"
             display="chip"
-            :options="$getFeatures(content_type)"
+            :options="getFeatures(content_type)"
             filter
             size="small"
             name="features"
           />
-          <label for="features">{{ $t('torrent.features') }}</label>
+          <label for="features">{{ t('torrent.features') }}</label>
         </FloatLabel>
         <!-- <FloatLabel >
           <InputText v-model="torrentForm.duration" size="small" name="duration" />
@@ -238,7 +238,7 @@
           <FileUpload
             ref="torrentFile"
             accept="application/x-bittorrent"
-            :chooseLabel="$t('torrent.torrent_file')"
+            :chooseLabel="t('torrent.torrent_file')"
             :showCancelButton="false"
             :showUploadButton="false"
             @select="onFileSelect"
@@ -260,7 +260,7 @@
         <div class="flex align-items-center">
           <Checkbox v-model="torrentForm.uploaded_as_anonymous" name="anonymous" binary />
           <label for="anonymous" style="margin-left: 5px">
-            {{ $t('torrent.upload_as_anonymous') }}</label
+            {{ t('torrent.upload_as_anonymous') }}</label
           >
         </div>
       </div>
@@ -296,8 +296,9 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent, type Torrent, type UploadedTorrent } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useI18n } from 'vue-i18n'
+import { getFeatures, getLanguages } from '@/services/helpers'
 
-const torrentFile = ref({ files: [] })
+const torrentFile = ref({ files: [] as unknown[] })
 const step = ref(1)
 const torrentForm = ref({
   edition_group_id: '',
@@ -316,7 +317,7 @@ const torrentForm = ref({
   features: [],
   audio_channels: null,
   audio_bitrate_sampling: null,
-  torrent_file: null,
+  torrent_file: '',
   uploaded_as_anonymous: false,
 })
 // TODO : move all the selectable* arrays to an helper function
@@ -419,7 +420,7 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
 const onFileSelect = (event: FileUploadSelectEvent) => {
   if (event.files && event.files.length > 0) {
     // keep a single file
-    const file = event.files[event.files.length - 1]
+    const file = event.files[event.files.length - 1] as string
     // torrentFile.value.files.clear()
     torrentFile.value.files = [file]
     torrentForm.value.torrent_file = file

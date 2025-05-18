@@ -17,7 +17,7 @@
   >
     <Column expander style="width: 1em" v-if="!preview" />
     <Column style="width: 1em" v-else />
-    <Column :header="$t('torrent.properties')" style="min-width: 300px">
+    <Column :header="t('torrent.properties')" style="min-width: 300px">
       <template #body="slotProps">
         <a
           :href="
@@ -62,46 +62,46 @@
         </a>
       </template>
     </Column>
-    <Column :header="$t('general.uploaded')">
+    <Column :header="t('general.uploaded')">
       <template #body="slotProps">
-        {{ $timeAgo(slotProps.data.created_at) }}
+        {{ timeAgo(slotProps.data.created_at) }}
       </template>
     </Column>
     <Column header="">
       <template #body="slotProps">
         <i
-          v-tooltip.top="$t('torrent.download')"
+          v-tooltip.top="t('torrent.download')"
           class="action pi pi-download"
           @click="downloadTorrent(slotProps.data.id)"
         />
         <i
-          v-tooltip.top="$t('general.report')"
+          v-tooltip.top="t('general.report')"
           class="action pi pi-flag"
           @click="reportTorrent(slotProps.data.id)"
         />
-        <i v-tooltip.top="$t('torrent.copy_permalink')" class="action pi pi-link" />
-        <i v-tooltip.top="$t('general.edit')" class="action pi pi-pen-to-square" />
+        <i v-tooltip.top="t('torrent.copy_permalink')" class="action pi pi-link" />
+        <i v-tooltip.top="t('general.edit')" class="action pi pi-pen-to-square" />
       </template>
     </Column>
-    <Column :header="$t('torrent.size')">
-      <template #body="slotProps"> {{ $bytesToReadable(slotProps.data.size) }} </template>
+    <Column :header="t('torrent.size')">
+      <template #body="slotProps"> {{ bytesToReadable(slotProps.data.size) }} </template>
     </Column>
     <!-- TODO: replace with real data from the tracker -->
     <Column style="width: 2.5em">
       <template #header>
-        <i class="pi pi-replay" v-tooltip.top="$t('torrent.completed')" />
+        <i class="pi pi-replay" v-tooltip.top="t('torrent.completed')" />
       </template>
       <template #body>10</template>
     </Column>
     <Column style="width: 2.5em">
       <template #header>
-        <i class="pi pi-arrow-up" v-tooltip.top="$t('torrent.seeders')" />
+        <i class="pi pi-arrow-up" v-tooltip.top="t('torrent.seeders')" />
       </template>
       <template #body><span style="color: green">5</span></template>
     </Column>
     <Column style="width: 2.5em">
       <template #header>
-        <i class="pi pi-arrow-down" v-tooltip.top="$t('torrent.leechers')" />
+        <i class="pi pi-arrow-down" v-tooltip.top="t('torrent.leechers')" />
       </template>
       <template #body>0</template>
     </Column>
@@ -117,7 +117,7 @@
           <AccordionHeader>Report information</AccordionHeader>
           <AccordionContent>
             <div class="report" v-for="report in slotProps.data.reports" :key="report.id">
-              <span class="bold">{{ $timeAgo(report.reported_at) }}</span
+              <span class="bold">{{ timeAgo(report.reported_at) }}</span
               >: {{ report.description }}
             </div>
           </AccordionContent>
@@ -129,7 +129,7 @@
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel v-if="slotProps.data.description" value="2">
-          <AccordionHeader>{{ $t('general.description') }}</AccordionHeader>
+          <AccordionHeader>{{ t('general.description') }}</AccordionHeader>
           <AccordionContent>
             <BBCodeRenderer :content="slotProps.data.description" />
           </AccordionContent>
@@ -138,7 +138,7 @@
           v-if="slotProps.data.screenshots && slotProps.data.screenshots.length > 0"
           value="3"
         >
-          <AccordionHeader>{{ $t('general.screenshots') }}</AccordionHeader>
+          <AccordionHeader>{{ t('general.screenshots') }}</AccordionHeader>
           <AccordionContent>
             <div class="screenshots-container">
               <div
@@ -156,16 +156,16 @@
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel value="4">
-          <AccordionHeader>{{ $t('torrent.file_list') }}</AccordionHeader>
+          <AccordionHeader>{{ t('torrent.file_list') }}</AccordionHeader>
           <AccordionContent>
             <DataTable :value="slotProps.data.file_list.files" tableStyle="min-width: 50rem">
               <Column
                 field="name"
                 :header="(slotProps.data.file_list.parent_folder ?? '') + '/'"
               ></Column>
-              <Column field="size" :header="$t('torrent.size')">
+              <Column field="size" :header="t('torrent.size')">
                 <template #body="slotProps">
-                  {{ $bytesToReadable(slotProps.data.size) }}
+                  {{ bytesToReadable(slotProps.data.size) }}
                 </template>
               </Column>
             </DataTable>
@@ -177,7 +177,7 @@
   <Dialog
     closeOnEscape
     modal
-    :header="$t('torrent.report_torrent')"
+    :header="t('torrent.report_torrent')"
     v-model:visible="reportTorrentDialogVisible"
   >
     <ReportTorrentDialog :torrentId="reportingTorrentId" @reported="torrentReported" />
@@ -206,8 +206,9 @@ import {
   type TorrentReport,
 } from '@/services/api/torrentService'
 import { useRoute } from 'vue-router'
-import { getEditionGroupSlug } from '@/services/helpers'
+import { bytesToReadable, getEditionGroupSlug, timeAgo } from '@/services/helpers'
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
@@ -215,6 +216,8 @@ interface Props {
   sortBy?: string
 }
 const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
+
+const { t } = useI18n()
 
 const reportTorrentDialogVisible = ref(false)
 const expandedRows = ref<TorrentHierarchyLite[]>([])

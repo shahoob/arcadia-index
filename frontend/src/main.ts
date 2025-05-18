@@ -11,7 +11,6 @@ import './assets/main.css'
 import Tooltip from 'primevue/tooltip'
 import ToastService from 'primevue/toastservice'
 import { definePreset } from '@primeuix/themes'
-import * as helpers from './services/helpers'
 import { createI18n } from 'vue-i18n'
 import en from './i18n/en.json'
 import fr from './i18n/fr.json'
@@ -54,9 +53,5 @@ app.use(router)
 app.use(i18n)
 app.use(ToastService)
 app.directive('tooltip', Tooltip)
-
-Object.keys(helpers).forEach((key) => {
-  app.config.globalProperties[`$${key}`] = helpers[key as keyof typeof helpers]
-})
 
 app.mount('#app')

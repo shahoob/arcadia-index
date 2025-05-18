@@ -52,6 +52,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/forum/post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["add_forum_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/gift": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["send_gift"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/invitation": {
         parameters: {
             query?: never;
@@ -271,7 +303,7 @@ export interface paths {
         get: operations["download_dottorrent_file"];
         put?: never;
         post: operations["upload_torrent"];
-        delete?: never;
+        delete: operations["delete_torrent"];
         options?: never;
         head?: never;
         patch?: never;
@@ -309,6 +341,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/torrent/top": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_top_torrents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/user": {
         parameters: {
             query?: never;
@@ -319,6 +367,22 @@ export interface paths {
         get: operations["get_user"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/warn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["warn_user"];
         delete?: never;
         options?: never;
         head?: never;
@@ -478,9 +542,43 @@ export interface components {
         };
         /** @enum {string} */
         Features: "HDR" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
+        ForumPost: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            forum_thread_id: number;
+            /** Format: int64 */
+            id: number;
+            sticky: boolean;
+            /** Format: date-time */
+            updated_at: string;
+        };
         GetArtistPublicationsQuery: {
             /** Format: int64 */
             id: number;
+        };
+        GetTopTorrentsQuery: {
+            /** Format: int64 */
+            amount: number;
+            period: string;
+        };
+        Gift: {
+            /** Format: int64 */
+            bonus_points: number;
+            /** Format: int32 */
+            freeleech_tokens: number;
+            /** Format: int64 */
+            id: number;
+            message: string;
+            /** Format: int64 */
+            receiver_id: number;
+            /** Format: int64 */
+            sender_id: number;
+            /** Format: date-time */
+            sent_at: string;
         };
         Invitation: {
             /** Format: date-time */
@@ -535,6 +633,7 @@ export interface components {
         Profile: {
             peers: components["schemas"]["Peer"][];
             user: components["schemas"]["User"];
+            user_warnings: components["schemas"]["UserWarning"][];
         };
         PublicProfile: {
             user: components["schemas"]["PublicUser"];
@@ -596,6 +695,7 @@ export interface components {
             /** Format: int64 */
             uploaded: number;
             username: string;
+            warned: boolean;
         };
         Register: {
             email: string;
@@ -988,6 +1088,12 @@ export interface components {
         TorrentSearchResults: {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
         };
+        TorrentToDelete: {
+            displayed_reason?: string | null;
+            /** Format: int64 */
+            id: number;
+            reason: string;
+        };
         UploadedTorrent: {
             /** Format: int32 */
             audio_bitrate: number;
@@ -1080,6 +1186,7 @@ export interface components {
             /** Format: int64 */
             uploaded: number;
             username: string;
+            warned: boolean;
         };
         UserCreatedAffiliatedArtist: {
             /** Format: int64 */
@@ -1109,6 +1216,20 @@ export interface components {
             /** Format: int64 */
             title_group_id?: number | null;
         };
+        UserCreatedForumPost: {
+            content: string;
+            /** Format: int64 */
+            forum_thread_id: number;
+        };
+        UserCreatedGift: {
+            /** Format: int64 */
+            bonus_points: number;
+            /** Format: int32 */
+            freeleech_tokens: number;
+            message: string;
+            /** Format: int64 */
+            receiver_id: number;
+        };
         UserCreatedMasterGroup: {
             name?: string | null;
         };
@@ -1120,9 +1241,7 @@ export interface components {
             tags: string[];
         };
         UserCreatedTitleGroup: {
-            affiliated_artists: {
-                [key: string]: string;
-            };
+            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
@@ -1187,6 +1306,13 @@ export interface components {
             /** Format: int64 */
             torrent_request_id: number;
         };
+        UserCreatedUserWarning: {
+            /** Format: date-time */
+            expires_at: string;
+            reason: string;
+            /** Format: int64 */
+            user_id: number;
+        };
         UserLite: {
             /** Format: int64 */
             id: number;
@@ -1197,6 +1323,20 @@ export interface components {
             /** Format: int64 */
             id: number;
             username: string;
+            warned: boolean;
+        };
+        UserWarning: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: date-time */
+            expires_at: string;
+            /** Format: int64 */
+            id: number;
+            reason: string;
+            /** Format: int64 */
+            user_id: number;
         };
         /** @enum {string} */
         VideoCodec: "mpeg1" | "mpeg2" | "Xvid" | "divX" | "h264" | "h265" | "vc-1" | "vp9" | "BD50" | "UHD100";
@@ -1299,6 +1439,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EditionGroup"];
+                };
+            };
+        };
+    };
+    add_forum_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedForumPost"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the forum post */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForumPost"];
+                };
+            };
+        };
+    };
+    send_gift: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedGift"];
+            };
+        };
+        responses: {
+            /** @description Successfully sent the gift */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Gift"];
                 };
             };
         };
@@ -1711,6 +1899,28 @@ export interface operations {
             };
         };
     };
+    delete_torrent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TorrentToDelete"];
+            };
+        };
+        responses: {
+            /** @description Torrent deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     add_torrent_request: {
         parameters: {
             query?: never;
@@ -1759,6 +1969,29 @@ export interface operations {
             };
         };
     };
+    get_top_torrents: {
+        parameters: {
+            query: {
+                period: string;
+                amount: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Top torrents found (and their title/edition group), sorted by amount of users who seeded at some point in time */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TorrentSearchResults"];
+                };
+            };
+        };
+    };
     get_user: {
         parameters: {
             query: {
@@ -1777,6 +2010,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicProfile"];
+                };
+            };
+        };
+    };
+    warn_user: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedUserWarning"];
+            };
+        };
+        responses: {
+            /** @description Successfully warned the user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserWarning"];
                 };
             };
         };
