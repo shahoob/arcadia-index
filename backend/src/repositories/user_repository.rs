@@ -24,7 +24,6 @@ pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
                 class,
                 forum_posts,
                 forum_threads,
-                group_comments,
                 torrent_comments,
                 request_comments,
                 artist_comments,

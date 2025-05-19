@@ -18,7 +18,6 @@ CREATE TABLE users (
     class VARCHAR(50) NOT NULL DEFAULT 'newbie',
     forum_posts INTEGER NOT NULL DEFAULT 0,
     forum_threads INTEGER NOT NULL DEFAULT 0,
-    group_comments INTEGER NOT NULL DEFAULT 0,
     torrent_comments INTEGER NOT NULL DEFAULT 0,
     request_comments INTEGER NOT NULL DEFAULT 0,
     artist_comments BIGINT NOT NULL DEFAULT 0,

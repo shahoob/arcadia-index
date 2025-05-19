@@ -30,11 +30,11 @@ COPY public._sqlx_migrations (version, description, installed_on, success, check
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.users (id, username, avatar, email, password_hash, registered_from_ip, created_at, description, uploaded, real_uploaded, downloaded, real_downloaded, ratio, required_ratio, last_seen, class, forum_posts, forum_threads, group_comments, torrent_comments, request_comments, artist_comments, seeding, leeching, snatched, seeding_size, requests_filled, collages_started, requests_voted, average_seeding_time, invited, invitations, bonus_points, freeleech_tokens, settings, passkey_upper, passkey_lower, warned) FROM stdin;
-2	waterbottle	https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg	user2@example.com	hashedpassword2	192.168.1.2	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	5493004881313328037	2566432999990446913	f
-3	coolguy	https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg	user3@example.com	hashedpassword3	192.168.1.3	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	2274483400846363122	1270934296711348124	f
-1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-04-21 12:07:33.795558+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
-4	test	\N	test@test.tsttt	$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M	127.0.0.1	2025-04-10 19:15:51.036818+00		0	0	1	1	0	0	2025-05-17 07:50:13.218053+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-7167291202215854785	1526268353104531819	f
+COPY public.users (id, username, avatar, email, password_hash, registered_from_ip, created_at, description, uploaded, real_uploaded, downloaded, real_downloaded, ratio, required_ratio, last_seen, class, forum_posts, forum_threads, torrent_comments, request_comments, artist_comments, seeding, leeching, snatched, seeding_size, requests_filled, collages_started, requests_voted, average_seeding_time, invited, invitations, bonus_points, freeleech_tokens, settings, passkey_upper, passkey_lower, warned) FROM stdin;
+2	waterbottle	https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg	user2@example.com	hashedpassword2	192.168.1.2	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	5493004881313328037	2566432999990446913	f
+3	coolguy	https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg	user3@example.com	hashedpassword3	192.168.1.3	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	2274483400846363122	1270934296711348124	f
+1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-04-21 12:07:33.795558+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
+4	test	\N	test@test.tsttt	$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M	127.0.0.1	2025-04-10 19:15:51.036818+00		0	0	1	1	0	0	2025-05-17 07:50:13.218053+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-7167291202215854785	1526268353104531819	f
 \.
 
 
@@ -556,4 +556,3 @@ SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 --
 -- PostgreSQL database dump complete
 --
-

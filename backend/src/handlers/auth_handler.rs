@@ -158,6 +158,8 @@ pub async fn validate_bearer_auth(
 
     let user_id = token_data.claims.sub;
 
+    // TODO: only do this if the call comes from the website (with origin set to the site's url)
+    // if the user uses the api for scripting, it shouldn't bee counted as "seen"
     let _ = crate::repositories::user_repository::update_last_seen(&arc.pool, user_id).await;
 
     req.extensions_mut()

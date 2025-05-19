@@ -24,6 +24,9 @@
     "link": "Link | Links",
     "report": "Report",
     "uploaded": "Uploaded",
+    "uploaded_real": "Uploaded (real)",
+    "downloaded": "Downloaded",
+    "downloaded_real": "Downloaded (real)",
     "language": "Language | Languages",
     "search_terms": "Search terms",
     "search": "Search"
@@ -59,10 +62,26 @@
     "password": "Password",
     "password_verify": "Verify password",
     "email": "E-mail",
-    "user": "User | Users"
+    "user": "User | Users",
+    "class": "Class",
+    "joined_at": "Joined",
+    "last_seen": "Last seen",
+    "bonus_points": "Bonus points",
+    "invited": "Invited",
+    "seeding_size": "Seeding size"
   },
   "community": {
-    "new_comment": "New comment"
+    "new_comment": "New comment",
+    "community": "Community",
+    "artist_comments": "Artist comments",
+    "forum_posts": "Forum posts",
+    "forum_threads": "Forum threads",
+    "torrent_comments": "Torrent comments",
+    "request_comments": "Request comments",
+    "request_voted": "Request voted",
+    "request_filled": "Request filled",
+    "statistics": "Statistics",
+    "collages_started": "Collages started"
   },
   "master_group": {
     "master_group_id": "Master group id",

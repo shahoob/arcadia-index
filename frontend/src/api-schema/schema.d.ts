@@ -658,8 +658,6 @@ export interface components {
             forum_posts: number;
             /** Format: int32 */
             forum_threads: number;
-            /** Format: int32 */
-            group_comments: number;
             /** Format: int64 */
             id: number;
             /** Format: int32 */
@@ -1141,8 +1139,6 @@ export interface components {
             forum_threads: number;
             /** Format: int32 */
             freeleech_tokens: number;
-            /** Format: int32 */
-            group_comments: number;
             /** Format: int64 */
             id: number;
             /** Format: int32 */

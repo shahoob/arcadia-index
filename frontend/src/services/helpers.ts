@@ -10,6 +10,15 @@ export const timeAgo = (date: string) => {
         ? `${Math.floor(diff / 3600)}h ago`
         : `${Math.floor(diff / 86400)}d ago`
 }
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const time = date.toLocaleTimeString('en-US', {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+  return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}, ${time}`
+}
 export const bytesToReadable = (bytes: number): string => {
   const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB']
   let size = bytes

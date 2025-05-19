@@ -33,15 +33,14 @@ const isAppReady = ref(false)
 const route = useRoute()
 const router = useRouter()
 
-router.isReady().then(() => {
+router.isReady().then(async () => {
   const user = localStorage.getItem('user')
   if (user && route.path !== '/login' && route.path !== '/register') {
     // refresh user on page reload
-    getMe().then((profile) => {
-      localStorage.setItem('user', JSON.stringify(profile.user))
-      const userStore = useUserStore()
-      userStore.setUser(profile.user)
-    })
+    const profile = await getMe()
+    localStorage.setItem('user', JSON.stringify(profile.user))
+    const userStore = useUserStore()
+    userStore.setUser(profile.user)
   } else {
     router.push('/login')
   }
