@@ -69,7 +69,7 @@ defineProps<{
 
 <style scoped>
 .stats-container {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 </style>
 <style>
