@@ -31,7 +31,7 @@
       {{ t('user.seeding_size') }}: {{ bytesToReadable(user.seeding_size) }}
       <br />
     </ContentContainer>
-    <ContentContainer :container-title="t('community.community')">
+    <ContentContainer :container-title="t('community.community')" class="stats-container">
       {{ t('community.forum_threads') }}: {{ user.forum_threads }}
       <br />
       {{ t('community.forum_posts') }}: {{ user.forum_posts }}

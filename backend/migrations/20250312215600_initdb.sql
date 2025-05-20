@@ -1,3 +1,7 @@
+-- CREATE TYPE user_class_enum AS ENUM (
+--     'newbie',
+--     'staff'
+-- );
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(20) UNIQUE NOT NULL,
@@ -588,6 +592,7 @@ CREATE TABLE forum_threads (
     created_by_id BIGINT NOT NULL,
     posts_amount BIGINT NOT NULL DEFAULT 0,
     sticky BOOLEAN NOT NULL DEFAULT FALSE,
+    locked BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_sub_category_id) REFERENCES forum_sub_categories(id)

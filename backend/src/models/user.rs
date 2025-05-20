@@ -33,6 +33,19 @@ use super::peer::Peer;
 //     pub site_appearance: SiteAppearanceSettings,
 // }
 
+// causes errors
+// https://github.com/launchbadge/sqlx/issues/3869
+// #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
+// #[sqlx(type_name = "user_class_enum")]
+// pub enum UserClass {
+//     #[sqlx(rename = "newbie")]
+//     #[serde(rename = "newbie")]
+//     Newbie,
+//     #[sqlx(rename = "staff")]
+//     #[serde(rename = "staff")]
+//     Staff,
+// }
+
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct User {
     pub id: i64,

@@ -24,3 +24,17 @@ pub async fn add_forum_post(
 
     Ok(HttpResponse::Created().json(forum_post))
 }
+
+// #[utoipa::path(
+//     get,
+//     path = "/api/forum",
+//     responses(
+//         (status = 200, description = "Returns the forum's categories and subcategories"),
+//     )
+// )]
+// pub async fn get_forum(arc: web::Data<Arcadia>, current_user: User) -> Result<HttpResponse> {
+//     //TODO: protect route based on forbidden_classes
+//     let forum_post = create_forum_post(&arc.pool, &forum_post, current_user.id).await?;
+
+//     Ok(HttpResponse::Created().json(forum_post))
+// }

@@ -22,6 +22,7 @@ pub struct ForumSubCategory {
     pub created_by_id: i64,
     pub threads_amount: i64,
     pub posts_amount: i64,
+    pub forbidden_classes: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
@@ -34,6 +35,7 @@ pub struct ForumThread {
     pub created_by_id: i64,
     pub posts_amount: i64,
     pub sticky: bool,
+    pub locked: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
