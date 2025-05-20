@@ -6,7 +6,7 @@ use crate::handlers::{
     artist_handler::{
         add_affiliated_artists, add_artist, get_artist_publications, get_artists_lite,
     },
-    auth_handler::{login, register, validate_bearer_auth},
+    auth_handler::{login, refresh_token, register, validate_bearer_auth},
     edition_group_handler::add_edition_group,
     forum_handler::add_forum_post,
     gift_handler::send_gift,
@@ -35,6 +35,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .wrap(HttpAuthentication::with_fn(validate_bearer_auth))
             .route("/register", web::post().to(register))
             .route("/login", web::post().to(login))
+            .route("/refresh-token", web::post().to(refresh_token))
             .route("/user", web::get().to(get_user))
             .route("/user/warn", web::post().to(warn_user))
             .route("/me", web::get().to(get_me))

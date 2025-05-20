@@ -24,8 +24,8 @@ use crate::{
         torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{
-            Login, Profile, PublicProfile, PublicUser, Register, User, UserCreatedUserWarning,
-            UserWarning,
+            Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken, Register, User,
+            UserCreatedUserWarning, UserWarning,
         },
     },
 };
@@ -36,6 +36,7 @@ use crate::{
     paths(
         crate::handlers::auth_handler::register,
         crate::handlers::auth_handler::login,
+        crate::handlers::auth_handler::refresh_token,
         crate::handlers::artist_handler::get_artist_publications,
         crate::handlers::artist_handler::add_artist,
         crate::handlers::artist_handler::add_affiliated_artists,
@@ -69,6 +70,8 @@ use crate::{
         Register,
         RegisterQuery,
         Login,
+        LoginResponse,
+        RefreshToken,
         GetArtistPublicationsQuery,
         DownloadTorrentQuery,
         TorrentSearch,

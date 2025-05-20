@@ -112,6 +112,9 @@ pub enum Error {
     #[error("wrong username or password")]
     WrongUsernameOrPassword,
 
+    #[error("invalid or expired refresh token")]
+    InvalidOrExpiredRefreshToken,
+
     #[error("unsupported notification type '{0}'")]
     UnsupportedNotification(String),
 

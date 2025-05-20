@@ -105,10 +105,21 @@ pub struct Login {
     pub remember_me: bool,
 }
 
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct LoginResponse {
+    pub token: String,
+    pub refresh_token: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: i64,
     pub exp: usize,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct RefreshToken {
+    pub refresh_token: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
