@@ -9,9 +9,9 @@ use actix_web::{
     },
     test, web,
 };
-use arcadia_backend::{Arcadia, OpenSignups};
+use arcadia_backend::{Arcadia, OpenSignups, models::user::LoginResponse};
 use reqwest::Url;
-use serde::{Deserialize, de::DeserializeOwned};
+use serde::de::DeserializeOwned;
 use sqlx::PgPool;
 
 pub async fn create_test_app(
@@ -70,23 +70,10 @@ pub async fn create_test_app_and_login(
         }))
         .to_request();
 
-    #[derive(PartialEq, Deserialize)]
-    struct UserResponse {
-        username: String,
-        id: i64,
-        avatar: Option<String>,
-    }
-
-    #[derive(PartialEq, Deserialize)]
-    struct LoginResponse {
-        token: String,
-        user: UserResponse,
-    }
-
     let user = call_and_read_body_json::<LoginResponse, _>(&service, req).await;
 
     assert!(!user.token.is_empty());
-    assert_eq!(user.user.username, "test_user");
+    assert!(!user.refresh_token.is_empty());
 
     (service, (AUTHORIZATION, format!("Bearer {}", user.token)))
 }
