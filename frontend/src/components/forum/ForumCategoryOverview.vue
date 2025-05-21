@@ -1,8 +1,20 @@
 <template>
   <div class="title">{{ forumCategory.name }}</div>
   <DataTable :value="forumCategory.sub_categories">
-    <Column field="name" :header="t('general.name')" />
-    <Column field="latest_post_in_thread.name" :header="t('forum.latest_post')" />
+    <Column field="name" :header="t('general.name')">
+      <template #body="slotProps">
+        <RouterLink :to="'/forum/sub-category/' + slotProps.data.id">
+          {{ slotProps.data.name }}
+        </RouterLink>
+      </template>
+    </Column>
+    <Column field="latest_post_in_thread.name" :header="t('forum.latest_post')">
+      <template #body="slotProps">
+        <RouterLink :to="'/forum/thread/' + slotProps.data.latest_post_in_thread.id">
+          {{ slotProps.data.latest_post_in_thread.name }}
+        </RouterLink>
+      </template>
+    </Column>
     <Column field="latest_post_in_thread.created_at">
       <template #body="slotProps">
         {{ timeAgo(slotProps.data.latest_post_in_thread.created_at) }} {{ t('general.by') }}
@@ -31,4 +43,10 @@ defineProps<{
 const { t } = useI18n()
 </script>
 
-<style scoped></style>
+<style scoped>
+.title {
+  font-weight: bold;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+</style>

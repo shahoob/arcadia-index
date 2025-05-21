@@ -580,6 +580,7 @@ CREATE TABLE forum_sub_categories (
     created_by_id BIGINT NOT NULL,
     threads_amount BIGINT NOT NULL DEFAULT 0,
     posts_amount BIGINT NOT NULL DEFAULT 0,
+    forbidden_classes VARCHAR(50) [] NOT NULL DEFAULT ARRAY[]::VARCHAR(50)[],
 
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_category_id) REFERENCES forum_categories(id)

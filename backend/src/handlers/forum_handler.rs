@@ -1,12 +1,16 @@
 use crate::{
     Arcadia, Result,
     models::{
-        forum::{ForumOverview, ForumPost, UserCreatedForumPost},
+        forum::{ForumOverview, ForumPost, ForumSubCategoryHierarchy, UserCreatedForumPost},
         user::User,
     },
-    repositories::forum_repository::{create_forum_post, find_forum_overview},
+    repositories::forum_repository::{
+        create_forum_post, find_forum_overview, find_forum_sub_category_threads,
+    },
 };
 use actix_web::{HttpResponse, web};
+use serde::Deserialize;
+use utoipa::IntoParams;
 
 #[utoipa::path(
     post,
@@ -34,7 +38,30 @@ pub async fn add_forum_post(
 )]
 pub async fn get_forum(arc: web::Data<Arcadia>) -> Result<HttpResponse> {
     //TODO: restrict access to some sub_categories based on forbidden_classes
-    let forum_post = find_forum_overview(&arc.pool).await?;
+    let forum_overview = find_forum_overview(&arc.pool).await?;
 
-    Ok(HttpResponse::Ok().json(forum_post))
+    Ok(HttpResponse::Ok().json(forum_overview))
+}
+
+#[derive(Debug, Deserialize, IntoParams)]
+pub struct GetForumSubCategoryThreadsQuery {
+    id: i32,
+}
+
+#[utoipa::path(
+    get,
+    params(GetForumSubCategoryThreadsQuery),
+    path = "/api/forum/sub-category",
+    responses(
+        (status = 200, description = "Returns the threads in the forum sub-category", body=ForumSubCategoryHierarchy),
+    )
+)]
+pub async fn get_forum_sub_category_threads(
+    arc: web::Data<Arcadia>,
+    query: web::Query<GetForumSubCategoryThreadsQuery>,
+) -> Result<HttpResponse> {
+    //TODO: restrict access to some sub_categories based on forbidden_classes
+    let threads = find_forum_sub_category_threads(&arc.pool, query.id).await?;
+
+    Ok(HttpResponse::Ok().json(threads))
 }

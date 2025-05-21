@@ -72,6 +72,12 @@ pub struct ForumCategoryHierarchy {
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ForumCategoryLite {
+    pub id: i32,
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct ForumSubCategoryHierarchy {
     pub id: i32,
     pub name: String,
@@ -79,6 +85,20 @@ pub struct ForumSubCategoryHierarchy {
     pub posts_amount: i64,
     pub forbidden_classes: Vec<String>,
     pub latest_post_in_thread: ForumThreadPostLite,
+    pub threads: Vec<ForumThreadHierarchy>,
+    pub category: ForumCategoryLite,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ForumThreadHierarchy {
+    pub id: i64,
+    pub name: String,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: DateTime<Local>,
+    pub created_by: UserLite,
+    pub posts_amount: i64,
+    pub sticky: bool,
+    pub locked: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]

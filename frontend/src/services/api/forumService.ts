@@ -13,3 +13,18 @@ export const getForum = async (): Promise<ForumOverview> => {
     throw error
   }
 }
+
+export type ForumSubCategoryHierarchy = components['schemas']['ForumSubCategoryHierarchy']
+
+export const getForumSubCategory = async (
+  forumSubCategoryId: number,
+): Promise<ForumSubCategoryHierarchy> => {
+  try {
+    return (
+      await api.get<ForumSubCategoryHierarchy>('/forum/sub-category?id=' + forumSubCategoryId)
+    ).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}

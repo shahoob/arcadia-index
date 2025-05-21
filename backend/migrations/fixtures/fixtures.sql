@@ -22,7 +22,7 @@ SET row_security = off;
 --
 
 COPY public._sqlx_migrations (version, description, installed_on, success, checksum, execution_time) FROM stdin;
-20250312215600	initdb	2025-05-17 07:49:22.688341+00	t	\\x1f240e9eed1cf9143a3f2d0c9dee597237266639f1c5b3424b0b3409cfffb1f4485f9e380c37a4849f88e32ac5ca1a8f	33366282
+20250312215600	initdb	2025-05-21 14:19:44.990784+00	t	\\x6180d4ff89725d79de87e8bd6f6947ddff2c0ffc2dc5a0c6b9b1ca73665362e038fdda1a2cf6d9623f44e6959b570b80	40601008
 \.
 
 
@@ -33,8 +33,8 @@ COPY public._sqlx_migrations (version, description, installed_on, success, check
 COPY public.users (id, username, avatar, email, password_hash, registered_from_ip, created_at, description, uploaded, real_uploaded, downloaded, real_downloaded, ratio, required_ratio, last_seen, class, forum_posts, forum_threads, torrent_comments, request_comments, artist_comments, seeding, leeching, snatched, seeding_size, requests_filled, collages_started, requests_voted, average_seeding_time, invited, invitations, bonus_points, freeleech_tokens, settings, passkey_upper, passkey_lower, warned) FROM stdin;
 2	waterbottle	https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg	user2@example.com	hashedpassword2	192.168.1.2	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	5493004881313328037	2566432999990446913	f
 3	coolguy	https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg	user3@example.com	hashedpassword3	192.168.1.3	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	2274483400846363122	1270934296711348124	f
-1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-04-21 12:07:33.795558+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
 4	test	\N	test@test.tsttt	$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M	127.0.0.1	2025-04-10 19:15:51.036818+00		0	0	1	1	0	0	2025-05-17 07:50:13.218053+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-7167291202215854785	1526268353104531819	f
+1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-05-21 15:02:40.360292+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
 \.
 
 
@@ -191,8 +191,8 @@ COPY public.forum_categories (id, name, created_at, created_by_id) FROM stdin;
 -- Data for Name: forum_sub_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.forum_sub_categories (id, forum_category_id, name, created_at, created_by_id, threads_amount, posts_amount) FROM stdin;
-4	2	Announcements	2025-05-15 13:21:26.539012+00	1	0	0
+COPY public.forum_sub_categories (id, forum_category_id, name, created_at, created_by_id, threads_amount, posts_amount, forbidden_classes) FROM stdin;
+4	2	Announcements	2025-05-15 13:21:26.539012+00	1	1	1	{}
 \.
 
 
@@ -200,8 +200,8 @@ COPY public.forum_sub_categories (id, forum_category_id, name, created_at, creat
 -- Data for Name: forum_threads; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_by_id, posts_amount, sticky) FROM stdin;
-1	4	Welcome to the site	2025-05-15 13:23:37.770668+00	1	0	f
+COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_by_id, posts_amount, sticky, locked) FROM stdin;
+1	4	Welcome to the site	2025-05-15 13:23:37.770668+00	1	0	f	f
 \.
 
 
@@ -556,3 +556,4 @@ SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 --
 -- PostgreSQL database dump complete
 --
+
