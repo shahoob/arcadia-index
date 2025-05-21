@@ -17,6 +17,12 @@ Install the dependencies:
 npm install
 ```
 
+Create a `.env` file from the template and update the values if needed:
+
+```
+cp .env.example .env
+```
+
 Launch the server:
 
 ```
