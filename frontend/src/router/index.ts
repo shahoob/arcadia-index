@@ -61,6 +61,11 @@ const router = createRouter({
       name: 'User',
       component: () => import('../views/UserView.vue'),
     },
+    {
+      path: '/forum',
+      name: 'Forum',
+      component: () => import('../views/ForumView.vue'),
+    },
   ],
 })
 

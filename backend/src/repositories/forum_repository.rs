@@ -1,3 +1,4 @@
+use serde_json::Value;
 use sqlx::PgPool;
 
 use crate::{
@@ -49,4 +50,76 @@ pub async fn create_forum_post(
     .await
     .map_err(Error::CouldNotCreateForumPost)?;
     Ok(forum_post)
+}
+
+pub async fn find_forum_overview(pool: &PgPool) -> Result<Value> {
+    let forum_overview = sqlx::query!(
+        r#"
+        SELECT
+            json_build_object(
+                'forum_categories', json_agg(
+                    json_build_object(
+                        'id', fc.id,
+                        'name', fc.name,
+                        'sub_categories', (
+                            SELECT
+                                json_agg(
+                                    json_build_object(
+                                        'id', fsc.id,
+                                        'name', fsc.name,
+                                        'threads_amount', fsc.threads_amount,
+                                        'posts_amount', fsc.posts_amount,
+                                        'forbidden_classes', '[]'::jsonb,
+                                        'latest_post_in_thread', CASE
+                                            WHEN ft.id IS NOT NULL THEN json_build_object(
+                                                'id', ft.id,
+                                                'name', ft.name,
+                                                'created_at', ft.latest_post_created_at,
+                                                'created_by', json_build_object( -- Changed to a JSON object for user details
+                                                    'id', ft.latest_post_created_by_id,
+                                                    'username', ft.latest_post_created_by_username
+                                                ),
+                                                'posts_amount', ft.posts_amount
+                                            )
+                                            ELSE NULL
+                                        END
+                                    ) ORDER BY fsc.name
+                                )
+                            FROM
+                                forum_sub_categories fsc
+                            LEFT JOIN LATERAL (
+                                SELECT
+                                    ft_with_latest_post.id,
+                                    ft_with_latest_post.name,
+                                    ft_with_latest_post.posts_amount,
+                                    fp_latest.created_at AS latest_post_created_at,
+                                    fp_latest.created_by_id AS latest_post_created_by_id,
+                                    u.username AS latest_post_created_by_username -- Joined to get the username
+                                FROM
+                                    forum_posts fp_latest
+                                JOIN
+                                    forum_threads ft_with_latest_post ON fp_latest.forum_thread_id = ft_with_latest_post.id
+                                JOIN
+                                    users u ON fp_latest.created_by_id = u.id -- Joined with the users table
+                                WHERE
+                                    ft_with_latest_post.forum_sub_category_id = fsc.id
+                                ORDER BY
+                                    fp_latest.created_at DESC
+                                LIMIT 1
+                            ) AS ft ON TRUE
+                            WHERE
+                                fsc.forum_category_id = fc.id
+                        )
+                    ) ORDER BY fc.name
+                )
+            ) AS forum_overview
+        FROM
+            forum_categories fc;
+        "#
+    )
+    .fetch_one(pool)
+    .await
+    .expect("error getting forums");
+
+    Ok(forum_overview.forum_overview.unwrap())
 }

@@ -29,7 +29,8 @@
     "downloaded_real": "Downloaded (real)",
     "language": "Language | Languages",
     "search_terms": "Search terms",
-    "search": "Search"
+    "search": "Search",
+    "by": "by"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -55,7 +56,10 @@
     "series": "Series"
   },
   "forum": {
-    "forum": "Forum | Forums"
+    "forum": "Forum | Forums",
+    "latest_post": "Latest post",
+    "threads": "Threads",
+    "posts": "Posts"
   },
   "user": {
     "username": "Username",

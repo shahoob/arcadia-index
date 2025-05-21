@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
+use super::user::UserLite;
+
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct ForumCategory {
     pub id: i32,
@@ -55,4 +57,36 @@ pub struct ForumPost {
 pub struct UserCreatedForumPost {
     pub content: String,
     pub forum_thread_id: i64,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ForumOverview {
+    forum_categories: Vec<ForumCategoryHierarchy>,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ForumCategoryHierarchy {
+    pub id: i32,
+    pub name: String,
+    pub sub_categories: Vec<ForumSubCategoryHierarchy>,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ForumSubCategoryHierarchy {
+    pub id: i32,
+    pub name: String,
+    pub threads_amount: i64,
+    pub posts_amount: i64,
+    pub forbidden_classes: Vec<String>,
+    pub latest_post_in_thread: ForumThreadPostLite,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct ForumThreadPostLite {
+    pub id: i64,
+    pub name: String,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: DateTime<Local>,
+    pub created_by: UserLite,
+    pub posts_amount: i64,
 }

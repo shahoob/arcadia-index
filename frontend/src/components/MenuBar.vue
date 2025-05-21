@@ -14,7 +14,7 @@ const menuItems = ref([
   { label: 'Torrents', route: '/torrents' },
   { label: 'Collages', route: '' },
   { label: 'Requests', route: '' },
-  { label: 'Forums', route: '' },
+  { label: 'Forum', route: '/forum' },
   { label: 'IRC', route: '' },
   { label: 'Top', route: '' },
   { label: 'Rules', route: '' },

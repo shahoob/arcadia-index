@@ -1,10 +1,10 @@
 use crate::{
     Arcadia, Result,
     models::{
-        forum::{ForumPost, UserCreatedForumPost},
+        forum::{ForumOverview, ForumPost, UserCreatedForumPost},
         user::User,
     },
-    repositories::forum_repository::create_forum_post,
+    repositories::forum_repository::{create_forum_post, find_forum_overview},
 };
 use actix_web::{HttpResponse, web};
 
@@ -25,16 +25,16 @@ pub async fn add_forum_post(
     Ok(HttpResponse::Created().json(forum_post))
 }
 
-// #[utoipa::path(
-//     get,
-//     path = "/api/forum",
-//     responses(
-//         (status = 200, description = "Returns the forum's categories and subcategories"),
-//     )
-// )]
-// pub async fn get_forum(arc: web::Data<Arcadia>, current_user: User) -> Result<HttpResponse> {
-//     //TODO: protect route based on forbidden_classes
-//     let forum_post = create_forum_post(&arc.pool, &forum_post, current_user.id).await?;
+#[utoipa::path(
+    get,
+    path = "/api/forum",
+    responses(
+        (status = 200, description = "Returns an overview of the forum", body=ForumOverview),
+    )
+)]
+pub async fn get_forum(arc: web::Data<Arcadia>) -> Result<HttpResponse> {
+    //TODO: restrict access to some sub_categories based on forbidden_classes
+    let forum_post = find_forum_overview(&arc.pool).await?;
 
-//     Ok(HttpResponse::Created().json(forum_post))
-// }
+    Ok(HttpResponse::Ok().json(forum_post))
+}

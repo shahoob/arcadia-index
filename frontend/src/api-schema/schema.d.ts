@@ -52,6 +52,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/forum": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_forum"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/forum/post": {
         parameters: {
             query?: never;
@@ -142,6 +158,22 @@ export interface paths {
         get: operations["get_me"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/refresh-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refresh_token"];
         delete?: never;
         options?: never;
         head?: never;
@@ -542,6 +574,15 @@ export interface components {
         };
         /** @enum {string} */
         Features: "HDR" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
+        ForumCategoryHierarchy: {
+            /** Format: int32 */
+            id: number;
+            name: string;
+            sub_categories: components["schemas"]["ForumSubCategoryHierarchy"][];
+        };
+        ForumOverview: {
+            forum_categories: components["schemas"]["ForumCategoryHierarchy"][];
+        };
         ForumPost: {
             content: string;
             /** Format: date-time */
@@ -555,6 +596,27 @@ export interface components {
             sticky: boolean;
             /** Format: date-time */
             updated_at: string;
+        };
+        ForumSubCategoryHierarchy: {
+            forbidden_classes: string[];
+            /** Format: int32 */
+            id: number;
+            latest_post_in_thread: components["schemas"]["ForumThreadPostLite"];
+            name: string;
+            /** Format: int64 */
+            posts_amount: number;
+            /** Format: int64 */
+            threads_amount: number;
+        };
+        ForumThreadPostLite: {
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+            /** Format: int64 */
+            id: number;
+            name: string;
+            /** Format: int64 */
+            posts_amount: number;
         };
         GetArtistPublicationsQuery: {
             /** Format: int64 */
@@ -601,6 +663,10 @@ export interface components {
             password: string;
             remember_me: boolean;
             username: string;
+        };
+        LoginResponse: {
+            refresh_token: string;
+            token: string;
         };
         MasterGroup: {
             /** Format: date-time */
@@ -694,6 +760,9 @@ export interface components {
             uploaded: number;
             username: string;
             warned: boolean;
+        };
+        RefreshToken: {
+            refresh_token: string;
         };
         Register: {
             email: string;
@@ -1439,6 +1508,26 @@ export interface operations {
             };
         };
     };
+    get_forum: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns an overview of the forum */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForumOverview"];
+                };
+            };
+        };
+    };
     add_forum_post: {
         parameters: {
             query?: never;
@@ -1529,7 +1618,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
             };
         };
     };
@@ -1573,6 +1664,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    refresh_token: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefreshToken"];
+            };
+        };
+        responses: {
+            /** @description Successfully refreshed the token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
                 };
             };
         };
