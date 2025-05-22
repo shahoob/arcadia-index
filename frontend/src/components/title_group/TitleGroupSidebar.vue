@@ -96,7 +96,7 @@ defineProps<{
   justify-content: center;
   .affiliated-artist {
     margin: 0px 4px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
 }
 .links {

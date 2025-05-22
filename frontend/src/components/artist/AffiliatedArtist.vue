@@ -8,6 +8,9 @@
     <RouterLink :to="`/artist/${affiliated_artist.artist.id}`">
       <div class="name">{{ affiliated_artist.artist.name }}</div>
     </RouterLink>
+    <span class="nickname" v-if="affiliated_artist.nickname">
+      ({{ affiliated_artist.nickname }})
+    </span>
     <div class="roles">
       <template v-for="(role, i) in affiliated_artist.roles" :key="role">
         <span class="role">{{ t(`artist.role.${role}`) }}</span>
@@ -38,6 +41,9 @@ defineProps<{
 .roles {
   font-size: 0.8em;
   text-align: center;
+}
+.nickname {
+  font-size: 0.8em;
 }
 .role {
   font-weight: bold;
