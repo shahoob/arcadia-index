@@ -28,6 +28,7 @@
     >
       <div class="affiliated-artists">
         <AffiliatedArtist
+          class="affiliated-artist"
           v-for="artist in title_group.affiliated_artists"
           :key="artist.artist_id"
           :affiliated_artist="artist"
@@ -88,6 +89,15 @@ defineProps<{
 }
 .p-galleria {
   border: none;
+}
+.affiliated-artists {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  .affiliated-artist {
+    margin: 0px 4px;
+    margin-bottom: 10px;
+  }
 }
 .links {
   a {

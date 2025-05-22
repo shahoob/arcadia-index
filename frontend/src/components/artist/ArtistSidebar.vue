@@ -5,7 +5,7 @@
         <i class="pi pi-search"></i>
       </template>
     </Image>
-    <ContentContainer v-if="artist.description">
+    <ContentContainer v-if="artist.description" :container-title="t('general.description')">
       <div class="description">
         <BBCodeRenderer :content="artist.description" />
       </div>
@@ -17,6 +17,9 @@ import ContentContainer from '@/components/ContentContainer.vue'
 import BBCodeRenderer from '@/components/BBCodeRenderer.vue'
 import { type Artist } from '@/services/api/artistService'
 import { Image } from 'primevue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps<{
   artist: Artist
