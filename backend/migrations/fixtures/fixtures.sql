@@ -34,7 +34,7 @@ COPY public.users (id, username, avatar, email, password_hash, registered_from_i
 2	waterbottle	https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg	user2@example.com	hashedpassword2	192.168.1.2	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	5493004881313328037	2566432999990446913	f
 3	coolguy	https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg	user3@example.com	hashedpassword3	192.168.1.3	2025-03-30 16:24:57.388152+00		0	0	1	1	0	0	2025-03-30 16:24:57.388152+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	2274483400846363122	1270934296711348124	f
 4	test	\N	test@test.tsttt	$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M	127.0.0.1	2025-04-10 19:15:51.036818+00		0	0	1	1	0	0	2025-05-17 07:50:13.218053+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-7167291202215854785	1526268353104531819	f
-1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-05-21 15:02:40.360292+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
+1	picolo	https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg	user1@example.com	$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0	192.168.1.1	2025-03-30 16:24:57.388152+00		10000	0	1	1	0	0	2025-05-22 08:07:36.287123+00	newbie	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1000000000	0	{"site_appearance": {"item_detail_layout": "sidebar_right"}}	-197409747985172542	1837889239438807682	f
 \.
 
 
@@ -184,6 +184,7 @@ COPY public.edition_groups (id, title_group_id, name, release_date, created_at, 
 
 COPY public.forum_categories (id, name, created_at, created_by_id) FROM stdin;
 2	Arcadia	2025-05-15 13:19:15.64232+00	1
+3	Community	2025-05-22 08:01:35.753162+00	1
 \.
 
 
@@ -193,6 +194,8 @@ COPY public.forum_categories (id, name, created_at, created_by_id) FROM stdin;
 
 COPY public.forum_sub_categories (id, forum_category_id, name, created_at, created_by_id, threads_amount, posts_amount, forbidden_classes) FROM stdin;
 4	2	Announcements	2025-05-15 13:21:26.539012+00	1	1	1	{}
+5	3	Lounge	2025-05-22 08:02:15.125336+00	1	1	1	{}
+7	3	Technology	2025-05-22 08:05:01.192217+00	1	1	1	{}
 \.
 
 
@@ -201,7 +204,9 @@ COPY public.forum_sub_categories (id, forum_category_id, name, created_at, creat
 --
 
 COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_by_id, posts_amount, sticky, locked) FROM stdin;
-1	4	Welcome to the site	2025-05-15 13:23:37.770668+00	1	0	f	f
+1	4	Welcome to the site	2025-05-15 13:23:37.770668+00	1	1	f	f
+2	5	Hello everyone	2025-05-22 08:03:08.400255+00	1	1	f	f
+5	7	Favorite OS for daily driving	2025-05-22 08:06:06.724797+00	1	1	f	f
 \.
 
 
@@ -211,6 +216,8 @@ COPY public.forum_threads (id, forum_sub_category_id, name, created_at, created_
 
 COPY public.forum_posts (id, forum_thread_id, created_at, updated_at, created_by_id, content, sticky) FROM stdin;
 1	1	2025-05-15 13:24:07.981379+00	2025-05-15 13:24:07.981379+00	1	Welcome to the site everyone !	f
+2	2	2025-05-22 08:03:48.66391+00	2025-05-22 08:03:48.66391+00	1	Hello there, I just joined!	f
+3	5	2025-05-22 08:06:36.225458+00	2025-05-22 08:06:36.225458+00	2	I use arch btw :)	f
 \.
 
 
@@ -417,28 +424,28 @@ SELECT pg_catalog.setval('public.entities_id_seq', 1, false);
 -- Name: forum_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
-SELECT pg_catalog.setval('public.forum_categories_id_seq', 2, true);
+SELECT pg_catalog.setval('public.forum_categories_id_seq', 3, true);
 
 
 --
 -- Name: forum_posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
-SELECT pg_catalog.setval('public.forum_posts_id_seq', 1, true);
+SELECT pg_catalog.setval('public.forum_posts_id_seq', 3, true);
 
 
 --
 -- Name: forum_sub_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
-SELECT pg_catalog.setval('public.forum_sub_categories_id_seq', 4, true);
+SELECT pg_catalog.setval('public.forum_sub_categories_id_seq', 7, true);
 
 
 --
 -- Name: forum_threads_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
-SELECT pg_catalog.setval('public.forum_threads_id_seq', 1, true);
+SELECT pg_catalog.setval('public.forum_threads_id_seq', 5, true);
 
 
 --

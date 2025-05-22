@@ -8,7 +8,7 @@ use crate::handlers::{
     },
     auth_handler::{login, refresh_token, register, validate_bearer_auth},
     edition_group_handler::add_edition_group,
-    forum_handler::{add_forum_post, get_forum, get_forum_sub_category_threads},
+    forum_handler::{add_forum_post, get_forum, get_forum_sub_category_threads, get_forum_thread},
     gift_handler::send_gift,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
@@ -80,6 +80,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 "/forum/sub-category",
                 web::get().to(get_forum_sub_category_threads),
             )
+            .route("/forum/thread", web::get().to(get_forum_thread))
             .route("/forum/post", web::post().to(add_forum_post))
             .route(
                 "/external_db/open_library",

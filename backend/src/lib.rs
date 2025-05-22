@@ -160,6 +160,9 @@ pub enum Error {
     #[error("could not find forum sub-category")]
     CouldNotFindForumSubCategory(#[source] sqlx::Error),
 
+    #[error("could not find forum thread")]
+    CouldNotFindForumThread(#[source] sqlx::Error),
+
     #[error("insufficient privileges")]
     InsufficientPrivileges,
 

@@ -64,12 +64,17 @@ const router = createRouter({
     {
       path: '/forum',
       name: 'Forum',
-      component: () => import('../views/forum/ForumView.vue'),
+      component: () => import('../views/forum/ForumOverviewView.vue'),
     },
     {
       path: '/forum/sub-category/:id',
       name: 'ForumSubCategory',
       component: () => import('../views/forum/ForumSubCategoryView.vue'),
+    },
+    {
+      path: '/forum/thread/:id',
+      name: 'ForumThread',
+      component: () => import('../views/forum/ForumThreadView.vue'),
     },
   ],
 })

@@ -1,6 +1,7 @@
 <template>
   <div v-if="forumOverview">
     <ForumCategoryOverview
+      class="forum-category"
       v-for="category in forumOverview.forum_categories"
       :key="category.id"
       :forum-category="category"
@@ -21,4 +22,8 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.forum-category {
+  margin-bottom: 15px;
+}
+</style>

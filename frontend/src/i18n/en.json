@@ -59,7 +59,8 @@
     "forum": "Forum | Forums",
     "latest_post": "Latest post",
     "threads": "Threads",
-    "posts": "Posts"
+    "posts": "Posts",
+    "new_post": "New post"
   },
   "user": {
     "username": "Username",
@@ -85,7 +86,8 @@
     "request_voted": "Request voted",
     "request_filled": "Request filled",
     "statistics": "Statistics",
-    "collages_started": "Collages started"
+    "collages_started": "Collages started",
+    "invited": "Invited"
   },
   "master_group": {
     "master_group_id": "Master group id",

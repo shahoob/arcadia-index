@@ -1,11 +1,14 @@
 use crate::{
     Arcadia, Result,
     models::{
-        forum::{ForumOverview, ForumPost, ForumSubCategoryHierarchy, UserCreatedForumPost},
+        forum::{
+            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThreadAndPosts,
+            UserCreatedForumPost,
+        },
         user::User,
     },
     repositories::forum_repository::{
-        create_forum_post, find_forum_overview, find_forum_sub_category_threads,
+        create_forum_post, find_forum_overview, find_forum_sub_category_threads, find_forum_thread,
     },
 };
 use actix_web::{HttpResponse, web};
@@ -64,4 +67,27 @@ pub async fn get_forum_sub_category_threads(
     let threads = find_forum_sub_category_threads(&arc.pool, query.id).await?;
 
     Ok(HttpResponse::Ok().json(threads))
+}
+
+#[derive(Debug, Deserialize, IntoParams)]
+pub struct GetForumThreadQuery {
+    id: i64,
+}
+
+#[utoipa::path(
+    get,
+    params(GetForumThreadQuery),
+    path = "/api/forum/thread",
+    responses(
+        (status = 200, description = "Returns the threads and its posts", body=ForumThreadAndPosts),
+    )
+)]
+pub async fn get_forum_thread(
+    arc: web::Data<Arcadia>,
+    query: web::Query<GetForumThreadQuery>,
+) -> Result<HttpResponse> {
+    //TODO: restrict access to some sub_categories based on forbidden_classes
+    let thread = find_forum_thread(&arc.pool, query.id).await?;
+
+    Ok(HttpResponse::Ok().json(thread))
 }

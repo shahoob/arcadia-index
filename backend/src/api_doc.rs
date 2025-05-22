@@ -12,7 +12,10 @@ use crate::{
             ArtistLite,
         },
         edition_group::EditionGroup,
-        forum::{ForumOverview, ForumPost, ForumSubCategoryHierarchy, UserCreatedForumPost},
+        forum::{
+            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThreadAndPosts,
+            UserCreatedForumPost,
+        },
         gift::{Gift, UserCreatedGift},
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
@@ -66,6 +69,7 @@ use crate::{
         crate::handlers::gift_handler::send_gift,
         crate::handlers::forum_handler::get_forum,
         crate::handlers::forum_handler::get_forum_sub_category_threads,
+        crate::handlers::forum_handler::get_forum_thread,
         crate::handlers::forum_handler::add_forum_post,
     ),
     components(schemas(
@@ -116,7 +120,8 @@ use crate::{
         UserWarning,
         UserCreatedUserWarning,
         ForumOverview,
-        ForumSubCategoryHierarchy
+        ForumSubCategoryHierarchy,
+        ForumThreadAndPosts
     ),)
 )]
 pub struct ApiDoc;

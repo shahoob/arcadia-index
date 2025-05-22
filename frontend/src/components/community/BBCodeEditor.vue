@@ -5,7 +5,7 @@
       rows="5"
       style="width: 100%"
       autoResize
-      @value-change="$emit('value-change', content)"
+      @value-change="emit('valueChange', content)"
       name="content"
     />
     <label for="in_label">{{ label }}</label>
@@ -15,10 +15,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { FloatLabel, Textarea } from 'primevue'
+import { watch } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   label: string
+  emptyInput: boolean
+}>()
+
+const emit = defineEmits<{
+  inputEmptied: [boolean]
+  valueChange: [string]
 }>()
 
 const content = ref('')
+
+watch(
+  () => props.emptyInput,
+  (newVal) => {
+    if (newVal) {
+      content.value = ''
+      emit('inputEmptied', true)
+    }
+  },
+)
 </script>

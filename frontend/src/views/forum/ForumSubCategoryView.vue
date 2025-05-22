@@ -7,7 +7,7 @@
     <DataTable :value="forumSubCategory.threads">
       <Column field="name" :header="t('general.name')">
         <template #body="slotProps">
-          <RouterLink :to="'/thread/' + slotProps.data.id">
+          <RouterLink :to="'/forum/thread/' + slotProps.data.id">
             {{ slotProps.data.name }}
           </RouterLink>
         </template>

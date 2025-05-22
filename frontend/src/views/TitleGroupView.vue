@@ -96,7 +96,7 @@
           </div>
         </div>
       </ContentContainer>
-      <GeneralComments :comments="title_group.title_group_comments" />
+      <TitleGroupComments :comments="title_group.title_group_comments" />
     </div>
     <div
       class="sidebar"
@@ -110,7 +110,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
-import GeneralComments from '@/components/community/GeneralComments.vue'
+import TitleGroupComments from '@/components/community/TitleGroupComments.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { getTitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'

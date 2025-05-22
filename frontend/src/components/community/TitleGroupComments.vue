@@ -11,7 +11,12 @@
     :validateOnValueUpdate="false"
   >
     <div class="new-comment">
-      <BBCodeEditor @value-change="newCommentUpdated" :label="t('community.new_comment')" />
+      <BBCodeEditor
+        :empty-input="bbcodeEditorEmptyInput"
+        @value-change="newCommentUpdated"
+        @input-emptied="bbcodeEditorEmptyInput = false"
+        :label="t('community.new_comment')"
+      />
       <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
         {{ $form.content.error?.message }}
       </Message>
@@ -57,6 +62,7 @@ const new_comment = ref<UserCreatedTitleGroupComment>({
   title_group_id: 0,
 })
 const sending_comment = ref(false)
+const bbcodeEditorEmptyInput = ref(false)
 
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroupComment, { message: string }[]>> = {}
@@ -93,6 +99,7 @@ const sendComment = async () => {
   new_comment.value.answers_to_comment_id = null
   // TODO: use created_comment to update the comments list
   // this.comments.push(created_comment)
+  bbcodeEditorEmptyInput.value = true
   sending_comment.value = false
 }
 </script>

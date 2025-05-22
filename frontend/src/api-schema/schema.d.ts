@@ -100,6 +100,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/forum/thread": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_forum_thread"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/gift": {
         parameters: {
             query?: never;
@@ -618,6 +634,19 @@ export interface components {
             /** Format: date-time */
             updated_at: string;
         };
+        ForumPostHierarchy: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLiteAvatar"];
+            /** Format: int64 */
+            forum_thread_id: number;
+            /** Format: int64 */
+            id: number;
+            sticky: boolean;
+            /** Format: date-time */
+            updated_at: string;
+        };
         ForumSubCategoryHierarchy: {
             category: components["schemas"]["ForumCategoryLite"];
             forbidden_classes: string[];
@@ -630,6 +659,22 @@ export interface components {
             threads: components["schemas"]["ForumThreadHierarchy"][];
             /** Format: int64 */
             threads_amount: number;
+        };
+        ForumThreadAndPosts: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int32 */
+            forum_sub_category_id: number;
+            /** Format: int64 */
+            id: number;
+            locked: boolean;
+            name: string;
+            posts: components["schemas"]["ForumPostHierarchy"][];
+            /** Format: int64 */
+            posts_amount: number;
+            sticky: boolean;
         };
         ForumThreadHierarchy: {
             /** Format: date-time */
@@ -1605,6 +1650,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForumSubCategoryHierarchy"];
+                };
+            };
+        };
+    };
+    get_forum_thread: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the threads and its posts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForumThreadAndPosts"];
                 };
             };
         };

@@ -33,7 +33,7 @@
         :options="selectableContentTypes"
         class="select"
         size="small"
-        @update:modelValue="(step = 2) && (manualCreation = false)"
+        @update:modelValue="manualCreation = false"
       >
         <template #option="slotProps">
           <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
@@ -132,18 +132,18 @@
           </IconField>
         </FloatLabel>
       </div>
-      <div v-if="step == 2" class="external-db-inputs" style="margin-left: 5px">
+      <div class="external-db-inputs" style="margin-left: 5px">
         or
         <span
           class="cursor-pointer"
           style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
-          @click="(step = 3) && (manualCreation = true)"
+          @click="(step = 2) && (manualCreation = true)"
         >
           create the title manually
         </span>
       </div>
     </div>
-    <div v-if="step > 2">
+    <div v-if="step > 1">
       <CreateOrEditTitleGroup
         :content_type="content_type"
         @validated="sendTitleGroup"
@@ -219,7 +219,7 @@ const getExternalDBData = (item_id: string | number, database: string) => {
     if (data.edition_group) {
       emit('gotEditionData', data.edition_group)
     }
-    step.value = 3
+    step.value = 2
     gettingExternalDatabaseData = false
   })
 }
