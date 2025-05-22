@@ -119,7 +119,7 @@
               size="small"
               variant="simple"
             >
-              {{ $form.video_codec.error?.message }}
+              {{ $form.video_resolution.error?.message }}
             </Message>
           </div>
           <div>

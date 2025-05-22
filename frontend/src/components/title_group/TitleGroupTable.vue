@@ -34,7 +34,7 @@
             / {{ slotProps.data.video_resolution }}</span
           >
           <span v-if="slotProps.data.audio_codec">
-            <span v-if="title_group.content_type != 'music'">/ </span
+            <span v-if="title_group.content_type != 'music'"> / </span
             >{{ slotProps.data.audio_codec }}</span
           >
           <span v-if="slotProps.data.audio_channels"> / {{ slotProps.data.audio_channels }}</span>
