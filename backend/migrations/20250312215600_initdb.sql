@@ -625,6 +625,10 @@ SELECT
         WHEN t.uploaded_as_anonymous THEN NULL
         ELSE t.created_by_id
     END as created_by_id,
+    CASE
+        WHEN t.uploaded_as_anonymous THEN NULL
+        ELSE json_build_object('id', u.id, 'username', u.username)
+    END AS created_by,
     t.info_hash,
     t.languages,
     t.release_name,
@@ -654,8 +658,12 @@ SELECT
 FROM
     torrents t
 LEFT JOIN
+    users u ON t.created_by_id = u.id
+LEFT JOIN
     torrent_reports tr ON t.id = tr.reported_torrent_id
 GROUP BY
+    t.id, u.id, u.username
+ORDER BY
     t.id;
 
 CREATE OR REPLACE VIEW title_groups_and_edition_group_and_torrents_lite AS

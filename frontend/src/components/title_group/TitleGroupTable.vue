@@ -112,6 +112,13 @@
     </template>
     <template #expansion="slotProps" v-if="!preview">
       <div class="pre-style release-name">{{ slotProps.data.release_name }}</div>
+      <div class="uploader">
+        <span>{{ t('torrent.uploaded_by') }}</span>
+        <RouterLink :to="`/user/${slotProps.data.created_by.id}`" v-if="slotProps.data.created_by">
+          {{ slotProps.data.created_by.username }}
+        </RouterLink>
+        <span v-else>{{ t('general.anonymous') }}</span>
+      </div>
       <Accordion :value="[]" multiple class="dense-accordion">
         <AccordionPanel value="0" v-if="slotProps.data.reports.length !== 0">
           <AccordionHeader>Report information</AccordionHeader>
@@ -122,16 +129,16 @@
             </div>
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel value="1">
-          <AccordionHeader>Mediainfo</AccordionHeader>
-          <AccordionContent>
-            <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
-          </AccordionContent>
-        </AccordionPanel>
         <AccordionPanel v-if="slotProps.data.description" value="2">
           <AccordionHeader>{{ t('general.description') }}</AccordionHeader>
           <AccordionContent>
             <BBCodeRenderer :content="slotProps.data.description" />
+          </AccordionContent>
+        </AccordionPanel>
+        <AccordionPanel value="1">
+          <AccordionHeader>Mediainfo</AccordionHeader>
+          <AccordionContent>
+            <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel
@@ -209,6 +216,7 @@ import { useRoute } from 'vue-router'
 import { bytesToReadable, getEditionGroupSlug, timeAgo } from '@/services/helpers'
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 
 interface Props {
   title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
@@ -296,6 +304,13 @@ const isGrouped = computed(() => sortBy === 'edition')
 .release-name {
   margin-bottom: 10px;
   margin-left: 7px;
+}
+.uploader {
+  margin-left: 7px;
+  margin-bottom: 10px;
+  span {
+    margin-right: 5px;
+  }
 }
 
 .screenshots-container {

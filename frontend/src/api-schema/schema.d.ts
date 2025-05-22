@@ -1106,8 +1106,9 @@ export interface components {
             container: string;
             /** Format: date-time */
             created_at: string;
+            created_by?: null | components["schemas"]["UserLite"];
             /** Format: int64 */
-            created_by_id: number;
+            created_by_id?: number | null;
             description?: string | null;
             /** Format: double */
             download_factor: number;

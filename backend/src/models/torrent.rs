@@ -316,7 +316,8 @@ pub struct TorrentHierarchy {
     pub created_at: DateTime<Local>,
     #[schema(value_type = String, format = DateTime)]
     pub updated_at: DateTime<Local>,
-    pub created_by_id: i64,
+    pub created_by_id: Option<i64>,
+    pub created_by: Option<UserLite>,
     pub release_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,

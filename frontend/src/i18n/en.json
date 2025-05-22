@@ -1,5 +1,6 @@
 {
   "general": {
+    "anonymous": "Anonymous",
     "subscribe": "Subscribe",
     "unsubscribe": "Unsubscribe",
     "bookmark": "Bookmark",
@@ -147,7 +148,8 @@
     "features": "Features",
     "torrent_file": "Torrent file",
     "upload_as_anonymous": "Upload as anonymous",
-    "clients_and_ips": "Clients and IP-Addresses"
+    "clients_and_ips": "Clients and IP-Addresses",
+    "uploaded_by": "Uploaded by"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",
