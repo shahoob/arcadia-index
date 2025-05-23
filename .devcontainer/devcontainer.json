@@ -27,6 +27,19 @@
 			"installDirectlyFromGitHubRelease": true,
 			"version": "latest"
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-containers",
+				"docker.docker",
+				"dotenv.dotenv-vscode",
+				"EditorConfig.EditorConfig",
+				"redhat.vscode-yaml",
+				"Vue.volar",
+				"tamasfe.even-better-toml"
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
