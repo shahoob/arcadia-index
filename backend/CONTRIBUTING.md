@@ -89,7 +89,7 @@ Now when you make changes to the backend, compose will automatically rebuild the
 
 API calls are forwarded to `handlers`, database requests are done by `repositories`, objects are defined by `models`. Directories with those names contain the relevant code.
 
-A swagger for the API is available at `http://localhost:8080/swagger-ui`
+A swagger for the API is available at `http://localhost:8080/swagger-ui/`
 
 If you make changes to structs that are listed in the swagger, you must regenerate the typescript interfaces with this command (from the frontend directory, while the backend is running) :
 
