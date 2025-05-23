@@ -1,8 +1,13 @@
 <template>
   <div v-if="forumSubCategory">
-    <div class="title">
-      <RouterLink to="/forum">{{ forumSubCategory.category.name }}</RouterLink> >
-      <RouterLink to="">{{ forumSubCategory.name }}</RouterLink>
+    <div class="top-bar">
+      <div class="title">
+        <RouterLink to="/forum">{{ forumSubCategory.category.name }}</RouterLink> >
+        <RouterLink to="">{{ forumSubCategory.name }}</RouterLink>
+      </div>
+      <div class="actions">
+        <i v-tooltip.top="t('forum.new_thread')" class="pi pi-plus cursor-pointer" />
+      </div>
     </div>
     <DataTable :value="forumSubCategory.threads">
       <Column field="name" :header="t('general.name')">
@@ -48,6 +53,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
 .title {
   font-weight: bold;
   font-size: 2em;

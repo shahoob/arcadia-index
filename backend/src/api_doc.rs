@@ -14,7 +14,7 @@ use crate::{
         edition_group::EditionGroup,
         forum::{
             ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThreadAndPosts,
-            UserCreatedForumPost,
+            UserCreatedForumPost, UserCreatedForumThread,
         },
         gift::{Gift, UserCreatedGift},
         invitation::{Invitation, SentInvitation},
@@ -70,6 +70,7 @@ use crate::{
         crate::handlers::forum_handler::get_forum,
         crate::handlers::forum_handler::get_forum_sub_category_threads,
         crate::handlers::forum_handler::get_forum_thread,
+        crate::handlers::forum_handler::add_forum_thread,
         crate::handlers::forum_handler::add_forum_post,
     ),
     components(schemas(
@@ -121,7 +122,8 @@ use crate::{
         UserCreatedUserWarning,
         ForumOverview,
         ForumSubCategoryHierarchy,
-        ForumThreadAndPosts
+        ForumThreadAndPosts,
+        UserCreatedForumThread
     ),)
 )]
 pub struct ApiDoc;

@@ -157,6 +157,9 @@ pub enum Error {
     #[error("could not create forum post")]
     CouldNotCreateForumPost(#[source] sqlx::Error),
 
+    #[error("could not create forum thread")]
+    CouldNotCreateForumThread(#[source] sqlx::Error),
+
     #[error("could not find forum sub-category")]
     CouldNotFindForumSubCategory(#[source] sqlx::Error),
 

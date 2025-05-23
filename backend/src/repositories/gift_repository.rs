@@ -1,4 +1,4 @@
-use sqlx::PgPool;
+use sqlx::{PgPool, Postgres, Transaction};
 
 use crate::{
     Error, Result,
@@ -10,9 +10,10 @@ pub async fn create_gift(
     gift: &UserCreatedGift,
     current_user_id: i64,
 ) -> Result<Gift> {
-    // TODO: make this properly atomic with a db transaction
+    let mut tx = pool.begin().await?;
+
     let _ = decrement_bonus_points_and_freeleech_tokens(
-        pool,
+        &mut tx,
         current_user_id,
         gift.bonus_points,
         gift.freeleech_tokens,
@@ -32,15 +33,17 @@ pub async fn create_gift(
         gift.bonus_points,
         gift.freeleech_tokens
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await
     .map_err(Error::CouldNotCreateGift)?;
+
+    tx.commit().await?;
 
     Ok(gift)
 }
 
 pub async fn decrement_bonus_points_and_freeleech_tokens(
-    pool: &PgPool,
+    tx: &mut Transaction<'_, Postgres>,
     current_user_id: i64,
     bonus_points: i64,
     freeleech_tokens: i32,
@@ -55,7 +58,7 @@ pub async fn decrement_bonus_points_and_freeleech_tokens(
         freeleech_tokens,
         current_user_id
     )
-    .execute(pool)
+    .execute(&mut **tx)
     .await?;
 
     Ok(())
