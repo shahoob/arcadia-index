@@ -46,8 +46,10 @@ services:
     ports:
       - '8080:8080'
     env_file:
+      - backend/.env.example
+      - path: backend/.env
+        required: false
       - backend/.env.docker
-      - backend/.env
     depends_on:
       db:
         condition: service_healthy
@@ -65,6 +67,7 @@ services:
         - path: ./backend
           action: restart
           include:
+            - .env.example
             - .env
             - .env.docker
 
