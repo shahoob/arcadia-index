@@ -72,7 +72,7 @@
   <div class="actions">
     <Button
       :label="t('general.preview')"
-      :icon="preview ? 'pi pi-eye-slash' : 'pi pi-eye'"
+      :icon="`pi pi-eye${preview ? '-slash' : ''}`"
       @click="preview = !preview"
     />
     <slot name="buttons"></slot>

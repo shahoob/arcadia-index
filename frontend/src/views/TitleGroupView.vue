@@ -21,13 +21,13 @@
       <TitleGroupSlimHeader v-else :title_group class="slim-header" />
       <div class="actions">
         <div>
+          <i v-if="togglingSubscription" class="pi pi-hourglass" />
           <i
-            v-if="title_group.is_subscribed"
-            v-tooltip.top="t('general.unsubscribe')"
-            @click="unsubscribe"
-            class="pi pi-bell-slash"
+            v-else
+            v-tooltip.top="t(`general.${title_group.is_subscribed ? 'un' : ''}subscribe`)"
+            @click="toggleSubscribtion"
+            :class="`pi pi-bell${title_group.is_subscribed ? '-slash' : ''}`"
           />
-          <i v-else v-tooltip.top="t('general.subscribe')" @click="subscribe" class="pi pi-bell" />
           <i v-tooltip.top="t('general.bookmark')" class="pi pi-bookmark" />
         </div>
         <div>
@@ -130,10 +130,12 @@ import CustomGalleria from '@/components/CustomGalleria.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue/usetoast'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+const toast = useToast()
 
 const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()
@@ -142,6 +144,7 @@ const selectableSortingOptions = ['edition', 'size', 'seeders', 'completed', 'cr
 
 const title_group = ref<TitleGroupAndAssociatedData>()
 const sortBy = ref('edition')
+const togglingSubscription = ref(false)
 
 onMounted(async () => {
   await fetchTitleGroup()
@@ -160,17 +163,28 @@ const uploadTorrent = () => {
   }
 }
 
-const subscribe = async () => {
-  await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
+const toggleSubscribtion = async () => {
   if (title_group.value) {
-    title_group.value.is_subscribed = true
-  }
-}
-
-const unsubscribe = async () => {
-  await unsubscribeToItem(parseInt(route.params.id.toString()), 'title_group')
-  if (title_group.value) {
-    title_group.value.is_subscribed = false
+    togglingSubscription.value = true
+    if (title_group.value.is_subscribed) {
+      await unsubscribeToItem(parseInt(route.params.id.toString()), 'title_group')
+    } else {
+      await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
+    }
+    title_group.value.is_subscribed = !title_group.value.is_subscribed
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: t(
+        `title_group.${
+          title_group.value.is_subscribed
+            ? 'subscription_successfull'
+            : 'unsubscription_successfull'
+        }`,
+      ),
+      life: 3000,
+    })
+    togglingSubscription.value = false
   }
 }
 

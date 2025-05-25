@@ -104,6 +104,8 @@
     "select_title": "Select a title group",
     "create_title": "Create a title group",
     "title_group_id": "Title group id",
+    "subscription_successfull": "Subscription successfull",
+    "unsubscription_successfull": "Unsubscription successfull",
     "content_type": {
       "content_type": "Content type",
       "music": "Music",
