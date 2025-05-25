@@ -1,5 +1,5 @@
 <template>
-  <div class="boilerplate-inserters">
+  <div class="boilerplate-inserters" v-if="!preview">
     <Button size="small" @click="insertBoilerplate('[b][/b]')">
       <template #icon>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.5 0 24 24">
@@ -57,7 +57,7 @@
       </template>
     </Button>
   </div>
-  <FloatLabel style="width: 100%" variant="in">
+  <FloatLabel style="width: 100%" variant="in" v-if="!preview">
     <Textarea
       v-model="content"
       rows="5"
@@ -68,6 +68,15 @@
     />
     <label for="in_label">{{ label }}</label>
   </FloatLabel>
+  <BBCodeRenderer :content v-if="preview" />
+  <div class="actions">
+    <Button
+      :label="t('general.preview')"
+      :icon="preview ? 'pi pi-eye-slash' : 'pi pi-eye'"
+      @click="preview = !preview"
+    />
+    <slot name="buttons"></slot>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -75,6 +84,8 @@ import { ref } from 'vue'
 import { FloatLabel, Textarea } from 'primevue'
 import { watch } from 'vue'
 import Button from 'primevue/button'
+import { useI18n } from 'vue-i18n'
+import BBCodeRenderer from '../BBCodeRenderer.vue'
 
 const props = defineProps<{
   label: string
@@ -86,7 +97,10 @@ const emit = defineEmits<{
   valueChange: [string]
 }>()
 
+const { t } = useI18n()
+
 const content = ref('')
+const preview = ref(false)
 
 const insertBoilerplate = (boilerplate: string) => {
   content.value = content.value + boilerplate
@@ -110,6 +124,11 @@ watch(
   .p-button {
     margin-right: 4px;
     padding: 0.45em;
+  }
+}
+.actions {
+  .p-button {
+    margin-right: 10px;
   }
 }
 </style>

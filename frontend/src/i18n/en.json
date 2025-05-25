@@ -31,7 +31,8 @@
     "language": "Language | Languages",
     "search_terms": "Search terms",
     "search": "Search",
-    "by": "by"
+    "by": "by",
+    "preview": "Preview"
   },
   "auth": {
     "remember_me": "Remember me"

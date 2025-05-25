@@ -16,17 +16,20 @@
         @value-change="newCommentUpdated"
         @input-emptied="bbcodeEditorEmptyInput = false"
         :label="t('community.new_comment')"
-      />
+      >
+        <template #buttons>
+          <Button
+            type="submit"
+            label="Post"
+            icon="pi pi-send"
+            :loading="sending_comment"
+            class="post-button"
+          />
+        </template>
+      </BBCodeEditor>
       <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
         {{ $form.content.error?.message }}
       </Message>
-      <Button
-        type="submit"
-        label="Post"
-        icon="pi pi-send"
-        :loading="sending_comment"
-        class="post-button"
-      />
     </div>
   </Form>
 </template>
