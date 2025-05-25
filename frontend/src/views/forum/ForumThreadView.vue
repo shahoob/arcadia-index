@@ -68,10 +68,10 @@ onMounted(async () => {
   forumThread.value = await getForumThread(parseInt(route.params.id as string))
 })
 
-const resolver = ({ values }: FormResolverOptions) => {
+const resolver = () => {
   const errors: Partial<Record<keyof UserCreatedForumPost, { message: string }[]>> = {}
 
-  if (values.content.length < 5) {
+  if (newPost.value.content.length < 5) {
     errors.content = [{ message: t('error.write_more_than_x_chars', [5]) }]
   }
 
