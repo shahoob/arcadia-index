@@ -38,3 +38,16 @@ export const getUser = async (userId: number): Promise<PublicProfile> => {
     throw error
   }
 }
+
+export type UserCreatedUserWarning = components['schemas']['UserCreatedUserWarning']
+
+export type UserWarning = components['schemas']['UserWarning']
+
+export const warnUser = async (warning: UserCreatedUserWarning): Promise<UserWarning> => {
+  try {
+    return (await api.post<UserWarning>('/user/warn', warning)).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}

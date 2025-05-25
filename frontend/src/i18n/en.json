@@ -32,7 +32,8 @@
     "search_terms": "Search terms",
     "search": "Search",
     "by": "by",
-    "preview": "Preview"
+    "preview": "Preview",
+    "reason": "Reason"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -76,7 +77,13 @@
     "last_seen": "Last seen",
     "bonus_points": "Bonus points",
     "invited": "Invited",
-    "seeding_size": "Seeding size"
+    "seeding_size": "Seeding size",
+    "banned": "Banned",
+    "warn": "Warn",
+    "warned": "Warned",
+    "warn_user": "Warn user",
+    "user_warned_success": "User warned successfully",
+    "ban": "Ban"
   },
   "community": {
     "new_comment": "New comment",

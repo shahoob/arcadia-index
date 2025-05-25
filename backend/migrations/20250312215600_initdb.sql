@@ -41,6 +41,8 @@ CREATE TABLE users (
     passkey_upper BIGINT NOT NULL,
     passkey_lower BIGINT NOT NULL,
     warned BOOLEAN NOT NULL DEFAULT FALSE,
+    banned BOOLEAN NOT NULL DEFAULT FALSE,
+    staff_note TEXT NOT NULL DEFAULT '',
 
     UNIQUE(passkey_upper, passkey_lower)
 );
@@ -48,8 +50,9 @@ CREATE TABLE user_warnings (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE,
     reason TEXT NOT NULL,
+    ban boolean NOT NULL,
     created_by_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TABLE invitations (

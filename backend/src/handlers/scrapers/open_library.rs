@@ -1,8 +1,9 @@
 use crate::Result;
 use actix_web::{HttpResponse, web};
+use chrono::Utc;
 // Datelike and Timelike are needed in the tests, even though they are not directly referenced
 #[allow(unused_imports)]
-use chrono::{DateTime, Datelike, Local, NaiveDate, Timelike};
+use chrono::{DateTime, Datelike, NaiveDate, Timelike};
 use serde::Deserialize;
 
 use crate::models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group};
@@ -44,13 +45,13 @@ struct Work {
     first_publish_date: Option<String>,
 }
 
-fn parse_date(date: &str) -> Option<DateTime<Local>> {
+fn parse_date(date: &str) -> Option<DateTime<Utc>> {
     date.parse::<i32>()
         .ok()
         .and_then(|y| NaiveDate::from_ymd_opt(y, 1, 1))
         .or_else(|| NaiveDate::parse_from_str(date, "%B %d, %Y").ok())
         .and_then(|nd| nd.and_hms_opt(0, 0, 0))
-        .map(|ndt| DateTime::<Local>::from_naive_utc_and_offset(ndt, *Local::now().offset()))
+        .map(|ndt| DateTime::<Utc>::from_naive_utc_and_offset(ndt, *Utc::now().offset()))
 }
 
 #[derive(Debug, Deserialize)]
@@ -89,6 +90,8 @@ pub async fn get_open_library_data(query: web::Query<GetOpenLibraryQuery>) -> Re
 
 #[cfg(test)]
 mod tests {
+    use chrono::Utc;
+
     use super::*;
 
     #[test]
@@ -129,7 +132,7 @@ mod tests {
     fn test_parse_date() {
         // OpenLibrary published date is not normalized, try a couple varieties.
 
-        let local_offset_hours = Local::now().offset().local_minus_utc() / 3600;
+        let local_offset_hours = Utc::now().offset().local_minus_utc() / 3600;
 
         let date1 = parse_date("1970").unwrap();
         assert_eq!(

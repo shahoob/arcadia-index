@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -17,6 +20,19 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
+    return Promise.reject(error)
+  },
+)
+
+api.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      window.location.replace('/login')
+      return new Promise(() => {})
+    }
     return Promise.reject(error)
   },
 )

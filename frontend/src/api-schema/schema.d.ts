@@ -109,7 +109,7 @@ export interface paths {
         };
         get: operations["get_forum_thread"];
         put?: never;
-        post?: never;
+        post: operations["add_forum_thread"];
         delete?: never;
         options?: never;
         head?: never;
@@ -660,6 +660,21 @@ export interface components {
             /** Format: int64 */
             threads_amount: number;
         };
+        ForumThread: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int32 */
+            forum_sub_category_id: number;
+            /** Format: int64 */
+            id: number;
+            locked: boolean;
+            name: string;
+            /** Format: int64 */
+            posts_amount: number;
+            sticky: boolean;
+        };
         ForumThreadAndPosts: {
             /** Format: date-time */
             created_at: string;
@@ -790,6 +805,7 @@ export interface components {
             avatar?: string | null;
             /** Format: int64 */
             average_seeding_time: number;
+            banned: boolean;
             /** Format: int64 */
             bonus_points: number;
             class: string;
@@ -1272,6 +1288,7 @@ export interface components {
             avatar?: string | null;
             /** Format: int64 */
             average_seeding_time: number;
+            banned: boolean;
             /** Format: int64 */
             bonus_points: number;
             class: string;
@@ -1327,6 +1344,7 @@ export interface components {
             settings: unknown;
             /** Format: int32 */
             snatched: number;
+            staff_note: string;
             /** Format: int32 */
             torrent_comments: number;
             /** Format: int64 */
@@ -1366,6 +1384,12 @@ export interface components {
             content: string;
             /** Format: int64 */
             forum_thread_id: number;
+        };
+        UserCreatedForumThread: {
+            first_post: components["schemas"]["UserCreatedForumPost"];
+            /** Format: int32 */
+            forum_sub_category_id: number;
+            name: string;
         };
         UserCreatedGift: {
             /** Format: int64 */
@@ -1453,31 +1477,36 @@ export interface components {
             torrent_request_id: number;
         };
         UserCreatedUserWarning: {
+            ban: boolean;
             /** Format: date-time */
-            expires_at: string;
+            expires_at?: string | null;
             reason: string;
             /** Format: int64 */
             user_id: number;
         };
         UserLite: {
+            banned: boolean;
             /** Format: int64 */
             id: number;
             username: string;
+            warned: boolean;
         };
         UserLiteAvatar: {
             avatar?: string | null;
+            banned: boolean;
             /** Format: int64 */
             id: number;
             username: string;
             warned: boolean;
         };
         UserWarning: {
+            ban: boolean;
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
             created_by_id: number;
             /** Format: date-time */
-            expires_at: string;
+            expires_at?: string | null;
             /** Format: int64 */
             id: number;
             reason: string;
@@ -1673,6 +1702,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForumThreadAndPosts"];
+                };
+            };
+        };
+    };
+    add_forum_thread: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedForumThread"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the forum thread */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForumThread"];
                 };
             };
         };

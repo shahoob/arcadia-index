@@ -10,6 +10,17 @@
         <RouterLink :to="`/user/${comment.created_by.id}`">
           <span class="username">
             {{ comment.created_by.username }}
+
+            <i
+              v-if="comment.created_by.banned"
+              v-tooltip.top="t('user.banned')"
+              class="banned pi pi-ban"
+            />
+            <i
+              v-if="!comment.created_by.banned && comment.created_by.warned"
+              v-tooltip.top="t('user.warned')"
+              class="warned pi pi-exclamation-triangle"
+            />
           </span>
         </RouterLink>
         <span class="time-ago">
@@ -29,6 +40,9 @@ import BBCodeRenderer from '@/components/BBCodeRenderer.vue'
 import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 import { timeAgo } from '@/services/helpers'
 import type { ForumPostHierarchy } from '@/services/api/forumService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps<{
   comment: TitleGroupCommentHierarchy | ForumPostHierarchy
@@ -60,6 +74,14 @@ defineProps<{
 }
 .username {
   color: var(--color-primary);
+  i {
+    &.banned {
+      color: red;
+    }
+    &.warned {
+      color: yellow;
+    }
+  }
 }
 .time-ago {
   font-size: 0.8em;

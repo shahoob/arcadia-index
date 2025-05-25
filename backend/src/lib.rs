@@ -40,6 +40,9 @@ pub enum Error {
     #[error("database error: {0}")]
     GenericDatabaseError(#[from] sqlx::Error),
 
+    #[error("account banned")]
+    AccountBanned,
+
     #[error("could not create artist")]
     CouldNotCreateArtist(#[source] sqlx::Error),
 

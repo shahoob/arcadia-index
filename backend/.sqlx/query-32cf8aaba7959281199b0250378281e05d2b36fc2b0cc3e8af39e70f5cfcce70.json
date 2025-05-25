@@ -30,6 +30,11 @@
       },
       {
         "ordinal": 5,
+        "name": "ban",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
         "name": "created_by_id",
         "type_info": "Int8"
       }
@@ -43,6 +48,7 @@
       false,
       false,
       false,
+      true,
       false,
       false,
       false
