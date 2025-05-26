@@ -24,6 +24,7 @@
     "series": "Series",
     "link": "Link | Links",
     "report": "Report",
+    "reported": "Reported",
     "uploaded": "Uploaded",
     "uploaded_real": "Uploaded (real)",
     "downloaded": "Downloaded",
@@ -33,7 +34,10 @@
     "search": "Search",
     "by": "by",
     "preview": "Preview",
-    "reason": "Reason"
+    "reason": "Reason",
+    "yes": "Yes",
+    "no": "No",
+    "both": "Both"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -160,7 +164,8 @@
     "torrent_file": "Torrent file",
     "upload_as_anonymous": "Upload as anonymous",
     "clients_and_ips": "Clients and IP-Addresses",
-    "uploaded_by": "Uploaded by"
+    "uploaded_by": "Uploaded by",
+    "staff_checked": "Checked by staff"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

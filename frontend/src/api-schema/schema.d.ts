@@ -1247,10 +1247,18 @@ export interface components {
             torrent_request_id: number;
         };
         TorrentSearch: {
-            title_group_name: string;
+            title_group: components["schemas"]["TorrentSearchTitleGroup"];
+            torrent: components["schemas"]["TorrentSearchTorrent"];
         };
         TorrentSearchResults: {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
+        };
+        TorrentSearchTitleGroup: {
+            name: string;
+        };
+        TorrentSearchTorrent: {
+            reported?: boolean | null;
+            staff_checked?: boolean | null;
         };
         TorrentToDelete: {
             displayed_reason?: string | null;

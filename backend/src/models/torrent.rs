@@ -274,8 +274,20 @@ pub struct UploadedTorrent {
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct TorrentSearchTitleGroup {
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct TorrentSearchTorrent {
+    pub reported: Option<bool>,
+    pub staff_checked: Option<bool>,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearch {
-    pub title_group_name: String,
+    pub title_group: TorrentSearchTitleGroup,
+    pub torrent: TorrentSearchTorrent,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

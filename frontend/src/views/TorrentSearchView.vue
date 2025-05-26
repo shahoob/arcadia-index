@@ -1,6 +1,12 @@
 <template>
   <div v-if="search_results">
-    <TorrentSearchInputs class="torrent-search-inputs" @search="search" :loading :initialForm />
+    <TorrentSearchInputs
+      class="torrent-search-inputs"
+      @search="search"
+      :loading
+      :initialForm
+      :showStaffOptions="userStore.class === 'staff'"
+    />
     <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
       <div class="title-groups">
         <TitleGroupPreviewCoverOnly
@@ -36,13 +42,18 @@ import {
 import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
+const userStore = useUserStore()
 
 const search_results = ref<TorrentSearchResults>()
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
 const loading = ref(false)
-const initialForm = ref<TorrentSearch>({ title_group_name: '' })
+const initialForm = ref<TorrentSearch>({
+  title_group: { name: '' },
+  torrent: {},
+})
 
 const search = async (torrentSearch: TorrentSearch) => {
   loading.value = true
@@ -51,7 +62,11 @@ const search = async (torrentSearch: TorrentSearch) => {
 }
 
 const loadSearchForm = async () => {
-  initialForm.value.title_group_name = route.query.title_group_name?.toString() ?? ''
+  initialForm.value.title_group.name = route.query.title_group_name?.toString() ?? ''
+  if (userStore.class === 'staff') {
+    initialForm.value.torrent.staff_checked = false
+    initialForm.value.torrent.reported = null
+  }
   search(initialForm.value)
 }
 
