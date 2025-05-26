@@ -90,8 +90,6 @@ pub async fn get_open_library_data(query: web::Query<GetOpenLibraryQuery>) -> Re
 
 #[cfg(test)]
 mod tests {
-    use chrono::Utc;
-
     use super::*;
 
     #[test]
@@ -132,7 +130,7 @@ mod tests {
     fn test_parse_date() {
         // OpenLibrary published date is not normalized, try a couple varieties.
 
-        let local_offset_hours = Utc::now().offset().local_minus_utc() / 3600;
+        // let local_offset_hours = Local::now().offset().local_minus_utc() / 3600;
 
         let date1 = parse_date("1970").unwrap();
         assert_eq!(
@@ -144,7 +142,8 @@ mod tests {
                 date1.minute(),
                 date1.second(),
             ),
-            (1970, 1, 1, local_offset_hours as u32, 0, 0)
+            // (1970, 1, 1, local_offset_hours as u32, 0, 0)
+            (1970, 1, 1, 0, 0, 0)
         );
 
         let date2 = parse_date("February 19, 1994").unwrap();
@@ -157,7 +156,8 @@ mod tests {
                 date2.minute(),
                 date2.second(),
             ),
-            (1994, 2, 19, local_offset_hours as u32, 0, 0)
+            // (1994, 2, 19, local_offset_hours as u32, 0, 0)
+            (1994, 2, 19, 0, 0, 0)
         );
     }
 }
