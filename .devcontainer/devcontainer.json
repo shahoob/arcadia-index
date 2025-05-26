@@ -50,10 +50,7 @@
 			"cargo",
 			"install",
 			"sqlx-cli"
-		]
-	},
-	"updateContentCommand": {
+		],
 		"npm install": "cd frontend; npm i --verbose",
-		"cargo fetch": "cd backend; cargo fetch"
 	}
 }
