@@ -10,10 +10,10 @@
         />
         <label for="title_group_name">{{ t('general.search_terms') }}</label>
       </FloatLabel>
-      <FloatLabel>
+      <!-- <FloatLabel>
         <InputText class="tags" size="small" v-model="searchForm.tags" name="tags" />
         <label for="tags">{{ t('general.tags_comma_separated') }}</label>
-      </FloatLabel>
+      </FloatLabel> -->
       <div class="flex justify-content-center" style="margin-top: 15px">
         <Button :loading :label="t('general.search')" @click="emit('search', searchForm)" />
       </div>
@@ -28,25 +28,27 @@ import ContentContainer from '../ContentContainer.vue'
 import InputText from 'primevue/inputtext'
 import FloatLabel from 'primevue/floatlabel'
 import Button from 'primevue/button'
+import type { TorrentSearch } from '@/services/api/torrentService'
+import { onMounted } from 'vue'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   loading: boolean
+  initialForm: TorrentSearch
 }>()
-
-export type SearchForm = {
-  title_group_name: string
-  tags: string
-}
 
 const emit = defineEmits<{
-  search: [form: SearchForm]
+  search: [form: TorrentSearch]
 }>()
 
-const searchForm = ref<SearchForm>({
+const searchForm = ref<TorrentSearch>({
   title_group_name: '',
-  tags: '',
+  // tags: '',
+})
+
+onMounted(async () => {
+  searchForm.value = props.initialForm
 })
 </script>
 
