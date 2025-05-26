@@ -35,6 +35,7 @@ import {
 } from '@/services/api/torrentService'
 import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
 import { useRoute } from 'vue-router'
+import { watch } from 'vue'
 
 const route = useRoute()
 
@@ -49,10 +50,16 @@ const search = async (torrentSearch: TorrentSearch) => {
   loading.value = false
 }
 
-onMounted(async () => {
+const loadSearchForm = async () => {
   initialForm.value.title_group_name = route.query.title_group_name?.toString() ?? ''
   search(initialForm.value)
+}
+
+onMounted(async () => {
+  loadSearchForm()
 })
+
+watch(() => route.query, loadSearchForm, { immediate: true })
 </script>
 
 <style scoped>
