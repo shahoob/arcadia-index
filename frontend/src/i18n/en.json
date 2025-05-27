@@ -45,7 +45,8 @@
   "artist": {
     "artist": "Artist | Artists",
     "name": "Name",
-    "nickname": "Nickname (eg: name of the character played)",
+    "nickname": "Nickname",
+    "nickname_explanation": "eg: name of the character played",
     "role": {
       "role": "Role | Roles",
       "main": "Main",
@@ -184,6 +185,8 @@
     "select_bitrate": "Select a bitrate",
     "select_at_least_x_language": "Select at least {0} language(s)",
     "select_torrent_file": "Select a torrent file",
-    "invalid_url": "Invalid url"
+    "invalid_url": "Invalid url",
+    "artist_must_have_at_lease_one_role": "Artist must have at least 1 role",
+    "invalid_name": "Invalid name"
   }
 }

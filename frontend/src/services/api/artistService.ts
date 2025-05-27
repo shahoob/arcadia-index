@@ -21,3 +21,12 @@ export const getArtist = async (id: number): Promise<ArtistAndTitleGroupsLite> =
     throw error
   }
 }
+
+export const createArtists = async (artists: UserCreatedArtist[]): Promise<Artist[]> => {
+  try {
+    return (await api.post<Artist[]>('/artists', artists)).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}

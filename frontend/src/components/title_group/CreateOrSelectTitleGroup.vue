@@ -146,9 +146,8 @@
     <div v-if="step > 1">
       <CreateOrEditTitleGroup
         :content_type="content_type"
-        @validated="sendTitleGroup"
+        @done="titleGroupCreated"
         :initialTitleGroupForm
-        :sendingTitleGroup
       />
     </div>
   </div>
@@ -165,7 +164,6 @@ import { getExternalDatabaseData } from '@/services/api/externalDatabasesService
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
 import {
-  createTitleGroup,
   getTitleGroupLite,
   type ContentType,
   type TitleGroup,
@@ -190,7 +188,6 @@ const selectableContentTypes: ContentType[] = [
 ]
 const content_type = ref<ContentType>('movie') // consider either
 const gettingTitleGroupInfo = ref(false)
-let sendingTitleGroup = false
 let initialTitleGroupForm: UserCreatedTitleGroup | null = null
 const external_database_ids = {
   openlibrary: '',
@@ -238,19 +235,10 @@ const sendSelectedTitleGroup = async (): Promise<void> => {
   gettingTitleGroupInfo.value = false
 }
 
-const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
-  sendingTitleGroup = true
-  titleGroupForm.content_type = content_type.value
-  const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
-  createTitleGroup(formattedTitleGroupForm)
-    .then((data) => {
-      titleGroupStore.id = data.id
-      titleGroupStore.content_type = data.content_type
-      emit('done', data)
-    })
-    .finally(() => {
-      sendingTitleGroup = false
-    })
+const titleGroupCreated = async (titleGroup: TitleGroup) => {
+  titleGroupStore.id = titleGroup.id
+  titleGroupStore.content_type = titleGroup.content_type
+  emit('done', titleGroup)
 }
 
 onMounted(() => {

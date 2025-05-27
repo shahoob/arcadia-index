@@ -26,11 +26,15 @@ use crate::{
     )
 )]
 pub async fn add_title_group(
-    form: web::Json<UserCreatedTitleGroup>,
+    mut form: web::Json<UserCreatedTitleGroup>,
     arc: web::Data<Arcadia>,
     current_user: User,
 ) -> Result<HttpResponse> {
     let created_title_group = create_title_group(&arc.pool, &form, &current_user).await?;
+
+    for artist in &mut form.affiliated_artists {
+        artist.title_group_id = created_title_group.id
+    }
 
     let _ =
         create_artists_affiliation(&arc.pool, &form.affiliated_artists, current_user.id).await?;

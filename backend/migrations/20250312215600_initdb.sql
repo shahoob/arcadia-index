@@ -733,7 +733,8 @@ ORDER BY
 
 CREATE FUNCTION get_title_groups_and_edition_group_and_torrents_lite(
     p_torrent_staff_checked BOOLEAN DEFAULT NULL,
-    p_torrent_reported BOOLEAN DEFAULT NULL
+    p_torrent_reported BOOLEAN DEFAULT NULL,
+    p_include_empty_groups BOOLEAN DEFAULT TRUE
 )
 RETURNS TABLE (
     title_group_id BIGINT,
@@ -783,7 +784,7 @@ BEGIN
                 ) FILTER (WHERE ft.id IS NOT NULL), '[]'::jsonb)
             )) AS eg_data
         FROM edition_groups eg
-        JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
+        LEFT JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
         GROUP BY eg.id
     )
     SELECT
@@ -800,7 +801,15 @@ BEGIN
             'edition_groups', COALESCE(jsonb_agg(egwt.eg_data ORDER BY egwt.eg_id) FILTER (WHERE egwt.eg_data IS NOT NULL), '[]'::jsonb)
         )) AS title_group_data
     FROM title_groups tg
-    JOIN edition_groups_with_torrents egwt ON tg.id = egwt.title_group_id
-    GROUP BY tg.id;
+    LEFT JOIN edition_groups_with_torrents egwt ON tg.id = egwt.title_group_id
+    WHERE p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL
+    GROUP BY
+        tg.id,
+        tg.name,
+        tg.covers,
+        tg.category,
+        tg.content_type,
+        tg.tags,
+        tg.original_release_date;
 END;
 $$;
