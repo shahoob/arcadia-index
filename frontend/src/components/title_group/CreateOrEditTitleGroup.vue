@@ -299,7 +299,6 @@ import {
 } from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
 import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
-import { title } from 'node:process'
 
 interface Props {
   content_type: ContentType
