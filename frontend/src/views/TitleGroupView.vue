@@ -96,7 +96,7 @@
           </div>
         </div>
       </ContentContainer>
-      <TitleGroupComments :comments="title_group.title_group_comments" />
+      <TitleGroupComments :comments="title_group.title_group_comments" @newComment="newComment" />
     </div>
     <div
       class="sidebar"
@@ -110,7 +110,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
-import TitleGroupComments from '@/components/community/TitleGroupComments.vue'
+import TitleGroupComments from '@/components/title_group/TitleGroupComments.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { getTitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'
@@ -131,6 +131,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
 import { showToast } from '@/main'
+import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 
 const router = useRouter()
 const route = useRoute()
@@ -185,6 +186,10 @@ const toggleSubscribtion = async () => {
     )
     togglingSubscription.value = false
   }
+}
+
+const newComment = (comment: TitleGroupCommentHierarchy) => {
+  title_group.value?.title_group_comments.push(comment)
 }
 
 watch(() => route.params.id, fetchTitleGroup, { immediate: true })
