@@ -241,14 +241,9 @@ const sendSelectedTitleGroup = async (): Promise<void> => {
 const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
   sendingTitleGroup = true
   titleGroupForm.content_type = content_type.value
-  console.log(content_type.value)
   const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
-  // otherwise there is a json parse error, last char is "Z"
-  // formattedTitleGroupForm.original_release_date =
-  //   formattedTitleGroupForm.original_release_date.slice(0, -1)
   createTitleGroup(formattedTitleGroupForm)
     .then((data) => {
-      // this.creatingTitleGroup = false
       titleGroupStore.id = data.id
       titleGroupStore.content_type = data.content_type
       emit('done', data)

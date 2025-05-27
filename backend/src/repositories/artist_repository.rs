@@ -7,28 +7,38 @@ use crate::{
 use serde_json::Value;
 use sqlx::PgPool;
 
-pub async fn create_artist(
+pub async fn create_artists(
     pool: &PgPool,
-    artist: &UserCreatedArtist,
+    artists: &Vec<UserCreatedArtist>,
     current_user_id: i64,
-) -> Result<Artist> {
-    let created_artist = sqlx::query_as!(
-        Artist,
-        r#"
-            INSERT INTO artists (name, description, pictures, created_by_id)
-            VALUES ($1, $2, $3, $4)
-            RETURNING *
-        "#,
-        artist.name,
-        artist.description,
-        &artist.pictures,
-        current_user_id
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(Error::CouldNotCreateArtist)?;
+) -> Result<Vec<Artist>> {
+    let mut tx = pool.begin().await?;
 
-    Ok(created_artist)
+    let mut created_artists = Vec::new();
+
+    for artist in artists {
+        let artist = sqlx::query_as!(
+            Artist,
+            r#"
+                INSERT INTO artists (name, description, pictures, created_by_id)
+                VALUES ($1, $2, $3, $4)
+                RETURNING *
+            "#,
+            artist.name,
+            artist.description,
+            &artist.pictures,
+            current_user_id
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .map_err(Error::CouldNotCreateArtist)?;
+
+        created_artists.push(artist);
+    }
+
+    tx.commit().await?;
+
+    Ok(created_artists)
 }
 
 pub async fn create_artists_affiliation(

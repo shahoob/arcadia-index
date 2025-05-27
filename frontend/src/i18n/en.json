@@ -44,7 +44,10 @@
   },
   "artist": {
     "artist": "Artist | Artists",
+    "name": "Name",
+    "nickname": "Nickname (eg: name of the character played)",
     "role": {
+      "role": "Role | Roles",
       "main": "Main",
       "producer": "Producer",
       "guest": "Guest",

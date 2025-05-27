@@ -76,7 +76,7 @@ CREATE TABLE gifts (
 );
 CREATE TABLE artists (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     description TEXT NOT NULL,
     pictures TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,

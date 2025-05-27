@@ -9,6 +9,10 @@ export type ArtistAndTitleGroupsLite = components['schemas']['ArtistAndTitleGrou
 
 export type TitleGroupHierarchyLite = components['schemas']['TitleGroupHierarchyLite']
 
+export type UserCreatedAffiliatedArtist = components['schemas']['UserCreatedAffiliatedArtist']
+
+export type UserCreatedArtist = components['schemas']['UserCreatedArtist']
+
 export const getArtist = async (id: number): Promise<ArtistAndTitleGroupsLite> => {
   try {
     return (await api.get<ArtistAndTitleGroupsLite>('/artist?id=' + id)).data

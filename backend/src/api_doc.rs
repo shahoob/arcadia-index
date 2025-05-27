@@ -41,7 +41,7 @@ use crate::{
         crate::handlers::auth_handler::login,
         crate::handlers::auth_handler::refresh_token,
         crate::handlers::artist_handler::get_artist_publications,
-        crate::handlers::artist_handler::add_artist,
+        crate::handlers::artist_handler::add_artists,
         crate::handlers::artist_handler::add_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::upload_torrent,

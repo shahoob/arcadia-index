@@ -5,7 +5,7 @@ use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
 use super::{
-    artist::AffiliatedArtistHierarchy,
+    artist::{AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist},
     edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
     series::SeriesLite,
     title_group_comment::TitleGroupCommentHierarchy,
@@ -139,7 +139,7 @@ pub struct UserCreatedTitleGroup {
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: DateTime<Utc>,
-    pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
+    pub affiliated_artists: Vec<UserCreatedAffiliatedArtist>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     // one of them should be given, if master groups are required for this type of content

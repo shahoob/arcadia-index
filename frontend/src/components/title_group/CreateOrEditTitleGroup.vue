@@ -149,10 +149,47 @@
         {{ $form.original_release_date.error?.message }}
       </Message>
     </div>
+    <div class="artists input-list">
+      <label>{{ t('artist.artist', 2) }}</label>
+      <div v-for="(_link, index) in affiliated_artists_names" :key="index">
+        <InputText
+          size="small"
+          v-model="affiliated_artists_names[index]"
+          :placeholder="t('artist.name')"
+        />
+        <InputText
+          size="small"
+          v-model="titleGroupForm.affiliated_artists[index].nickname"
+          :placeholder="t('artist.nickname')"
+        />
+        <MultiSelect
+          v-model="titleGroupForm.affiliated_artists[index].roles"
+          :options="getArtistRoles()"
+          size="small"
+          class="select"
+          :placeholder="t('artist.role.role', 2)"
+        />
+        <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
+        <Button
+          v-if="index != 0 || affiliated_artists_names.length > 1"
+          @click="removeAffiliatedArtist(index)"
+          icon="pi pi-minus"
+          size="small"
+        />
+        <Message
+          v-if="($form.covers as unknown as FormFieldState[])?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ ($form.covers as unknown as FormFieldState[])[index].error?.message }}
+        </Message>
+      </div>
+    </div>
     <div class="covers input-list">
       <label>{{ t('general.cover', 2) }}</label>
       <div v-for="(_link, index) in titleGroupForm.covers" :key="index">
-        <InputText size="small" v-model="titleGroupForm.covers[index]" :name="`covers[${index}]`" />
+        <InputText size="small" v-model="titleGroupForm.covers[index]" />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
         <Button
           v-if="index != 0 || titleGroupForm.covers.length > 1"
@@ -173,11 +210,7 @@
     <div class="screenshots input-list" v-if="content_type == 'software'">
       <label>{{ t('general.screenshots') }}</label>
       <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
-        <InputText
-          size="small"
-          v-model="titleGroupForm.screenshots[index]"
-          :name="`screenshots[${index}]`"
-        />
+        <InputText size="small" v-model="titleGroupForm.screenshots[index]" />
         <Button v-if="index == 0" @click="addScreenshot" icon="pi pi-plus" size="small" />
         <Button
           v-if="index != 0 || titleGroupForm.screenshots.length > 1"
@@ -244,6 +277,7 @@ import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
+import MultiSelect from 'primevue/multiselect'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
@@ -254,7 +288,7 @@ import type {
   UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
-import { getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
+import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
 
 interface Props {
   content_type: ContentType
@@ -278,12 +312,13 @@ const titleGroupForm = ref<Omit<UserCreatedTitleGroup, 'content_type'>>({
   category: 'Ep',
   country_from: '',
   name_aliases: [],
-  affiliated_artists: [],
+  affiliated_artists: [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }],
   tags: [],
   master_group_id: null,
   platform: null,
   embedded_links: {},
 })
+const affiliated_artists_names = ref<[string]>([''])
 
 const original_release_date = computed({
   get() {
@@ -312,12 +347,11 @@ const emit = defineEmits<{
   validated: [titleGroup: UserCreatedTitleGroup]
 }>()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type FormErrors = {
-  [key in keyof UserCreatedTitleGroup]: UserCreatedTitleGroup[key] extends Array<unknown>
-    ? { message: string }[][]
-    : { message: string }[]
-}
+// type FormErrors = {
+//   [key in keyof UserCreatedTitleGroup]: UserCreatedTitleGroup[key] extends Array<unknown>
+//     ? { message: string }[][]
+//     : { message: string }[]
+// }
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
 
@@ -379,8 +413,24 @@ const resolver = ({ values }: FormResolverOptions) => {
 const onFormSubmit = ({ valid }: FormSubmitEvent) => {
   if (valid) {
     titleGroupForm.value.tags = tagsString.value.trim().split(',')
+    titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter(
+      (screenshot) => screenshot.trim() !== '',
+    )
     emit('validated', { ...titleGroupForm.value, content_type })
   }
+}
+const addAffiliatedArtist = () => {
+  affiliated_artists_names.value.push('')
+  titleGroupForm.value.affiliated_artists.push({
+    artist_id: 0,
+    nickname: null,
+    roles: [],
+    title_group_id: 0,
+  })
+}
+const removeAffiliatedArtist = (index: number) => {
+  affiliated_artists_names.value.splice(index, 1)
+  titleGroupForm.value.affiliated_artists.splice(index, 1)
 }
 const addLink = () => {
   titleGroupForm.value.external_links.push('')

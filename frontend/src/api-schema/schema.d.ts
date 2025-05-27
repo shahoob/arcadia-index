@@ -29,7 +29,23 @@ export interface paths {
         };
         get: operations["get_artist_publications"];
         put?: never;
-        post: operations["add_artist"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/artists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["add_artists"];
         delete?: never;
         options?: never;
         head?: never;
@@ -605,7 +621,7 @@ export interface components {
             source?: null | components["schemas"]["Source"];
         };
         /** @enum {string} */
-        Features: "HDR" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
+        Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
         ForumCategoryHierarchy: {
             /** Format: int32 */
             id: number;
@@ -1419,7 +1435,7 @@ export interface components {
             tags: string[];
         };
         UserCreatedTitleGroup: {
-            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
+            affiliated_artists: components["schemas"]["UserCreatedAffiliatedArtist"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
@@ -1578,7 +1594,7 @@ export interface operations {
             };
         };
     };
-    add_artist: {
+    add_artists: {
         parameters: {
             query?: never;
             header?: never;
@@ -1587,17 +1603,17 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserCreatedArtist"];
+                "application/json": components["schemas"]["UserCreatedArtist"][];
             };
         };
         responses: {
-            /** @description Successfully created the artist */
+            /** @description Successfully created the artists */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Artist"];
+                    "application/json": components["schemas"]["Artist"][];
                 };
             };
         };

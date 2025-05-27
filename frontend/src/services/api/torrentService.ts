@@ -35,7 +35,6 @@ export type UserCreatedTitleGroup = components['schemas']['UserCreatedTitleGroup
 
 export const createTitleGroup = async (titleGroup: UserCreatedTitleGroup) => {
   try {
-    titleGroup.screenshots = titleGroup.screenshots.filter((screenshot) => screenshot.trim() !== '')
     return (await api.post<TitleGroup>('/title-group', titleGroup)).data
   } catch (error) {
     console.error('API Error:', error)

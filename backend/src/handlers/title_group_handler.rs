@@ -10,8 +10,11 @@ use crate::{
         },
         user::User,
     },
-    repositories::title_group_repository::{
-        create_title_group, find_title_group, find_title_group_info_lite,
+    repositories::{
+        artist_repository::create_artists_affiliation,
+        title_group_repository::{
+            create_title_group, find_title_group, find_title_group_info_lite,
+        },
     },
 };
 
@@ -27,9 +30,12 @@ pub async fn add_title_group(
     arc: web::Data<Arcadia>,
     current_user: User,
 ) -> Result<HttpResponse> {
-    let title_group = create_title_group(&arc.pool, &form, &current_user).await?;
+    let created_title_group = create_title_group(&arc.pool, &form, &current_user).await?;
 
-    Ok(HttpResponse::Created().json(title_group))
+    let _ =
+        create_artists_affiliation(&arc.pool, &form.affiliated_artists, current_user.id).await?;
+
+    Ok(HttpResponse::Created().json(created_title_group))
 }
 
 #[derive(Debug, Deserialize, IntoParams)]

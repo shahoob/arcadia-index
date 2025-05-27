@@ -121,6 +121,22 @@ export const getSources = (contentType: string) => {
   sources.push('Mixed')
   return sources
 }
+export const getArtistRoles = () => {
+  return [
+    'main',
+    'producer',
+    'guest',
+    'composer',
+    'conductor',
+    'dj_compiler',
+    'remixer',
+    'arranger',
+    'director',
+    'cinematographer',
+    'actor',
+    'author',
+  ]
+}
 export const isValidUrl = (url: string) => {
   try {
     new URL(url)
