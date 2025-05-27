@@ -164,7 +164,6 @@ import Button from 'primevue/button'
 import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
-import { useToast } from 'primevue/usetoast'
 import {
   createTitleGroup,
   getTitleGroupLite,
@@ -201,7 +200,6 @@ const external_database_ids = {
 }
 let gettingExternalDatabaseData = false
 const titleGroupStore = useTitleGroupStore()
-const toast = useToast()
 
 const { t } = useI18n()
 

@@ -1,5 +1,5 @@
 import { uniq, compact } from 'lodash-es'
-import { AUDIO_OPTION, VIDEO_OPTION } from '../utils'
+import { VIDEO_OPTION } from '../utils'
 import type { ParseResult } from './mediainfoParser'
 
 type VideoResolution = string | [string, string]
@@ -40,7 +40,7 @@ export default class MediainfoConverter {
     }
     for (const v of info['video']) {
       const hdrFormat = v['hdr format']
-      const bitDepth = v['bit depth']
+      // const bitDepth = v['bit depth']
       if (hdrFormat && hdrFormat.match(/Dolby Vision/)) {
         options.add(VIDEO_OPTION.DOLBYVISION)
       }
@@ -122,7 +122,7 @@ export default class MediainfoConverter {
     // V_MPEGH/ISO/HEVC is H265 ?
     const completeName = info['general']['complete name']
     const video = info['video'][0]
-    const encodingSettings = video['encoding settings']
+    // const encodingSettings = video['encoding settings']
     const format = video['format']
     const videoCodecId = video['vide codec id']
     return format === 'AVC'
