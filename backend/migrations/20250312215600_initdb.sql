@@ -329,7 +329,7 @@ CREATE TYPE language_enum AS ENUM(
    'Spanish',
    'Swedish'
 );
-CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
+CREATE TYPE features_enum AS ENUM('HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
     upload_factor FLOAT NOT NULL DEFAULT 1.0,

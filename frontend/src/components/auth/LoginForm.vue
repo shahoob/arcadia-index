@@ -42,7 +42,6 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { getMe } from '@/services/api/userService'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'primevue'
 
 const form = {
   username: '',
@@ -53,24 +52,14 @@ const form = {
 const router = useRouter()
 const userStore = useUserStore()
 const { t } = useI18n()
-const toast = useToast()
 
 const handleLogin = async () => {
-  login(form)
-    .then(async (data) => {
-      localStorage.setItem('token', data.token)
-      const profile = await getMe()
-      localStorage.setItem('user', JSON.stringify(profile.user))
-      userStore.setUser(profile.user)
-      router.push('/')
-    })
-    .catch((error) => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.error,
-        life: 4000,
-      })
-    })
+  login(form).then(async (data) => {
+    localStorage.setItem('token', data.token)
+    const profile = await getMe()
+    localStorage.setItem('user', JSON.stringify(profile.user))
+    userStore.setUser(profile.user)
+    router.push('/')
+  })
 }
 </script>

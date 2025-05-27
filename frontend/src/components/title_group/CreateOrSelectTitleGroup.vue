@@ -227,14 +227,7 @@ const getExternalDBData = (item_id: string | number, database: string) => {
 const sendSelectedTitleGroup = async (): Promise<void> => {
   gettingTitleGroupInfo.value = true
   if (!titleGroupStore.id && titleGroupId.value) {
-    const titleGroupLite = await getTitleGroupLite(titleGroupId.value).catch((error) => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.error,
-        life: 4000,
-      })
-    })
+    const titleGroupLite = await getTitleGroupLite(titleGroupId.value)
     if (titleGroupLite) {
       titleGroupStore.id = titleGroupLite.id
       titleGroupStore.edition_groups = titleGroupLite.edition_groups

@@ -13,8 +13,9 @@
 </template>
 
 <script setup lang="ts">
+import { showToast } from '@/main'
 import { warnUser, type UserCreatedUserWarning, type UserWarning } from '@/services/api/userService'
-import { Textarea, FloatLabel, useToast, Checkbox } from 'primevue'
+import { Textarea, FloatLabel, Checkbox } from 'primevue'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -22,7 +23,6 @@ import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
 const route = useRoute()
-const toast = useToast()
 
 const warning = ref<UserCreatedUserWarning>({
   reason: '',
@@ -40,12 +40,7 @@ const sendWarning = () => {
   loading.value = true
   warnUser(warning.value).then((data: UserWarning) => {
     loading.value = false
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: t('user.user_warned_success'),
-      life: 4000,
-    })
+    showToast('Success', t('user.user_warned_success'), 'success', 4000)
     emit('warned', data)
   })
 }

@@ -65,7 +65,7 @@ export const getFeatures = (contentType: string): string[] => {
   if (contentType == 'book' || contentType == 'music') {
     return ['Cue', 'Booklet']
   } else if (contentType == 'tv_show' || contentType == 'movie') {
-    return ['HDR', 'DV', 'Commentary', 'Remux', '3D']
+    return ['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D']
   } else {
     return []
   }

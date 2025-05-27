@@ -130,12 +130,11 @@ import CustomGalleria from '@/components/CustomGalleria.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'primevue/usetoast'
+import { showToast } from '@/main'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
-const toast = useToast()
 
 const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()
@@ -172,18 +171,18 @@ const toggleSubscribtion = async () => {
       await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
     }
     title_group.value.is_subscribed = !title_group.value.is_subscribed
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: t(
+    showToast(
+      'success',
+      'Success',
+      t(
         `title_group.${
           title_group.value.is_subscribed
             ? 'subscription_successfull'
             : 'unsubscription_successfull'
         }`,
       ),
-      life: 3000,
-    })
+      3000,
+    )
     togglingSubscription.value = false
   }
 }

@@ -62,7 +62,6 @@ import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'primevue'
 
 // eslint-disable-next-line prefer-const
 let action = ref('select') // create | select
@@ -73,7 +72,6 @@ const selected_edition_group = ref<EditionGroupInfoLite | null>(null)
 let creatingEditionGroup = false
 
 const { t } = useI18n()
-const toast = useToast()
 
 const emit = defineEmits<{
   done: [editionGroup: EditionGroupInfoLite]
@@ -90,19 +88,10 @@ const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
     const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
     // otherwise there is a json parse error, last char is "Z"
     // formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
-    createEditionGroup(formattededitionGroupForm)
-      .then((data: EditionGroup) => {
-        creatingEditionGroup = false
-        emit('done', data)
-      })
-      .catch((error) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.response.data.error,
-          life: 4000,
-        })
-      })
+    createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
+      creatingEditionGroup = false
+      emit('done', data)
+    })
   }
 }
 </script>

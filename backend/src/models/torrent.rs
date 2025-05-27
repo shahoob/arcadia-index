@@ -159,6 +159,12 @@ pub enum Features {
     #[sqlx(rename = "HDR")]
     #[serde(rename = "HDR")]
     Hdr,
+    #[sqlx(rename = "HDR 10")]
+    #[serde(rename = "HDR 10")]
+    HdrTen,
+    #[sqlx(rename = "HDR 10+")]
+    #[serde(rename = "HDR 10+")]
+    HdrTenPlus,
     #[sqlx(rename = "DV")]
     #[serde(rename = "DV")]
     Dv,
@@ -178,6 +184,8 @@ impl FromStr for Features {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "HDR" => Ok(Features::Hdr),
+            "HDR 10" => Ok(Features::HdrTen),
+            "HDR 10+" => Ok(Features::HdrTenPlus),
             "DV" => Ok(Features::Dv),
             "Commentary" => Ok(Features::Commentary),
             "Remux" => Ok(Features::Remux),
