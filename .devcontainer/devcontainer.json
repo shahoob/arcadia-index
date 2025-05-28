@@ -41,7 +41,8 @@
 				"EditorConfig.EditorConfig",
 				"redhat.vscode-yaml",
 				"Vue.volar",
-				"tamasfe.even-better-toml"
+				"tamasfe.even-better-toml",
+				"esbenp.prettier-vscode"
 			]
 		}
 	},
