@@ -804,12 +804,6 @@ BEGIN
     LEFT JOIN edition_groups_with_torrents egwt ON tg.id = egwt.title_group_id
     WHERE p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL
     GROUP BY
-        tg.id,
-        tg.name,
-        tg.covers,
-        tg.category,
-        tg.content_type,
-        tg.tags,
-        tg.original_release_date;
+        tg.id;
 END;
 $$;
