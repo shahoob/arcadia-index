@@ -40,6 +40,9 @@ pub enum Error {
     #[error("database error: {0}")]
     GenericDatabaseError(#[from] sqlx::Error),
 
+    #[error("account banned")]
+    AccountBanned,
+
     #[error("could not create artist")]
     CouldNotCreateArtist(#[source] sqlx::Error),
 
@@ -156,6 +159,9 @@ pub enum Error {
 
     #[error("could not create forum post")]
     CouldNotCreateForumPost(#[source] sqlx::Error),
+
+    #[error("could not create forum thread")]
+    CouldNotCreateForumThread(#[source] sqlx::Error),
 
     #[error("could not find forum sub-category")]
     CouldNotFindForumSubCategory(#[source] sqlx::Error),

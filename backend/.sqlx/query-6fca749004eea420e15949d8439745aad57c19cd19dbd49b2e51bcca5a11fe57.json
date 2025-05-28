@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH title_group_search AS (\n            SELECT\n                id AS title_group_id,\n                CASE\n                    WHEN $1 = '' THEN NULL\n                    ELSE ts_rank_cd(to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')), plainto_tsquery('simple', $1))\n                END AS relevance\n            FROM title_groups\n            WHERE $1 = '' OR to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)\n        ),\n        title_group_data AS (\n            SELECT\n                tgl.title_group_data || jsonb_build_object(\n                    'affiliated_artists', COALESCE((\n                        SELECT jsonb_agg(\n                            jsonb_build_object(\n                                'id', ar.id,\n                                'name', ar.name\n                            )\n                        )\n                        FROM affiliated_artists aa\n                        JOIN artists ar ON aa.artist_id = ar.id\n                        WHERE aa.title_group_id = tgl.title_group_id\n                    ), '[]'::jsonb)\n                ) AS lite_title_group,\n                CASE\n                    WHEN $1 = '' THEN EXTRACT(EPOCH FROM tg.created_at)\n                    ELSE tgs.relevance\n                END AS sort_order\n            FROM get_title_groups_and_edition_group_and_torrents_lite($2, $3) tgl\n            JOIN title_groups tg ON tgl.title_group_id = tg.id\n            JOIN title_group_search tgs ON tg.id = tgs.title_group_id\n        )\n        SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups\n        FROM title_group_data;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "title_groups",
+        "type_info": "Jsonb"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Bool",
+        "Bool"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "6fca749004eea420e15949d8439745aad57c19cd19dbd49b2e51bcca5a11fe57"
+}

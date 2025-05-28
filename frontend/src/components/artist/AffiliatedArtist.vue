@@ -1,6 +1,9 @@
 <template>
   <div class="affiliated-artist">
-    <Image :src="affiliated_artist.artist.pictures[0]" preview>
+    <Image
+      :src="affiliated_artist.artist.pictures[0] ?? '/default_artist_picture.svg'"
+      :preview="affiliated_artist.artist.pictures.length !== 0"
+    >
       <template #previewicon>
         <i class="pi pi-search"></i>
       </template>

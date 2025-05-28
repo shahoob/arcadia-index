@@ -41,6 +41,8 @@ CREATE TABLE users (
     passkey_upper BIGINT NOT NULL,
     passkey_lower BIGINT NOT NULL,
     warned BOOLEAN NOT NULL DEFAULT FALSE,
+    banned BOOLEAN NOT NULL DEFAULT FALSE,
+    staff_note TEXT NOT NULL DEFAULT '',
 
     UNIQUE(passkey_upper, passkey_lower)
 );
@@ -48,8 +50,9 @@ CREATE TABLE user_warnings (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE,
     reason TEXT NOT NULL,
+    ban boolean NOT NULL,
     created_by_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TABLE invitations (
@@ -73,7 +76,7 @@ CREATE TABLE gifts (
 );
 CREATE TABLE artists (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     description TEXT NOT NULL,
     pictures TEXT [] NOT NULL,
     created_by_id BIGINT NOT NULL,
@@ -326,7 +329,7 @@ CREATE TYPE language_enum AS ENUM(
    'Spanish',
    'Swedish'
 );
-CREATE TYPE features_enum AS ENUM('HDR', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
+CREATE TYPE features_enum AS ENUM('HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
     upload_factor FLOAT NOT NULL DEFAULT 1.0,
@@ -666,64 +669,147 @@ GROUP BY
 ORDER BY
     t.id;
 
-CREATE OR REPLACE VIEW title_groups_and_edition_group_and_torrents_lite AS
-SELECT
-    tg.id AS title_group_id,
-    jsonb_build_object(
-        'id', tg.id,
-        'name', tg.name,
-        'covers', tg.covers,
-        'category', tg.category,
-        'content_type', tg.content_type,
-        'tags', tg.tags,
-        'original_release_date', tg.original_release_date
-    ) || jsonb_build_object(
-        'edition_groups', COALESCE((
-            SELECT jsonb_agg(
-                jsonb_build_object(
-                    'id', eg.id,
-                    'title_group_id', eg.title_group_id,
-                    'name', eg.name,
-                    'release_date', eg.release_date,
-                    'distributor', eg.distributor,
-                    'covers', eg.covers,
-                    'source', eg.source,
-                    'additional_information', eg.additional_information,
-                    'torrents', COALESCE((
-                        SELECT jsonb_agg(
-                            jsonb_build_object(
-                                'id', t.id,
-                                'upload_factor', t.upload_factor,
-                                'download_factor', t.download_factor,
-                                'edition_group_id', t.edition_group_id,
-                                'created_at', t.created_at,
-                                'release_name', t.release_name,
-                                'release_group', t.release_group,
-                                'file_amount_per_type', t.file_amount_per_type,
-                                'trumpable', t.trumpable,
-                                'staff_checked', t.staff_checked,
-                                'languages', t.languages,
-                                'container', t.container,
-                                'size', t.size,
-                                'duration', t.duration,
-                                'audio_codec', t.audio_codec,
-                                'audio_bitrate', t.audio_bitrate,
-                                'audio_bitrate_sampling', t.audio_bitrate_sampling,
-                                'audio_channels', t.audio_channels,
-                                'video_codec', t.video_codec,
-                                'features', t.features,
-                                'subtitle_languages', t.subtitle_languages,
-                                'video_resolution', t.video_resolution,
-                                'reports', t.reports
-                            )
-                        )
-                        FROM torrents_and_reports t
-                        WHERE t.edition_group_id = eg.id
-                    ), '[]'::jsonb)
-                )
-            )
-            FROM edition_groups eg
-            WHERE eg.title_group_id = tg.id
-        ), '[]'::jsonb)
-    ) AS title_group_data
-FROM title_groups tg;
+-- CREATE VIEW title_groups_and_edition_group_and_torrents_lite AS
+-- SELECT
+--     tg.id AS title_group_id,
+--     jsonb_build_object(
+--         'id', tg.id,
+--         'name', tg.name,
+--         'covers', tg.covers,
+--         'category', tg.category,
+--         'content_type', tg.content_type,
+--         'tags', tg.tags,
+--         'original_release_date', tg.original_release_date
+--     ) || jsonb_build_object(
+--         'edition_groups', COALESCE((
+--             SELECT jsonb_agg(
+--                 jsonb_build_object(
+--                     'id', eg.id,
+--                     'title_group_id', eg.title_group_id,
+--                     'name', eg.name,
+--                     'release_date', eg.release_date,
+--                     'distributor', eg.distributor,
+--                     'covers', eg.covers,
+--                     'source', eg.source,
+--                     'additional_information', eg.additional_information,
+--                     'torrents', COALESCE((
+--                         SELECT jsonb_agg(
+--                             jsonb_build_object(
+--                                 'id', t.id,
+--                                 'upload_factor', t.upload_factor,
+--                                 'download_factor', t.download_factor,
+--                                 'edition_group_id', t.edition_group_id,
+--                                 'created_at', t.created_at,
+--                                 'release_name', t.release_name,
+--                                 'release_group', t.release_group,
+--                                 'file_amount_per_type', t.file_amount_per_type,
+--                                 'trumpable', t.trumpable,
+--                                 'staff_checked', t.staff_checked,
+--                                 'languages', t.languages,
+--                                 'container', t.container,
+--                                 'size', t.size,
+--                                 'duration', t.duration,
+--                                 'audio_codec', t.audio_codec,
+--                                 'audio_bitrate', t.audio_bitrate,
+--                                 'audio_bitrate_sampling', t.audio_bitrate_sampling,
+--                                 'audio_channels', t.audio_channels,
+--                                 'video_codec', t.video_codec,
+--                                 'features', t.features,
+--                                 'subtitle_languages', t.subtitle_languages,
+--                                 'video_resolution', t.video_resolution,
+--                                 'reports', t.reports
+--                             )
+--                         )
+--                         FROM torrents_and_reports t
+--                         WHERE t.edition_group_id = eg.id
+--                     ), '[]'::jsonb)
+--                 )
+--             )
+--             FROM edition_groups eg
+--             WHERE eg.title_group_id = tg.id
+--         ), '[]'::jsonb)
+--     ) AS title_group_data
+-- FROM title_groups tg;
+
+CREATE FUNCTION get_title_groups_and_edition_group_and_torrents_lite(
+    p_torrent_staff_checked BOOLEAN DEFAULT NULL,
+    p_torrent_reported BOOLEAN DEFAULT NULL,
+    p_include_empty_groups BOOLEAN DEFAULT TRUE
+)
+RETURNS TABLE (
+    title_group_id BIGINT,
+    title_group_data JSONB
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    WITH filtered_torrents AS (
+        SELECT *
+        FROM torrents_and_reports t
+        WHERE (p_torrent_staff_checked IS NULL OR t.staff_checked = p_torrent_staff_checked)
+        AND (
+            p_torrent_reported IS NULL
+            OR (p_torrent_reported = TRUE AND t.reports::jsonb <> '[]'::jsonb)
+            OR (p_torrent_reported = FALSE AND t.reports::jsonb = '[]'::jsonb)
+        )
+    ),
+    edition_groups_with_torrents AS (
+        SELECT
+            eg.id AS eg_id,
+            eg.title_group_id,
+            jsonb_strip_nulls(jsonb_build_object(
+                'id', eg.id,
+                'title_group_id', eg.title_group_id,
+                'name', eg.name,
+                'release_date', eg.release_date,
+                'distributor', eg.distributor,
+                'covers', eg.covers,
+                'source', eg.source,
+                'additional_information', eg.additional_information,
+                'torrents', COALESCE(jsonb_agg(
+                    jsonb_strip_nulls(jsonb_build_object(
+                        'id', ft.id, 'upload_factor', ft.upload_factor, 'download_factor', ft.download_factor,
+                        'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at,
+                        'release_name', ft.release_name, 'release_group', ft.release_group,
+                        'file_amount_per_type', ft.file_amount_per_type, 'trumpable', ft.trumpable,
+                        'staff_checked', ft.staff_checked, 'languages', ft.languages,
+                        'container', ft.container, 'size', ft.size, 'duration', ft.duration,
+                        'audio_codec', ft.audio_codec, 'audio_bitrate', ft.audio_bitrate,
+                        'audio_bitrate_sampling', ft.audio_bitrate_sampling, 'audio_channels', ft.audio_channels,
+                        'video_codec', ft.video_codec, 'features', ft.features,
+                        'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
+                        'reports', ft.reports
+                    )) ORDER BY ft.id
+                ) FILTER (WHERE ft.id IS NOT NULL), '[]'::jsonb)
+            )) AS eg_data
+        FROM edition_groups eg
+        LEFT JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
+        GROUP BY eg.id
+    )
+    SELECT
+        tg.id AS title_group_id,
+        jsonb_strip_nulls(jsonb_build_object(
+            'id', tg.id,
+            'name', tg.name,
+            'covers', tg.covers,
+            'category', tg.category,
+            'content_type', tg.content_type,
+            'tags', tg.tags,
+            'original_release_date', tg.original_release_date
+        ) || jsonb_build_object(
+            'edition_groups', COALESCE(jsonb_agg(egwt.eg_data ORDER BY egwt.eg_id) FILTER (WHERE egwt.eg_data IS NOT NULL), '[]'::jsonb)
+        )) AS title_group_data
+    FROM title_groups tg
+    LEFT JOIN edition_groups_with_torrents egwt ON tg.id = egwt.title_group_id
+    WHERE p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL
+    GROUP BY
+        tg.id,
+        tg.name,
+        tg.covers,
+        tg.category,
+        tg.content_type,
+        tg.tags,
+        tg.original_release_date;
+END;
+$$;

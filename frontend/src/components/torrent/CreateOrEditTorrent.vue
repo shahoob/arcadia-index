@@ -429,6 +429,7 @@ const onFileSelect = (event: FileUploadSelectEvent) => {
 const mediainfoUpdated = () => {
   const mediainfoExtractedInfo = getFileInfo(torrentForm.value.mediainfo)
   console.log(mediainfoExtractedInfo)
+  Object.assign(torrentForm.value, mediainfoExtractedInfo)
   step.value = 2
 }
 const sendTorrent = () => {

@@ -3,7 +3,7 @@ use sqlx::PgPool;
 
 use crate::{
     Error, Result,
-    models::forum::{ForumPost, UserCreatedForumPost},
+    models::forum::{ForumPost, ForumThread, UserCreatedForumPost, UserCreatedForumThread},
 };
 
 pub async fn create_forum_post(
@@ -11,6 +11,8 @@ pub async fn create_forum_post(
     forum_post: &UserCreatedForumPost,
     current_user_id: i64,
 ) -> Result<ForumPost> {
+    let mut tx = pool.begin().await?;
+
     let forum_post = sqlx::query_as!(
         ForumPost,
         r#"
@@ -22,7 +24,7 @@ pub async fn create_forum_post(
         current_user_id,
         forum_post.forum_thread_id
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await
     .map_err(Error::CouldNotCreateForumPost)?;
 
@@ -34,7 +36,7 @@ pub async fn create_forum_post(
         "#,
         forum_post.forum_thread_id
     )
-    .execute(pool)
+    .execute(&mut *tx)
     .await
     .map_err(Error::CouldNotCreateForumPost)?;
 
@@ -46,10 +48,40 @@ pub async fn create_forum_post(
         "#,
         forum_post.forum_thread_id
     )
-    .execute(pool)
+    .execute(&mut *tx)
     .await
     .map_err(Error::CouldNotCreateForumPost)?;
+
+    tx.commit().await?;
+
     Ok(forum_post)
+}
+
+pub async fn create_forum_thread(
+    pool: &PgPool,
+    forum_thread: &mut UserCreatedForumThread,
+    current_user_id: i64,
+) -> Result<ForumThread> {
+    let created_forum_thread = sqlx::query_as!(
+        ForumThread,
+        r#"
+            INSERT INTO forum_threads (name, created_by_id, forum_sub_category_id)
+            VALUES ($1, $2, $3)
+            RETURNING *
+        "#,
+        forum_thread.name,
+        current_user_id,
+        forum_thread.forum_sub_category_id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotCreateForumThread)?;
+
+    forum_thread.first_post.forum_thread_id = created_forum_thread.id;
+
+    create_forum_post(pool, &forum_thread.first_post, current_user_id).await?;
+
+    Ok(created_forum_thread)
 }
 
 pub async fn find_forum_overview(pool: &PgPool) -> Result<Value> {

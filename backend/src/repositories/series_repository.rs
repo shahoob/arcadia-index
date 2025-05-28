@@ -37,24 +37,24 @@ pub async fn create_series(
 pub async fn find_series(pool: &PgPool, series_id: &i64) -> Result<Value> {
     let found_series = sqlx::query!(
         r#"
-            SELECT
-                jsonb_build_object(
-                    'series', to_jsonb(s),
-                    'title_groups', COALESCE(
-                        jsonb_agg(tgd.title_group_data),
-                        '[]'::jsonb
-                    )
-                ) AS series_and_title_groups
-            FROM
-                series s
-            LEFT JOIN
-                title_groups tg ON s.id = tg.series_id
-            LEFT JOIN
-                title_groups_and_edition_group_and_torrents_lite tgd ON tg.id = tgd.title_group_id
-            WHERE
-                s.id = $1
-            GROUP BY
-                s.id, s.*;
+        SELECT
+            jsonb_build_object(
+                'series', to_jsonb(s),
+                'title_groups', COALESCE(
+                    jsonb_agg(tgd.title_group_data),
+                    '[]'::jsonb
+                )
+            ) AS series_and_title_groups
+        FROM
+            series s
+        LEFT JOIN
+            title_groups tg ON s.id = tg.series_id
+        LEFT JOIN
+            get_title_groups_and_edition_group_and_torrents_lite() AS tgd ON tg.id = tgd.title_group_id
+        WHERE
+            s.id = $1
+        GROUP BY
+            s.id, s.*;
         "#,
         series_id
     )

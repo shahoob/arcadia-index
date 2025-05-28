@@ -98,7 +98,7 @@ pub struct AffiliatedArtist {
     pub created_by_id: i64,
 }
 
-#[derive(Debug, Deserialize, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserCreatedAffiliatedArtist {
     pub title_group_id: i64,
     pub artist_id: i64,

@@ -38,7 +38,8 @@ pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
                 invited,
                 invitations,
                 bonus_points,
-                warned
+                warned,
+                banned
             FROM users
             WHERE id = $1
         "#,
@@ -74,10 +75,15 @@ pub async fn create_user_warning(
     let _ = sqlx::query!(
         r#"
             UPDATE users
-            SET warned = true
+            SET warned = true,
+            banned = CASE
+                WHEN $2 IS TRUE THEN TRUE
+                ELSE banned
+            END
             WHERE id = $1
         "#,
-        user_warning.user_id
+        user_warning.user_id,
+        user_warning.ban
     )
     .execute(&mut *tx)
     .await?;
@@ -85,14 +91,15 @@ pub async fn create_user_warning(
     let user_warning = sqlx::query_as!(
         UserWarning,
         r#"
-            INSERT INTO user_warnings (user_id, expires_at, reason, created_by_id)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO user_warnings (user_id, expires_at, reason, created_by_id, ban)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING *
         "#,
         user_warning.user_id,
         user_warning.expires_at,
         user_warning.reason,
         current_user_id,
+        user_warning.ban
     )
     .fetch_one(&mut *tx)
     .await
@@ -115,4 +122,13 @@ pub async fn find_user_warnings(pool: &PgPool, user_id: i64) -> Vec<UserWarning>
     .fetch_all(pool)
     .await
     .expect("failed to get user warnings")
+}
+
+pub async fn is_user_banned(pool: &PgPool, user_id: i64) -> bool {
+    let banned = sqlx::query_scalar!("SELECT banned FROM users WHERE id = $1", user_id)
+        .fetch_optional(pool)
+        .await
+        .expect("user not found");
+
+    banned.unwrap()
 }

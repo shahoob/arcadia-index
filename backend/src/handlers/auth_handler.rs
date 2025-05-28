@@ -97,6 +97,10 @@ pub async fn register(
 pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Result<HttpResponse> {
     let user = find_user_with_password(&arc.pool, &user_login).await?;
 
+    if user.banned {
+        return Err(Error::AccountBanned);
+    }
+
     let mut token_expiration_date = Utc::now();
     let mut refresh_token = String::from("");
     if !user_login.remember_me {
@@ -173,6 +177,12 @@ pub async fn validate_bearer_auth(
     };
 
     let user_id = token_data.claims.sub;
+
+    let banned = crate::repositories::user_repository::is_user_banned(&arc.pool, user_id).await;
+
+    if banned {
+        return Err((actix_web::error::ErrorUnauthorized("account banned"), req));
+    }
 
     // TODO: only do this if the call comes from the website (with origin set to the site's url)
     // if the user uses the api for scripting, it shouldn't bee counted as "seen"

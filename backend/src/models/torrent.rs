@@ -159,6 +159,12 @@ pub enum Features {
     #[sqlx(rename = "HDR")]
     #[serde(rename = "HDR")]
     Hdr,
+    #[sqlx(rename = "HDR 10")]
+    #[serde(rename = "HDR 10")]
+    HdrTen,
+    #[sqlx(rename = "HDR 10+")]
+    #[serde(rename = "HDR 10+")]
+    HdrTenPlus,
     #[sqlx(rename = "DV")]
     #[serde(rename = "DV")]
     Dv,
@@ -178,6 +184,8 @@ impl FromStr for Features {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "HDR" => Ok(Features::Hdr),
+            "HDR 10" => Ok(Features::HdrTen),
+            "HDR 10+" => Ok(Features::HdrTenPlus),
             "DV" => Ok(Features::Dv),
             "Commentary" => Ok(Features::Commentary),
             "Remux" => Ok(Features::Remux),
@@ -274,8 +282,20 @@ pub struct UploadedTorrent {
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct TorrentSearchTitleGroup {
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
+pub struct TorrentSearchTorrent {
+    pub reported: Option<bool>,
+    pub staff_checked: Option<bool>,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearch {
-    pub title_group_name: String,
+    pub title_group: TorrentSearchTitleGroup,
+    pub torrent: TorrentSearchTorrent,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

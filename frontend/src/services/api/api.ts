@@ -1,3 +1,4 @@
+import { showToast } from '@/main'
 import axios from 'axios'
 
 const api = axios.create({
@@ -17,6 +18,20 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
+    return Promise.reject(error)
+  },
+)
+
+api.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      window.location.replace('/login')
+      return new Promise(() => {})
+    }
+    showToast('error', error.response.data.error, 'error', 4000)
     return Promise.reject(error)
   },
 )

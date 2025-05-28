@@ -13,10 +13,10 @@ export const AUDIO_OPTION = {
 }
 
 export const VIDEO_OPTION = {
-  BIT10: 'color_10bit',
-  HDR10: 'hdr10',
-  HDR10PLUS: 'hdr10_plus',
-  DOLBYVISION: 'dolby_vision',
+  HDR: 'HDR',
+  HDR10: 'HDR 10',
+  HDR10PLUS: 'HDR 10+',
+  DOLBYVISION: 'DV',
 }
 
 export const DISK_SIZE = {

@@ -33,7 +33,7 @@ pub async fn create_invitation(
         current_user_id,
         invitation.receiver_email
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await
     .map_err(Error::CouldNotCreateInvitation)?;
 

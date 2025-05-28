@@ -16,17 +16,20 @@
         @value-change="newCommentUpdated"
         @input-emptied="bbcodeEditorEmptyInput = false"
         :label="t('community.new_comment')"
-      />
+      >
+        <template #buttons>
+          <Button
+            type="submit"
+            label="Post"
+            icon="pi pi-send"
+            :loading="sending_comment"
+            class="post-button"
+          />
+        </template>
+      </BBCodeEditor>
       <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
         {{ $form.content.error?.message }}
       </Message>
-      <Button
-        type="submit"
-        label="Post"
-        icon="pi pi-send"
-        :loading="sending_comment"
-        class="post-button"
-      />
     </div>
   </Form>
 </template>
@@ -34,14 +37,14 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
-import GeneralComment from './GeneralComment.vue'
+import GeneralComment from '../community/GeneralComment.vue'
 import { Button } from 'primevue'
 import {
   postTitleGroupComment,
   type TitleGroupCommentHierarchy,
   type UserCreatedTitleGroupComment,
 } from '@/services/api/commentService'
-import BBCodeEditor from './BBCodeEditor.vue'
+import BBCodeEditor from '../community/BBCodeEditor.vue'
 import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import Message from 'primevue/message'
 import { useUserStore } from '@/stores/user'
@@ -49,6 +52,10 @@ import { useRoute } from 'vue-router'
 
 defineProps<{
   comments: TitleGroupCommentHierarchy[]
+}>()
+
+const emit = defineEmits<{
+  newComment: [TitleGroupCommentHierarchy]
 }>()
 
 const { t } = useI18n()
@@ -89,16 +96,14 @@ const newCommentUpdated = (content: string) => {
 const sendComment = async () => {
   sending_comment.value = true
   new_comment.value.title_group_id = parseInt(route.params.id as string)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const created_comment: TitleGroupCommentHierarchy = {
+  const createdComment: TitleGroupCommentHierarchy = {
     ...(await postTitleGroupComment(new_comment.value)),
     created_by: useUserStore(),
   }
   new_comment.value.content = ''
   new_comment.value.refers_to_torrent_id = null
   new_comment.value.answers_to_comment_id = null
-  // TODO: use created_comment to update the comments list
-  // this.comments.push(created_comment)
+  emit('newComment', createdComment)
   bbcodeEditorEmptyInput.value = true
   sending_comment.value = false
 }
