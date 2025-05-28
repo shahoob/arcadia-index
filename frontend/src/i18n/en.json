@@ -47,6 +47,8 @@
     "name": "Name",
     "nickname": "Nickname",
     "nickname_explanation": "eg: name of the character played",
+    "new_artist": "New artist",
+    "existing_artist": "Existing artist",
     "role": {
       "role": "Role | Roles",
       "main": "Main",

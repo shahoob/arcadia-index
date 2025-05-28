@@ -7,6 +7,7 @@
     :placeholder
     optionLabel="name"
     @option-select="artistSelected"
+    @input="onInput"
   >
     <template #option="slotProps">
       <div>{{ slotProps.option.name }}</div>
@@ -15,35 +16,55 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { AutoComplete, type AutoCompleteOptionSelectEvent } from 'primevue'
 import { searchArtistsLite, type ArtistLite } from '@/services/api/artistService'
 
 const props = defineProps<{
   placeholder: string
   clearInputOnSelect: boolean
+  modelValue: string
 }>()
 
 const emit = defineEmits<{
+  'update:modelValue': [string]
   artistSelected: [ArtistLite]
 }>()
 
 const name = ref('')
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    name.value = newValue
+  },
+  { immediate: true },
+)
+
 const foundArtists = ref<ArtistLite[]>()
 
 const artistSelected = (event: AutoCompleteOptionSelectEvent) => {
+  const selectedArtistName = (event.value as ArtistLite).name
   emit('artistSelected', event.value)
+  emit('update:modelValue', selectedArtistName)
   if (props.clearInputOnSelect) {
     name.value = ''
+  } else {
+    name.value = selectedArtistName
   }
+}
+
+const onInput = () => {
+  emit('update:modelValue', name.value)
 }
 
 const search = () => {
   if (name.value !== '') {
-    console.log('Searching for:', name.value)
     searchArtistsLite(name.value).then((artists) => {
       foundArtists.value = artists
     })
+  } else {
+    foundArtists.value = []
   }
 }
 </script>
