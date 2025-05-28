@@ -51,6 +51,6 @@
 			"install",
 			"sqlx-cli"
 		],
-		"npm install": "cd frontend; npm i --verbose",
+		"npm install": "cd frontend; npm i --verbose"
 	}
 }
