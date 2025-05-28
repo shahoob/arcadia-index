@@ -5,6 +5,7 @@ use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
+use strum::Display;
 use utoipa::ToSchema;
 
 use super::{title_group::TitleGroupHierarchyLite, torrent_report::TorrentReport, user::UserLite};
@@ -284,6 +285,7 @@ pub struct UploadedTorrent {
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearchTitleGroup {
     pub name: String,
+    pub include_empty_groups: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
@@ -292,10 +294,37 @@ pub struct TorrentSearchTorrent {
     pub staff_checked: Option<bool>,
 }
 
+#[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
+pub enum TorrentSearchSortField {
+    #[serde(rename = "torrent_created_at")]
+    #[strum(serialize = "torrent_created_at")]
+    TorrentCreatedAt,
+    #[serde(rename = "torrent_size")]
+    #[strum(serialize = "torrent_size")]
+    TorrentSize,
+    #[serde(rename = "title_group_original_release_date")]
+    #[strum(serialize = "title_group_original_release_date")]
+    TitleGroupOriginalReleaseDate,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
+pub enum TorrentSearchOrder {
+    #[serde(rename = "asc")]
+    #[strum(serialize = "asc")]
+    Asc,
+    #[serde(rename = "desc")]
+    #[strum(serialize = "desc")]
+    Desc,
+}
+
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearch {
     pub title_group: TorrentSearchTitleGroup,
     pub torrent: TorrentSearchTorrent,
+    pub page: i64,
+    pub page_size: i32,
+    pub sort_by: TorrentSearchSortField,
+    pub order: TorrentSearchOrder,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

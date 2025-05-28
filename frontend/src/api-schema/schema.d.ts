@@ -1263,13 +1263,24 @@ export interface components {
             torrent_request_id: number;
         };
         TorrentSearch: {
+            order: components["schemas"]["TorrentSearchOrder"];
+            /** Format: int64 */
+            page: number;
+            /** Format: int32 */
+            page_size: number;
+            sort_by: components["schemas"]["TorrentSearchSortField"];
             title_group: components["schemas"]["TorrentSearchTitleGroup"];
             torrent: components["schemas"]["TorrentSearchTorrent"];
         };
+        /** @enum {string} */
+        TorrentSearchOrder: "asc" | "desc";
         TorrentSearchResults: {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
         };
+        /** @enum {string} */
+        TorrentSearchSortField: "torrent_created_at" | "torrent_size" | "title_group_original_release_date";
         TorrentSearchTitleGroup: {
+            include_empty_groups: boolean;
             name: string;
         };
         TorrentSearchTorrent: {

@@ -36,6 +36,7 @@ dotenvy = "0.15.7"
 percent-encoding = "2.3.1"
 serde_bencode = "0.2.4"
 actix-web-httpauth = "0.8.2"
+strum = { version = "0.27", features = ["derive"] }
 
 [patch.crates-io]
 bip_metainfo = { path = "vendored/bip_metainfo" }

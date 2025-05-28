@@ -51,8 +51,12 @@ const search_results = ref<TorrentSearchResults>()
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
 const loading = ref(false)
 const initialForm = ref<TorrentSearch>({
-  title_group: { name: '' },
+  title_group: { name: '', include_empty_groups: true },
   torrent: {},
+  page: 1,
+  page_size: 20,
+  sort_by: 'torrent_created_at',
+  order: 'desc',
 })
 
 const search = async (torrentSearch: TorrentSearch) => {

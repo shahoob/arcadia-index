@@ -253,10 +253,10 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
                     ), '[]'::jsonb)
                 ) AS lite_title_group,
                 CASE
-                    WHEN $1 = '' THEN EXTRACT(EPOCH FROM tg.created_at)
+                    WHEN $1 = '' THEN NULL
                     ELSE tgs.relevance
                 END AS sort_order
-            FROM get_title_groups_and_edition_group_and_torrents_lite($2, $3) tgl
+            FROM get_title_groups_and_edition_group_and_torrents_lite($2, $3, $4, $5, $6) tgl
             JOIN title_groups tg ON tgl.title_group_id = tg.id
             JOIN title_group_search tgs ON tg.id = tgs.title_group_id
         )
@@ -265,11 +265,19 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
         "#,
         torrent_search.title_group.name,
         torrent_search.torrent.staff_checked,
-        torrent_search.torrent.reported
+        torrent_search.torrent.reported,
+        torrent_search.title_group.include_empty_groups,
+        torrent_search.sort_by.to_string(),
+        torrent_search.order.to_string()
     )
     .fetch_one(pool)
     .await
     .map_err(|error| Error::ErrorSearchingForTorrents(error.to_string()))?;
+    println!(
+        "{} {}",
+        torrent_search.sort_by.to_string(),
+        torrent_search.order.to_string()
+    );
 
     Ok(serde_json::json!({"title_groups": search_results.title_groups}))
 }

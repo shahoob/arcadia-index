@@ -669,72 +669,12 @@ GROUP BY
 ORDER BY
     t.id;
 
--- CREATE VIEW title_groups_and_edition_group_and_torrents_lite AS
--- SELECT
---     tg.id AS title_group_id,
---     jsonb_build_object(
---         'id', tg.id,
---         'name', tg.name,
---         'covers', tg.covers,
---         'category', tg.category,
---         'content_type', tg.content_type,
---         'tags', tg.tags,
---         'original_release_date', tg.original_release_date
---     ) || jsonb_build_object(
---         'edition_groups', COALESCE((
---             SELECT jsonb_agg(
---                 jsonb_build_object(
---                     'id', eg.id,
---                     'title_group_id', eg.title_group_id,
---                     'name', eg.name,
---                     'release_date', eg.release_date,
---                     'distributor', eg.distributor,
---                     'covers', eg.covers,
---                     'source', eg.source,
---                     'additional_information', eg.additional_information,
---                     'torrents', COALESCE((
---                         SELECT jsonb_agg(
---                             jsonb_build_object(
---                                 'id', t.id,
---                                 'upload_factor', t.upload_factor,
---                                 'download_factor', t.download_factor,
---                                 'edition_group_id', t.edition_group_id,
---                                 'created_at', t.created_at,
---                                 'release_name', t.release_name,
---                                 'release_group', t.release_group,
---                                 'file_amount_per_type', t.file_amount_per_type,
---                                 'trumpable', t.trumpable,
---                                 'staff_checked', t.staff_checked,
---                                 'languages', t.languages,
---                                 'container', t.container,
---                                 'size', t.size,
---                                 'duration', t.duration,
---                                 'audio_codec', t.audio_codec,
---                                 'audio_bitrate', t.audio_bitrate,
---                                 'audio_bitrate_sampling', t.audio_bitrate_sampling,
---                                 'audio_channels', t.audio_channels,
---                                 'video_codec', t.video_codec,
---                                 'features', t.features,
---                                 'subtitle_languages', t.subtitle_languages,
---                                 'video_resolution', t.video_resolution,
---                                 'reports', t.reports
---                             )
---                         )
---                         FROM torrents_and_reports t
---                         WHERE t.edition_group_id = eg.id
---                     ), '[]'::jsonb)
---                 )
---             )
---             FROM edition_groups eg
---             WHERE eg.title_group_id = tg.id
---         ), '[]'::jsonb)
---     ) AS title_group_data
--- FROM title_groups tg;
-
 CREATE FUNCTION get_title_groups_and_edition_group_and_torrents_lite(
     p_torrent_staff_checked BOOLEAN DEFAULT NULL,
     p_torrent_reported BOOLEAN DEFAULT NULL,
-    p_include_empty_groups BOOLEAN DEFAULT TRUE
+    p_include_empty_groups BOOLEAN DEFAULT TRUE,
+    p_sort_by TEXT DEFAULT 'title_group_original_release_date',
+    p_order TEXT DEFAULT 'desc'
 )
 RETURNS TABLE (
     title_group_id BIGINT,
@@ -782,7 +722,11 @@ BEGIN
                         'reports', ft.reports
                     )) ORDER BY ft.id
                 ) FILTER (WHERE ft.id IS NOT NULL), '[]'::jsonb)
-            )) AS eg_data
+            )) AS eg_data,
+            MIN(ft.created_at) AS min_torrent_created_at,
+            MAX(ft.created_at) AS max_torrent_created_at,
+            MIN(ft.size) AS min_torrent_size,
+            MAX(ft.size) AS max_torrent_size
         FROM edition_groups eg
         LEFT JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
         GROUP BY eg.id
@@ -804,6 +748,35 @@ BEGIN
     LEFT JOIN edition_groups_with_torrents egwt ON tg.id = egwt.title_group_id
     WHERE p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL
     GROUP BY
-        tg.id;
+        tg.id
+    -- TODO: feels like this part can be simplified, but not sure how
+    ORDER BY
+        CASE
+            WHEN p_sort_by = 'torrent_created_at' AND p_order = 'asc' THEN MIN(egwt.min_torrent_created_at)
+            ELSE NULL
+        END ASC NULLS LAST,
+        CASE
+            WHEN p_sort_by = 'torrent_created_at' AND p_order = 'desc' THEN MAX(egwt.max_torrent_created_at)
+            ELSE NULL
+        END DESC NULLS LAST,
+
+        CASE
+            WHEN p_sort_by = 'torrent_size' AND p_order = 'asc' THEN MIN(egwt.min_torrent_size)
+            ELSE NULL
+        END ASC NULLS LAST,
+        CASE
+            WHEN p_sort_by = 'torrent_size' AND p_order = 'desc' THEN MAX(egwt.max_torrent_size)
+            ELSE NULL
+        END DESC NULLS LAST,
+
+        CASE
+            WHEN p_sort_by = 'title_group_original_release_date' AND p_order = 'asc' THEN tg.original_release_date
+            ELSE NULL
+        END ASC NULLS LAST,
+        CASE
+            WHEN p_sort_by = 'title_group_original_release_date' AND p_order = 'desc' THEN tg.original_release_date
+            ELSE NULL
+        END DESC NULLS LAST,
+        tg.id ASC;
 END;
 $$;
