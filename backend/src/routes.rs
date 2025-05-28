@@ -56,7 +56,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/torrent", web::delete().to(delete_torrent))
             .route("/torrent/top", web::get().to(get_top_torrents))
             .route("/report/torrent", web::post().to(add_torrent_report))
-            .route("/search/torrent", web::post().to(find_torrents))
+            .route("/search/torrent/lite", web::post().to(find_torrents))
             .route("/search/artist/lite", web::get().to(get_artists_lite))
             .route("/artists", web::post().to(add_artists))
             .route("/artist", web::get().to(get_artist_publications))

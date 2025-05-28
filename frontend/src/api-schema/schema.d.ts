@@ -277,7 +277,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/search/torrent": {
+    "/api/search/torrent/lite": {
         parameters: {
             query?: never;
             header?: never;
@@ -1607,7 +1607,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Successfully created the artists */
+            /** @description Successfully created the artists, returned in the same order as the one sent */
             200: {
                 headers: {
                     [name: string]: unknown;

@@ -35,7 +35,7 @@ import ContentContainer from '@/components/ContentContainer.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import {
-  searchTorrents,
+  searchTorrentsLite,
   type TorrentSearch,
   type TorrentSearchResults,
 } from '@/services/api/torrentService'
@@ -57,7 +57,7 @@ const initialForm = ref<TorrentSearch>({
 
 const search = async (torrentSearch: TorrentSearch) => {
   loading.value = true
-  search_results.value = await searchTorrents(torrentSearch)
+  search_results.value = await searchTorrentsLite(torrentSearch)
   loading.value = false
 }
 

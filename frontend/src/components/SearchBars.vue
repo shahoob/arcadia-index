@@ -12,11 +12,10 @@
         }
       "
     />
-    <InputText
-      type="text"
+    <ArtistSearchBar
       :placeholder="t('artist.artist', 2)"
-      v-model="searchForm.artists"
-      size="small"
+      @artistSelected="artistSelected"
+      :clearInputOnSelect="true"
     />
     <InputText
       type="text"
@@ -41,9 +40,11 @@
 
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
+import ArtistSearchBar from './artist/ArtistSearchBar.vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import type { ArtistLite } from '@/services/api/artistService'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -56,6 +57,10 @@ const searchForm = ref({
   forums: '',
   users: '',
 })
+
+const artistSelected = (artist: ArtistLite) => {
+  router.push(`/artist/${artist.id}`)
+}
 </script>
 
 <style scoped>
@@ -66,6 +71,6 @@ const searchForm = ref({
 }
 .p-inputtext {
   margin: 0 5px;
-  width: 10%;
+  /* width: 10%; */
 }
 </style>
