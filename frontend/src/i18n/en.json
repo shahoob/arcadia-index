@@ -37,7 +37,8 @@
     "reason": "Reason",
     "yes": "Yes",
     "no": "No",
-    "both": "Both"
+    "both": "Both",
+    "page": "Page"
   },
   "auth": {
     "remember_me": "Remember me"

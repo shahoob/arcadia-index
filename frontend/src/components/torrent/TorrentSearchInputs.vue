@@ -43,6 +43,16 @@
       </div>
     </div>
   </ContentContainer>
+  <div class="pagination">
+    <Button
+      :disabled="searchForm.page < 2"
+      @click="searchForm.page-- && emit('search', searchForm)"
+      label="<"
+      size="small"
+    />
+    {{ t('general.page') }} {{ searchForm.page }}
+    <Button @click="searchForm.page++ && emit('search', searchForm)" label=">" size="small" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -69,9 +79,12 @@ const emit = defineEmits<{
 }>()
 
 const searchForm = ref<TorrentSearch>({
-  title_group: { name: '' },
-  torrent: { staff_checked: null },
-  // tags: '',
+  title_group: { name: '', include_empty_groups: true },
+  torrent: {},
+  page: 2,
+  page_size: 4,
+  sort_by: 'torrent_created_at',
+  order: 'desc',
 })
 const staffOptionChoices = ref([
   { label: t('general.yes'), value: true },
@@ -106,6 +119,13 @@ onMounted(async () => {
   }
   label {
     margin-right: 5px;
+  }
+}
+.pagination {
+  text-align: center;
+  margin: 10px 0;
+  .p-button {
+    margin: 0 10px;
   }
 }
 </style>

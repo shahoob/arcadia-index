@@ -227,57 +227,40 @@ pub async fn get_torrent(
 pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
     let search_results = sqlx::query!(
         r#"
-        WITH title_group_search AS (
-            SELECT
-                id AS title_group_id,
-                CASE
-                    WHEN $1 = '' THEN NULL
-                    ELSE ts_rank_cd(to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')), plainto_tsquery('simple', $1))
-                END AS relevance
-            FROM title_groups
-            WHERE $1 = '' OR to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
-        ),
-        title_group_data AS (
-            SELECT
-                tgl.title_group_data || jsonb_build_object(
-                    'affiliated_artists', COALESCE((
-                        SELECT jsonb_agg(
-                            jsonb_build_object(
-                                'id', ar.id,
-                                'name', ar.name
+        WITH title_group_data AS (
+                SELECT
+                    tgl.title_group_data || jsonb_build_object(
+                        'affiliated_artists', COALESCE((
+                            SELECT jsonb_agg(
+                                jsonb_build_object(
+                                    'id', ar.id,
+                                    'name', ar.name
+                                )
                             )
-                        )
-                        FROM affiliated_artists aa
-                        JOIN artists ar ON aa.artist_id = ar.id
-                        WHERE aa.title_group_id = tgl.title_group_id
-                    ), '[]'::jsonb)
-                ) AS lite_title_group,
-                CASE
-                    WHEN $1 = '' THEN NULL
-                    ELSE tgs.relevance
-                END AS sort_order
-            FROM get_title_groups_and_edition_group_and_torrents_lite($2, $3, $4, $5, $6) tgl
-            JOIN title_groups tg ON tgl.title_group_id = tg.id
-            JOIN title_group_search tgs ON tg.id = tgs.title_group_id
-        )
-        SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
-        FROM title_group_data;
+                            FROM affiliated_artists aa
+                            JOIN artists ar ON aa.artist_id = ar.id
+                            WHERE aa.title_group_id = tgl.title_group_id
+                        ), '[]'::jsonb)
+                    ) AS lite_title_group,
+                    tgl.relevance AS sort_order
+                FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8) tgl
+            )
+            SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
+            FROM title_group_data;
         "#,
         torrent_search.title_group.name,
         torrent_search.torrent.staff_checked,
         torrent_search.torrent.reported,
         torrent_search.title_group.include_empty_groups,
         torrent_search.sort_by.to_string(),
-        torrent_search.order.to_string()
+        torrent_search.order.to_string(),
+        torrent_search.page_size,
+        (torrent_search.page - 1) * torrent_search.page_size,
     )
     .fetch_one(pool)
     .await
     .map_err(|error| Error::ErrorSearchingForTorrents(error.to_string()))?;
-    println!(
-        "{} {}",
-        torrent_search.sort_by.to_string(),
-        torrent_search.order.to_string()
-    );
+    println!("{} {}", torrent_search.page_size, torrent_search.page);
 
     Ok(serde_json::json!({"title_groups": search_results.title_groups}))
 }

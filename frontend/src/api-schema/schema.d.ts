@@ -1266,7 +1266,7 @@ export interface components {
             order: components["schemas"]["TorrentSearchOrder"];
             /** Format: int64 */
             page: number;
-            /** Format: int32 */
+            /** Format: int64 */
             page_size: number;
             sort_by: components["schemas"]["TorrentSearchSortField"];
             title_group: components["schemas"]["TorrentSearchTitleGroup"];

@@ -54,15 +54,16 @@ const initialForm = ref<TorrentSearch>({
   title_group: { name: '', include_empty_groups: true },
   torrent: {},
   page: 1,
-  page_size: 20,
+  page_size: 5,
   sort_by: 'torrent_created_at',
   order: 'desc',
 })
 
 const search = async (torrentSearch: TorrentSearch) => {
   loading.value = true
-  search_results.value = await searchTorrentsLite(torrentSearch)
-  loading.value = false
+  search_results.value = await searchTorrentsLite(torrentSearch).finally(() => {
+    loading.value = false
+  })
 }
 
 const loadSearchForm = async () => {

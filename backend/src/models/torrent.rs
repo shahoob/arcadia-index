@@ -322,7 +322,7 @@ pub struct TorrentSearch {
     pub title_group: TorrentSearchTitleGroup,
     pub torrent: TorrentSearchTorrent,
     pub page: i64,
-    pub page_size: i32,
+    pub page_size: i64,
     pub sort_by: TorrentSearchSortField,
     pub order: TorrentSearchOrder,
 }
