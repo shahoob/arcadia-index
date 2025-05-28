@@ -228,25 +228,24 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
     let search_results = sqlx::query!(
         r#"
         WITH title_group_data AS (
-                SELECT
-                    tgl.title_group_data || jsonb_build_object(
-                        'affiliated_artists', COALESCE((
-                            SELECT jsonb_agg(
-                                jsonb_build_object(
-                                    'id', ar.id,
-                                    'name', ar.name
-                                )
+            SELECT
+                tgl.title_group_data || jsonb_build_object(
+                    'affiliated_artists', COALESCE((
+                        SELECT jsonb_agg(
+                            jsonb_build_object(
+                                'id', ar.id,
+                                'name', ar.name
                             )
-                            FROM affiliated_artists aa
-                            JOIN artists ar ON aa.artist_id = ar.id
-                            WHERE aa.title_group_id = tgl.title_group_id
-                        ), '[]'::jsonb)
-                    ) AS lite_title_group,
-                    tgl.relevance AS sort_order
-                FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8) tgl
-            )
-            SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
-            FROM title_group_data;
+                        )
+                        FROM affiliated_artists aa
+                        JOIN artists ar ON aa.artist_id = ar.id
+                        WHERE aa.title_group_id = tgl.title_group_id
+                    ), '[]'::jsonb)
+                ) AS lite_title_group
+            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8) tgl
+        )
+        SELECT jsonb_agg(lite_title_group) AS title_groups
+        FROM title_group_data;
         "#,
         torrent_search.title_group.name,
         torrent_search.torrent.staff_checked,

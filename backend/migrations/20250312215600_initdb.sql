@@ -669,123 +669,143 @@ GROUP BY
 ORDER BY
     t.id;
 
+
     CREATE FUNCTION get_title_groups_and_edition_group_and_torrents_lite(
-         p_search_query TEXT DEFAULT '',
-         p_torrent_staff_checked BOOLEAN DEFAULT NULL,
-         p_torrent_reported BOOLEAN DEFAULT NULL,
-         p_include_empty_groups BOOLEAN DEFAULT TRUE,
-         p_sort_by TEXT DEFAULT 'title_group_original_release_date',
-         p_order TEXT DEFAULT 'desc',
-         p_limit BIGINT DEFAULT NULL,
-         p_offset BIGINT DEFAULT NULL
-     )
-     RETURNS TABLE (
-         title_group_id BIGINT,
-         title_group_data JSONB,
-         relevance REAL
-     )
-     LANGUAGE plpgsql
-     AS $$
-     BEGIN
-         RETURN QUERY
-         WITH filtered_torrents AS (
-             SELECT *
-             FROM torrents_and_reports t
-             WHERE (p_torrent_staff_checked IS NULL OR t.staff_checked = p_torrent_staff_checked)
-             AND (
-                 p_torrent_reported IS NULL
-                 OR (p_torrent_reported = TRUE AND t.reports::jsonb <> '[]'::jsonb)
-                 OR (p_torrent_reported = FALSE AND t.reports::jsonb = '[]'::jsonb)
-             )
-         ),
-         edition_groups_with_torrents AS (
-             SELECT
-                 eg.id AS eg_id,
-                 eg.title_group_id,
-                 jsonb_strip_nulls(jsonb_build_object(
-                     'id', eg.id,
-                     'title_group_id', eg.title_group_id,
-                     'name', eg.name,
-                     'release_date', eg.release_date,
-                     'distributor', eg.distributor,
-                     'covers', eg.covers,
-                     'source', eg.source,
-                     'additional_information', eg.additional_information,
-                     'torrents', COALESCE(jsonb_agg(
-                         jsonb_strip_nulls(jsonb_build_object(
-                             'id', ft.id, 'upload_factor', ft.upload_factor, 'download_factor', ft.download_factor,
-                             'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at,
-                             'release_name', ft.release_name, 'release_group', ft.release_group,
-                             'file_amount_per_type', ft.file_amount_per_type, 'trumpable', ft.trumpable,
-                             'staff_checked', ft.staff_checked, 'languages', ft.languages,
-                             'container', ft.container, 'size', ft.size, 'duration', ft.duration,
-                             'audio_codec', ft.audio_codec, 'audio_bitrate', ft.audio_bitrate,
-                             'audio_bitrate_sampling', ft.audio_bitrate_sampling, 'audio_channels', ft.audio_channels,
-                             'video_codec', ft.video_codec, 'features', ft.features,
-                             'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
-                             'reports', ft.reports
-                         )) ORDER BY ft.id
-                     ) FILTER (WHERE ft.id IS NOT NULL), '[]'::jsonb)
-                 )) AS eg_data,
-                 MIN(ft.created_at) AS min_torrent_created_at,
-                 MAX(ft.created_at) AS max_torrent_created_at,
-                 MIN(ft.size) AS min_torrent_size,
-                 MAX(ft.size) AS max_torrent_size
-             FROM edition_groups eg
-             LEFT JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
-             GROUP BY eg.id
-         )
-         SELECT
-             tg.id AS title_group_id,
-             jsonb_strip_nulls(jsonb_build_object(
-                 'id', tg.id,
-                 'name', tg.name,
-                 'covers', tg.covers,
-                 'category', tg.category,
-                 'content_type', tg.content_type,
-                 'tags', tg.tags,
-                 'original_release_date', tg.original_release_date
-             ) || jsonb_build_object(
-                 'edition_groups', COALESCE(jsonb_agg(egwt.eg_data ORDER BY egwt.eg_id) FILTER (WHERE egwt.eg_data IS NOT NULL), '[]'::jsonb)
-             )) AS title_group_data,
-             CASE
-                 WHEN p_search_query = '' THEN NULL
-                 ELSE ts_rank_cd(to_tsvector('simple', tg.name || ' ' || coalesce(array_to_string(tg.name_aliases, ' '), '')), plainto_tsquery('simple', p_search_query))
-             END AS relevance
-         FROM title_groups tg
-         LEFT JOIN edition_groups_with_torrents egwt ON tg.id = egwt.title_group_id
-         WHERE (p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL)
-         AND (p_search_query = '' OR to_tsvector('simple', tg.name || ' ' || coalesce(array_to_string(tg.name_aliases, ' '), '')) @@ plainto_tsquery('simple', p_search_query))
-         GROUP BY
-             tg.id
-         ORDER BY
-             CASE
-                 WHEN p_sort_by = 'torrent_created_at' AND p_order = 'asc' THEN MIN(egwt.min_torrent_created_at)
-                 ELSE NULL
-             END ASC NULLS LAST,
-             CASE
-                 WHEN p_sort_by = 'torrent_created_at' AND p_order = 'desc' THEN MAX(egwt.max_torrent_created_at)
-                 ELSE NULL
-             END DESC NULLS LAST,
-
-             CASE
-                 WHEN p_sort_by = 'torrent_size' AND p_order = 'asc' THEN MIN(egwt.min_torrent_size)
-                 ELSE NULL
-             END ASC NULLS LAST,
-             CASE
-                 WHEN p_sort_by = 'torrent_size' AND p_order = 'desc' THEN MAX(egwt.max_torrent_size)
-                 ELSE NULL
-             END DESC NULLS LAST,
-
-             CASE
-                 WHEN p_sort_by = 'title_group_original_release_date' AND p_order = 'asc' THEN tg.original_release_date
-                 ELSE NULL
-             END ASC NULLS LAST,
-             CASE
-                 WHEN p_sort_by = 'title_group_original_release_date' AND p_order = 'desc' THEN tg.original_release_date
-                 ELSE NULL
-             END DESC NULLS LAST,
-             tg.id ASC
-         LIMIT p_limit OFFSET p_offset;
-     END;
-     $$;
+        p_title_group_name TEXT DEFAULT '',
+        p_torrent_staff_checked BOOLEAN DEFAULT NULL,
+        p_torrent_reported BOOLEAN DEFAULT NULL,
+        p_include_empty_groups BOOLEAN DEFAULT TRUE,
+        p_sort_by TEXT DEFAULT 'title_group_original_release_date',
+        p_order TEXT DEFAULT 'desc',
+        p_limit BIGINT DEFAULT NULL,
+        p_offset BIGINT DEFAULT NULL
+    )
+    RETURNS TABLE (
+        title_group_id BIGINT,
+        title_group_data JSONB
+    )
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        WITH filtered_torrents AS (
+            SELECT *
+            FROM torrents_and_reports t
+            WHERE (p_torrent_staff_checked IS NULL OR t.staff_checked = p_torrent_staff_checked)
+            AND (
+                p_torrent_reported IS NULL
+                OR (p_torrent_reported = TRUE AND t.reports::jsonb <> '[]'::jsonb)
+                OR (p_torrent_reported = FALSE AND t.reports::jsonb = '[]'::jsonb)
+            )
+        ),
+        edition_groups_with_torrents AS (
+            SELECT
+                eg.id AS eg_id,
+                eg.title_group_id,
+                jsonb_strip_nulls(jsonb_build_object(
+                    'id', eg.id,
+                    'title_group_id', eg.title_group_id,
+                    'name', eg.name,
+                    'release_date', eg.release_date,
+                    'distributor', eg.distributor,
+                    'covers', eg.covers,
+                    'source', eg.source,
+                    'additional_information', eg.additional_information,
+                    'torrents', COALESCE(jsonb_agg(
+                        jsonb_strip_nulls(jsonb_build_object(
+                            'id', ft.id, 'upload_factor', ft.upload_factor, 'download_factor', ft.download_factor,
+                            'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at,
+                            'release_name', ft.release_name, 'release_group', ft.release_group,
+                            'file_amount_per_type', ft.file_amount_per_type, 'trumpable', ft.trumpable,
+                            'staff_checked', ft.staff_checked, 'languages', ft.languages,
+                            'container', ft.container, 'size', ft.size, 'duration', ft.duration,
+                            'audio_codec', ft.audio_codec, 'audio_bitrate', ft.audio_bitrate,
+                            'audio_bitrate_sampling', ft.audio_bitrate_sampling, 'audio_channels', ft.audio_channels,
+                            'video_codec', ft.video_codec, 'features', ft.features,
+                            'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
+                            'reports', ft.reports
+                        )) ORDER BY ft.id
+                    ) FILTER (WHERE ft.id IS NOT NULL), '[]'::jsonb)
+                )) AS eg_data,
+                MIN(ft.created_at) AS min_torrent_created_at,
+                MAX(ft.created_at) AS max_torrent_created_at,
+                MIN(ft.size) AS min_torrent_size,
+                MAX(ft.size) AS max_torrent_size
+            FROM edition_groups eg
+            LEFT JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
+            GROUP BY eg.id
+        ),
+        -- Calculate relevance score once if search query is provided
+        title_groups_with_relevance AS (
+            SELECT
+                tg.id,
+                tg.name,
+                tg.covers,
+                tg.category,
+                tg.content_type,
+                tg.tags,
+                tg.original_release_date,
+                CASE
+                    WHEN p_title_group_name IS NOT NULL AND p_title_group_name <> '' THEN
+                        ts_rank_cd(to_tsvector('simple', tg.name || ' ' || coalesce(array_to_string(tg.name_aliases, ' '), '')), plainto_tsquery('simple', p_title_group_name))
+                    ELSE NULL
+                END AS relevance_score,
+                to_tsvector('simple', tg.name || ' ' || coalesce(array_to_string(tg.name_aliases, ' '), '')) AS search_vector
+            FROM title_groups tg
+            WHERE p_title_group_name = '' OR to_tsvector('simple', tg.name || ' ' || coalesce(array_to_string(tg.name_aliases, ' '), '')) @@ plainto_tsquery('simple', p_title_group_name)
+        )
+        SELECT
+            tgr.id AS title_group_id,
+            jsonb_strip_nulls(jsonb_build_object(
+                'id', tgr.id,
+                'name', tgr.name,
+                'covers', tgr.covers,
+                'category', tgr.category,
+                'content_type', tgr.content_type,
+                'tags', tgr.tags,
+                'original_release_date', tgr.original_release_date
+            ) || jsonb_build_object(
+                'edition_groups', COALESCE(jsonb_agg(egwt.eg_data ORDER BY egwt.eg_id) FILTER (WHERE egwt.eg_data IS NOT NULL), '[]'::jsonb)
+            )) AS title_group_data
+        FROM title_groups_with_relevance tgr
+        LEFT JOIN edition_groups_with_torrents egwt ON tgr.id = egwt.title_group_id
+        WHERE (p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL)
+        GROUP BY
+            tgr.id, tgr.name, tgr.covers, tgr.category, tgr.content_type, tgr.tags, tgr.original_release_date, tgr.relevance_score
+        ORDER BY
+            CASE
+                WHEN p_sort_by = 'relevance' AND p_order = 'asc' THEN tgr.relevance_score
+                ELSE NULL
+            END ASC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'relevance' AND p_order = 'desc' THEN tgr.relevance_score
+                ELSE NULL
+            END DESC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'torrent_created_at' AND p_order = 'asc' THEN MIN(egwt.min_torrent_created_at)
+                ELSE NULL
+            END ASC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'torrent_created_at' AND p_order = 'desc' THEN MAX(egwt.max_torrent_created_at)
+                ELSE NULL
+            END DESC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'torrent_size' AND p_order = 'asc' THEN MIN(egwt.min_torrent_size)
+                ELSE NULL
+            END ASC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'torrent_size' AND p_order = 'desc' THEN MAX(egwt.max_torrent_size)
+                ELSE NULL
+            END DESC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'title_group_original_release_date' AND p_order = 'asc' THEN tgr.original_release_date
+                ELSE NULL
+            END ASC NULLS LAST,
+            CASE
+                WHEN p_sort_by = 'title_group_original_release_date' AND p_order = 'desc' THEN tgr.original_release_date
+                ELSE NULL
+            END DESC NULLS LAST,
+            tgr.id ASC
+        LIMIT p_limit OFFSET p_offset;
+    END;
+    $$;
