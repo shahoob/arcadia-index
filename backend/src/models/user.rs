@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use sqlx::types::ipnetwork::IpNetwork;
@@ -56,7 +56,7 @@ pub struct User {
     #[schema(value_type = String, format = "0.0.0.0")]
     pub registered_from_ip: IpNetwork,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
     pub description: String,
     pub uploaded: i64,
     pub real_uploaded: i64,
@@ -65,7 +65,7 @@ pub struct User {
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
-    pub last_seen: DateTime<Local>,
+    pub last_seen: DateTime<Utc>,
     pub class: String,
     pub forum_posts: i32,
     pub forum_threads: i32,
@@ -86,6 +86,8 @@ pub struct User {
     pub freeleech_tokens: i32,
     pub settings: serde_json::Value,
     pub warned: bool,
+    pub banned: bool,
+    pub staff_note: String,
     pub passkey_upper: i64,
     pub passkey_lower: i64,
 }
@@ -128,7 +130,7 @@ pub struct PublicUser {
     pub username: String,
     pub avatar: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
     pub description: String,
     pub uploaded: i64,
     pub real_uploaded: i64,
@@ -137,7 +139,7 @@ pub struct PublicUser {
     pub ratio: f64,
     pub required_ratio: f64,
     #[schema(value_type = String, format = DateTime)]
-    pub last_seen: DateTime<Local>,
+    pub last_seen: DateTime<Utc>,
     pub class: String,
     pub forum_posts: i32,
     pub forum_threads: i32,
@@ -155,6 +157,7 @@ pub struct PublicUser {
     pub invited: i64,
     pub invitations: i16,
     pub bonus_points: i64,
+    pub banned: bool,
     pub warned: bool,
 }
 
@@ -162,12 +165,15 @@ pub struct PublicUser {
 pub struct UserLite {
     pub id: i64,
     pub username: String,
+    pub warned: bool,
+    pub banned: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserLiteAvatar {
     pub id: i64,
     pub username: String,
+    pub banned: bool,
     pub avatar: Option<String>,
     pub warned: bool,
 }
@@ -189,17 +195,19 @@ pub struct UserWarning {
     pub id: i64,
     pub user_id: i64,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
-    #[schema(value_type = String, format = DateTime)]
-    pub expires_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
+    #[schema(value_type = Option<String>, format = DateTime)]
+    pub expires_at: Option<DateTime<Utc>>,
     pub reason: String,
     pub created_by_id: i64,
+    pub ban: bool, // wether or not this warning bans the user
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserCreatedUserWarning {
     pub user_id: i64,
-    #[schema(value_type = String, format = DateTime)]
-    pub expires_at: DateTime<Local>,
+    #[schema(value_type = Option<String>, format = DateTime)]
+    pub expires_at: Option<DateTime<Utc>>,
     pub reason: String,
+    pub ban: bool,
 }

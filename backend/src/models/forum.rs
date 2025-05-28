@@ -41,6 +41,13 @@ pub struct ForumThread {
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct UserCreatedForumThread {
+    pub forum_sub_category_id: i32,
+    pub name: String,
+    pub first_post: UserCreatedForumPost,
+}
+
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct ForumPost {
     pub id: i64,
     pub forum_thread_id: i64,

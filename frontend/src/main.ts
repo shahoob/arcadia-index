@@ -54,4 +54,13 @@ app.use(i18n)
 app.use(ToastService)
 app.directive('tooltip', Tooltip)
 
+export function showToast(title: string, detail: string, severity: string, life: number): void {
+  app.config.globalProperties.$toast.add({
+    severity: severity,
+    summary: title,
+    detail: detail,
+    life: life,
+  })
+}
+
 app.mount('#app')

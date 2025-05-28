@@ -146,9 +146,8 @@
     <div v-if="step > 1">
       <CreateOrEditTitleGroup
         :content_type="content_type"
-        @validated="sendTitleGroup"
+        @done="titleGroupCreated"
         :initialTitleGroupForm
-        :sendingTitleGroup
       />
     </div>
   </div>
@@ -164,9 +163,7 @@ import Button from 'primevue/button'
 import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
-import { useToast } from 'primevue/usetoast'
 import {
-  createTitleGroup,
   getTitleGroupLite,
   type ContentType,
   type TitleGroup,
@@ -191,7 +188,6 @@ const selectableContentTypes: ContentType[] = [
 ]
 const content_type = ref<ContentType>('movie') // consider either
 const gettingTitleGroupInfo = ref(false)
-let sendingTitleGroup = false
 let initialTitleGroupForm: UserCreatedTitleGroup | null = null
 const external_database_ids = {
   openlibrary: '',
@@ -201,7 +197,6 @@ const external_database_ids = {
 }
 let gettingExternalDatabaseData = false
 const titleGroupStore = useTitleGroupStore()
-const toast = useToast()
 
 const { t } = useI18n()
 
@@ -227,14 +222,7 @@ const getExternalDBData = (item_id: string | number, database: string) => {
 const sendSelectedTitleGroup = async (): Promise<void> => {
   gettingTitleGroupInfo.value = true
   if (!titleGroupStore.id && titleGroupId.value) {
-    const titleGroupLite = await getTitleGroupLite(titleGroupId.value).catch((error) => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.error,
-        life: 4000,
-      })
-    })
+    const titleGroupLite = await getTitleGroupLite(titleGroupId.value)
     if (titleGroupLite) {
       titleGroupStore.id = titleGroupLite.id
       titleGroupStore.edition_groups = titleGroupLite.edition_groups
@@ -247,24 +235,10 @@ const sendSelectedTitleGroup = async (): Promise<void> => {
   gettingTitleGroupInfo.value = false
 }
 
-const sendTitleGroup = async (titleGroupForm: UserCreatedTitleGroup) => {
-  sendingTitleGroup = true
-  titleGroupForm.content_type = content_type.value
-  console.log(content_type.value)
-  const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm))
-  // otherwise there is a json parse error, last char is "Z"
-  // formattedTitleGroupForm.original_release_date =
-  //   formattedTitleGroupForm.original_release_date.slice(0, -1)
-  createTitleGroup(formattedTitleGroupForm)
-    .then((data) => {
-      // this.creatingTitleGroup = false
-      titleGroupStore.id = data.id
-      titleGroupStore.content_type = data.content_type
-      emit('done', data)
-    })
-    .finally(() => {
-      sendingTitleGroup = false
-    })
+const titleGroupCreated = async (titleGroup: TitleGroup) => {
+  titleGroupStore.id = titleGroup.id
+  titleGroupStore.content_type = titleGroup.content_type
+  emit('done', titleGroup)
 }
 
 onMounted(() => {

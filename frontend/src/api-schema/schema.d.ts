@@ -29,7 +29,23 @@ export interface paths {
         };
         get: operations["get_artist_publications"];
         put?: never;
-        post: operations["add_artist"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/artists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["add_artists"];
         delete?: never;
         options?: never;
         head?: never;
@@ -109,7 +125,7 @@ export interface paths {
         };
         get: operations["get_forum_thread"];
         put?: never;
-        post?: never;
+        post: operations["add_forum_thread"];
         delete?: never;
         options?: never;
         head?: never;
@@ -605,7 +621,7 @@ export interface components {
             source?: null | components["schemas"]["Source"];
         };
         /** @enum {string} */
-        Features: "HDR" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
+        Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
         ForumCategoryHierarchy: {
             /** Format: int32 */
             id: number;
@@ -659,6 +675,21 @@ export interface components {
             threads: components["schemas"]["ForumThreadHierarchy"][];
             /** Format: int64 */
             threads_amount: number;
+        };
+        ForumThread: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int32 */
+            forum_sub_category_id: number;
+            /** Format: int64 */
+            id: number;
+            locked: boolean;
+            name: string;
+            /** Format: int64 */
+            posts_amount: number;
+            sticky: boolean;
         };
         ForumThreadAndPosts: {
             /** Format: date-time */
@@ -790,6 +821,7 @@ export interface components {
             avatar?: string | null;
             /** Format: int64 */
             average_seeding_time: number;
+            banned: boolean;
             /** Format: int64 */
             bonus_points: number;
             class: string;
@@ -1231,10 +1263,18 @@ export interface components {
             torrent_request_id: number;
         };
         TorrentSearch: {
-            title_group_name: string;
+            title_group: components["schemas"]["TorrentSearchTitleGroup"];
+            torrent: components["schemas"]["TorrentSearchTorrent"];
         };
         TorrentSearchResults: {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
+        };
+        TorrentSearchTitleGroup: {
+            name: string;
+        };
+        TorrentSearchTorrent: {
+            reported?: boolean | null;
+            staff_checked?: boolean | null;
         };
         TorrentToDelete: {
             displayed_reason?: string | null;
@@ -1272,6 +1312,7 @@ export interface components {
             avatar?: string | null;
             /** Format: int64 */
             average_seeding_time: number;
+            banned: boolean;
             /** Format: int64 */
             bonus_points: number;
             class: string;
@@ -1327,6 +1368,7 @@ export interface components {
             settings: unknown;
             /** Format: int32 */
             snatched: number;
+            staff_note: string;
             /** Format: int32 */
             torrent_comments: number;
             /** Format: int64 */
@@ -1367,6 +1409,12 @@ export interface components {
             /** Format: int64 */
             forum_thread_id: number;
         };
+        UserCreatedForumThread: {
+            first_post: components["schemas"]["UserCreatedForumPost"];
+            /** Format: int32 */
+            forum_sub_category_id: number;
+            name: string;
+        };
         UserCreatedGift: {
             /** Format: int64 */
             bonus_points: number;
@@ -1387,7 +1435,7 @@ export interface components {
             tags: string[];
         };
         UserCreatedTitleGroup: {
-            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
+            affiliated_artists: components["schemas"]["UserCreatedAffiliatedArtist"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
@@ -1453,31 +1501,36 @@ export interface components {
             torrent_request_id: number;
         };
         UserCreatedUserWarning: {
+            ban: boolean;
             /** Format: date-time */
-            expires_at: string;
+            expires_at?: string | null;
             reason: string;
             /** Format: int64 */
             user_id: number;
         };
         UserLite: {
+            banned: boolean;
             /** Format: int64 */
             id: number;
             username: string;
+            warned: boolean;
         };
         UserLiteAvatar: {
             avatar?: string | null;
+            banned: boolean;
             /** Format: int64 */
             id: number;
             username: string;
             warned: boolean;
         };
         UserWarning: {
+            ban: boolean;
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
             created_by_id: number;
             /** Format: date-time */
-            expires_at: string;
+            expires_at?: string | null;
             /** Format: int64 */
             id: number;
             reason: string;
@@ -1541,7 +1594,7 @@ export interface operations {
             };
         };
     };
-    add_artist: {
+    add_artists: {
         parameters: {
             query?: never;
             header?: never;
@@ -1550,17 +1603,17 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserCreatedArtist"];
+                "application/json": components["schemas"]["UserCreatedArtist"][];
             };
         };
         responses: {
-            /** @description Successfully created the artist */
+            /** @description Successfully created the artists */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Artist"];
+                    "application/json": components["schemas"]["Artist"][];
                 };
             };
         };
@@ -1673,6 +1726,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForumThreadAndPosts"];
+                };
+            };
+        };
+    };
+    add_forum_thread: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedForumThread"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the forum thread */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForumThread"];
                 };
             };
         };

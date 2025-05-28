@@ -3,7 +3,7 @@
     v-slot="$form"
     :initialValues="titleGroupForm"
     :resolver
-    @submit="onFormSubmit"
+    @submit="sendTitleGroup"
     validateOnSubmit
     :validateOnValueUpdate="false"
     validateOnBlur
@@ -149,10 +149,50 @@
         {{ $form.original_release_date.error?.message }}
       </Message>
     </div>
+    <div class="artists input-list">
+      <label>{{ t('artist.artist', 2) }}</label>
+      <div v-for="(_link, index) in affiliated_artists_names" :key="index">
+        <InputText
+          size="small"
+          v-model="affiliated_artists_names[index]"
+          :placeholder="t('artist.name')"
+          class="artist"
+        />
+        <InputText
+          size="small"
+          v-model="titleGroupForm.affiliated_artists[index].nickname"
+          :placeholder="t('artist.nickname')"
+          class="artist"
+          v-tooltip.top="t('artist.nickname_explanation')"
+        />
+        <MultiSelect
+          v-model="titleGroupForm.affiliated_artists[index].roles"
+          :options="getArtistRoles()"
+          size="small"
+          class="select"
+          :placeholder="t('artist.role.role', 2)"
+        />
+        <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
+        <Button
+          v-if="index != 0 || affiliated_artists_names.length > 1"
+          @click="removeAffiliatedArtist(index)"
+          icon="pi pi-minus"
+          size="small"
+        />
+        <Message
+          v-if="($form.affiliated_artists as unknown as FormFieldState[])?.[index]?.invalid"
+          severity="error"
+          size="small"
+          variant="simple"
+        >
+          {{ ($form.affiliated_artists as unknown as FormFieldState[])[index].error?.message }}
+        </Message>
+      </div>
+    </div>
     <div class="covers input-list">
       <label>{{ t('general.cover', 2) }}</label>
       <div v-for="(_link, index) in titleGroupForm.covers" :key="index">
-        <InputText size="small" v-model="titleGroupForm.covers[index]" :name="`covers[${index}]`" />
+        <InputText size="small" v-model="titleGroupForm.covers[index]" />
         <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
         <Button
           v-if="index != 0 || titleGroupForm.covers.length > 1"
@@ -173,11 +213,7 @@
     <div class="screenshots input-list" v-if="content_type == 'software'">
       <label>{{ t('general.screenshots') }}</label>
       <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
-        <InputText
-          size="small"
-          v-model="titleGroupForm.screenshots[index]"
-          :name="`screenshots[${index}]`"
-        />
+        <InputText size="small" v-model="titleGroupForm.screenshots[index]" />
         <Button v-if="index == 0" @click="addScreenshot" icon="pi pi-plus" size="small" />
         <Button
           v-if="index != 0 || titleGroupForm.screenshots.length > 1"
@@ -244,30 +280,35 @@ import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
+import MultiSelect from 'primevue/multiselect'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
-import type {
-  ContentType,
-  TitleGroupCategory,
-  UserCreatedTitleGroup,
+import {
+  createTitleGroup,
+  type ContentType,
+  type TitleGroup,
+  type TitleGroupCategory,
+  type UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
+import {
+  createArtists,
+  type UserCreatedAffiliatedArtist,
+  type UserCreatedArtist,
+} from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
-import { getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
+import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
 
 interface Props {
   content_type: ContentType
   initialTitleGroupForm: UserCreatedTitleGroup | null
-  sendingTitleGroup: boolean
 }
-const {
-  content_type,
-  initialTitleGroupForm = null,
-  sendingTitleGroup = false,
-} = defineProps<Props>()
+const { content_type, initialTitleGroupForm = null } = defineProps<Props>()
 
-const titleGroupForm = ref<Omit<UserCreatedTitleGroup, 'content_type'>>({
+const sendingTitleGroup = ref(false)
+
+const titleGroupForm = ref<UserCreatedTitleGroup>({
   name: '',
   description: '',
   original_language: '',
@@ -278,12 +319,14 @@ const titleGroupForm = ref<Omit<UserCreatedTitleGroup, 'content_type'>>({
   category: 'Ep',
   country_from: '',
   name_aliases: [],
-  affiliated_artists: [],
+  affiliated_artists: [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }],
   tags: [],
   master_group_id: null,
   platform: null,
   embedded_links: {},
+  content_type: 'book',
 })
+const affiliated_artists_names = ref<[string]>([''])
 
 const original_release_date = computed({
   get() {
@@ -309,15 +352,14 @@ const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
 const { t } = useI18n()
 
 const emit = defineEmits<{
-  validated: [titleGroup: UserCreatedTitleGroup]
+  done: [titleGroup: TitleGroup]
 }>()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type FormErrors = {
-  [key in keyof UserCreatedTitleGroup]: UserCreatedTitleGroup[key] extends Array<unknown>
-    ? { message: string }[][]
-    : { message: string }[]
-}
+// type FormErrors = {
+//   [key in keyof UserCreatedTitleGroup]: UserCreatedTitleGroup[key] extends Array<unknown>
+//     ? { message: string }[][]
+//     : { message: string }[]
+// }
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
 
@@ -346,6 +388,26 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.original_release_date == '') {
     errors.original_release_date = [{ message: t('error.select_date') }]
   }
+  affiliated_artists_names.value.forEach((artist_name: string, index: number) => {
+    if (artist_name === '') {
+      if (!('affiliated_artists' in errors)) {
+        errors.affiliated_artists = []
+      }
+      errors.affiliated_artists![index] = { message: t('error.invalid_name') }
+    }
+  })
+  titleGroupForm.value.affiliated_artists.forEach(
+    (artist: UserCreatedAffiliatedArtist, index: number) => {
+      if (artist.roles.length === 0) {
+        if (!('affiliated_artists' in errors)) {
+          errors.affiliated_artists = []
+        }
+        errors.affiliated_artists![index] = {
+          message: t('error.artist_must_have_at_lease_one_role'),
+        }
+      }
+    },
+  )
   values.external_links.forEach((link: string, index: number) => {
     if (!isValidUrl(link)) {
       if (!('external_links' in errors)) {
@@ -354,7 +416,8 @@ const resolver = ({ values }: FormResolverOptions) => {
       errors.external_links![index] = { message: t('error.invalid_url') }
     }
   })
-  values.covers.forEach((link: string, index: number) => {
+  //TODO: should be values.covers, but somehow it is undefined
+  titleGroupForm.value.covers.forEach((link: string, index: number) => {
     if (!isValidUrl(link)) {
       if (!('covers' in errors)) {
         errors.covers = []
@@ -376,11 +439,61 @@ const resolver = ({ values }: FormResolverOptions) => {
     errors,
   }
 }
-const onFormSubmit = ({ valid }: FormSubmitEvent) => {
-  if (valid) {
-    titleGroupForm.value.tags = tagsString.value.trim().split(',')
-    emit('validated', { ...titleGroupForm.value, content_type })
+const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
+  if (!valid) {
+    return
   }
+  sendingTitleGroup.value = true
+  titleGroupForm.value.content_type = content_type
+  titleGroupForm.value.tags = tagsString.value.trim().split(',')
+  titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter(
+    (screenshot) => screenshot.trim() !== '',
+  )
+  // create artists that need to be created
+  const artistsToCreate: UserCreatedArtist[] = []
+  titleGroupForm.value.affiliated_artists.forEach((artist, index) => {
+    if (artist.artist_id === 0) {
+      artistsToCreate.push({
+        name: affiliated_artists_names.value[index],
+        pictures: [],
+        description: '',
+      })
+    }
+  })
+  const createdArtists = await createArtists(artistsToCreate)
+  titleGroupForm.value.affiliated_artists.forEach((artist) => {
+    if (artist.artist_id === 0) {
+      artist.artist_id = createdArtists[0].id
+      createdArtists.shift()
+    }
+  })
+
+  const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm.value))
+  createTitleGroup(formattedTitleGroupForm)
+    .then((data) => {
+      emit('done', data)
+    })
+    .finally(() => {
+      sendingTitleGroup.value = false
+    })
+}
+// const onFormSubmit = ({ valid }: FormSubmitEvent) => {
+//   if (valid) {
+//    emit('validated', { ...titleGroupForm.value, content_type })
+//   }
+// }
+const addAffiliatedArtist = () => {
+  affiliated_artists_names.value.push('')
+  titleGroupForm.value.affiliated_artists.push({
+    artist_id: 0,
+    nickname: null,
+    roles: [],
+    title_group_id: 0,
+  })
+}
+const removeAffiliatedArtist = (index: number) => {
+  affiliated_artists_names.value.splice(index, 1)
+  titleGroupForm.value.affiliated_artists.splice(index, 1)
 }
 const addLink = () => {
   titleGroupForm.value.external_links.push('')
@@ -450,7 +563,12 @@ onMounted(() => {
 }
 
 .input-list input {
-  width: 400px;
+  &:not(.artist) {
+    width: 400px;
+  }
+  &.artist {
+    width: 230px;
+  }
 }
 
 .validate-button {

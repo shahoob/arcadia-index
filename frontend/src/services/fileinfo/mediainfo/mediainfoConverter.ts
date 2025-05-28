@@ -1,96 +1,105 @@
 import { uniq, compact } from 'lodash-es'
-import { AUDIO_OPTION, VIDEO_OPTION } from '../utils'
+import { VIDEO_OPTION } from '../utils'
 import type { ParseResult } from './mediainfoParser'
 
-type Resolution = string | [string, string]
+type VideoResolution = string | [string, string]
 
 export default class MediainfoConverter {
   convert(info: ParseResult) {
-    const source = this.extractSource(info)
-    const codec = this.extractCodec(info)
-    const processing = this.extractProcessing(info, codec)
-    const resolution = this.extractResolution(info) // '720p' | ['1', '2']
-    const container = this.extractContainer(info, resolution)
-    const subtitles = this.extractSubtitle(info) // ['Chinese Simplified']
-    const videoOption = this.extractVideoOption(info)
-    const audioOption = this.extractAudioOption(info)
+    // const source = this.extractSource(info)
+    const videoCodec = this.extractVideoCodec(info)
+    // const processing = this.extractProcessing(info, videoCodec)
+    const videoResolution = this.extractVideoResolution(info) // '720p' | ['1', '2']
+    const container = this.extractContainer(info, videoResolution)
+    const subtitlesLanguages = this.extractSubtitleLanguages(info) // ['Chinese Simplified']
+    const features = this.extractFeatures(info)
+    const releaseGroup = this.extractReleaseGroup(info['general']['complete name'])
+    // const audioOption = this.extractAudioOption(info)
     return {
-      source,
-      codec,
-      processing,
-      resolution,
+      // source,
+      video_codec: videoCodec,
+      // processing,
+      video_resolution: videoResolution,
       container,
-      subtitles,
-      videoOption,
-      audioOption,
+      subtitle_languages: subtitlesLanguages,
+      features,
+      release_name: info['general']['complete name'],
+      release_group: releaseGroup,
+      // audioOption,
     }
   }
 
-  extractVideoOption(info: ParseResult) {
+  extractReleaseGroup(releaseName: string) {
+    return releaseName.substring(releaseName.lastIndexOf('-') + 1, releaseName.lastIndexOf('.'))
+  }
+
+  extractFeatures(info: ParseResult) {
     const options = new Set()
+    if (/remux/i.test(info['general']['complete name'])) {
+      options.add('Remux')
+    }
     for (const v of info['video']) {
       const hdrFormat = v['hdr format']
-      const bitDepth = v['bit depth']
+      // const bitDepth = v['bit depth']
       if (hdrFormat && hdrFormat.match(/Dolby Vision/)) {
         options.add(VIDEO_OPTION.DOLBYVISION)
       }
       if (hdrFormat && hdrFormat.match(/HDR10\+/)) {
         options.add(VIDEO_OPTION.HDR10PLUS)
-      }
-      if (hdrFormat && hdrFormat.match(/HDR/)) {
+      } else if (hdrFormat && hdrFormat.match(/HDR10/)) {
         options.add(VIDEO_OPTION.HDR10)
-      }
-      if (bitDepth && bitDepth.match(/10 bits/)) {
-        options.add(VIDEO_OPTION.BIT10)
-      }
-    }
-    return Array.from(options)
-  }
-
-  extractAudioOption(info: ParseResult) {
-    const options = new Set()
-    for (const a of info['audio']) {
-      const channels = a['channel(s)']
-      const commercialName = a['commercial name']
-      const format = a['format']
-      if (channels && channels.match(/6 channels/)) {
-        options.add(AUDIO_OPTION.CHANNEL51)
-      }
-      if (channels && channels.match(/8 channels/)) {
-        options.add(AUDIO_OPTION.CHANNEL71)
-      }
-      if (commercialName && commercialName.match(/Atmos/)) {
-        options.add(AUDIO_OPTION.DOLBYATMOS)
-      }
-      if (format && format.match(/DTS XLL X/)) {
-        options.add(AUDIO_OPTION.DTSX)
+      } else if (hdrFormat && hdrFormat.match(/HDR/)) {
+        options.add(VIDEO_OPTION.HDR)
       }
     }
     return Array.from(options)
   }
 
-  extractSource(info: ParseResult) {
-    const name = info['general']['complete name']
-    return /bdrip|blu-?ray|bluray/i.test(name)
-      ? 'Blu-ray'
-      : /web/i.test(name)
-        ? 'WEB'
-        : /dvdrip|ifo|vob/i.test(name)
-          ? 'DVD'
-          : /hdtv/i.test(name)
-            ? 'HDTV'
-            : /tv/i.test(name)
-              ? 'TV'
-              : /vhs/i.test(name)
-                ? 'VHS'
-                : /hddvd/i.test(name)
-                  ? 'HD-DVD'
-                  : ''
-  }
+  // extractAudioOption(info: ParseResult) {
+  //   const options = new Set()
+  //   for (const a of info['audio']) {
+  //     const channels = a['channel(s)']
+  //     const commercialName = a['commercial name']
+  //     const format = a['format']
+  //     if (channels && channels.match(/6 channels/)) {
+  //       options.add(AUDIO_OPTION.CHANNEL51)
+  //     }
+  //     if (channels && channels.match(/8 channels/)) {
+  //       options.add(AUDIO_OPTION.CHANNEL71)
+  //     }
+  //     if (commercialName && commercialName.match(/Atmos/)) {
+  //       options.add(AUDIO_OPTION.DOLBYATMOS)
+  //     }
+  //     if (format && format.match(/DTS XLL X/)) {
+  //       options.add(AUDIO_OPTION.DTSX)
+  //     }
+  //   }
+  //   return Array.from(options)
+  // }
 
-  extractContainer(info: ParseResult, resolution: Resolution) {
+  // not needed as this is specified at the edition_group level
+  // extractSource(info: ParseResult) {
+  //   const name = info['general']['complete name']
+  //   return /bdrip|blu-?ray|bluray/i.test(name)
+  //     ? 'Blu-ray'
+  //     : /web/i.test(name)
+  //       ? 'WEB'
+  //       : /dvdrip|ifo|vob/i.test(name)
+  //         ? 'DVD'
+  //         : /hdtv/i.test(name)
+  //           ? 'HDTV'
+  //           : /tv/i.test(name)
+  //             ? 'TV'
+  //             : /vhs/i.test(name)
+  //               ? 'VHS'
+  //               : /hddvd/i.test(name)
+  //                 ? 'HD-DVD'
+  //                 : ''
+  // }
+
+  extractContainer(info: ParseResult, videoResolution: VideoResolution) {
     const format = info['general']['format']
-    if (!Array.isArray(resolution) && ['PAL', 'NTSC'].includes(resolution)) {
+    if (!Array.isArray(videoResolution) && ['PAL', 'NTSC'].includes(videoResolution)) {
       return 'VOB IFO'
     }
 
@@ -109,25 +118,21 @@ export default class MediainfoConverter {
                 : 'Other'
   }
 
-  extractCodec(info: ParseResult) {
+  extractVideoCodec(info: ParseResult) {
     // V_MPEGH/ISO/HEVC is H265 ?
     const completeName = info['general']['complete name']
     const video = info['video'][0]
-    const encodingSettings = video['encoding settings']
+    // const encodingSettings = video['encoding settings']
     const format = video['format']
-    const codecId = video['codec id']
+    const videoCodecId = video['vide codec id']
     return format === 'AVC'
-      ? encodingSettings
-        ? 'x264'
-        : 'H.264'
+      ? 'h264'
       : format.includes('HEVC')
-        ? encodingSettings
-          ? 'x265'
-          : 'H.265'
+        ? 'h265'
         : format.includes('H265')
-          ? 'H.265'
+          ? 'h265'
           : format === 'MPEG-4 Visual'
-            ? codecId === 'XVID'
+            ? videoCodecId === 'XVID'
               ? 'XviD'
               : 'DivX'
             : /dvd5/i.test(completeName)
@@ -137,18 +142,18 @@ export default class MediainfoConverter {
                 : 'Other'
   }
 
-  extractProcessing(info: ParseResult, codec: string) {
-    const completeName = info['general']['complete name']
-    return /remux/i.test(completeName)
-      ? 'Remux'
-      : ['x264', 'x265'].includes(codec)
-        ? 'Encode'
-        : ['H.264', 'H.265'].includes(codec)
-          ? 'Untouched'
-          : ''
-  }
+  // extractProcessing(info: ParseResult, videoCodec: string) {
+  //   const completeName = info['general']['complete name']
+  //   return /remux/i.test(completeName)
+  //     ? 'Remux'
+  //     : ['x264', 'x265'].includes(videoCodec)
+  //       ? 'Encode'
+  //       : ['H.264', 'H.265'].includes(videoCodec)
+  //         ? 'Untouched'
+  //         : ''
+  // }
 
-  extractResolution(info: ParseResult): string | [string, string] {
+  extractVideoResolution(info: ParseResult): string | [string, string] {
     const completeName = info['general']['complete name']
     const video = info['video'][0]
     const standard = video['standard']
@@ -160,7 +165,7 @@ export default class MediainfoConverter {
     )
 
     // 1920x567 -> 1080p
-    let resolution: string | [string, string] =
+    let videoResolution: string | [string, string] =
       /2160p/i.test(completeName) || width === 3840
         ? '2160p'
         : /1080i/i.test(completeName) ||
@@ -181,16 +186,16 @@ export default class MediainfoConverter {
                       ? 'PAL'
                       : 'Other'
 
-    if (resolution === 'Other' && width && height) {
-      resolution = [video.width, video.height] as [string, string]
+    if (videoResolution === 'Other' && width && height) {
+      videoResolution = [video.width, video.height] as [string, string]
     }
 
-    return resolution
+    return videoResolution
   }
 
-  extractSubtitle(info: ParseResult) {
+  extractSubtitleLanguages(info: ParseResult) {
     const texts = info['text']
-    const subtitles = []
+    const subtitleLanguages = []
     for (const text of texts) {
       let language = text['language'] || text['title']
       if (!language) {
@@ -206,8 +211,8 @@ export default class MediainfoConverter {
             ? ' Simplified'
             : ' Simplified'
       }
-      subtitles.push(`${language}${extra}`)
+      subtitleLanguages.push(`${language}${extra}`)
     }
-    return uniq(subtitles)
+    return uniq(subtitleLanguages)
   }
 }

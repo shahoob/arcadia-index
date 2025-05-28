@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO user_warnings (user_id, expires_at, reason, created_by_id)\n            VALUES ($1, $2, $3, $4)\n            RETURNING *\n        ",
+  "query": "\n            INSERT INTO user_warnings (user_id, expires_at, reason, created_by_id, ban)\n            VALUES ($1, $2, $3, $4, $5)\n            RETURNING *\n        ",
   "describe": {
     "columns": [
       {
@@ -30,6 +30,11 @@
       },
       {
         "ordinal": 5,
+        "name": "ban",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
         "name": "created_by_id",
         "type_info": "Int8"
       }
@@ -39,17 +44,19 @@
         "Int8",
         "Timestamptz",
         "Text",
-        "Int8"
+        "Int8",
+        "Bool"
       ]
     },
     "nullable": [
       false,
       false,
       false,
+      true,
       false,
       false,
       false
     ]
   },
-  "hash": "637e3148136256b33ebadca4170456aef3ed780f730773a38d058883a03786ef"
+  "hash": "46431df05d8c302557d75a50846ba321781e2d0243f39a7d642c3a56ed066fda"
 }

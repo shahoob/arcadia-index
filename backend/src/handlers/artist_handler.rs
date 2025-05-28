@@ -6,7 +6,7 @@ use crate::{
         UserCreatedAffiliatedArtist, UserCreatedArtist,
     },
     repositories::artist_repository::{
-        create_artist, create_artists_affiliation, find_artist_publications, find_artists_lite,
+        create_artists, create_artists_affiliation, find_artist_publications, find_artists_lite,
     },
 };
 use actix_web::{HttpResponse, web};
@@ -15,19 +15,19 @@ use utoipa::{IntoParams, ToSchema};
 
 #[utoipa::path(
     post,
-    path = "/api/artist",
+    path = "/api/artists",
     responses(
-        (status = 200, description = "Successfully created the artist", body=Artist),
+        (status = 200, description = "Successfully created the artists, returned in the same order as the one sent", body=Vec<Artist>),
     )
 )]
-pub async fn add_artist(
-    artist: web::Json<UserCreatedArtist>,
+pub async fn add_artists(
+    artists: web::Json<Vec<UserCreatedArtist>>,
     arc: web::Data<Arcadia>,
     current_user_id: UserId,
 ) -> Result<HttpResponse> {
-    let artist = create_artist(&arc.pool, &artist, current_user_id.0).await?;
+    let artists = create_artists(&arc.pool, &artists, current_user_id.0).await?;
 
-    Ok(HttpResponse::Created().json(artist))
+    Ok(HttpResponse::Created().json(artists))
 }
 
 #[utoipa::path(
@@ -42,9 +42,9 @@ pub async fn add_affiliated_artists(
     arc: web::Data<Arcadia>,
     current_user_id: UserId,
 ) -> Result<HttpResponse> {
-    let affiliation = create_artists_affiliation(&arc.pool, &artists, current_user_id.0).await?;
+    let affiliations = create_artists_affiliation(&arc.pool, &artists, current_user_id.0).await?;
 
-    Ok(HttpResponse::Created().json(affiliation))
+    Ok(HttpResponse::Created().json(affiliations))
 }
 
 #[derive(Debug, Deserialize, ToSchema, IntoParams)]

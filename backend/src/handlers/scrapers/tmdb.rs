@@ -163,9 +163,9 @@ pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpRes
         .ok()
         .and_then(|nd| nd.and_hms_opt(0, 0, 0))
         .map(|ndt| {
-            chrono::DateTime::<chrono::Local>::from_naive_utc_and_offset(
+            chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(
                 ndt,
-                *chrono::Local::now().offset(),
+                *chrono::Utc::now().offset(),
             )
         })
         .unwrap();
@@ -210,9 +210,9 @@ pub async fn get_tmdb_tv_data(query: web::Query<TmdbQuery>) -> Result<HttpRespon
             .ok()
             .and_then(|nd| nd.and_hms_opt(0, 0, 0))
             .map(|ndt| {
-                chrono::DateTime::<chrono::Local>::from_naive_utc_and_offset(
+                chrono::DateTime::<chrono::Utc>::from_naive_utc_and_offset(
                     ndt,
-                    *chrono::Local::now().offset(),
+                    *chrono::Utc::now().offset(),
                 )
             })
             .unwrap();

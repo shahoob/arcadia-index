@@ -4,7 +4,8 @@
       class="torrent-search-inputs"
       @search="search"
       :loading
-      :initialTitleGroupName
+      :initialForm
+      :showStaffOptions="userStore.class === 'staff'"
     />
     <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
       <div class="title-groups">
@@ -33,28 +34,47 @@ import { ref, onMounted } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
-import { searchTorrents, type TorrentSearchResults } from '@/services/api/torrentService'
-import TorrentSearchInputs, { type SearchForm } from '@/components/torrent/TorrentSearchInputs.vue'
+import {
+  searchTorrents,
+  type TorrentSearch,
+  type TorrentSearchResults,
+} from '@/services/api/torrentService'
+import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
 import { useRoute } from 'vue-router'
+import { watch } from 'vue'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
+const userStore = useUserStore()
 
 const search_results = ref<TorrentSearchResults>()
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
 const loading = ref(false)
-const initialTitleGroupName = ref('')
+const initialForm = ref<TorrentSearch>({
+  title_group: { name: '' },
+  torrent: {},
+})
 
-const search = async (searchForm: SearchForm) => {
+const search = async (torrentSearch: TorrentSearch) => {
   loading.value = true
-  search_results.value = await searchTorrents(searchForm)
+  search_results.value = await searchTorrents(torrentSearch)
   loading.value = false
 }
 
+const loadSearchForm = async () => {
+  initialForm.value.title_group.name = route.query.title_group_name?.toString() ?? ''
+  if (userStore.class === 'staff') {
+    initialForm.value.torrent.staff_checked = false
+    initialForm.value.torrent.reported = null
+  }
+  search(initialForm.value)
+}
+
 onMounted(async () => {
-  // TODO: fix the search input not being populated
-  initialTitleGroupName.value = route.query.title_group_name?.toString() ?? ''
-  search({ title_group_name: initialTitleGroupName.value, tags: '' })
+  loadSearchForm()
 })
+
+watch(() => route.query, loadSearchForm, { immediate: true })
 </script>
 
 <style scoped>

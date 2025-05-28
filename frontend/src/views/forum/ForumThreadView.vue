@@ -18,17 +18,20 @@
           @value-change="newPostUpdated"
           @input-emptied="bbcodeEditorEmptyInput = false"
           :label="t('forum.new_post')"
-        />
+        >
+          <template #buttons>
+            <Button
+              type="submit"
+              label="Post"
+              icon="pi pi-send"
+              :loading="sendingPost"
+              class="post-button"
+            />
+          </template>
+        </BBCodeEditor>
         <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
           {{ $form.content.error?.message }}
         </Message>
-        <Button
-          type="submit"
-          label="Post"
-          icon="pi pi-send"
-          :loading="sendingPost"
-          class="post-button"
-        />
       </div>
     </Form>
   </div>
@@ -46,7 +49,7 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import GeneralComment from '@/components/community/GeneralComment.vue'
-import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms'
+import type { FormSubmitEvent } from '@primevue/forms'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import { Form } from '@primevue/forms'
@@ -68,10 +71,10 @@ onMounted(async () => {
   forumThread.value = await getForumThread(parseInt(route.params.id as string))
 })
 
-const resolver = ({ values }: FormResolverOptions) => {
+const resolver = () => {
   const errors: Partial<Record<keyof UserCreatedForumPost, { message: string }[]>> = {}
 
-  if (values.content.length < 5) {
+  if (newPost.value.content.length < 5) {
     errors.content = [{ message: t('error.write_more_than_x_chars', [5]) }]
   }
 

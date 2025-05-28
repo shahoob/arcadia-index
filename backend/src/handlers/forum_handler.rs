@@ -2,13 +2,14 @@ use crate::{
     Arcadia, Result,
     models::{
         forum::{
-            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThreadAndPosts,
-            UserCreatedForumPost,
+            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThread, ForumThreadAndPosts,
+            UserCreatedForumPost, UserCreatedForumThread,
         },
         user::User,
     },
     repositories::forum_repository::{
-        create_forum_post, find_forum_overview, find_forum_sub_category_threads, find_forum_thread,
+        create_forum_post, create_forum_thread, find_forum_overview,
+        find_forum_sub_category_threads, find_forum_thread,
     },
 };
 use actix_web::{HttpResponse, web};
@@ -30,6 +31,23 @@ pub async fn add_forum_post(
     let forum_post = create_forum_post(&arc.pool, &forum_post, current_user.id).await?;
 
     Ok(HttpResponse::Created().json(forum_post))
+}
+
+#[utoipa::path(
+    post,
+    path = "/api/forum/thread",
+    responses(
+        (status = 200, description = "Successfully created the forum thread", body=ForumThread),
+    )
+)]
+pub async fn add_forum_thread(
+    mut forum_thread: web::Json<UserCreatedForumThread>,
+    arc: web::Data<Arcadia>,
+    current_user: User,
+) -> Result<HttpResponse> {
+    let forum_thread = create_forum_thread(&arc.pool, &mut forum_thread, current_user.id).await?;
+
+    Ok(HttpResponse::Created().json(forum_thread))
 }
 
 #[utoipa::path(

@@ -5,7 +5,12 @@
       :placeholder="t('torrent.torrent', 2)"
       v-model="searchForm.torrents"
       size="small"
-      @keyup.enter="router.push(`/torrents?title_group_name=${searchForm.torrents}`)"
+      @keyup.enter="
+        () => {
+          router.push(`/torrents?title_group_name=${searchForm.torrents}`)
+          searchForm.torrents = ''
+        }
+      "
     />
     <InputText
       type="text"

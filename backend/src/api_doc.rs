@@ -14,7 +14,7 @@ use crate::{
         edition_group::EditionGroup,
         forum::{
             ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThreadAndPosts,
-            UserCreatedForumPost,
+            UserCreatedForumPost, UserCreatedForumThread,
         },
         gift::{Gift, UserCreatedGift},
         invitation::{Invitation, SentInvitation},
@@ -41,7 +41,7 @@ use crate::{
         crate::handlers::auth_handler::login,
         crate::handlers::auth_handler::refresh_token,
         crate::handlers::artist_handler::get_artist_publications,
-        crate::handlers::artist_handler::add_artist,
+        crate::handlers::artist_handler::add_artists,
         crate::handlers::artist_handler::add_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::upload_torrent,
@@ -70,6 +70,7 @@ use crate::{
         crate::handlers::forum_handler::get_forum,
         crate::handlers::forum_handler::get_forum_sub_category_threads,
         crate::handlers::forum_handler::get_forum_thread,
+        crate::handlers::forum_handler::add_forum_thread,
         crate::handlers::forum_handler::add_forum_post,
     ),
     components(schemas(
@@ -121,7 +122,8 @@ use crate::{
         UserCreatedUserWarning,
         ForumOverview,
         ForumSubCategoryHierarchy,
-        ForumThreadAndPosts
+        ForumThreadAndPosts,
+        UserCreatedForumThread
     ),)
 )]
 pub struct ApiDoc;

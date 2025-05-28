@@ -1,11 +1,11 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
 use super::{
-    artist::AffiliatedArtistHierarchy,
+    artist::{AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist},
     edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
     series::SeriesLite,
     title_group_comment::TitleGroupCommentHierarchy,
@@ -89,15 +89,15 @@ pub struct TitleGroup {
     pub name: String,
     pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Local>,
+    pub updated_at: DateTime<Utc>,
     pub created_by_id: i64,
     pub description: String,
     pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Local>,
+    pub original_release_date: DateTime<Utc>,
     pub tagline: Option<String>, // catchy sentence that represents the general idea of the title
     pub country_from: Option<String>,
     pub covers: Vec<String>,
@@ -138,8 +138,8 @@ pub struct UserCreatedTitleGroup {
     pub tagline: Option<String>,
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Local>,
-    pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
+    pub original_release_date: DateTime<Utc>,
+    pub affiliated_artists: Vec<UserCreatedAffiliatedArtist>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     // one of them should be given, if master groups are required for this type of content
@@ -156,7 +156,7 @@ pub struct TitleGroupHierarchyLite {
     pub content_type: ContentType,
     pub tags: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Local>,
+    pub original_release_date: DateTime<Utc>,
     // #[schema(value_type = HashMap<String, String>)]
     // pub affiliated_artists: Vec<Json<Value>>,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
@@ -185,15 +185,15 @@ pub struct TitleGroupHierarchy {
     pub name: String,
     pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Local>,
+    pub updated_at: DateTime<Utc>,
     pub created_by_id: i64,
     pub description: String,
     pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Local>,
+    pub original_release_date: DateTime<Utc>,
     pub tagline: Option<String>,
     pub country_from: Option<String>,
     pub covers: Vec<String>,
@@ -217,15 +217,15 @@ pub struct TitleGroupAndAssociatedData {
     pub name: String,
     pub name_aliases: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Local>,
+    pub updated_at: DateTime<Utc>,
     pub created_by_id: i64,
     pub description: String,
     pub platform: Option<Platform>,
     pub original_language: Option<String>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Local>,
+    pub original_release_date: DateTime<Utc>,
     pub tagline: Option<String>,
     pub country_from: Option<String>,
     pub covers: Vec<String>,
@@ -263,7 +263,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         tags: Vec::new(),
         tagline: None,
         platform: None,
-        original_release_date: Local::now(),
+        original_release_date: Utc::now(),
         affiliated_artists: Vec::new(),
         series_id: None,
         screenshots: Vec::new(),

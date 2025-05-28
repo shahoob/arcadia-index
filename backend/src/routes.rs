@@ -4,11 +4,14 @@ use actix_web_httpauth::middleware::HttpAuthentication;
 use crate::handlers::{
     announce_handler::handle_announce,
     artist_handler::{
-        add_affiliated_artists, add_artist, get_artist_publications, get_artists_lite,
+        add_affiliated_artists, add_artists, get_artist_publications, get_artists_lite,
     },
     auth_handler::{login, refresh_token, register, validate_bearer_auth},
     edition_group_handler::add_edition_group,
-    forum_handler::{add_forum_post, get_forum, get_forum_sub_category_threads, get_forum_thread},
+    forum_handler::{
+        add_forum_post, add_forum_thread, get_forum, get_forum_sub_category_threads,
+        get_forum_thread,
+    },
     gift_handler::send_gift,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
@@ -55,7 +58,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/report/torrent", web::post().to(add_torrent_report))
             .route("/search/torrent", web::post().to(find_torrents))
             .route("/search/artist/lite", web::get().to(get_artists_lite))
-            .route("/artist", web::post().to(add_artist))
+            .route("/artists", web::post().to(add_artists))
             .route("/artist", web::get().to(get_artist_publications))
             .route(
                 "/affiliated-artists",
@@ -81,6 +84,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 web::get().to(get_forum_sub_category_threads),
             )
             .route("/forum/thread", web::get().to(get_forum_thread))
+            .route("/forum/thread", web::post().to(add_forum_thread))
             .route("/forum/post", web::post().to(add_forum_post))
             .route(
                 "/external_db/open_library",
