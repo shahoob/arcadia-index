@@ -16,6 +16,7 @@ pub enum OpenSignups {
     Enabled,
 }
 
+#[derive(Clone)]
 pub struct Arcadia {
     pub pool: sqlx::PgPool,
     pub jwt_secret: String,
