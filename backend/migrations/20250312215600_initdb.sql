@@ -334,6 +334,10 @@ CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
     upload_factor FLOAT NOT NULL DEFAULT 1.0,
     download_factor FLOAT NOT NULL DEFAULT 1.0,
+    seeders BIGINT NOT NULL DEFAULT 0,
+    leechers BIGINT NOT NULL DEFAULT 0,
+    completed BIGINT NOT NULL DEFAULT 0,
+    snatched BIGINT NOT NULL DEFAULT 0,
     edition_group_id BIGINT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -466,6 +470,7 @@ CREATE TABLE notifications (
     read_status BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (receiver) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE TYPE peer_status_enum AS ENUM('seeding', 'leeching');
 CREATE TABLE peers (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
@@ -478,6 +483,7 @@ CREATE TABLE peers (
     real_uploaded BIGINT NOT NULL DEFAULT 0,
     real_downloaded BIGINT NOT NULL DEFAULT 0,
     user_agent TEXT,
+    status peer_status_enum NOT NULL,
 
     PRIMARY KEY (id),
 
@@ -486,12 +492,13 @@ CREATE TABLE peers (
 
     UNIQUE (torrent_id, peer_id, ip, port)
 );
-CREATE TABLE seeded_torrents (
+CREATE TABLE torrent_activities (
     id BIGSERIAL PRIMARY KEY,
     torrent_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
-    first_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    last_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    snatched_at TIMESTAMP WITH TIME ZONE,
+    first_seen_seeding_at TIMESTAMP WITH TIME ZONE,
+    last_seen_seeding_at TIMESTAMP WITH TIME ZONE,
     total_seed_time BIGINT NOT NULL DEFAULT 0,
 
     FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,

@@ -1,5 +1,6 @@
 mod handlers;
 mod models;
+mod periodic_tasks;
 mod repositories;
 mod routes;
 mod services;
@@ -7,6 +8,7 @@ mod tracker;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web::Data};
+use periodic_tasks::scheduler::run_periodic_tasks;
 use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
@@ -82,7 +84,7 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f64");
 
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
             .wrap(middleware::Logger::default())
@@ -106,6 +108,13 @@ async fn main() -> std::io::Result<()> {
             )
     })
     .bind(format!("{}:{}", host, port))?
-    .run()
-    .await
+    .run();
+
+    tokio::spawn(async {
+        if let Err(e) = run_periodic_tasks().await {
+            eprintln!("Error running cron tasks: {:?}", e);
+        }
+    });
+
+    server.await
 }

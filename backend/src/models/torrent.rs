@@ -203,6 +203,10 @@ pub struct Torrent {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub completed: i64,
+    pub snatched: i64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
@@ -332,6 +336,10 @@ pub struct TorrentHierarchyLite {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub completed: i64,
+    pub snatched: i64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
@@ -360,6 +368,10 @@ pub struct TorrentHierarchy {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub completed: i64,
+    pub snatched: i64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,

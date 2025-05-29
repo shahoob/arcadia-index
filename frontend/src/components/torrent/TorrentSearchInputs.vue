@@ -29,7 +29,7 @@
           />
         </div>
         <div class="dropdown">
-          <label for="orderDropdown">{{ t('general.sort_by') }}</label>
+          <label for="orderDropdown">{{ t('general.order_by') }}</label>
           <Dropdown
             v-model="searchForm.order"
             :options="orderOptions"

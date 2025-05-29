@@ -180,20 +180,21 @@ pub async fn get_torrent(
     frontend_url: &str,
     tracker_url: &str,
 ) -> Result<GetTorrentResult> {
+    let mut tx = pool.begin().await?;
+
     let torrent = sqlx::query!(
         r#"
-            SELECT
-                info_dict,
-                EXTRACT(EPOCH FROM created_at)::BIGINT AS "created_at_secs!",
-                release_name
-            FROM
-                torrents
-            WHERE
-                id = $1
+        UPDATE torrents
+        SET snatched = snatched + 1
+        WHERE id = $1
+        RETURNING
+            info_dict,
+            EXTRACT(EPOCH FROM created_at)::BIGINT AS "created_at_secs!",
+            release_name;
         "#,
         torrent_id
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await
     .map_err(|_| Error::TorrentFileInvalid)?;
 
@@ -217,6 +218,21 @@ pub async fn get_torrent(
         .set_private_flag(Some(true))
         .build(1, &info, |_| {})
         .map_err(|_| Error::TorrentFileInvalid)?;
+
+    let _ = sqlx::query!(
+        r#"
+            INSERT INTO torrent_activities(torrent_id, user_id, snatched_at)
+            VALUES ($1, $2, NOW())
+            ON CONFLICT (torrent_id, user_id) DO NOTHING;
+            "#,
+        torrent_id,
+        user.id,
+    )
+    .execute(&mut *tx)
+    .await
+    .map_err(|_| Error::InvalidUserIdOrTorrentId);
+
+    tx.commit().await?;
 
     Ok(GetTorrentResult {
         title: torrent.release_name,
@@ -271,7 +287,7 @@ pub async fn find_top_torrents(pool: &PgPool, period: &str, amount: i64) -> Resu
             ---------- This is the part that selects the top torrents
             SELECT DISTINCT ON (tg.id) tg.id AS title_group_id
             FROM torrents t
-            JOIN seeded_torrents st ON t.id = st.torrent_id
+            JOIN torrent_activities st ON t.id = st.torrent_id
             JOIN edition_groups eg ON t.edition_group_id = eg.id
             JOIN title_groups tg ON eg.title_group_id = tg.id
             WHERE CASE

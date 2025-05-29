@@ -84,18 +84,26 @@ pub async fn update_total_seedtime(
     torrent_id: i64,
     announce_interval: u32,
 ) -> Result<PgQueryResult, Error> {
+    // normally, there should always already be an entry, added when the user snatched the torrent
+    // but if they used the file from another user, and edited it with their own passkey, this will still work
+    // this can be changed if it's not a desired behavior
     sqlx::query!(
         r#"
-        INSERT INTO seeded_torrents(torrent_id, user_id)
+        INSERT INTO torrent_activities(torrent_id, user_id)
         VALUES ($1, $2)
         ON CONFLICT (torrent_id, user_id) DO UPDATE
         SET
-            total_seed_time = CASE
-                WHEN seeded_torrents.last_seen_at < NOW() - ($3 || ' seconds')::INTERVAL
-                THEN seeded_torrents.total_seed_time + EXTRACT(EPOCH FROM (NOW() - seeded_torrents.last_seen_at))::BIGINT
-                ELSE seeded_torrents.total_seed_time
+            first_seen_seeding_at = CASE
+                WHEN torrent_activities.first_seen_seeding_at IS NULL
+                THEN NOW()
+                ELSE torrent_activities.first_seen_seeding_at
             END,
-            last_seen_at = NOW()
+            total_seed_time = CASE
+                WHEN torrent_activities.last_seen_seeding_at < NOW() - ($3 || ' seconds')::INTERVAL
+                THEN torrent_activities.total_seed_time + EXTRACT(EPOCH FROM (NOW() - torrent_activities.last_seen_seeding_at))::BIGINT
+                ELSE torrent_activities.total_seed_time
+            END,
+            last_seen_seeding_at = NOW()
         "#,
         torrent_id,
         user_id,

@@ -1,3 +1,4 @@
+use crate::models::peer::PeerStatus;
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 
 use crate::{
@@ -16,10 +17,11 @@ pub async fn get_user_peers(pool: &PgPool, user_id: i64) -> Vec<models::peer::Pe
                     MIN(first_seen_at) as "first_seen_at!",
                     MAX(last_seen_at) as "last_seen_at!",
                     SUM(real_uploaded)::BIGINT as "real_uploaded!",
-                    SUM(real_downloaded)::BIGINT as "real_downloaded!"
+                    SUM(real_downloaded)::BIGINT as "real_downloaded!",
+                    status::peer_status_enum as "status!: PeerStatus"
                 FROM peers
                 WHERE user_id = $1
-                GROUP BY (peer_id, ip, port, user_agent)
+                GROUP BY (peer_id, ip, port, user_agent, status)
             "#,
         user_id
     )
@@ -75,15 +77,22 @@ pub async fn insert_or_update_peer(
     .await
     .expect("failed");
 
+    let peer_status = if ann.left.unwrap() == 0 {
+        PeerStatus::Seeding
+    } else {
+        PeerStatus::Leeching
+    };
+
     sqlx::query!(
         r#"
-        INSERT INTO peers(torrent_id, peer_id, ip, port, user_id, real_uploaded, real_downloaded, user_agent)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO peers(torrent_id, peer_id, ip, port, user_id, real_uploaded, real_downloaded, user_agent, status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::peer_status_enum)
         ON CONFLICT (torrent_id, peer_id, ip, port) DO UPDATE
         SET
             last_seen_at = NOW(),
             real_uploaded = $6,
-            real_downloaded = $7
+            real_downloaded = $7,
+            status = $9::peer_status_enum
         "#,
         torrent_id,
         &ann.peer_id,
@@ -92,7 +101,8 @@ pub async fn insert_or_update_peer(
         user_id,
         ann.uploaded.unwrap_or(0) as i64,
         ann.downloaded.unwrap_or(0) as i64,
-        user_agent
+        user_agent,
+        peer_status as PeerStatus
     )
     .execute(pool)
     .await
