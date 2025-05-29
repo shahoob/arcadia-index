@@ -628,6 +628,9 @@ SELECT
     t.id,
     t.upload_factor,
     t.download_factor,
+    t.seeders,
+    t.leechers,
+    t.completed,
     t.edition_group_id,
     t.created_at,
     t.updated_at,
@@ -721,6 +724,7 @@ ORDER BY
                     'torrents', COALESCE(jsonb_agg(
                         jsonb_strip_nulls(jsonb_build_object(
                             'id', ft.id, 'upload_factor', ft.upload_factor, 'download_factor', ft.download_factor,
+                            'seeders', ft.seeders, 'leechers', ft.leechers, 'completed', ft.completed,
                             'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at,
                             'release_name', ft.release_name, 'release_group', ft.release_group,
                             'file_amount_per_type', ft.file_amount_per_type, 'trumpable', ft.trumpable,
