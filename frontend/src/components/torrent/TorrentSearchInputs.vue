@@ -1,21 +1,47 @@
 <template>
   <ContentContainer>
     <div id="torrent-search-inputs">
-      <FloatLabel>
-        <InputText
-          class="title-group-name"
-          size="small"
-          v-model="searchForm.title_group.name"
-          name="title_group_name"
-        />
-        <label for="title_group_name">{{ t('general.search_terms') }}</label>
-      </FloatLabel>
+      <div class="line">
+        <FloatLabel>
+          <InputText
+            class="title-group-name"
+            size="small"
+            v-model="searchForm.title_group.name"
+            name="title_group_name"
+          />
+          <label for="title_group_name">{{ t('general.search_terms') }}</label>
+        </FloatLabel>
+      </div>
       <!-- <FloatLabel>
         <InputText class="tags" size="small" v-model="searchForm.tags" name="tags" />
         <label for="tags">{{ t('general.tags_comma_separated') }}</label>
       </FloatLabel> -->
-      <div class="staff-options" v-if="showStaffOptions">
-        <div class="staff-option">
+      <div class="line">
+        <div class="dropdown">
+          <label for="sortByDropdown">{{ t('general.sort_by') }}</label>
+          <Dropdown
+            v-model="searchForm.sort_by"
+            :options="sortByOptions"
+            optionLabel="label"
+            optionValue="value"
+            size="small"
+            input-id="sortByDropdown"
+          />
+        </div>
+        <div class="dropdown">
+          <label for="orderDropdown">{{ t('general.sort_by') }}</label>
+          <Dropdown
+            v-model="searchForm.order"
+            :options="orderOptions"
+            optionLabel="label"
+            optionValue="value"
+            size="small"
+            input-id="orderDropdown"
+          />
+        </div>
+      </div>
+      <div class="staff-options line" v-if="showStaffOptions">
+        <div class="dropdown">
           <label>{{ t('torrent.staff_checked') }}</label>
           <Dropdown
             v-model="searchForm.torrent.staff_checked"
@@ -26,7 +52,7 @@
             size="small"
           />
         </div>
-        <div class="staff-option">
+        <div class="dropdown">
           <label>{{ t('general.reported') }}</label>
           <Dropdown
             v-model="searchForm.torrent.reported"
@@ -78,6 +104,21 @@ const emit = defineEmits<{
   search: [form: TorrentSearch]
 }>()
 
+const sortByOptions = [
+  { label: t('torrent.created_at'), value: 'torrent_created_at' },
+  { label: t('torrent.size'), value: 'torrent_size' },
+  { label: t('title_group.original_release_date'), value: 'title_group_original_release_date' },
+]
+const orderOptions = [
+  { label: t('general.ascending'), value: 'asc' },
+  { label: t('general.descending'), value: 'desc' },
+]
+const staffOptionChoices = ref([
+  { label: t('general.yes'), value: true },
+  { label: t('general.no'), value: false },
+  { label: t('general.both'), value: null },
+])
+
 const searchForm = ref<TorrentSearch>({
   title_group: { name: '', include_empty_groups: true },
   torrent: {},
@@ -86,11 +127,6 @@ const searchForm = ref<TorrentSearch>({
   sort_by: 'torrent_created_at',
   order: 'desc',
 })
-const staffOptionChoices = ref([
-  { label: t('general.yes'), value: true },
-  { label: t('general.no'), value: false },
-  { label: t('general.both'), value: null },
-])
 
 onMounted(async () => {
   searchForm.value = props.initialForm
@@ -102,24 +138,24 @@ onMounted(async () => {
   padding-top: 20px;
 }
 .title-group-name {
-  width: 40%;
+  width: 40em;
 }
 .tags {
   width: 30%;
 }
-.p-floatlabel {
-  margin-bottom: 25px;
+.line {
+  margin-bottom: 15px;
 }
-.staff-options {
+.dropdown {
   display: flex;
-  .staff-option {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-  }
+  align-items: center;
+  margin-right: 10px;
   label {
     margin-right: 5px;
   }
+}
+.staff-options {
+  display: flex;
 }
 .pagination {
   text-align: center;

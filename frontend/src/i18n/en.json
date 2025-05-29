@@ -38,7 +38,9 @@
     "yes": "Yes",
     "no": "No",
     "both": "Both",
-    "page": "Page"
+    "page": "Page",
+    "ascending": "Ascending",
+    "descending": "Descending"
   },
   "auth": {
     "remember_me": "Remember me"
