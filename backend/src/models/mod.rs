@@ -18,3 +18,4 @@ pub mod torrent_report;
 pub mod torrent_request;
 pub mod torrent_request_vote;
 pub mod user;
+pub mod wiki;
