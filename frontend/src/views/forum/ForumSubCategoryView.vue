@@ -6,13 +6,15 @@
         <RouterLink to="">{{ forumSubCategory.name }}</RouterLink>
       </div>
       <div class="actions">
-        <i v-tooltip.top="t('forum.new_thread')" class="pi pi-plus cursor-pointer" />
+        <RouterLink :to="`/forum/thread/new?subCategoryId=${route.params.id}`">
+          <i v-tooltip.top="t('forum.new_thread')" class="pi pi-plus cursor-pointer" />
+        </RouterLink>
       </div>
     </div>
     <DataTable :value="forumSubCategory.threads">
       <Column field="name" :header="t('general.name')">
         <template #body="slotProps">
-          <RouterLink :to="'/forum/thread/' + slotProps.data.id">
+          <RouterLink :to="`/forum/thread/${slotProps.data.id}`">
             {{ slotProps.data.name }}
           </RouterLink>
         </template>
@@ -20,7 +22,7 @@
       <Column field="latest_post" :header="t('forum.latest_post')">
         <template #body="slotProps">
           {{ timeAgo(slotProps.data.latest_post.created_at) }} {{ t('general.by') }}
-          <RouterLink :to="'/user/' + slotProps.data.latest_post.created_by.id">
+          <RouterLink :to="`/user/${slotProps.data.latest_post.created_by.id}`">
             {{ slotProps.data.latest_post.created_by.username }}
           </RouterLink>
         </template>
@@ -58,9 +60,5 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-}
-.title {
-  font-weight: bold;
-  font-size: 2em;
 }
 </style>

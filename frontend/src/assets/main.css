@@ -32,6 +32,11 @@ a {
   text-decoration: none;
 }
 
+.title {
+  font-weight: bold;
+  font-size: 2em;
+}
+
 .p-datatable-table,
 .p-accordionpanel {
   border-radius: 7px;

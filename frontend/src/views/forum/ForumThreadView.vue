@@ -111,10 +111,6 @@ const sendPost = async () => {
 </script>
 
 <style scoped>
-.title {
-  font-weight: bold;
-  font-size: 2em;
-}
 .new-post {
   display: flex;
   flex-direction: column;

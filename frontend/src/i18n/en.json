@@ -78,7 +78,8 @@
     "threads": "Threads",
     "posts": "Posts",
     "new_post": "New post",
-    "new_thread": "New thread"
+    "new_thread": "New thread",
+    "thread_name": "Thread name"
   },
   "user": {
     "username": "Username",

@@ -54,3 +54,16 @@ export const postForumPost = async (form: UserCreatedForumPost): Promise<ForumPo
     throw error
   }
 }
+
+export type UserCreatedForumThread = components['schemas']['UserCreatedForumThread']
+
+export type ForumThread = components['schemas']['ForumThread']
+
+export const postForumThread = async (form: UserCreatedForumThread): Promise<ForumThread> => {
+  try {
+    return (await api.post<ForumThread>('/forum/thread', form)).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}

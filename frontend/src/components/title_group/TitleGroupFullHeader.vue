@@ -104,10 +104,6 @@ defineProps<{
   border: none;
   margin-right: 20px;
 }
-.title {
-  font-weight: bold;
-  font-size: 2em;
-}
 .item-title {
   font-weight: bold;
   margin-right: 7px;

@@ -249,8 +249,6 @@ onMounted(() => {
 </script>
 <style scoped>
 .title {
-  font-weight: bold;
-  font-size: 1.5em;
   margin-bottom: 25px;
 }
 

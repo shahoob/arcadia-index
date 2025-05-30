@@ -38,8 +38,6 @@ defineProps<{
   width: 100%;
 }
 .title {
-  font-weight: bold;
-  font-size: 1.5em;
   margin-bottom: 5px;
 }
 .year {
