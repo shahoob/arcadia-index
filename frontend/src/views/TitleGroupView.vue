@@ -92,7 +92,7 @@
         <div v-for="edition_group in title_group.edition_groups" :key="edition_group.id">
           <div v-if="edition_group.description" class="edition-description">
             <div class="edition-group-slug">{{ getEditionGroupSlug(edition_group) }}</div>
-            {{ edition_group.description }}
+            <BBCodeRenderer :content="edition_group.description" />
           </div>
         </div>
       </ContentContainer>
