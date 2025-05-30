@@ -85,7 +85,7 @@ import { FloatLabel, Textarea } from 'primevue'
 import { watch } from 'vue'
 import Button from 'primevue/button'
 import { useI18n } from 'vue-i18n'
-import BBCodeRenderer from '../BBCodeRenderer.vue'
+import BBCodeRenderer from '../community/BBCodeRenderer.vue'
 
 const props = defineProps<{
   label: string

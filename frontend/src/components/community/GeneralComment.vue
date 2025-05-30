@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
-import BBCodeRenderer from '@/components/BBCodeRenderer.vue'
+import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 import { timeAgo } from '@/services/helpers'
 import type { ForumPostHierarchy } from '@/services/api/forumService'
