@@ -1,15 +1,20 @@
 <template>
   <div class="title-group-preview-cover-only">
-    <RouterLink :to="`/title-group/${id}`">
-      <img class="title-group-cover" :src="cover" v-tooltip.top="name" alt="Title Group Cover" />
+    <RouterLink :to="`/title-group/${titleGroup.id}`">
+      <img
+        class="title-group-cover"
+        :src="titleGroup.covers[0]"
+        v-tooltip.top="titleGroup.name"
+        alt="Title Group Cover"
+      />
     </RouterLink>
   </div>
 </template>
 <script setup lang="ts">
+import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
+
 defineProps<{
-  id: number
-  name: string
-  cover: string
+  titleGroup: TitleGroupHierarchyLite
 }>()
 </script>
 

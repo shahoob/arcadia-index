@@ -56,8 +56,9 @@ pub async fn get_user(
     };
     let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
 
-    Ok(HttpResponse::Created()
-        .json(json!({"user":user, "last_five_uploaded_torrents": uploaded_torrents})))
+    Ok(HttpResponse::Created().json(
+        json!({"user":user, "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap()}),
+    ))
 }
 
 #[utoipa::path(
@@ -93,7 +94,7 @@ pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> Result<H
             "user": current_user,
             "peers":peers,
             "user_warnings": user_warnings,
-            "last_five_uploaded_torrents": uploaded_torrents
+            "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap()
     })))
 }
 

@@ -98,7 +98,8 @@
     "warned": "Warned",
     "warn_user": "Warn user",
     "user_warned_success": "User warned successfully",
-    "ban": "Ban"
+    "ban": "Ban",
+    "uploads": "Uploads"
   },
   "community": {
     "new_comment": "New comment",

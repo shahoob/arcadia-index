@@ -120,7 +120,7 @@ const staffOptionChoices = ref([
 ])
 
 const searchForm = ref<TorrentSearch>({
-  title_group: { name: '', include_empty_groups: true },
+  title_group: { name: '', include_empty_groups: false },
   torrent: {},
   page: 2,
   page_size: 4,

@@ -19,13 +19,13 @@
           />
         </div>
       </div>
-      <ContentContainer :containerTitle="t('general.description')" class="description">
+      <ContentContainer :containerTitle="t('general.description')" class="section">
         <BBCodeRenderer :content="user.description" />
       </ContentContainer>
-      <div v-if="peers">
-        <span class="bold">{{ t('torrent.clients_and_ips') }}</span>
-        <PeerTable :peers class="peer-table" />
-      </div>
+      <ContentContainer v-if="peers" :containerTitle="t('torrent.clients_and_ips')" class="section">
+        <PeerTable :peers />
+      </ContentContainer>
+      <RelatedTorrents :titleGroups="uploadedTorrents" class="section" :userId="user.id" />
     </div>
     <UserSidebar :user class="sidebar" />
   </div>
@@ -38,6 +38,7 @@
 import { ref, onMounted } from 'vue'
 import { getMe, getUser, type Peer, type PublicUser, type User } from '@/services/api/userService'
 import PeerTable from '@/components/user/PeerTable.vue'
+import RelatedTorrents from '@/components/user/RelatedTorrents.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
 import UserSidebar from '@/components/user/UserSidebar.vue'
@@ -46,9 +47,11 @@ import ContentContainer from '@/components/ContentContainer.vue'
 import { useI18n } from 'vue-i18n'
 import WarnUserDialog from '@/components/user/WarnUserDialog.vue'
 import { Dialog } from 'primevue'
+import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 
 const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
+const uploadedTorrents = ref<TitleGroupHierarchyLite[]>([])
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -58,7 +61,11 @@ const warnUserDialogVisible = ref(false)
 
 onMounted(async () => {
   if (parseInt(route.params.id.toString()) == userStore.id) {
-    ;({ peers: peers.value, user: user.value } = await getMe())
+    ;({
+      peers: peers.value,
+      user: user.value,
+      last_five_uploaded_torrents: uploadedTorrents.value,
+    } = await getMe())
     userStore.setUser(user.value as User)
   } else {
     ;({ user: user.value } = await getUser(parseInt(route.params.id.toString())))
@@ -90,11 +97,8 @@ onMounted(async () => {
     color: yellow;
   }
 }
-.description {
+.section {
   margin-bottom: 15px;
-}
-.peer-table {
-  margin-top: 5px;
 }
 .sidebar {
   width: 25%;

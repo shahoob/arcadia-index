@@ -757,7 +757,6 @@ BEGIN
         LEFT JOIN filtered_torrents ft ON eg.id = ft.edition_group_id
         GROUP BY eg.id
     ),
-    -- Calculate relevance score once if search query is provided
     title_groups_with_relevance AS (
         SELECT
             tg.id,
@@ -776,7 +775,6 @@ BEGIN
         FROM title_groups tg
         WHERE p_title_group_name = '' OR to_tsvector('simple', tg.name || ' ' || coalesce(array_to_string(tg.name_aliases, ' '), '')) @@ plainto_tsquery('simple', p_title_group_name)
     ),
-    -- New CTE to get affiliated artists for each title group
     affiliated_artists_data AS (
         SELECT
             aa.title_group_id,
@@ -784,7 +782,7 @@ BEGIN
                 jsonb_build_object(
                     'id', ar.id,
                     'name', ar.name
-                ) ORDER BY ar.name -- Optional: order artists by name
+                ) ORDER BY ar.name
             ) AS affiliated_artists
         FROM affiliated_artists aa
         JOIN artists ar ON aa.artist_id = ar.id
@@ -802,11 +800,11 @@ BEGIN
             'original_release_date', tgr.original_release_date
         ) || jsonb_build_object(
             'edition_groups', COALESCE(jsonb_agg(egwt.eg_data ORDER BY egwt.eg_id) FILTER (WHERE egwt.eg_data IS NOT NULL), '[]'::jsonb),
-            'affiliated_artists', COALESCE(aad.affiliated_artists, '[]'::jsonb) -- Affiliated artists added here
+            'affiliated_artists', COALESCE(aad.affiliated_artists, '[]'::jsonb)
         )) AS title_group_data
     FROM title_groups_with_relevance tgr
     LEFT JOIN edition_groups_with_torrents egwt ON tgr.id = egwt.title_group_id
-    LEFT JOIN affiliated_artists_data aad ON tgr.id = aad.title_group_id -- Join the new CTE
+    LEFT JOIN affiliated_artists_data aad ON tgr.id = aad.title_group_id
     WHERE (p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL)
     GROUP BY
         tgr.id, tgr.name, tgr.covers, tgr.category, tgr.content_type, tgr.tags, tgr.original_release_date, tgr.relevance_score, aad.affiliated_artists

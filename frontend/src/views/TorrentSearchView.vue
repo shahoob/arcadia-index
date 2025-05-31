@@ -12,9 +12,7 @@
         <TitleGroupPreviewCoverOnly
           v-for="title_group in search_results.title_groups"
           :key="title_group.id"
-          :id="title_group.id"
-          :name="title_group.name"
-          :cover="title_group.covers[0]"
+          :titleGroup="title_group"
         />
       </div>
     </ContentContainer>
@@ -51,7 +49,7 @@ const search_results = ref<TorrentSearchResults>()
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
 const loading = ref(false)
 const initialForm = ref<TorrentSearch>({
-  title_group: { name: '', include_empty_groups: true },
+  title_group: { name: '', include_empty_groups: false },
   torrent: {},
   page: 1,
   page_size: 5,
@@ -68,6 +66,7 @@ const search = async (torrentSearch: TorrentSearch) => {
 
 const loadSearchForm = async () => {
   initialForm.value.title_group.name = route.query.title_group_name?.toString() ?? ''
+  initialForm.value.torrent.created_by_id = parseInt(route.query.created_by_id as string) ?? null
   if (userStore.class === 'staff') {
     initialForm.value.torrent.staff_checked = false
     initialForm.value.torrent.reported = null
