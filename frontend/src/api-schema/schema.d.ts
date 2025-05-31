@@ -469,6 +469,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/wiki/article": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_wiki_article"];
+        put?: never;
+        post: operations["add_wiki_article"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -803,8 +819,11 @@ export interface components {
             real_downloaded: number;
             /** Format: int64 */
             real_uploaded: number;
+            status: components["schemas"]["PeerStatus"];
             user_agent?: string | null;
         };
+        /** @enum {string} */
+        PeerStatus: "Seeding" | "Leeching";
         /** @enum {string} */
         Platform: "Windows" | "Linux" | "MacOS" | "Xbox";
         Profile: {
@@ -1091,6 +1110,8 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: null | components["schemas"]["AudioChannels"];
             audio_codec?: null | components["schemas"]["AudioCodec"];
+            /** Format: int64 */
+            completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1113,11 +1134,17 @@ export interface components {
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
+            /** Format: int64 */
+            leechers: number;
             mediainfo: string;
             release_group?: string | null;
             release_name?: string | null;
             /** Format: int64 */
+            seeders: number;
+            /** Format: int64 */
             size: number;
+            /** Format: int64 */
+            snatched: number;
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
@@ -1135,6 +1162,8 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: null | components["schemas"]["AudioChannels"];
             audio_codec?: null | components["schemas"]["AudioCodec"];
+            /** Format: int64 */
+            completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1158,12 +1187,18 @@ export interface components {
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
+            /** Format: int64 */
+            leechers: number;
             mediainfo: string;
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
+            seeders: number;
+            /** Format: int64 */
             size: number;
+            /** Format: int64 */
+            snatched: number;
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
@@ -1182,6 +1217,8 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
+            /** Format: int64 */
+            completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1198,10 +1235,16 @@ export interface components {
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
+            /** Format: int64 */
+            leechers: number;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
+            seeders: number;
+            /** Format: int64 */
             size: number;
+            /** Format: int64 */
+            snatched: number;
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
@@ -1519,6 +1562,10 @@ export interface components {
             /** Format: int64 */
             user_id: number;
         };
+        UserCreatedWikiArticle: {
+            body: string;
+            title: string;
+        };
         UserLite: {
             banned: boolean;
             /** Format: int64 */
@@ -1550,6 +1597,32 @@ export interface components {
         };
         /** @enum {string} */
         VideoCodec: "mpeg1" | "mpeg2" | "Xvid" | "divX" | "h264" | "h265" | "vc-1" | "vp9" | "BD50" | "UHD100";
+        WikiArticle: {
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            title: string;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: int64 */
+            updated_by_id: number;
+        };
+        WikiArticleHierarchy: {
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+            /** Format: int64 */
+            id: number;
+            title: string;
+            /** Format: date-time */
+            updated_at: string;
+            updated_by: components["schemas"]["UserLite"];
+        };
     };
     responses: never;
     parameters: never;
@@ -2358,6 +2431,52 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserWarning"];
+                };
+            };
+        };
+    };
+    get_wiki_article: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully found the wiki article */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WikiArticle"];
+                };
+            };
+        };
+    };
+    add_wiki_article: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedWikiArticle"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the wiki article */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WikiArticle"];
                 };
             };
         };

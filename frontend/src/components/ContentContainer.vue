@@ -1,6 +1,6 @@
 <template>
   <div class="content-container">
-    <div class="title" v-if="containerTitle">{{ containerTitle }}</div>
+    <div class="container-title" v-if="containerTitle">{{ containerTitle }}</div>
     <slot></slot>
   </div>
 </template>
@@ -18,7 +18,7 @@ defineProps<{
   background-color: var(--color-background-secondary);
   display: block !important;
 }
-.title {
+.container-title {
   color: var(--color-primary);
   margin-bottom: 10px;
 }
