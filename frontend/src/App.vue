@@ -41,7 +41,7 @@ router.isReady().then(async () => {
     localStorage.setItem('user', JSON.stringify(profile.user))
     const userStore = useUserStore()
     userStore.setUser(profile.user)
-  } else {
+  } else if (!user) {
     router.push('/login')
   }
   isAppReady.value = true
