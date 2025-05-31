@@ -1,5 +1,5 @@
 <template>
-  <div v-if="wikiArticle">
+  <div v-if="wikiArticle" class="wiki-article">
     <ContentContainer :containerTitle="wikiArticle.title">
       <BBCodeRenderer :content="wikiArticle.body" />
     </ContentContainer>
@@ -29,4 +29,8 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style>
+.wiki-article {
+  margin-bottom: 20px;
+}
+</style>
