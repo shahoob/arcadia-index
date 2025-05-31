@@ -5,7 +5,7 @@ use sqlx::{prelude::FromRow, types::Json};
 use utoipa::ToSchema;
 
 use super::{
-    artist::{AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist},
+    artist::{AffiliatedArtistHierarchy, AffiliatedArtistLite, UserCreatedAffiliatedArtist},
     edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
     series::SeriesLite,
     title_group_comment::TitleGroupCommentHierarchy,
@@ -160,6 +160,7 @@ pub struct TitleGroupHierarchyLite {
     // #[schema(value_type = HashMap<String, String>)]
     // pub affiliated_artists: Vec<Json<Value>>,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
+    pub affiliated_artists: Vec<AffiliatedArtistLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

@@ -245,19 +245,7 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
         r#"
         WITH title_group_data AS (
             SELECT
-                tgl.title_group_data || jsonb_build_object(
-                    'affiliated_artists', COALESCE((
-                        SELECT jsonb_agg(
-                            jsonb_build_object(
-                                'id', ar.id,
-                                'name', ar.name
-                            )
-                        )
-                        FROM affiliated_artists aa
-                        JOIN artists ar ON aa.artist_id = ar.id
-                        WHERE aa.title_group_id = tgl.title_group_id
-                    ), '[]'::jsonb)
-                ) AS lite_title_group
+                tgl.title_group_data AS lite_title_group
             FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8) tgl
         )
         SELECT jsonb_agg(lite_title_group) AS title_groups
@@ -301,19 +289,7 @@ pub async fn find_top_torrents(pool: &PgPool, period: &str, amount: i64) -> Resu
         ),
         title_group_data AS (
             SELECT
-                tgl.title_group_data || jsonb_build_object(
-                    'affiliated_artists', COALESCE((
-                        SELECT jsonb_agg(
-                            jsonb_build_object(
-                                'id', ar.id,
-                                'name', ar.name
-                            )
-                        )
-                        FROM affiliated_artists aa
-                        JOIN artists ar ON aa.artist_id = ar.id
-                        WHERE aa.title_group_id = tgl.title_group_id
-                    ), '[]'::jsonb)
-                ) AS lite_title_group
+                tgl.title_group_data AS lite_title_group -- 'affiliated_artists' is already inside tgl.title_group_data
             FROM get_title_groups_and_edition_group_and_torrents_lite() tgl
             JOIN title_groups tg ON tgl.title_group_id = tg.id
             JOIN title_group_search tgs ON tg.id = tgs.title_group_id
