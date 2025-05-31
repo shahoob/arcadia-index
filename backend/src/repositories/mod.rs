@@ -17,3 +17,4 @@ pub mod torrent_repository;
 pub mod torrent_request_repository;
 pub mod torrent_request_vote_repository;
 pub mod user_repository;
+pub mod wiki_repository;

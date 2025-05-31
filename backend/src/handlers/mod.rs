@@ -17,6 +17,7 @@ pub mod torrent_report_handler;
 pub mod torrent_request_handler;
 pub mod torrent_request_vote_handler;
 pub mod user_handler;
+pub mod wiki_handler;
 
 use crate::models::user::User;
 use crate::repositories::auth_repository::find_user_with_id;

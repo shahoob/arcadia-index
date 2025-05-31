@@ -30,6 +30,7 @@ use crate::{
             Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken, Register, User,
             UserCreatedUserWarning, UserWarning,
         },
+        wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
     },
 };
 
@@ -72,6 +73,8 @@ use crate::{
         crate::handlers::forum_handler::get_forum_thread,
         crate::handlers::forum_handler::add_forum_thread,
         crate::handlers::forum_handler::add_forum_post,
+        crate::handlers::wiki_handler::add_wiki_article,
+        crate::handlers::wiki_handler::get_wiki_article,
     ),
     components(schemas(
         Register,
@@ -123,7 +126,10 @@ use crate::{
         ForumOverview,
         ForumSubCategoryHierarchy,
         ForumThreadAndPosts,
-        UserCreatedForumThread
+        UserCreatedForumThread,
+        WikiArticle,
+        UserCreatedWikiArticle,
+        WikiArticleHierarchy
     ),)
 )]
 pub struct ApiDoc;

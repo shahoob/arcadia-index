@@ -620,6 +620,15 @@ CREATE TABLE forum_posts (
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_thread_id) REFERENCES forum_threads(id)
 );
+CREATE TABLE wiki_articles (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by_id BIGINT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_by_id BIGINT NOT NULL,
+    body TEXT NOT NULL
+);
 
 -- Views
 
