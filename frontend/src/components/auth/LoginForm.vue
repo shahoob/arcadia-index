@@ -18,13 +18,23 @@
         :feedback="false"
       />
     </div>
-    <div>
-      <Checkbox class="form-item" v-model="form.remember_me" binary />
-      <label for="ingredient1"> {{ t('auth.remember_me') }} </label>
+    <div class="remember-wrapper">
+      <Checkbox inputId="remember-me" v-model="form.remember_me" binary />
+      <label for="remember-me"> {{ t('auth.remember_me') }} </label>
     </div>
-    <Button class="form-item" type="submit" severity="secondary" label="Submit" />
+    <Button class="form-item w-full" type="submit" severity="secondary" label="Submit" />
   </Form>
 </template>
+
+<style>
+  .remember-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+  }
+</style>
+
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
