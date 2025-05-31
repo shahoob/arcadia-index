@@ -25,8 +25,20 @@
           <Button icon="pi pi-upload" severity="secondary" size="small" />
         </RouterLink>
         <Button icon="pi pi-moon" @click="toggleDarkMode()" severity="secondary" size="small" />
-        <RouterLink :to="`/user/${user.id}`">
+        <RouterLink :onmouseenter="toggle" :to="`/user/${user.id}`">
           <Button icon="pi pi-user" severity="secondary" size="small" />
+          <Popover :onmouseleave="toggle" ref="op">
+            <div class="flex flex-col gap-4 w-[25rem]">
+              <ul class="flex flex-col p-0 m-0 list-none">
+                <li
+                  class="flex gap-2 items-center px-2 cursor-pointer rounded-border hover:bg-emphasis"
+                  @click="handleLogoff"
+                >
+                  <span class="font-medium">Logoff</span>
+                </li>
+              </ul>
+            </div>
+          </Popover>
         </RouterLink>
       </div>
     </div>
@@ -37,8 +49,24 @@
 import { useUserStore } from '@/stores/user'
 import { Button } from 'primevue'
 import { bytesToReadable } from '@/services/helpers'
+import Popover from 'primevue/popover'
+
+import { ref } from 'vue'
+import router from '@/router'
+const op = ref()
 
 const user = useUserStore()
+
+const toggle = (event: Event) => {
+  op.value.toggle(event)
+}
+
+const handleLogoff = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  user.removeUser()
+  router.push('/login')
+}
 
 const toggleDarkMode = () => {
   document.documentElement.classList.toggle('dark-theme')
@@ -55,19 +83,23 @@ const toggleDarkMode = () => {
   padding: 0 7px;
   width: 100%;
 }
+
 .user-stats {
   font-size: 0.85em;
   display: flex;
   align-items: center;
+
   .stat {
     margin: 0px 10px;
     display: flex;
     align-items: center;
   }
+
   i {
     margin-right: 7px;
   }
 }
+
 .actions .p-button {
   margin-left: 7px;
 }
