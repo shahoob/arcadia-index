@@ -27,14 +27,15 @@
         <Button icon="pi pi-moon" @click="toggleDarkMode()" severity="secondary" size="small" />
         <RouterLink :onmouseenter="toggle" :to="`/user/${user.id}`">
           <Button icon="pi pi-user" severity="secondary" size="small" />
-          <Popover :onmouseleave="toggle" ref="op">
+          <Popover ref="op">
             <div class="flex flex-col gap-4 w-[25rem]">
               <ul class="flex flex-col p-0 m-0 list-none">
                 <li
-                  class="flex gap-2 items-center px-2 cursor-pointer rounded-border hover:bg-emphasis"
-                  @click="handleLogoff"
+                  class="flex gap-2 px-2 cursor-pointer list-item rounded-border hover:bg-emphasis"
+                  @click="handleLogout"
                 >
-                  <span class="font-medium">Logoff</span>
+                  <i class="pi pi-sign-out small" />
+                  <small class="font-medium">{{ t('general.logout') }}</small>
                 </li>
               </ul>
             </div>
@@ -50,6 +51,8 @@ import { useUserStore } from '@/stores/user'
 import { Button } from 'primevue'
 import { bytesToReadable } from '@/services/helpers'
 import Popover from 'primevue/popover'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 import { ref } from 'vue'
 import router from '@/router'
@@ -61,7 +64,7 @@ const toggle = (event: Event) => {
   op.value.toggle(event)
 }
 
-const handleLogoff = () => {
+const handleLogout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
   user.removeUser()
@@ -82,6 +85,15 @@ const toggleDarkMode = () => {
   height: 45px;
   padding: 0 7px;
   width: 100%;
+}
+
+.list-item {
+  align-items: center;
+  transition: 0.3s ease;
+}
+
+.list-item:hover {
+  color: var(--p-red-600);
 }
 
 .user-stats {
