@@ -184,13 +184,13 @@ pub struct Profile {
     pub user: User,
     pub peers: Vec<Peer>,
     pub user_warnings: Vec<UserWarning>,
-    pub uploaded_torrents: Vec<TitleGroupHierarchyLite>,
+    pub last_five_uploaded_torrents: Vec<TitleGroupHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct PublicProfile {
     pub user: PublicUser,
-    pub uploaded_torrents: Vec<TitleGroupHierarchyLite>,
+    pub last_five_uploaded_torrents: Vec<TitleGroupHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, FromRow)]

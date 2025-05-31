@@ -246,7 +246,7 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
         WITH title_group_data AS (
             SELECT
                 tgl.title_group_data AS lite_title_group
-            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8) tgl
+            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8, $9) tgl
         )
         SELECT jsonb_agg(lite_title_group) AS title_groups
         FROM title_group_data;
@@ -259,11 +259,11 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
         torrent_search.order.to_string(),
         torrent_search.page_size,
         (torrent_search.page - 1) * torrent_search.page_size,
+        torrent_search.torrent.created_by_id,
     )
     .fetch_one(pool)
     .await
     .map_err(|error| Error::ErrorSearchingForTorrents(error.to_string()))?;
-    println!("{} {}", torrent_search.page_size, torrent_search.page);
 
     Ok(serde_json::json!({"title_groups": search_results.title_groups}))
 }

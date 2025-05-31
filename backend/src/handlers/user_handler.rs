@@ -1,8 +1,15 @@
 use crate::{
     Arcadia, Error, Result,
-    models::user::{Profile, PublicProfile, User, UserCreatedUserWarning, UserWarning},
+    models::{
+        torrent::{
+            TorrentSearch, TorrentSearchOrder, TorrentSearchSortField, TorrentSearchTitleGroup,
+            TorrentSearchTorrent,
+        },
+        user::{Profile, PublicProfile, User, UserCreatedUserWarning, UserWarning},
+    },
     repositories::{
         peer_repository,
+        torrent_repository::search_torrents,
         user_repository::{create_user_warning, find_user_profile, find_user_warnings},
     },
 };
@@ -30,7 +37,27 @@ pub async fn get_user(
 ) -> Result<HttpResponse> {
     let user = find_user_profile(&arc.pool, &query.id).await?;
 
-    Ok(HttpResponse::Created().json(json!({"user":user})))
+    let search_title_group = TorrentSearchTitleGroup {
+        name: String::from(""),
+        include_empty_groups: false,
+    };
+    let search_torrent = TorrentSearchTorrent {
+        reported: None,
+        staff_checked: None,
+        created_by_id: Some(query.id),
+    };
+    let torrent_search = TorrentSearch {
+        title_group: search_title_group,
+        torrent: search_torrent,
+        page: 1,
+        page_size: 5,
+        sort_by: TorrentSearchSortField::TorrentCreatedAt,
+        order: TorrentSearchOrder::Desc,
+    };
+    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+
+    Ok(HttpResponse::Created()
+        .json(json!({"user":user, "last_five_uploaded_torrents": uploaded_torrents})))
 }
 
 #[utoipa::path(
@@ -40,12 +67,34 @@ pub async fn get_user(
         (status = 200, description = "Successfully got the user's profile", body=Profile),
     )
 )]
-pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> HttpResponse {
+pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> Result<HttpResponse> {
     current_user.password_hash = String::from("");
     let peers = peer_repository::get_user_peers(&arc.pool, current_user.id).await;
     let user_warnings = find_user_warnings(&arc.pool, current_user.id).await;
-    HttpResponse::Ok()
-        .json(json!({"user": current_user, "peers":peers, "user_warnings": user_warnings}))
+    let search_title_group = TorrentSearchTitleGroup {
+        name: String::from(""),
+        include_empty_groups: false,
+    };
+    let search_torrent = TorrentSearchTorrent {
+        reported: None,
+        staff_checked: None,
+        created_by_id: Some(current_user.id),
+    };
+    let torrent_search = TorrentSearch {
+        title_group: search_title_group,
+        torrent: search_torrent,
+        page: 1,
+        page_size: 5,
+        sort_by: TorrentSearchSortField::TorrentCreatedAt,
+        order: TorrentSearchOrder::Desc,
+    };
+    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    Ok(HttpResponse::Ok().json(json!({
+            "user": current_user,
+            "peers":peers,
+            "user_warnings": user_warnings,
+            "last_five_uploaded_torrents": uploaded_torrents
+    })))
 }
 
 #[utoipa::path(

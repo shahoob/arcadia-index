@@ -296,6 +296,7 @@ pub struct TorrentSearchTitleGroup {
 pub struct TorrentSearchTorrent {
     pub reported: Option<bool>,
     pub staff_checked: Option<bool>,
+    pub created_by_id: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
