@@ -3,12 +3,15 @@
     :containerTitle="t('user.uploads')"
     :containerTitleLink="`/torrents?created_by_id=${userId}`"
   >
-    <div class="last-uploads">
+    <div class="last-uploads" v-if="titleGroups">
       <TitleGroupPreviewCoverOnly
         v-for="titleGroup in titleGroups"
         :key="titleGroup.id"
         :titleGroup="titleGroup"
       />
+    </div>
+    <div v-else>
+      {{ t('user.no_uploads_explanation') }}
     </div>
   </ContentContainer>
 </template>

@@ -47,12 +47,7 @@ pub struct GetWikiArticleQuery {
 pub async fn get_wiki_article(
     query: web::Query<GetWikiArticleQuery>,
     arc: web::Data<Arcadia>,
-    current_user: User,
 ) -> Result<HttpResponse> {
-    if current_user.class != "staff" {
-        return Err(Error::InsufficientPrivileges);
-    }
-
     let article = find_wiki_article(&arc.pool, query.id).await?;
 
     Ok(HttpResponse::Ok().json(article))

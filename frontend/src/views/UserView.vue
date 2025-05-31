@@ -48,6 +48,7 @@ import { useI18n } from 'vue-i18n'
 import WarnUserDialog from '@/components/user/WarnUserDialog.vue'
 import { Dialog } from 'primevue'
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
+import { watch } from 'vue'
 
 const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
@@ -59,7 +60,7 @@ const { t } = useI18n()
 
 const warnUserDialogVisible = ref(false)
 
-onMounted(async () => {
+const fetchUser = async () => {
   if (parseInt(route.params.id.toString()) == userStore.id) {
     ;({
       peers: peers.value,
@@ -68,9 +69,17 @@ onMounted(async () => {
     } = await getMe())
     userStore.setUser(user.value as User)
   } else {
-    ;({ user: user.value } = await getUser(parseInt(route.params.id.toString())))
+    ;({ user: user.value, last_five_uploaded_torrents: uploadedTorrents.value } = await getUser(
+      parseInt(route.params.id.toString()),
+    ))
   }
+}
+
+onMounted(async () => {
+  fetchUser()
 })
+
+watch(() => route.params.id, fetchUser, { immediate: true })
 </script>
 
 <style scoped>

@@ -805,7 +805,7 @@ BEGIN
     FROM title_groups_with_relevance tgr
     LEFT JOIN edition_groups_with_torrents egwt ON tgr.id = egwt.title_group_id
     LEFT JOIN affiliated_artists_data aad ON tgr.id = aad.title_group_id
-    WHERE (p_include_empty_groups = TRUE OR egwt.eg_data IS NOT NULL)
+    WHERE (p_include_empty_groups = TRUE OR (egwt.eg_data IS NOT NULL AND (egwt.eg_data -> 'torrents')::jsonb <> '[]'::jsonb))
     GROUP BY
         tgr.id, tgr.name, tgr.covers, tgr.category, tgr.content_type, tgr.tags, tgr.original_release_date, tgr.relevance_score, aad.affiliated_artists
     ORDER BY

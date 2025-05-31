@@ -99,7 +99,8 @@
     "warn_user": "Warn user",
     "user_warned_success": "User warned successfully",
     "ban": "Ban",
-    "uploads": "Uploads"
+    "uploads": "Uploads",
+    "no_uploads_explanation": "This user hasn't uploaded any torrents yet, or they are all uploaded as anonymous."
   },
   "community": {
     "new_comment": "New comment",
