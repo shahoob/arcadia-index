@@ -27,12 +27,12 @@
 </template>
 
 <style>
-  .remember-wrapper {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    align-items: center;
-  }
+.remember-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
 </style>
 
 <script setup lang="ts">
