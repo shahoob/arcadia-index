@@ -176,12 +176,12 @@ Whether you want to add a new feature or fix an existing issue, it needs to be d
 
 If you are unsure about what/how to do something, don't hesitate to [open a discussion](https://github.com/Arcadia-Solutions/arcadia/discussions) or [an issue](https://github.com/Arcadia-Solutions/arcadia/issues) about the topic.
 
-You can also hop on the [discord server](https://discord.gg/amYWVk7pS3) to chat with other devs and the community.
+You can also hop on the [Discord server](https://discord.gg/amYWVk7pS3) to chat with other devs and the community.
 
 ### Finding contributions to make
 
-Arcadia's frontend has a [board](https://github.com/orgs/Arcadia-Solutions/projects/2/views/1) to track the existing issues and features that need to be worked on. Feel free to claim one that isn't claimed yet before starting to work on it.
+Arcadia has [boards](https://github.com/Arcadia-Solutions/arcadia/projects) to track the existing issues and features that need to be worked on. Feel free to claim one that isn't claimed yet before starting to work on it.
 
 To claim a github issue, simply leave a comment on it saying that you are working on it.
 
-You can also search for `TODO` in the code and pick one of those tasks. If you decide to do this, please open an issue first and clam it before working on the task.
+You can also search for `TODO`s in the code and pick one of those tasks. If you decide to do this, please open an issue first and claim it before working on the task.
