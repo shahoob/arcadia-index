@@ -514,6 +514,11 @@ export interface components {
             /** Format: int64 */
             title_group_id: number;
         };
+        AffiliatedArtistLite: {
+            /** Format: int64 */
+            artist_id: number;
+            name: string;
+        };
         Artist: {
             /** Format: date-time */
             created_at: string;
@@ -827,11 +832,13 @@ export interface components {
         /** @enum {string} */
         Platform: "Windows" | "Linux" | "MacOS" | "Xbox";
         Profile: {
+            last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             peers: components["schemas"]["Peer"][];
             user: components["schemas"]["User"];
             user_warnings: components["schemas"]["UserWarning"][];
         };
         PublicProfile: {
+            last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             user: components["schemas"]["PublicUser"];
         };
         PublicUser: {
@@ -1085,6 +1092,7 @@ export interface components {
             updated_at: string;
         };
         TitleGroupHierarchyLite: {
+            affiliated_artists: components["schemas"]["AffiliatedArtistLite"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             covers: string[];
@@ -1327,6 +1335,8 @@ export interface components {
             name: string;
         };
         TorrentSearchTorrent: {
+            /** Format: int64 */
+            created_by_id?: number | null;
             reported?: boolean | null;
             staff_checked?: boolean | null;
         };
