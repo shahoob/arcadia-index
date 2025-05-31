@@ -832,6 +832,7 @@ export interface components {
         /** @enum {string} */
         Platform: "Windows" | "Linux" | "MacOS" | "Xbox";
         Profile: {
+            last_five_snatched_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             peers: components["schemas"]["Peer"][];
             user: components["schemas"]["User"];
@@ -1338,6 +1339,8 @@ export interface components {
             /** Format: int64 */
             created_by_id?: number | null;
             reported?: boolean | null;
+            /** Format: int64 */
+            snatched_by_id?: number | null;
             staff_checked?: boolean | null;
         };
         TorrentToDelete: {

@@ -45,8 +45,9 @@ pub async fn get_user(
         reported: None,
         staff_checked: None,
         created_by_id: Some(query.id),
+        snatched_by_id: None,
     };
-    let torrent_search = TorrentSearch {
+    let mut torrent_search = TorrentSearch {
         title_group: search_title_group,
         torrent: search_torrent,
         page: 1,
@@ -55,10 +56,16 @@ pub async fn get_user(
         order: TorrentSearchOrder::Desc,
     };
     let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    torrent_search.torrent.snatched_by_id = Some(query.id);
+    torrent_search.torrent.created_by_id = None;
+    torrent_search.sort_by = TorrentSearchSortField::TorrentSnatchedAt;
+    let snatched_torrents = search_torrents(&arc.pool, &torrent_search).await?;
 
-    Ok(HttpResponse::Created().json(
-        json!({"user":user, "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap()}),
-    ))
+    Ok(HttpResponse::Created().json(json!({
+        "user":user,
+        "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap(),
+        "last_five_snatched_torrents": snatched_torrents.get("title_groups").unwrap()
+    })))
 }
 
 #[utoipa::path(
@@ -80,8 +87,9 @@ pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> Result<H
         reported: None,
         staff_checked: None,
         created_by_id: Some(current_user.id),
+        snatched_by_id: None,
     };
-    let torrent_search = TorrentSearch {
+    let mut torrent_search = TorrentSearch {
         title_group: search_title_group,
         torrent: search_torrent,
         page: 1,
@@ -90,11 +98,16 @@ pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> Result<H
         order: TorrentSearchOrder::Desc,
     };
     let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    torrent_search.torrent.snatched_by_id = Some(current_user.id);
+    torrent_search.torrent.created_by_id = None;
+    torrent_search.sort_by = TorrentSearchSortField::TorrentSnatchedAt;
+    let snatched_torrents = search_torrents(&arc.pool, &torrent_search).await?;
     Ok(HttpResponse::Ok().json(json!({
             "user": current_user,
             "peers":peers,
             "user_warnings": user_warnings,
-            "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap()
+            "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap(),
+            "last_five_snatched_torrents": snatched_torrents.get("title_groups").unwrap()
     })))
 }
 

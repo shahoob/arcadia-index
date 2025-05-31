@@ -25,7 +25,18 @@
       <ContentContainer v-if="peers" :containerTitle="t('torrent.clients_and_ips')" class="section">
         <PeerTable :peers />
       </ContentContainer>
-      <RelatedTorrents :titleGroups="uploadedTorrents" class="section" :userId="user.id" />
+      <RelatedTorrents
+        :titleGroups="uploadedTorrents"
+        class="section"
+        :userId="user.id"
+        type="uploads"
+      />
+      <RelatedTorrents
+        :titleGroups="snatchedTorrents"
+        class="section"
+        :userId="user.id"
+        type="snatches"
+      />
     </div>
     <UserSidebar :user class="sidebar" />
   </div>
@@ -53,6 +64,7 @@ import { watch } from 'vue'
 const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
 const uploadedTorrents = ref<TitleGroupHierarchyLite[]>([])
+const snatchedTorrents = ref<TitleGroupHierarchyLite[]>([])
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -66,6 +78,7 @@ const fetchUser = async () => {
       peers: peers.value,
       user: user.value,
       last_five_uploaded_torrents: uploadedTorrents.value,
+      last_five_snatched_torrents: snatchedTorrents.value,
     } = await getMe())
     userStore.setUser(user.value as User)
   } else {

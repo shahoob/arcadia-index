@@ -104,11 +104,12 @@ const emit = defineEmits<{
   search: [form: TorrentSearch]
 }>()
 
-const sortByOptions = [
+const sortByOptions = ref([
   { label: t('torrent.created_at'), value: 'torrent_created_at' },
   { label: t('torrent.size'), value: 'torrent_size' },
   { label: t('title_group.original_release_date'), value: 'title_group_original_release_date' },
-]
+  { label: t('torrent.snatched_at'), value: 'torrent_snatched_at' },
+])
 const orderOptions = [
   { label: t('general.ascending'), value: 'asc' },
   { label: t('general.descending'), value: 'desc' },
