@@ -91,19 +91,21 @@
       <template #header>
         <i class="pi pi-replay" v-tooltip.top="t('torrent.completed')" />
       </template>
-      <template #body>10</template>
+      <template #body="slotProps">{{ slotProps.data.completed }}</template>
     </Column>
     <Column style="width: 2.5em">
       <template #header>
         <i class="pi pi-arrow-up" v-tooltip.top="t('torrent.seeders')" />
       </template>
-      <template #body><span style="color: green">5</span></template>
+      <template #body="slotProps"
+        ><span style="color: green">{{ slotProps.data.seeders }}</span></template
+      >
     </Column>
     <Column style="width: 2.5em">
       <template #header>
         <i class="pi pi-arrow-down" v-tooltip.top="t('torrent.leechers')" />
       </template>
-      <template #body>0</template>
+      <template #body="slotProps">{{ slotProps.data.leechers }}</template>
     </Column>
     <template #groupheader="slotProps" v-if="isGrouped">
       <div class="edition-group-header">
@@ -196,7 +198,7 @@ import { computed, onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Image from 'primevue/image'
-import BBCodeRenderer from '@/components/BBCodeRenderer.vue'
+import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import DOMPurify from 'dompurify'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'

@@ -1,5 +1,5 @@
 <template>
-  <Form :initialValues="form" @submit="login">
+  <Form :initialValues="form" @submit="handleLogin">
     <div class="flex flex-col gap-1">
       <InputText
         class="form-item"
@@ -18,43 +18,48 @@
         :feedback="false"
       />
     </div>
-    <div>
-      <Checkbox class="form-item" v-model="form.remember_me" binary />
-      <label for="ingredient1"> {{ t('auth.remember_me') }} </label>
+    <div class="remember-wrapper">
+      <Checkbox inputId="remember-me" v-model="form.remember_me" binary />
+      <label for="remember-me"> {{ t('auth.remember_me') }} </label>
     </div>
-    <Button
-      class="form-item"
-      type="submit"
-      severity="secondary"
-      label="Submit"
-      @click="handleLogin"
-    />
+    <Button class="form-item w-full" type="submit" severity="secondary" label="Submit" />
   </Form>
 </template>
+
+<style>
+.remember-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+</style>
+
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import { Form } from '@primevue/forms'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
-import { login } from '@/services/api/authService'
+import { login, type Login } from '@/services/api/authService'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { getMe } from '@/services/api/userService'
 import { useI18n } from 'vue-i18n'
+import { ref } from 'vue'
 
-const form = {
+const form = ref<Login>({
   username: '',
   password: '',
   remember_me: false,
-}
+})
 
 const router = useRouter()
 const userStore = useUserStore()
 const { t } = useI18n()
 
 const handleLogin = async () => {
-  login(form).then(async (data) => {
+  login(form.value).then(async (data) => {
     localStorage.setItem('token', data.token)
     const profile = await getMe()
     localStorage.setItem('user', JSON.stringify(profile.user))

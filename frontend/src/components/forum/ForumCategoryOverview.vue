@@ -47,8 +47,6 @@ const { t } = useI18n()
 
 <style scoped>
 .title {
-  font-weight: bold;
-  font-size: 2em;
   margin-bottom: 10px;
 }
 </style>

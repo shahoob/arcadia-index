@@ -1,13 +1,18 @@
 <template>
   <div class="content-container">
-    <div class="title" v-if="containerTitle">{{ containerTitle }}</div>
+    <RouterLink v-if="containerTitleLink" :to="containerTitleLink">
+      <div class="container-title" v-if="containerTitle">{{ containerTitle }}</div>
+    </RouterLink>
+    <div v-else-if="containerTitle" class="container-title">{{ containerTitle }}</div>
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 defineProps<{
   containerTitle?: string
+  containerTitleLink?: string
 }>()
 </script>
 
@@ -18,7 +23,7 @@ defineProps<{
   background-color: var(--color-background-secondary);
   display: block !important;
 }
-.title {
+.container-title {
   color: var(--color-primary);
   margin-bottom: 10px;
 }

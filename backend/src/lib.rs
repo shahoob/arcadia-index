@@ -4,6 +4,7 @@ use reqwest::Url;
 pub mod api_doc;
 pub mod handlers;
 pub mod models;
+pub mod periodic_tasks;
 pub mod repositories;
 pub mod routes;
 pub mod services;
@@ -15,6 +16,7 @@ pub enum OpenSignups {
     Enabled,
 }
 
+#[derive(Clone)]
 pub struct Arcadia {
     pub pool: sqlx::PgPool,
     pub jwt_secret: String,
@@ -174,6 +176,15 @@ pub enum Error {
 
     #[error("could not warn user: '{0}'")]
     CouldNotWarnUser(String),
+
+    #[error("invalid user id or torrent id")]
+    InvalidUserIdOrTorrentId,
+
+    #[error("could not create wiki article")]
+    CouldNotCreateWikiArticle(#[source] sqlx::Error),
+
+    #[error("could not find wiki article")]
+    CouldNotFindWikiArticle(#[source] sqlx::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

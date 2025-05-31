@@ -4,6 +4,7 @@ use crate::repositories::announce_repository::{
 use crate::repositories::peer_repository::{
     find_torrent_peers, insert_or_update_peer, remove_peer,
 };
+use crate::repositories::torrent_repository::increment_torrent_completed;
 use crate::services::announce_service::is_torrent_client_allowed;
 use crate::tracker::announce;
 use crate::{Arcadia, repositories::announce_repository::find_user_with_passkey};
@@ -156,6 +157,10 @@ async fn handle_announce(
         remove_peer(&arc.pool, &torrent.id, &ann.peer_id, &ip, ann.port).await;
         //return HttpResponse::Ok().into();
         todo!();
+    }
+
+    if let Some(announce::TorrentEvent::Completed) = ann.event {
+        let _ = increment_torrent_completed(&arc.pool, torrent.id).await;
     }
 
     let (old_real_uploaded, old_real_downloaded) = insert_or_update_peer(

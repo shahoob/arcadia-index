@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
@@ -7,7 +7,7 @@ use utoipa::ToSchema;
 pub struct Gift {
     pub id: i64,
     #[schema(value_type = String, format = DateTime)]
-    pub sent_at: DateTime<Local>,
+    pub sent_at: DateTime<Utc>,
     pub message: String,
     pub sender_id: i64,
     pub receiver_id: i64,

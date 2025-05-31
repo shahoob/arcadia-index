@@ -18,9 +18,7 @@
           <TitleGroupPreviewCoverOnly
             v-for="title_group in title_groups"
             :key="title_group.id"
-            :id="title_group.id"
-            :name="title_group.name"
-            :cover="title_group.covers[0]"
+            :titleGroup="title_group"
           />
         </div>
       </ContentContainer>

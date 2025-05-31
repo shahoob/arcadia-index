@@ -1,5 +1,6 @@
 mod handlers;
 mod models;
+mod periodic_tasks;
 mod repositories;
 mod routes;
 mod services;
@@ -7,6 +8,7 @@ mod tracker;
 
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, middleware, web::Data};
+use periodic_tasks::scheduler::run_periodic_tasks;
 use reqwest::Url;
 use routes::init;
 use sqlx::postgres::PgPoolOptions;
@@ -82,23 +84,26 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f64");
 
-    HttpServer::new(move || {
+    let arc = Data::new(Arcadia {
+        pool: pool.clone(),
+        open_signups,
+        jwt_secret: jwt_secret.clone(),
+        tracker_name: tracker_name.clone(),
+        frontend_url: frontend_url.clone(),
+        tracker_url: tracker_url.clone(),
+        tracker_announce_interval,
+        allowed_torrent_clients: allowed_torrent_clients.clone(),
+        global_download_factor,
+        global_upload_factor,
+    });
+    let arc_periodic_tasks = arc.clone();
+
+    let server = HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
             .wrap(middleware::Logger::default())
             .wrap(cors)
-            .app_data(Data::new(Arcadia {
-                pool: pool.clone(),
-                open_signups,
-                jwt_secret: jwt_secret.clone(),
-                tracker_name: tracker_name.clone(),
-                frontend_url: frontend_url.clone(),
-                tracker_url: tracker_url.clone(),
-                tracker_announce_interval,
-                allowed_torrent_clients: allowed_torrent_clients.clone(),
-                global_download_factor,
-                global_upload_factor,
-            }))
+            .app_data(arc.clone())
             .configure(init) // Initialize routes
             .service(
                 SwaggerUi::new("/swagger-ui/{_:.*}")
@@ -106,6 +111,13 @@ async fn main() -> std::io::Result<()> {
             )
     })
     .bind(format!("{}:{}", host, port))?
-    .run()
-    .await
+    .run();
+
+    tokio::spawn(async {
+        if let Err(e) = run_periodic_tasks(arc_periodic_tasks).await {
+            eprintln!("Error running cron tasks: {:?}", e);
+        }
+    });
+
+    server.await
 }

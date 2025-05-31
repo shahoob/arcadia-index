@@ -5,6 +5,7 @@ use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
+use strum::Display;
 use utoipa::ToSchema;
 
 use super::{title_group::TitleGroupHierarchyLite, torrent_report::TorrentReport, user::UserLite};
@@ -202,6 +203,10 @@ pub struct Torrent {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub completed: i64,
+    pub snatched: i64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
@@ -284,18 +289,47 @@ pub struct UploadedTorrent {
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearchTitleGroup {
     pub name: String,
+    pub include_empty_groups: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearchTorrent {
     pub reported: Option<bool>,
     pub staff_checked: Option<bool>,
+    pub created_by_id: Option<i64>,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
+pub enum TorrentSearchSortField {
+    #[serde(rename = "torrent_created_at")]
+    #[strum(serialize = "torrent_created_at")]
+    TorrentCreatedAt,
+    #[serde(rename = "torrent_size")]
+    #[strum(serialize = "torrent_size")]
+    TorrentSize,
+    #[serde(rename = "title_group_original_release_date")]
+    #[strum(serialize = "title_group_original_release_date")]
+    TitleGroupOriginalReleaseDate,
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
+pub enum TorrentSearchOrder {
+    #[serde(rename = "asc")]
+    #[strum(serialize = "asc")]
+    Asc,
+    #[serde(rename = "desc")]
+    #[strum(serialize = "desc")]
+    Desc,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct TorrentSearch {
     pub title_group: TorrentSearchTitleGroup,
     pub torrent: TorrentSearchTorrent,
+    pub page: i64,
+    pub page_size: i64,
+    pub sort_by: TorrentSearchSortField,
+    pub order: TorrentSearchOrder,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -303,6 +337,10 @@ pub struct TorrentHierarchyLite {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub completed: i64,
+    pub snatched: i64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
@@ -331,6 +369,10 @@ pub struct TorrentHierarchy {
     pub id: i64,
     pub upload_factor: f64,
     pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub completed: i64,
+    pub snatched: i64,
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,

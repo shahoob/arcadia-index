@@ -1,4 +1,4 @@
-import type { EditionGroupInfoLite } from './api/torrentService'
+import type { ContentType, EditionGroupInfoLite } from './api/torrentService'
 
 export const timeAgo = (date: string) => {
   const diff = (Date.now() - new Date(date).getTime()) / 1000
@@ -76,27 +76,26 @@ export const getLanguages = () => {
 export const getPlatforms = () => {
   return ['Linux', 'MacOS', 'Windows']
 }
-export const getSources = (contentType: string) => {
+export const getSources = (contentType: ContentType) => {
   const sources = ['Web']
-  console.log(contentType)
   switch (contentType) {
-    case 'Book': {
+    case 'book': {
       sources.push('Physical Book')
       break
     }
-    case 'Music': {
+    case 'music': {
       sources.push('Vinyl', 'Blu-Ray', 'CD', 'Soundboard', 'SACD', 'DAT', 'Cassette')
       break
     }
-    case 'Movie': {
+    case 'movie': {
       sources.push('Blu-Ray', 'DVD9', 'DVD5', 'HD-DVD', 'HD-TV', 'PDTV', 'VHS', 'TV', 'LaserDisc')
       break
     }
-    case 'TV-Show': {
+    case 'tv_show': {
       sources.push('Blu-Ray', 'DVD9', 'DVD5', 'HD-DVD', 'HD-TV', 'PDTV', 'VHS', 'TV', 'LaserDisc')
       break
     }
-    case 'Collection': {
+    case 'collection': {
       sources.push(
         'Blu-Ray',
         'DVD9',

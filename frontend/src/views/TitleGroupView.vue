@@ -87,12 +87,12 @@
         :container-title="t('title_group.description')"
       >
         <div class="title-group-description">
-          {{ title_group.description }}
+          <BBCodeRenderer :content="title_group.description" />
         </div>
         <div v-for="edition_group in title_group.edition_groups" :key="edition_group.id">
           <div v-if="edition_group.description" class="edition-description">
             <div class="edition-group-slug">{{ getEditionGroupSlug(edition_group) }}</div>
-            {{ edition_group.description }}
+            <BBCodeRenderer :content="edition_group.description" />
           </div>
         </div>
       </ContentContainer>
@@ -110,6 +110,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
+import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import TitleGroupComments from '@/components/title_group/TitleGroupComments.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'

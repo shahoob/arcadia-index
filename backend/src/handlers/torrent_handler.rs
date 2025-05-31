@@ -90,7 +90,7 @@ pub async fn download_dottorrent_file(
 
 #[utoipa::path(
     get,
-    path = "/api/search/torrent",
+    path = "/api/search/torrent/lite",
     responses(
         (status = 200, description = "Title groups and their torrents found", body=TorrentSearchResults),
     )

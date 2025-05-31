@@ -76,6 +76,16 @@ const router = createRouter({
       name: 'ForumThread',
       component: () => import('../views/forum/ForumThreadView.vue'),
     },
+    {
+      path: '/forum/thread/new',
+      name: 'NewForumThread',
+      component: () => import('../views/forum/NewForumThreadView.vue'),
+    },
+    {
+      path: '/wiki/article/:id',
+      name: 'WikiArticle',
+      component: () => import('../views/WikiView.vue'),
+    },
   ],
 })
 

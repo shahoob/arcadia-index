@@ -39,7 +39,7 @@ pub async fn notify_users(
                         r#"
                             WITH seeders_ids AS (
                                 SELECT user_id
-                                FROM seeded_torrents
+                                FROM torrent_activities
                                 WHERE torrent_id = $1
                             )
                             INSERT INTO notifications (receiver, title, message, notification_type, item_id)

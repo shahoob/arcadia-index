@@ -30,6 +30,7 @@ use crate::handlers::{
     torrent_request_handler::add_torrent_request,
     torrent_request_vote_handler::add_torrent_request_vote,
     user_handler::{get_me, get_user, warn_user},
+    wiki_handler::{add_wiki_article, get_wiki_article},
 };
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -56,7 +57,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/torrent", web::delete().to(delete_torrent))
             .route("/torrent/top", web::get().to(get_top_torrents))
             .route("/report/torrent", web::post().to(add_torrent_report))
-            .route("/search/torrent", web::post().to(find_torrents))
+            .route("/search/torrent/lite", web::post().to(find_torrents))
             .route("/search/artist/lite", web::get().to(get_artists_lite))
             .route("/artists", web::post().to(add_artists))
             .route("/artist", web::get().to(get_artist_publications))
@@ -86,6 +87,8 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/forum/thread", web::get().to(get_forum_thread))
             .route("/forum/thread", web::post().to(add_forum_thread))
             .route("/forum/post", web::post().to(add_forum_post))
+            .route("/wiki/article", web::post().to(add_wiki_article))
+            .route("/wiki/article", web::get().to(get_wiki_article))
             .route(
                 "/external_db/open_library",
                 web::get().to(get_open_library_data),

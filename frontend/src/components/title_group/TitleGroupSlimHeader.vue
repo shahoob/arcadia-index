@@ -24,9 +24,6 @@ defineProps<{
 }>()
 </script>
 <style scoped>
-.title {
-  font-size: 2em;
-}
 .title-group-name {
   font-weight: bold;
   margin-right: 5px;

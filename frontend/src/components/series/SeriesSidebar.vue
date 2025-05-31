@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import ContentContainer from '@/components/ContentContainer.vue'
-import BBCodeRenderer from '@/components/BBCodeRenderer.vue'
+import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import type { Series } from '@/services/api/seriesService'
 import { Image } from 'primevue'
 

@@ -96,11 +96,6 @@ const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
 }
 </script>
 <style scoped>
-.title {
-  font-weight: bold;
-  font-size: 1.5em;
-}
-
 .title .alternative {
   font-size: 0.8em;
   color: var(--color-secondary);

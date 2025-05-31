@@ -68,7 +68,12 @@
     />
     <label for="in_label">{{ label }}</label>
   </FloatLabel>
-  <BBCodeRenderer :content v-if="preview" />
+  <div class="message">
+    <slot name="message"></slot>
+  </div>
+  <ContentContainer v-if="preview">
+    <BBCodeRenderer :content />
+  </ContentContainer>
   <div class="actions">
     <Button
       :label="t('general.preview')"
@@ -82,10 +87,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { FloatLabel, Textarea } from 'primevue'
+import ContentContainer from '../ContentContainer.vue'
 import { watch } from 'vue'
 import Button from 'primevue/button'
 import { useI18n } from 'vue-i18n'
-import BBCodeRenderer from '../BBCodeRenderer.vue'
+import BBCodeRenderer from '../community/BBCodeRenderer.vue'
 
 const props = defineProps<{
   label: string
@@ -126,7 +132,12 @@ watch(
     padding: 0.45em;
   }
 }
+.message {
+  height: 0;
+}
 .actions {
+  text-align: right;
+  margin-top: 5px;
   .p-button {
     margin-right: 10px;
   }

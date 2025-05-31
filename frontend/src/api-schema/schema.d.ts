@@ -277,7 +277,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/search/torrent": {
+    "/api/search/torrent/lite": {
         parameters: {
             query?: never;
             header?: never;
@@ -469,6 +469,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/wiki/article": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_wiki_article"];
+        put?: never;
+        post: operations["add_wiki_article"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -497,6 +513,11 @@ export interface components {
             roles: components["schemas"]["ArtistRole"][];
             /** Format: int64 */
             title_group_id: number;
+        };
+        AffiliatedArtistLite: {
+            /** Format: int64 */
+            artist_id: number;
+            name: string;
         };
         Artist: {
             /** Format: date-time */
@@ -803,16 +824,21 @@ export interface components {
             real_downloaded: number;
             /** Format: int64 */
             real_uploaded: number;
+            status: components["schemas"]["PeerStatus"];
             user_agent?: string | null;
         };
         /** @enum {string} */
+        PeerStatus: "Seeding" | "Leeching";
+        /** @enum {string} */
         Platform: "Windows" | "Linux" | "MacOS" | "Xbox";
         Profile: {
+            last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             peers: components["schemas"]["Peer"][];
             user: components["schemas"]["User"];
             user_warnings: components["schemas"]["UserWarning"][];
         };
         PublicProfile: {
+            last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             user: components["schemas"]["PublicUser"];
         };
         PublicUser: {
@@ -1066,6 +1092,7 @@ export interface components {
             updated_at: string;
         };
         TitleGroupHierarchyLite: {
+            affiliated_artists: components["schemas"]["AffiliatedArtistLite"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             covers: string[];
@@ -1091,6 +1118,8 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: null | components["schemas"]["AudioChannels"];
             audio_codec?: null | components["schemas"]["AudioCodec"];
+            /** Format: int64 */
+            completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1113,11 +1142,17 @@ export interface components {
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
+            /** Format: int64 */
+            leechers: number;
             mediainfo: string;
             release_group?: string | null;
             release_name?: string | null;
             /** Format: int64 */
+            seeders: number;
+            /** Format: int64 */
             size: number;
+            /** Format: int64 */
+            snatched: number;
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
@@ -1135,6 +1170,8 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: null | components["schemas"]["AudioChannels"];
             audio_codec?: null | components["schemas"]["AudioCodec"];
+            /** Format: int64 */
+            completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1158,12 +1195,18 @@ export interface components {
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
+            /** Format: int64 */
+            leechers: number;
             mediainfo: string;
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
+            seeders: number;
+            /** Format: int64 */
             size: number;
+            /** Format: int64 */
+            snatched: number;
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
@@ -1182,6 +1225,8 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
+            /** Format: int64 */
+            completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1198,10 +1243,16 @@ export interface components {
             /** Format: int64 */
             id: number;
             languages?: components["schemas"]["Language"][] | null;
+            /** Format: int64 */
+            leechers: number;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
+            seeders: number;
+            /** Format: int64 */
             size: number;
+            /** Format: int64 */
+            snatched: number;
             staff_checked: boolean;
             subtitle_languages?: components["schemas"]["Language"][] | null;
             trumpable?: string | null;
@@ -1263,16 +1314,29 @@ export interface components {
             torrent_request_id: number;
         };
         TorrentSearch: {
+            order: components["schemas"]["TorrentSearchOrder"];
+            /** Format: int64 */
+            page: number;
+            /** Format: int64 */
+            page_size: number;
+            sort_by: components["schemas"]["TorrentSearchSortField"];
             title_group: components["schemas"]["TorrentSearchTitleGroup"];
             torrent: components["schemas"]["TorrentSearchTorrent"];
         };
+        /** @enum {string} */
+        TorrentSearchOrder: "asc" | "desc";
         TorrentSearchResults: {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
         };
+        /** @enum {string} */
+        TorrentSearchSortField: "torrent_created_at" | "torrent_size" | "title_group_original_release_date";
         TorrentSearchTitleGroup: {
+            include_empty_groups: boolean;
             name: string;
         };
         TorrentSearchTorrent: {
+            /** Format: int64 */
+            created_by_id?: number | null;
             reported?: boolean | null;
             staff_checked?: boolean | null;
         };
@@ -1508,6 +1572,10 @@ export interface components {
             /** Format: int64 */
             user_id: number;
         };
+        UserCreatedWikiArticle: {
+            body: string;
+            title: string;
+        };
         UserLite: {
             banned: boolean;
             /** Format: int64 */
@@ -1539,6 +1607,32 @@ export interface components {
         };
         /** @enum {string} */
         VideoCodec: "mpeg1" | "mpeg2" | "Xvid" | "divX" | "h264" | "h265" | "vc-1" | "vp9" | "BD50" | "UHD100";
+        WikiArticle: {
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            title: string;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: int64 */
+            updated_by_id: number;
+        };
+        WikiArticleHierarchy: {
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+            /** Format: int64 */
+            id: number;
+            title: string;
+            /** Format: date-time */
+            updated_at: string;
+            updated_by: components["schemas"]["UserLite"];
+        };
     };
     responses: never;
     parameters: never;
@@ -1607,7 +1701,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Successfully created the artists */
+            /** @description Successfully created the artists, returned in the same order as the one sent */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2347,6 +2441,52 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserWarning"];
+                };
+            };
+        };
+    };
+    get_wiki_article: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully found the wiki article */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WikiArticle"];
+                };
+            };
+        };
+    };
+    add_wiki_article: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedWikiArticle"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the wiki article */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WikiArticle"];
                 };
             };
         };

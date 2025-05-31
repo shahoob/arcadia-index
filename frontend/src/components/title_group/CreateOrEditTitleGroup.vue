@@ -152,11 +152,11 @@
     <div class="artists input-list">
       <label>{{ t('artist.artist', 2) }}</label>
       <div v-for="(_link, index) in affiliated_artists_names" :key="index">
-        <InputText
-          size="small"
-          v-model="affiliated_artists_names[index]"
+        <ArtistSearchBar
           :placeholder="t('artist.name')"
-          class="artist"
+          :clearInputOnSelect="false"
+          v-model="affiliated_artists_names[index]"
+          @artistSelected="(event) => artistSelected(event, index)"
         />
         <InputText
           size="small"
@@ -172,6 +172,15 @@
           class="select"
           :placeholder="t('artist.role.role', 2)"
         />
+        <span
+          v-if="titleGroupForm.affiliated_artists[index].artist_id !== 0"
+          class="artist-creation-hint existing"
+        >
+          {{ t('artist.existing_artist') }}
+        </span>
+        <span v-else-if="affiliated_artists_names[index] !== ''" class="artist-creation-hint new">{{
+          t('artist.new_artist')
+        }}</span>
         <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
         <Button
           v-if="index != 0 || affiliated_artists_names.length > 1"
@@ -284,6 +293,7 @@ import MultiSelect from 'primevue/multiselect'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
+import ArtistSearchBar from '../artist/ArtistSearchBar.vue'
 import { InputNumber } from 'primevue'
 import {
   createTitleGroup,
@@ -294,6 +304,8 @@ import {
 } from '@/services/api/torrentService'
 import {
   createArtists,
+  type Artist,
+  type ArtistLite,
   type UserCreatedAffiliatedArtist,
   type UserCreatedArtist,
 } from '@/services/api/artistService'
@@ -439,6 +451,9 @@ const resolver = ({ values }: FormResolverOptions) => {
     errors,
   }
 }
+const artistSelected = (artist: ArtistLite, index: number) => {
+  titleGroupForm.value.affiliated_artists[index].artist_id = artist.id
+}
 const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   if (!valid) {
     return
@@ -460,7 +475,10 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
       })
     }
   })
-  const createdArtists = await createArtists(artistsToCreate)
+  let createdArtists: Artist[] = []
+  if (artistsToCreate.length !== 0) {
+    createdArtists = await createArtists(artistsToCreate)
+  }
   titleGroupForm.value.affiliated_artists.forEach((artist) => {
     if (artist.artist_id === 0) {
       artist.artist_id = createdArtists[0].id
@@ -568,6 +586,12 @@ onMounted(() => {
   }
   &.artist {
     width: 230px;
+  }
+}
+.artist-creation-hint {
+  margin-right: 5px;
+  &.new {
+    color: green;
   }
 }
 

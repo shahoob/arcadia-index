@@ -5,6 +5,7 @@ use sqlx::types::ipnetwork::IpNetwork;
 use utoipa::ToSchema;
 
 use super::peer::Peer;
+use super::title_group::TitleGroupHierarchyLite;
 
 // TODO: deserialize the settings field to a rust struct, currently doesn't seem possible
 // https://github.com/launchbadge/sqlx/issues/3153#issuecomment-2798756953
@@ -183,11 +184,13 @@ pub struct Profile {
     pub user: User,
     pub peers: Vec<Peer>,
     pub user_warnings: Vec<UserWarning>,
+    pub last_five_uploaded_torrents: Vec<TitleGroupHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct PublicProfile {
     pub user: PublicUser,
+    pub last_five_uploaded_torrents: Vec<TitleGroupHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema, FromRow)]

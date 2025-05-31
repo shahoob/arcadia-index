@@ -180,20 +180,21 @@ pub async fn get_torrent(
     frontend_url: &str,
     tracker_url: &str,
 ) -> Result<GetTorrentResult> {
+    let mut tx = pool.begin().await?;
+
     let torrent = sqlx::query!(
         r#"
-            SELECT
-                info_dict,
-                EXTRACT(EPOCH FROM created_at)::BIGINT AS "created_at_secs!",
-                release_name
-            FROM
-                torrents
-            WHERE
-                id = $1
+        UPDATE torrents
+        SET snatched = snatched + 1
+        WHERE id = $1
+        RETURNING
+            info_dict,
+            EXTRACT(EPOCH FROM created_at)::BIGINT AS "created_at_secs!",
+            release_name;
         "#,
         torrent_id
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await
     .map_err(|_| Error::TorrentFileInvalid)?;
 
@@ -218,6 +219,21 @@ pub async fn get_torrent(
         .build(1, &info, |_| {})
         .map_err(|_| Error::TorrentFileInvalid)?;
 
+    let _ = sqlx::query!(
+        r#"
+            INSERT INTO torrent_activities(torrent_id, user_id, snatched_at)
+            VALUES ($1, $2, NOW())
+            ON CONFLICT (torrent_id, user_id) DO NOTHING;
+            "#,
+        torrent_id,
+        user.id,
+    )
+    .execute(&mut *tx)
+    .await
+    .map_err(|_| Error::InvalidUserIdOrTorrentId);
+
+    tx.commit().await?;
+
     Ok(GetTorrentResult {
         title: torrent.release_name,
         file_contents: metainfo,
@@ -227,45 +243,23 @@ pub async fn get_torrent(
 pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
     let search_results = sqlx::query!(
         r#"
-        WITH title_group_search AS (
+        WITH title_group_data AS (
             SELECT
-                id AS title_group_id,
-                CASE
-                    WHEN $1 = '' THEN NULL
-                    ELSE ts_rank_cd(to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')), plainto_tsquery('simple', $1))
-                END AS relevance
-            FROM title_groups
-            WHERE $1 = '' OR to_tsvector('simple', name || ' ' || coalesce(array_to_string(name_aliases, ' '), '')) @@ plainto_tsquery('simple', $1)
-        ),
-        title_group_data AS (
-            SELECT
-                tgl.title_group_data || jsonb_build_object(
-                    'affiliated_artists', COALESCE((
-                        SELECT jsonb_agg(
-                            jsonb_build_object(
-                                'id', ar.id,
-                                'name', ar.name
-                            )
-                        )
-                        FROM affiliated_artists aa
-                        JOIN artists ar ON aa.artist_id = ar.id
-                        WHERE aa.title_group_id = tgl.title_group_id
-                    ), '[]'::jsonb)
-                ) AS lite_title_group,
-                CASE
-                    WHEN $1 = '' THEN EXTRACT(EPOCH FROM tg.created_at)
-                    ELSE tgs.relevance
-                END AS sort_order
-            FROM get_title_groups_and_edition_group_and_torrents_lite($2, $3) tgl
-            JOIN title_groups tg ON tgl.title_group_id = tg.id
-            JOIN title_group_search tgs ON tg.id = tgs.title_group_id
+                tgl.title_group_data AS lite_title_group
+            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8, $9) tgl
         )
-        SELECT jsonb_agg(lite_title_group ORDER BY sort_order DESC) AS title_groups
+        SELECT jsonb_agg(lite_title_group) AS title_groups
         FROM title_group_data;
         "#,
         torrent_search.title_group.name,
         torrent_search.torrent.staff_checked,
-        torrent_search.torrent.reported
+        torrent_search.torrent.reported,
+        torrent_search.title_group.include_empty_groups,
+        torrent_search.sort_by.to_string(),
+        torrent_search.order.to_string(),
+        torrent_search.page_size,
+        (torrent_search.page - 1) * torrent_search.page_size,
+        torrent_search.torrent.created_by_id,
     )
     .fetch_one(pool)
     .await
@@ -281,7 +275,7 @@ pub async fn find_top_torrents(pool: &PgPool, period: &str, amount: i64) -> Resu
             ---------- This is the part that selects the top torrents
             SELECT DISTINCT ON (tg.id) tg.id AS title_group_id
             FROM torrents t
-            JOIN seeded_torrents st ON t.id = st.torrent_id
+            JOIN torrent_activities st ON t.id = st.torrent_id
             JOIN edition_groups eg ON t.edition_group_id = eg.id
             JOIN title_groups tg ON eg.title_group_id = tg.id
             WHERE CASE
@@ -295,19 +289,7 @@ pub async fn find_top_torrents(pool: &PgPool, period: &str, amount: i64) -> Resu
         ),
         title_group_data AS (
             SELECT
-                tgl.title_group_data || jsonb_build_object(
-                    'affiliated_artists', COALESCE((
-                        SELECT jsonb_agg(
-                            jsonb_build_object(
-                                'id', ar.id,
-                                'name', ar.name
-                            )
-                        )
-                        FROM affiliated_artists aa
-                        JOIN artists ar ON aa.artist_id = ar.id
-                        WHERE aa.title_group_id = tgl.title_group_id
-                    ), '[]'::jsonb)
-                ) AS lite_title_group
+                tgl.title_group_data AS lite_title_group -- 'affiliated_artists' is already inside tgl.title_group_data
             FROM get_title_groups_and_edition_group_and_torrents_lite() tgl
             JOIN title_groups tg ON tgl.title_group_id = tg.id
             JOIN title_group_search tgs ON tg.id = tgs.title_group_id
@@ -364,6 +346,54 @@ pub async fn remove_torrent(
     .map_err(|error| Error::ErrorDeletingTorrent(error.to_string()))?;
 
     tx.commit().await?;
+
+    Ok(())
+}
+
+pub async fn update_torrent_seeders_leechers(pool: &PgPool) -> Result<()> {
+    let _ = sqlx::query!(
+        r#"
+        WITH peer_counts AS (
+            SELECT
+                torrent_id,
+                COUNT(CASE WHEN status = 'seeding' THEN 1 END) AS current_seeders,
+                COUNT(CASE WHEN status = 'leeching' THEN 1 END) AS current_leechers
+            FROM
+                peers
+            GROUP BY
+                torrent_id
+        )
+        UPDATE torrents AS t
+        SET
+            seeders = COALESCE(pc.current_seeders, 0),
+            leechers = COALESCE(pc.current_leechers, 0)
+        FROM
+            torrents AS t_alias -- Use an alias for the table in the FROM clause to avoid ambiguity
+        LEFT JOIN
+            peer_counts AS pc ON t_alias.id = pc.torrent_id
+        WHERE
+            t.id = t_alias.id;
+        "#
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(())
+}
+
+pub async fn increment_torrent_completed(pool: &PgPool, torrent_id: i64) -> Result<()> {
+    let _ = sqlx::query!(
+        r#"
+        UPDATE torrents
+        SET
+            completed = completed + 1
+        WHERE
+            id = $1
+        "#,
+        torrent_id
+    )
+    .execute(pool)
+    .await?;
 
     Ok(())
 }

@@ -98,6 +98,12 @@ pub struct AffiliatedArtist {
     pub created_by_id: i64,
 }
 
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct AffiliatedArtistLite {
+    pub artist_id: i64,
+    pub name: String,
+}
+
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserCreatedAffiliatedArtist {
     pub title_group_id: i64,

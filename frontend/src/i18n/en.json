@@ -6,6 +6,7 @@
     "bookmark": "Bookmark",
     "edit": "Edit",
     "sort_by": "Sort by",
+    "order_by": "Order by",
     "submit": "Submit",
     "description": "Description",
     "release_date": "Release date",
@@ -37,7 +38,10 @@
     "reason": "Reason",
     "yes": "Yes",
     "no": "No",
-    "both": "Both"
+    "both": "Both",
+    "page": "Page",
+    "ascending": "Ascending",
+    "descending": "Descending"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -47,6 +51,8 @@
     "name": "Name",
     "nickname": "Nickname",
     "nickname_explanation": "eg: name of the character played",
+    "new_artist": "New artist",
+    "existing_artist": "Existing artist",
     "role": {
       "role": "Role | Roles",
       "main": "Main",
@@ -72,7 +78,8 @@
     "threads": "Threads",
     "posts": "Posts",
     "new_post": "New post",
-    "new_thread": "New thread"
+    "new_thread": "New thread",
+    "thread_name": "Thread name"
   },
   "user": {
     "username": "Username",
@@ -91,7 +98,9 @@
     "warned": "Warned",
     "warn_user": "Warn user",
     "user_warned_success": "User warned successfully",
-    "ban": "Ban"
+    "ban": "Ban",
+    "uploads": "Uploads",
+    "no_uploads_explanation": "This user hasn't uploaded any torrents yet, or they are all uploaded as anonymous."
   },
   "community": {
     "new_comment": "New comment",

@@ -3,6 +3,8 @@ import api from './api.ts'
 
 export type Artist = components['schemas']['Artist']
 
+export type ArtistLite = components['schemas']['ArtistLite']
+
 export type AffiliatedArtistHierarchy = components['schemas']['AffiliatedArtistHierarchy']
 
 export type ArtistAndTitleGroupsLite = components['schemas']['ArtistAndTitleGroupsLite']
@@ -25,6 +27,15 @@ export const getArtist = async (id: number): Promise<ArtistAndTitleGroupsLite> =
 export const createArtists = async (artists: UserCreatedArtist[]): Promise<Artist[]> => {
   try {
     return (await api.post<Artist[]>('/artists', artists)).data
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}
+
+export const searchArtistsLite = async (name: string): Promise<ArtistLite[]> => {
+  try {
+    return (await api.get<ArtistLite[]>(`/search/artist/lite?name=${name}`)).data
   } catch (error) {
     console.error('API Error:', error)
     throw error

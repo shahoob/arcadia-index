@@ -4,7 +4,7 @@ use crate::{
 };
 use sqlx::PgPool;
 
-pub async fn find_user_by_id(pool: &PgPool, id: &i64) -> Result<PublicUser> {
+pub async fn find_user_profile(pool: &PgPool, id: &i64) -> Result<PublicUser> {
     sqlx::query_as!(
         PublicUser,
         r#"

@@ -75,8 +75,6 @@ const torrentDone = (torrent: Torrent) => {
 
 <style scoped>
 .title {
-  font-weight: bold;
-  font-size: 1.8em;
   margin-bottom: 20px;
   color: var(--color-primary);
 }

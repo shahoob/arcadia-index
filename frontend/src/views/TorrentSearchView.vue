@@ -12,9 +12,7 @@
         <TitleGroupPreviewCoverOnly
           v-for="title_group in search_results.title_groups"
           :key="title_group.id"
-          :id="title_group.id"
-          :name="title_group.name"
-          :cover="title_group.covers[0]"
+          :titleGroup="title_group"
         />
       </div>
     </ContentContainer>
@@ -35,7 +33,7 @@ import ContentContainer from '@/components/ContentContainer.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import {
-  searchTorrents,
+  searchTorrentsLite,
   type TorrentSearch,
   type TorrentSearchResults,
 } from '@/services/api/torrentService'
@@ -51,18 +49,24 @@ const search_results = ref<TorrentSearchResults>()
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
 const loading = ref(false)
 const initialForm = ref<TorrentSearch>({
-  title_group: { name: '' },
+  title_group: { name: '', include_empty_groups: false },
   torrent: {},
+  page: 1,
+  page_size: 5,
+  sort_by: 'torrent_created_at',
+  order: 'desc',
 })
 
 const search = async (torrentSearch: TorrentSearch) => {
   loading.value = true
-  search_results.value = await searchTorrents(torrentSearch)
-  loading.value = false
+  search_results.value = await searchTorrentsLite(torrentSearch).finally(() => {
+    loading.value = false
+  })
 }
 
 const loadSearchForm = async () => {
   initialForm.value.title_group.name = route.query.title_group_name?.toString() ?? ''
+  initialForm.value.torrent.created_by_id = parseInt(route.query.created_by_id as string) ?? null
   if (userStore.class === 'staff') {
     initialForm.value.torrent.staff_checked = false
     initialForm.value.torrent.reported = null

@@ -18,9 +18,7 @@
           <TitleGroupPreviewCoverOnly
             v-for="title_group in title_groups"
             :key="title_group.id"
-            :id="title_group.id"
-            :name="title_group.name"
-            :cover="title_group.covers[0]"
+            :titleGroup="title_group"
           />
         </div>
       </ContentContainer>
@@ -38,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import ContentContainer from '@/components/ContentContainer.vue'
@@ -56,11 +54,13 @@ const artist = ref<Artist>()
 const title_groups = ref<TitleGroupHierarchyLite[]>([])
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table')
 
-onMounted(async () => {
+const fetchArtist = async () => {
   const artistData = await getArtist(parseInt(route.params.id.toString()))
   artist.value = artistData.artist
   title_groups.value = artistData.title_groups
-})
+}
+
+watch(() => route.params.id, fetchArtist, { immediate: true })
 </script>
 
 <style scoped>

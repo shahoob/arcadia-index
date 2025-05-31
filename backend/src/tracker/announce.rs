@@ -37,14 +37,8 @@ pub struct Announce {
     #[allow(dead_code)]
     pub ip: Option<std::net::Ipv4Addr>,
     pub port: u16,
-    // TODO: use this
-    #[allow(dead_code)]
     pub uploaded: Option<u64>,
-    // TODO: use this
-    #[allow(dead_code)]
     pub downloaded: Option<u64>,
-    // TODO: use this
-    #[allow(dead_code)]
     pub left: Option<u64>,
     pub event: Option<TorrentEvent>,
     // TODO: use this

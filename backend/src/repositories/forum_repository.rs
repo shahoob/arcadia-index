@@ -62,6 +62,8 @@ pub async fn create_forum_thread(
     forum_thread: &mut UserCreatedForumThread,
     current_user_id: i64,
 ) -> Result<ForumThread> {
+    let mut tx = pool.begin().await?;
+
     let created_forum_thread = sqlx::query_as!(
         ForumThread,
         r#"
@@ -73,12 +75,27 @@ pub async fn create_forum_thread(
         current_user_id,
         forum_thread.forum_sub_category_id
     )
-    .fetch_one(pool)
+    .fetch_one(&mut *tx)
     .await
     .map_err(Error::CouldNotCreateForumThread)?;
 
     forum_thread.first_post.forum_thread_id = created_forum_thread.id;
 
+    sqlx::query!(
+        r#"
+        UPDATE forum_sub_categories
+        SET threads_amount = threads_amount + 1
+        WHERE id = $1;
+        "#,
+        forum_thread.forum_sub_category_id
+    )
+    .execute(&mut *tx)
+    .await
+    .map_err(Error::CouldNotCreateForumPost)?;
+
+    tx.commit().await?;
+
+    // TODO: include this in the transaction
     create_forum_post(pool, &forum_thread.first_post, current_user_id).await?;
 
     Ok(created_forum_thread)
