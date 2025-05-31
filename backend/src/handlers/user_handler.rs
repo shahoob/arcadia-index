@@ -3,7 +3,7 @@ use crate::{
     models::user::{Profile, PublicProfile, User, UserCreatedUserWarning, UserWarning},
     repositories::{
         peer_repository,
-        user_repository::{create_user_warning, find_user_by_id, find_user_warnings},
+        user_repository::{create_user_warning, find_user_profile, find_user_warnings},
     },
 };
 use actix_web::{HttpResponse, web};
@@ -28,7 +28,7 @@ pub async fn get_user(
     arc: web::Data<Arcadia>,
     query: web::Query<GetUserQuery>,
 ) -> Result<HttpResponse> {
-    let user = find_user_by_id(&arc.pool, &query.id).await?;
+    let user = find_user_profile(&arc.pool, &query.id).await?;
 
     Ok(HttpResponse::Created().json(json!({"user":user})))
 }
