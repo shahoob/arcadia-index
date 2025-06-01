@@ -34,7 +34,6 @@ const route = useRoute()
 const router = useRouter()
 
 router.isReady().then(async () => {
-  const user = localStorage.getItem('user')
   const token = localStorage.getItem('token')
   
   if (route.path !== '/login' && route.path !== '/register') {
@@ -45,7 +44,7 @@ router.isReady().then(async () => {
         localStorage.setItem('user', JSON.stringify(profile.user))
         const userStore = useUserStore()
         userStore.setUser(profile.user)
-      } catch (error) {
+      } catch {
         // Token is invalid, redirect to login
         localStorage.removeItem('token')
         localStorage.removeItem('user')
