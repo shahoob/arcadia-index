@@ -22,21 +22,11 @@ export type Profile = components['schemas']['Profile'] & { user: User }
 export type PublicProfile = components['schemas']['PublicProfile']
 
 export const getMe = async (): Promise<Profile> => {
-  try {
-    return (await api.get<Profile>('/me')).data
-  } catch (error) {
-    console.error('API Error:', error)
-    throw error
-  }
+  return (await api.get<Profile>('/me')).data
 }
 
 export const getUser = async (userId: number): Promise<PublicProfile> => {
-  try {
-    return (await api.get<PublicProfile>(`/user?id=${userId}`)).data
-  } catch (error) {
-    console.error('API Error:', error)
-    throw error
-  }
+  return (await api.get<PublicProfile>(`/user?id=${userId}`)).data
 }
 
 export type UserCreatedUserWarning = components['schemas']['UserCreatedUserWarning']
@@ -44,10 +34,5 @@ export type UserCreatedUserWarning = components['schemas']['UserCreatedUserWarni
 export type UserWarning = components['schemas']['UserWarning']
 
 export const warnUser = async (warning: UserCreatedUserWarning): Promise<UserWarning> => {
-  try {
-    return (await api.post<UserWarning>('/user/warn', warning)).data
-  } catch (error) {
-    console.error('API Error:', error)
-    throw error
-  }
+  return (await api.post<UserWarning>('/user/warn', warning)).data
 }

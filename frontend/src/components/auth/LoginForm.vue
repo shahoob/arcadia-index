@@ -61,6 +61,7 @@ const { t } = useI18n()
 const handleLogin = async () => {
   login(form.value).then(async (data) => {
     localStorage.setItem('token', data.token)
+    localStorage.setItem('refreshToken', data.refresh_token)
     const profile = await getMe()
     localStorage.setItem('user', JSON.stringify(profile.user))
     userStore.setUser(profile.user)

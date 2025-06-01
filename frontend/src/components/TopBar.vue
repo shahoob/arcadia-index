@@ -25,9 +25,20 @@
           <Button icon="pi pi-upload" severity="secondary" size="small" />
         </RouterLink>
         <Button icon="pi pi-moon" @click="toggleDarkMode()" severity="secondary" size="small" />
-        <RouterLink :onmouseenter="toggle" :to="`/user/${user.id}`">
-          <Button icon="pi pi-user" severity="secondary" size="small" />
-          <Popover ref="op">
+        <RouterLink :to="`/user/${user.id}`">
+          <Button
+            :onmouseenter="show"
+            :onmouseleave="onLeaveUserIcon"
+            icon="pi pi-user"
+            severity="secondary"
+            size="small"
+          />
+          <Popover
+            :onmouseleave="onLeavePopover"
+            :onmouseenter="() => (isHoveringDropdown = true)"
+            :dismissable="false"
+            ref="op"
+          >
             <div class="flex flex-col gap-4 w-[25rem]">
               <ul class="flex flex-col p-0 m-0 list-none">
                 <li
@@ -56,12 +67,29 @@ const { t } = useI18n()
 
 import { ref } from 'vue'
 import router from '@/router'
-const op = ref()
+const op = ref<InstanceType<typeof Popover> & HTMLAnchorElement>()
 
 const user = useUserStore()
 
-const toggle = (event: Event) => {
-  op.value.toggle(event)
+let isHoveringDropdown = false
+
+const onLeavePopover = () => {
+  isHoveringDropdown = false
+  op.value?.hide()
+}
+
+const show = (event: Event) => {
+  op.value?.show(event)
+}
+
+// delay a bit so we can know if the user unhovered the user icon,
+// to hover the popover or not
+const onLeaveUserIcon = () => {
+  setTimeout(() => {
+    if (!isHoveringDropdown) {
+      op.value?.hide()
+    }
+  }, 100)
 }
 
 const handleLogout = () => {

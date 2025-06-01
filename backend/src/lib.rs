@@ -197,6 +197,15 @@ pub enum Error {
 
     #[error("could not find wiki article")]
     CouldNotFindWikiArticle(#[source] sqlx::Error),
+
+    #[error("could not create conversation")]
+    CouldNotCreateConversation(#[source] sqlx::Error),
+
+    #[error("could not create message")]
+    CouldNotCreateConversationMessage(#[source] sqlx::Error),
+
+    #[error("could not find conversation")]
+    CouldNotFindConversation(#[source] sqlx::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

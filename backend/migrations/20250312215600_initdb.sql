@@ -627,7 +627,29 @@ CREATE TABLE wiki_articles (
     created_by_id BIGINT NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_by_id BIGINT NOT NULL,
-    body TEXT NOT NULL
+    body TEXT NOT NULL,
+
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE conversations (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    sender_id BIGINT NOT NULL,
+    receiver_id BIGINT NOT NULL,
+
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+CREATE TABLE conversation_messages (
+    id BIGSERIAL PRIMARY KEY,
+    conversation_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    content TEXT NOT NULL,
+
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
 );
 
 -- Views

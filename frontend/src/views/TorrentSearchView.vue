@@ -79,7 +79,15 @@ onMounted(async () => {
   loadSearchForm()
 })
 
-watch(() => route.query, loadSearchForm, { immediate: true })
+watch(
+  () => route.query,
+  (newQuery, oldQuery) => {
+    if (oldQuery !== undefined) {
+      loadSearchForm()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>

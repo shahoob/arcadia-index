@@ -11,6 +11,10 @@ use crate::{
             AffiliatedArtist, AffiliatedArtistHierarchy, Artist, ArtistAndTitleGroupsLite,
             ArtistLite,
         },
+        conversation::{
+            Conversation, ConversationHierarchy, ConversationMessage, ConversationMessageHierarchy,
+            UserCreatedConversation, UserCreatedConversationMessage,
+        },
         edition_group::EditionGroup,
         forum::{
             ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThreadAndPosts,
@@ -75,6 +79,9 @@ use crate::{
         crate::handlers::forum_handler::add_forum_post,
         crate::handlers::wiki_handler::add_wiki_article,
         crate::handlers::wiki_handler::get_wiki_article,
+        crate::handlers::conversation_handler::add_conversation,
+        crate::handlers::conversation_handler::get_conversation,
+        crate::handlers::conversation_handler::add_conversation_message,
     ),
     components(schemas(
         Register,
@@ -129,7 +136,13 @@ use crate::{
         UserCreatedForumThread,
         WikiArticle,
         UserCreatedWikiArticle,
-        WikiArticleHierarchy
+        WikiArticleHierarchy,
+        ConversationMessage,
+        UserCreatedConversation,
+        UserCreatedConversationMessage,
+        Conversation,
+        ConversationHierarchy,
+        ConversationMessageHierarchy
     ),)
 )]
 pub struct ApiDoc;
