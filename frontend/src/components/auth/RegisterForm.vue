@@ -63,7 +63,7 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { register, login } from '@/services/api/authService'
+import { register } from '@/services/api/authService'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -79,22 +79,11 @@ const router = useRouter()
 
 const handleRegister = async () => {
   try {
-    // First register the user
+    // Register the user
     await register(form.value)
 
-    // Then login to get tokens
-    const loginData = await login({
-      username: form.value.username,
-      password: form.value.password,
-      remember_me: true,
-    })
-
-    // Store tokens
-    localStorage.setItem('token', loginData.token)
-    localStorage.setItem('refreshToken', loginData.refresh_token)
-
-    // Redirect to home
-    router.push('/')
+    // Redirect to login page after successful registration
+    router.push('/login')
   } catch (error) {
     console.error('Registration failed:', error)
   }
