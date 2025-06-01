@@ -7,9 +7,5 @@ export type SeriesAndTitleGroupHierarchyLite =
 export type Series = components['schemas']['Series']
 
 export const getSeries = async (id: number): Promise<SeriesAndTitleGroupHierarchyLite> => {
-  try {
-    return (await api.get<SeriesAndTitleGroupHierarchyLite>('/series?id=' + id)).data
-  } catch (error) {
-    throw error
-  }
+  return (await api.get<SeriesAndTitleGroupHierarchyLite>('/series?id=' + id)).data
 }
