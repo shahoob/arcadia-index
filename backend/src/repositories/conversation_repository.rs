@@ -1,0 +1,125 @@
+use serde_json::Value;
+use sqlx::PgPool;
+
+use crate::{
+    Error, Result,
+    models::conversation::{
+        Conversation, ConversationMessage, UserCreatedConversation, UserCreatedConversationMessage,
+    },
+};
+
+pub async fn create_conversation(
+    pool: &PgPool,
+    conversation: &mut UserCreatedConversation,
+    current_user_id: i64,
+) -> Result<Conversation> {
+    //TODO: make transactional
+    let created_conversation = sqlx::query_as!(
+        Conversation,
+        r#"
+            INSERT INTO conversations (subject, sender_id, receiver_id)
+            VALUES ($1, $2, $3)
+            RETURNING *
+        "#,
+        conversation.subject,
+        current_user_id,
+        conversation.receiver_id,
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotCreateConversation)?;
+
+    conversation.first_message.conversation_id = created_conversation.id;
+    create_conversation_message(pool, &conversation.first_message, current_user_id).await?;
+
+    Ok(created_conversation)
+}
+
+pub async fn create_conversation_message(
+    pool: &PgPool,
+    message: &UserCreatedConversationMessage,
+    current_user_id: i64,
+) -> Result<ConversationMessage> {
+    let message = sqlx::query_as!(
+        ConversationMessage,
+        r#"
+            INSERT INTO conversation_messages (conversation_id, created_by_id, content)
+            VALUES ($1, $2, $3)
+            RETURNING *
+        "#,
+        message.conversation_id,
+        current_user_id,
+        message.content,
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotCreateConversation)?;
+
+    Ok(message)
+}
+
+pub async fn find_conversation(
+    pool: &PgPool,
+    conversation_id: i64,
+    current_user_id: i64,
+) -> Result<Value> {
+    let conversation_with_messages = sqlx::query!(
+        r#"
+        SELECT
+            json_build_object(
+                'id', c.id,
+                'created_at', c.created_at,
+                'subject', c.subject,
+                'sender', json_build_object(
+                    'id', s.id,
+                    'username', s.username,
+                    'banned', s.banned,
+                    'avatar', s.avatar,
+                    'warned', s.warned
+                ),
+                'receiver', json_build_object(
+                    'id', r.id,
+                    'username', r.username,
+                    'banned', r.banned,
+                    'avatar', r.avatar,
+                    'warned', r.warned
+                ),
+                'messages', json_agg(json_build_object(
+                    'id', m.id,
+                    'created_at', m.created_at,
+                    'content', m.content,
+                    'created_by', json_build_object(
+                        'id', u_msg.id,
+                        'username', u_msg.username,
+                        'banned', u_msg.banned,
+                        'avatar', u_msg.avatar,
+                        'warned', u_msg.warned
+                    )
+                ) ORDER BY m.created_at ASC)
+            ) AS conversation_details
+        FROM
+            conversations c
+        INNER JOIN
+            users s ON c.sender_id = s.id
+        INNER JOIN
+            users r ON c.receiver_id = r.id
+        INNER JOIN
+            conversation_messages m ON c.id = m.conversation_id
+        INNER JOIN
+            users u_msg ON m.created_by_id = u_msg.id
+        WHERE
+            c.id = $1 AND (c.sender_id = $2 OR c.receiver_id = $2)
+        GROUP BY
+            c.id, c.created_at, c.subject,
+            s.id, s.username, s.banned, s.avatar, s.warned,
+            r.id, r.username, r.banned, r.avatar, r.warned;
+        "#,
+        conversation_id,
+        current_user_id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotFindConversation)?;
+
+    Ok(conversation_with_messages.conversation_details.unwrap())
+}
