@@ -35,14 +35,25 @@ const router = useRouter()
 
 router.isReady().then(async () => {
   const user = localStorage.getItem('user')
-  if (user && route.path !== '/login' && route.path !== '/register') {
-    // refresh user on page reload
-    const profile = await getMe()
-    localStorage.setItem('user', JSON.stringify(profile.user))
-    const userStore = useUserStore()
-    userStore.setUser(profile.user)
-  } else if (!user) {
-    router.push('/login')
+  const token = localStorage.getItem('token')
+  
+  if (route.path !== '/login' && route.path !== '/register') {
+    if (token) {
+      try {
+        // refresh user on page reload or fetch user after registration
+        const profile = await getMe()
+        localStorage.setItem('user', JSON.stringify(profile.user))
+        const userStore = useUserStore()
+        userStore.setUser(profile.user)
+      } catch (error) {
+        // Token is invalid, redirect to login
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        router.push('/login')
+      }
+    } else {
+      router.push('/login')
+    }
   }
   isAppReady.value = true
 })
