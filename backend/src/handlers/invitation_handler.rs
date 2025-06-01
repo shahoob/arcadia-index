@@ -5,6 +5,7 @@ use crate::{
         user::User,
     },
     repositories::invitation_repository::create_invitation,
+    services::email_service::EmailService,
 };
 use actix_web::{HttpResponse, web};
 
@@ -24,9 +25,22 @@ pub async fn send_invitation(
         return Err(Error::NoInvitationsAvailable);
     }
 
-    // TODO: send email to the user who receives the invite
+    let created_invitation = create_invitation(&arc.pool, &invitation, current_user.id).await?;
 
-    let invitation = create_invitation(&arc.pool, &invitation, current_user.id).await?;
+    // Send invitation email
+    if let Ok(email_service) = EmailService::new(&arc) {
+        if let Err(e) = email_service.send_invitation_email(
+            &invitation.receiver_email,
+            &current_user.username,
+            &created_invitation.invitation_key,
+            &invitation.message,
+        ).await {
+            // Log the error but don't fail the invitation creation
+            log::warn!("Failed to send invitation email to {}: {}", invitation.receiver_email, e);
+        }
+    } else {
+        log::warn!("Email service not configured, skipping invitation email");
+    }
 
-    Ok(HttpResponse::Created().json(invitation))
+    Ok(HttpResponse::Created().json(created_invitation))
 }

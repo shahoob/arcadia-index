@@ -28,6 +28,12 @@ pub struct Arcadia {
     pub allowed_torrent_clients: HashSet<Vec<u8>>,
     pub global_upload_factor: f64,
     pub global_download_factor: f64,
+    pub smtp_host: Option<String>,
+    pub smtp_port: Option<u16>,
+    pub smtp_username: Option<String>,
+    pub smtp_password: Option<String>,
+    pub smtp_from_email: Option<String>,
+    pub smtp_from_name: Option<String>,
 }
 
 impl Arcadia {
@@ -98,6 +104,12 @@ pub enum Error {
 
     #[error("invalid invitation key")]
     InvitationKeyInvalid,
+
+    #[error("email configuration error: {0}")]
+    EmailConfigurationError(String),
+
+    #[error("failed to send email: {0}")]
+    EmailSendError(String),
 
     #[error("invitation key required")]
     InvitationKeyRequired,
