@@ -39,6 +39,8 @@ actix-web-httpauth = "0.8.2"
 strum = { version = "0.27", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 tokio-cron-scheduler = "0.14"
+lettre = "0.11"
+log = "0.4"
 
 [patch.crates-io]
 bip_metainfo = { path = "vendored/bip_metainfo" }

@@ -8,6 +8,7 @@ use crate::{
         auth_repository::{create_user, find_user_with_password},
         invitation_repository::does_unexpired_invitation_exist,
     },
+    services::email_service::EmailService,
 };
 use actix_web::{HttpMessage as _, HttpRequest, HttpResponse, dev::ServiceRequest, web};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
@@ -83,6 +84,16 @@ pub async fn register(
         &arc.is_open_signups(),
     )
     .await?;
+
+    // Send welcome email
+    if let Ok(email_service) = EmailService::new(&arc) {
+        if let Err(e) = email_service.send_registration_email(&new_user.email, &new_user.username).await {
+            // Log the error but don't fail the registration
+            log::warn!("Failed to send welcome email to {}: {}", new_user.email, e);
+        }
+    } else {
+        log::warn!("Email service not configured, skipping welcome email");
+    }
 
     Ok(HttpResponse::Created().json(serde_json::json!(user)))
 }
