@@ -81,18 +81,18 @@ const handleRegister = async () => {
   try {
     // First register the user
     await register(form.value)
-    
+
     // Then login to get tokens
     const loginData = await login({
       username: form.value.username,
       password: form.value.password,
       remember_me: true,
     })
-    
+
     // Store tokens
     localStorage.setItem('token', loginData.token)
     localStorage.setItem('refreshToken', loginData.refresh_token)
-    
+
     // Redirect to home
     router.push('/')
   } catch (error) {

@@ -35,7 +35,7 @@ const router = useRouter()
 
 router.isReady().then(async () => {
   const token = localStorage.getItem('token')
-  
+
   if (route.path !== '/login' && route.path !== '/register') {
     if (token) {
       try {
