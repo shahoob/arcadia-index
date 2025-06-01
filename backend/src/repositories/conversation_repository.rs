@@ -108,7 +108,7 @@ pub async fn find_conversation(
         INNER JOIN
             users u_msg ON m.created_by_id = u_msg.id
         WHERE
-            c.id = $1 AND (c.sender_id = $2 OR c.receiver_id = $2)
+            c.id = $1 AND (c.sender_id = $2 OR c.receiver_id = $2) -- prevent users from reading a conversation they're not part of
         GROUP BY
             c.id, c.created_at, c.subject,
             s.id, s.username, s.banned, s.avatar, s.warned,
