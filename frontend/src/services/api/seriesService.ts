@@ -10,7 +10,6 @@ export const getSeries = async (id: number): Promise<SeriesAndTitleGroupHierarch
   try {
     return (await api.get<SeriesAndTitleGroupHierarchyLite>('/series?id=' + id)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }

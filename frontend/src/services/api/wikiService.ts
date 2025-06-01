@@ -7,7 +7,6 @@ export const getWikiArticle = async (articleId: number) => {
   try {
     return (await api.get<WikiArticle>(`/wiki/article?id=${articleId}`)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }

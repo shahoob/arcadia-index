@@ -9,7 +9,6 @@ export const getForum = async (): Promise<ForumOverview> => {
   try {
     return (await api.get<ForumOverview>('/forum')).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -24,7 +23,6 @@ export const getForumSubCategory = async (
       await api.get<ForumSubCategoryHierarchy>('/forum/sub-category?id=' + forumSubCategoryId)
     ).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -37,7 +35,6 @@ export const getForumThread = async (forumThreadId: number): Promise<ForumThread
   try {
     return (await api.get<ForumThreadsAndPosts>('/forum/thread?id=' + forumThreadId)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -50,7 +47,6 @@ export const postForumPost = async (form: UserCreatedForumPost): Promise<ForumPo
   try {
     return (await api.post<ForumPost>('/forum/post', form)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -63,7 +59,6 @@ export const postForumThread = async (form: UserCreatedForumThread): Promise<For
   try {
     return (await api.post<ForumThread>('/forum/thread', form)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }

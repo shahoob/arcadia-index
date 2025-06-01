@@ -16,7 +16,6 @@ export const getExternalDatabaseData = async (item_id: string | number, database
         return {}
     }
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }

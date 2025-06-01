@@ -17,7 +17,6 @@ export const getTitleGroup = async (id: number): Promise<TitleGroupAndAssociated
   try {
     return (await api.get<TitleGroupAndAssociatedData>('/title-group?id=' + id)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -26,7 +25,6 @@ export const getTitleGroupLite = async (id: number): Promise<TitleGroupLite> => 
   try {
     return (await api.get<TitleGroupLite>('/title-group/lite?id=' + id)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -37,7 +35,6 @@ export const createTitleGroup = async (titleGroup: UserCreatedTitleGroup) => {
   try {
     return (await api.post<TitleGroup>('/title-group', titleGroup)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -64,7 +61,6 @@ export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) 
     editionGroup.distributor = editionGroup.distributor == '' ? null : editionGroup.distributor
     return (await api.post<EditionGroup>('/edition-group', editionGroup)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -93,7 +89,6 @@ export const uploadTorrent = async (torrentForm: object) => {
       })
     ).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -114,7 +109,6 @@ export const downloadTorrent = async (torrentId: number) => {
     window.URL.revokeObjectURL(url)
     document.body.removeChild(a)
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -127,7 +121,6 @@ export const searchTorrentsLite = async (searchOptions: TorrentSearch) => {
   try {
     return (await api.post<TorrentSearchResults>('/search/torrent/lite', searchOptions)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }
@@ -140,7 +133,6 @@ export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => 
   try {
     return (await api.post<TorrentReport>('/report/torrent', torrentReport)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }

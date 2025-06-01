@@ -3,11 +3,12 @@ import api from './api.ts'
 
 export type Login = components['schemas']['Login']
 
-export const login = async (form: Login) => {
+export type LoginResponse = components['schemas']['LoginResponse']
+
+export const login = async (form: Login): Promise<LoginResponse> => {
   try {
-    return (await api.post('/login', form)).data
+    return (await api.post<LoginResponse>('/login', form)).data
   } catch (error) {
-    console.error('API Error: ', error)
     throw error
   }
 }
@@ -16,7 +17,6 @@ export const register = async (form: object) => {
   try {
     return (await api.post('/register', form)).data
   } catch (error) {
-    console.error('API Error: ', error)
     throw error
   }
 }

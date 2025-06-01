@@ -92,7 +92,15 @@ onMounted(async () => {
   fetchUser()
 })
 
-watch(() => route.params.id, fetchUser, { immediate: true })
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (oldId !== undefined) {
+      fetchUser()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>

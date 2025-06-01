@@ -11,7 +11,6 @@ export const postTitleGroupComment = async (comment: UserCreatedTitleGroupCommen
   try {
     return (await api.post<TitleGroupComment>('/title-group-comment', comment)).data
   } catch (error) {
-    console.error('API Error:', error)
     throw error
   }
 }

@@ -17,7 +17,9 @@ use argon2::{
 };
 use chrono::Duration;
 use chrono::prelude::Utc;
-use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
+use jsonwebtoken::{
+    DecodingKey, EncodingKey, Header, Validation, decode, encode, errors::ErrorKind,
+};
 use serde::Deserialize;
 use sqlx::types::ipnetwork::IpNetwork;
 use utoipa::ToSchema;
@@ -153,7 +155,7 @@ pub async fn validate_bearer_auth(
 
     let Some(bearer) = bearer else {
         return Err((
-            actix_web::error::ErrorUnauthorized("authentication error"),
+            actix_web::error::ErrorUnauthorized("authentication error, missing jwt token"),
             req,
         ));
     };
@@ -169,11 +171,19 @@ pub async fn validate_bearer_auth(
 
     let validation = Validation::default();
 
-    let Ok(token_data) = decode::<Claims>(bearer.token(), &decoding_key, &validation) else {
-        return Err((
-            actix_web::error::ErrorUnauthorized("authentication error"),
-            req,
-        ));
+    let token_data = match decode::<Claims>(bearer.token(), &decoding_key, &validation) {
+        Ok(data) => data,
+        Err(err) => {
+            return Err((
+                match err.kind() {
+                    ErrorKind::ExpiredSignature => {
+                        actix_web::error::ErrorUnauthorized("jwt token expired")
+                    }
+                    _ => actix_web::error::ErrorUnauthorized("authentication error"),
+                },
+                req,
+            ));
+        }
     };
 
     let user_id = token_data.claims.sub;
