@@ -31,6 +31,12 @@ pub async fn create_test_app(
         allowed_torrent_clients: ["lt0F01".as_bytes().to_vec()].into_iter().collect(),
         global_upload_factor,
         global_download_factor,
+        smtp_host: None,
+        smtp_port: None,
+        smtp_username: None,
+        smtp_password: None,
+        smtp_from_email: None,
+        smtp_from_name: None,
     };
 
     // TODO: CORS?

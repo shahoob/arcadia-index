@@ -16,28 +16,13 @@ export type UserCreatedAffiliatedArtist = components['schemas']['UserCreatedAffi
 export type UserCreatedArtist = components['schemas']['UserCreatedArtist']
 
 export const getArtist = async (id: number): Promise<ArtistAndTitleGroupsLite> => {
-  try {
-    return (await api.get<ArtistAndTitleGroupsLite>('/artist?id=' + id)).data
-  } catch (error) {
-    console.error('API Error:', error)
-    throw error
-  }
+  return (await api.get<ArtistAndTitleGroupsLite>('/artist?id=' + id)).data
 }
 
 export const createArtists = async (artists: UserCreatedArtist[]): Promise<Artist[]> => {
-  try {
-    return (await api.post<Artist[]>('/artists', artists)).data
-  } catch (error) {
-    console.error('API Error:', error)
-    throw error
-  }
+  return (await api.post<Artist[]>('/artists', artists)).data
 }
 
 export const searchArtistsLite = async (name: string): Promise<ArtistLite[]> => {
-  try {
-    return (await api.get<ArtistLite[]>(`/search/artist/lite?name=${name}`)).data
-  } catch (error) {
-    console.error('API Error:', error)
-    throw error
-  }
+  return (await api.get<ArtistLite[]>(`/search/artist/lite?name=${name}`)).data
 }

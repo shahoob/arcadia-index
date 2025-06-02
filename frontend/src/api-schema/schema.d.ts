@@ -52,6 +52,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/conversation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_conversation"];
+        put?: never;
+        post: operations["add_conversation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversation/message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["add_conversation_message"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_user_conversations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/edition-group": {
         parameters: {
             query?: never;
@@ -562,6 +610,67 @@ export interface components {
         AudioCodec: "mp2" | "mp3" | "aac" | "ac3" | "dts" | "flac" | "pcm" | "true-hd" | "opus" | "dsd";
         /** @enum {string} */
         ContentType: "movie" | "tv_show" | "music" | "software" | "book" | "collection";
+        Conversation: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            receiver_id: number;
+            /** Format: int64 */
+            sender_id: number;
+            subject: string;
+        };
+        ConversationHierarchy: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            messages: components["schemas"]["ConversationMessageHierarchy"][];
+            receiver: components["schemas"]["UserLiteAvatar"];
+            sender: components["schemas"]["UserLiteAvatar"];
+            subject: string;
+        };
+        ConversationMessage: {
+            content: string;
+            /** Format: int64 */
+            conversation_id: number;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+        };
+        ConversationMessageHierarchy: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLiteAvatar"];
+            /** Format: int64 */
+            id: number;
+        };
+        ConversationMessageHierarchyLite: {
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+        };
+        ConversationOverview: {
+            correspondant: components["schemas"]["UserLite"];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            last_message: components["schemas"]["ConversationMessageHierarchyLite"];
+            /** Format: int64 */
+            receiver_id: number;
+            /** Format: int64 */
+            sender_id: number;
+            subject: string;
+        };
+        ConversationsOverview: {
+            conversations: components["schemas"]["ConversationOverview"][];
+        };
         DownloadTorrentQuery: {
             /** Format: int64 */
             id: number;
@@ -832,6 +941,7 @@ export interface components {
         /** @enum {string} */
         Platform: "Windows" | "Linux" | "MacOS" | "Xbox";
         Profile: {
+            last_five_snatched_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             peers: components["schemas"]["Peer"][];
             user: components["schemas"]["User"];
@@ -1329,7 +1439,7 @@ export interface components {
             title_groups: components["schemas"]["TitleGroupHierarchyLite"][];
         };
         /** @enum {string} */
-        TorrentSearchSortField: "torrent_created_at" | "torrent_size" | "title_group_original_release_date";
+        TorrentSearchSortField: "torrent_created_at" | "torrent_size" | "torrent_snatched_at" | "title_group_original_release_date";
         TorrentSearchTitleGroup: {
             include_empty_groups: boolean;
             name: string;
@@ -1338,6 +1448,8 @@ export interface components {
             /** Format: int64 */
             created_by_id?: number | null;
             reported?: boolean | null;
+            /** Format: int64 */
+            snatched_by_id?: number | null;
             staff_checked?: boolean | null;
         };
         TorrentToDelete: {
@@ -1452,6 +1564,17 @@ export interface components {
             description: string;
             name: string;
             pictures: string[];
+        };
+        UserCreatedConversation: {
+            first_message: components["schemas"]["UserCreatedConversationMessage"];
+            /** Format: int64 */
+            receiver_id: number;
+            subject: string;
+        };
+        UserCreatedConversationMessage: {
+            content: string;
+            /** Format: int64 */
+            conversation_id: number;
         };
         UserCreatedEditionGroup: {
             additional_information: {
@@ -1708,6 +1831,96 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Artist"][];
+                };
+            };
+        };
+    };
+    get_conversation: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Found the conversation and its messages */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationHierarchy"];
+                };
+            };
+        };
+    };
+    add_conversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedConversation"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the conversation and first message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conversation"];
+                };
+            };
+        };
+    };
+    add_conversation_message: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedConversationMessage"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the conversation's message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationMessage"];
+                };
+            };
+        };
+    };
+    get_user_conversations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Found the conversations and some of their metadata */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationsOverview"];
                 };
             };
         };

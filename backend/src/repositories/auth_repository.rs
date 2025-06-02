@@ -12,6 +12,17 @@ use argon2::{
 use rand::Rng;
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 
+pub async fn does_username_exist(pool: &PgPool, username: &str) -> Result<bool> {
+    let result = sqlx::query!(
+        "SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)",
+        username
+    )
+    .fetch_one(pool)
+    .await?;
+    
+    Ok(result.exists.unwrap_or(false))
+}
+
 pub async fn create_user(
     pool: &PgPool,
     user: &Register,
@@ -26,6 +37,11 @@ pub async fn create_user(
 
     let passkey_upper = (passkey >> 64) as i64;
     let passkey_lower = passkey as i64;
+
+    // Check username availability first
+    if does_username_exist(pool, &user.username).await? {
+        return Err(Error::UsernameAlreadyExists);
+    }
 
     let settings = serde_json::json!({"site_appearance":{"item_detail_layout": "sidebar_right"}});
 

@@ -72,6 +72,9 @@ a {
 .danger {
   color: rgb(214, 52, 52);
 }
+.no-color {
+  color: unset;
+}
 
 .line {
   display: flex;

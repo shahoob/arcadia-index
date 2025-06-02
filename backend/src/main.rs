@@ -84,6 +84,22 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f64");
 
+    let smtp_host = env::var("SMTP_HOST").ok();
+    let smtp_port = env::var("SMTP_PORT")
+        .ok()
+        .and_then(|s| s.parse().ok());
+    let smtp_username = env::var("SMTP_USERNAME").ok();
+    let smtp_password = env::var("SMTP_PASSWORD").ok();
+    let smtp_from_email = env::var("SMTP_FROM_EMAIL").ok();
+    let smtp_from_name = env::var("SMTP_FROM_NAME").ok();
+
+    // Log email configuration status
+    if smtp_host.is_some() && smtp_port.is_some() && smtp_username.is_some() && smtp_password.is_some() && smtp_from_email.is_some() && smtp_from_name.is_some() {
+        println!("Email service configured and enabled");
+    } else {
+        println!("Email service not configured - emails will be skipped");
+    }
+
     let arc = Data::new(Arcadia {
         pool: pool.clone(),
         open_signups,
@@ -95,6 +111,12 @@ async fn main() -> std::io::Result<()> {
         allowed_torrent_clients: allowed_torrent_clients.clone(),
         global_download_factor,
         global_upload_factor,
+        smtp_host,
+        smtp_port,
+        smtp_username,
+        smtp_password,
+        smtp_from_email,
+        smtp_from_name,
     });
     let arc_periodic_tasks = arc.clone();
 

@@ -1,40 +1,27 @@
 <template>
-  <Form :initialValues="form" @submit="handleLogin">
-    <div class="flex flex-col gap-1">
-      <InputText
-        class="form-item"
-        name="username"
-        type="text"
-        :placeholder="t('user.username')"
-        v-model="form.username"
-      />
-    </div>
-    <div class="flex flex-col gap-1">
-      <Password
-        class="form-item"
-        name="password"
-        v-model="form.password"
-        :placeholder="t('user.password')"
-        :feedback="false"
-      />
-    </div>
+  <Form :initialValues="form" @submit="handleLogin" class="form">
+    <InputText
+      class="form-item"
+      name="username"
+      type="text"
+      :placeholder="t('user.username')"
+      v-model="form.username"
+    />
+    <Password
+      class="form-item"
+      name="password"
+      v-model="form.password"
+      :placeholder="t('user.password')"
+      :feedback="false"
+      toggleMask
+    />
     <div class="remember-wrapper">
       <Checkbox inputId="remember-me" v-model="form.remember_me" binary />
       <label for="remember-me"> {{ t('auth.remember_me') }} </label>
     </div>
-    <Button class="form-item w-full" type="submit" severity="secondary" label="Submit" />
+    <Button class="form-item w-full" type="submit" severity="secondary" label="Submit" :loading />
   </Form>
 </template>
-
-<style>
-.remember-wrapper {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  align-items: center;
-}
-</style>
-
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -56,15 +43,34 @@ const form = ref<Login>({
 
 const router = useRouter()
 const userStore = useUserStore()
+const loading = ref(false)
 const { t } = useI18n()
 
 const handleLogin = async () => {
-  login(form.value).then(async (data) => {
-    localStorage.setItem('token', data.token)
-    const profile = await getMe()
-    localStorage.setItem('user', JSON.stringify(profile.user))
-    userStore.setUser(profile.user)
-    router.push('/')
-  })
+  loading.value = true
+  login(form.value)
+    .then(async (data) => {
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('refreshToken', data.refresh_token)
+      const profile = await getMe()
+      localStorage.setItem('user', JSON.stringify(profile.user))
+      userStore.setUser(profile.user)
+      router.push('/')
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
+<style scoped>
+.remember-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+}
+</style>

@@ -297,6 +297,7 @@ pub struct TorrentSearchTorrent {
     pub reported: Option<bool>,
     pub staff_checked: Option<bool>,
     pub created_by_id: Option<i64>,
+    pub snatched_by_id: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
@@ -307,6 +308,9 @@ pub enum TorrentSearchSortField {
     #[serde(rename = "torrent_size")]
     #[strum(serialize = "torrent_size")]
     TorrentSize,
+    #[serde(rename = "torrent_snatched_at")]
+    #[strum(serialize = "torrent_snatched_at")]
+    TorrentSnatchedAt,
     #[serde(rename = "title_group_original_release_date")]
     #[strum(serialize = "title_group_original_release_date")]
     TitleGroupOriginalReleaseDate,

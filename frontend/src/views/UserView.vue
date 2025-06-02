@@ -11,12 +11,21 @@
             class="warned pi pi-exclamation-triangle"
           />
         </div>
-        <div v-if="userStore.class === 'staff'" class="actions">
-          <i
-            v-tooltip.top="t('user.warn')"
-            class="cursor-pointer pi pi-exclamation-triangle"
-            @click="warnUserDialogVisible = true"
-          />
+        <div class="actions">
+          <RouterLink
+            :to="`/conversation/new?receiverId=${user.id}&username=${user.username}`"
+            class="no-color"
+            v-if="userStore.id !== user.id"
+          >
+            <i v-tooltip.top="t('user.message_user', [user.username])" class="pi pi-envelope" />
+          </RouterLink>
+          <template v-if="userStore.class === 'staff'">
+            <i
+              v-tooltip.top="t('user.warn')"
+              class="cursor-pointer pi pi-exclamation-triangle"
+              @click="warnUserDialogVisible = true"
+            />
+          </template>
         </div>
       </div>
       <ContentContainer :containerTitle="t('general.description')" class="section">
@@ -25,7 +34,18 @@
       <ContentContainer v-if="peers" :containerTitle="t('torrent.clients_and_ips')" class="section">
         <PeerTable :peers />
       </ContentContainer>
-      <RelatedTorrents :titleGroups="uploadedTorrents" class="section" :userId="user.id" />
+      <RelatedTorrents
+        :titleGroups="uploadedTorrents"
+        class="section"
+        :userId="user.id"
+        type="uploads"
+      />
+      <RelatedTorrents
+        :titleGroups="snatchedTorrents"
+        class="section"
+        :userId="user.id"
+        type="snatches"
+      />
     </div>
     <UserSidebar :user class="sidebar" />
   </div>
@@ -53,6 +73,7 @@ import { watch } from 'vue'
 const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
 const uploadedTorrents = ref<TitleGroupHierarchyLite[]>([])
+const snatchedTorrents = ref<TitleGroupHierarchyLite[]>([])
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -66,6 +87,7 @@ const fetchUser = async () => {
       peers: peers.value,
       user: user.value,
       last_five_uploaded_torrents: uploadedTorrents.value,
+      last_five_snatched_torrents: snatchedTorrents.value,
     } = await getMe())
     userStore.setUser(user.value as User)
   } else {
@@ -79,7 +101,15 @@ onMounted(async () => {
   fetchUser()
 })
 
-watch(() => route.params.id, fetchUser, { immediate: true })
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (oldId !== undefined) {
+      fetchUser()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>
@@ -104,6 +134,11 @@ watch(() => route.params.id, fetchUser, { immediate: true })
   }
   .warned {
     color: yellow;
+  }
+}
+.actions {
+  i {
+    margin-left: 7px;
   }
 }
 .section {

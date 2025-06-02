@@ -67,6 +67,7 @@ const search = async (torrentSearch: TorrentSearch) => {
 const loadSearchForm = async () => {
   initialForm.value.title_group.name = route.query.title_group_name?.toString() ?? ''
   initialForm.value.torrent.created_by_id = parseInt(route.query.created_by_id as string) ?? null
+  initialForm.value.torrent.snatched_by_id = parseInt(route.query.snatched_by_id as string) ?? null
   if (userStore.class === 'staff') {
     initialForm.value.torrent.staff_checked = false
     initialForm.value.torrent.reported = null
@@ -78,7 +79,15 @@ onMounted(async () => {
   loadSearchForm()
 })
 
-watch(() => route.query, loadSearchForm, { immediate: true })
+watch(
+  () => route.query,
+  (newQuery, oldQuery) => {
+    if (oldQuery !== undefined) {
+      loadSearchForm()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>

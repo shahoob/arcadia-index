@@ -28,6 +28,12 @@ pub struct Arcadia {
     pub allowed_torrent_clients: HashSet<Vec<u8>>,
     pub global_upload_factor: f64,
     pub global_download_factor: f64,
+    pub smtp_host: Option<String>,
+    pub smtp_port: Option<u16>,
+    pub smtp_username: Option<String>,
+    pub smtp_password: Option<String>,
+    pub smtp_from_email: Option<String>,
+    pub smtp_from_name: Option<String>,
 }
 
 impl Arcadia {
@@ -56,6 +62,9 @@ pub enum Error {
 
     #[error("could not create user")]
     CouldNotCreateUser(#[source] sqlx::Error),
+
+    #[error("username already exists")]
+    UsernameAlreadyExists,
 
     #[error("could not create edition group")]
     CouldNotCreateEditionGroup(#[source] sqlx::Error),
@@ -98,6 +107,12 @@ pub enum Error {
 
     #[error("invalid invitation key")]
     InvitationKeyInvalid,
+
+    #[error("email configuration error: {0}")]
+    EmailConfigurationError(String),
+
+    #[error("failed to send email: {0}")]
+    EmailSendError(String),
 
     #[error("invitation key required")]
     InvitationKeyRequired,
@@ -185,6 +200,18 @@ pub enum Error {
 
     #[error("could not find wiki article")]
     CouldNotFindWikiArticle(#[source] sqlx::Error),
+
+    #[error("could not create conversation")]
+    CouldNotCreateConversation(#[source] sqlx::Error),
+
+    #[error("could not create message")]
+    CouldNotCreateConversationMessage(#[source] sqlx::Error),
+
+    #[error("could not find conversation")]
+    CouldNotFindConversation(#[source] sqlx::Error),
+
+    #[error("could not find conversations")]
+    CouldNotFindConversations(#[source] sqlx::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -192,7 +219,41 @@ pub type Result<T> = std::result::Result<T, Error>;
 impl actix_web::ResponseError for Error {
     #[inline]
     fn status_code(&self) -> actix_web::http::StatusCode {
-        actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+        use actix_web::http::StatusCode;
+        
+        match self {
+            // 400 Bad Request
+            Error::UsernameAlreadyExists |
+            Error::InvitationKeyInvalid |
+            Error::InvitationKeyRequired |
+            Error::InvitationKeyAlreadyUsed |
+            Error::WrongUsernameOrPassword |
+            Error::TorrentFileInvalid |
+            Error::InvalidUserIdOrTorrentId => StatusCode::BAD_REQUEST,
+            
+            // 401 Unauthorized
+            Error::InvalidOrExpiredRefreshToken => StatusCode::UNAUTHORIZED,
+            
+            // 403 Forbidden
+            Error::AccountBanned |
+            Error::InsufficientPrivileges => StatusCode::FORBIDDEN,
+            
+            // 404 Not Found
+            Error::UserNotFound(_) |
+            Error::UserWithIdNotFound(_) |
+            Error::SeriesWithIdNotFound(_) |
+            Error::DottorrentFileNotFound => StatusCode::NOT_FOUND,
+            
+            // 409 Conflict
+            Error::NoInvitationsAvailable |
+            Error::NotEnoughBonusPointsAvailable |
+            Error::NotEnoughFreeleechTokensAvailable |
+            Error::InsufficientBonusPointsForBounty |
+            Error::InsufficientUploadForBounty => StatusCode::CONFLICT,
+            
+            // 500 Internal Server Error
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {

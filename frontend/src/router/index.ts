@@ -86,6 +86,21 @@ const router = createRouter({
       name: 'WikiArticle',
       component: () => import('../views/WikiView.vue'),
     },
+    {
+      path: '/conversation/new',
+      name: 'NewConversation',
+      component: () => import('../views/conversation/NewConversationView.vue'),
+    },
+    {
+      path: '/conversation/:id',
+      name: 'Conversation',
+      component: () => import('../views/conversation/ConversationView.vue'),
+    },
+    {
+      path: '/conversations',
+      name: 'Conversations',
+      component: () => import('../views/conversation/ConversationsView.vue'),
+    },
   ],
 })
 

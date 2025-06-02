@@ -1,17 +1,15 @@
 <template>
-  <div>
-    <div class="flex flex-col gap-1">
-      <InputText
-        class="form-item"
-        name="email"
-        type="text"
-        :placeholder="t('user.email')"
-        v-model="form.email"
-      />
-      <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
+  <div class="form">
+    <InputText
+      class="form-item"
+      name="email"
+      type="text"
+      :placeholder="t('user.email')"
+      v-model="form.email"
+    />
+    <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
           $form.username.error?.message
         }}</Message> -->
-    </div>
     <InputText
       class="form-item"
       name="username"
@@ -22,41 +20,41 @@
     <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
           $form.username.error?.message
         }}</Message> -->
-    <div class="flex flex-col gap-1">
-      <InputText
-        class="form-item"
-        name="password"
-        type="text"
-        :placeholder="t('user.password')"
-        v-model="form.password"
-      />
-      <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
+    <Password
+      class="form-item"
+      name="password"
+      v-model="form.password"
+      :placeholder="t('user.password')"
+      :feedback="false"
+      toggleMask
+    />
+    <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
           $form.email.error?.message
         }}</Message> -->
-    </div>
-    <div class="flex flex-col gap-1">
-      <InputText
-        class="form-item"
-        name="password_verify"
-        type="text"
-        :placeholder="t('user.password_verify')"
-        v-model="form.password_verify"
-      />
-      <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
+    <Password
+      class="form-item"
+      name="password_verify"
+      v-model="form.password_verify"
+      :placeholder="t('user.password_verify')"
+      :feedback="false"
+      toggleMask
+    />
+    <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
           $form.email.error?.message
         }}</Message> -->
-    </div>
     <Button
       class="form-item w-full"
       type="submit"
       severity="secondary"
       :label="t('general.submit')"
       @click="handleRegister"
+      :loading
     />
   </div>
 </template>
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -64,6 +62,7 @@ import { register } from '@/services/api/authService'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const form = ref({
   email: '',
@@ -72,12 +71,22 @@ const form = ref({
   password_verify: '',
 })
 
-const router = useRouter()
+const loading = ref(false)
 
-const handleRegister = () => {
-  register(form.value).then((data) => {
-    localStorage.setItem('token', data.token)
+const handleRegister = async () => {
+  loading.value = true
+  try {
+    await register(form.value)
     router.push('/login')
-  })
+  } catch (error) {
+    console.error('Registration failed:', error)
+  }
+  loading.value = false
 }
 </script>
+<style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+}
+</style>

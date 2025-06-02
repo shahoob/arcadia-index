@@ -1,5 +1,6 @@
 pub mod artist;
 pub mod collage;
+pub mod conversation;
 pub mod edition_group;
 pub mod entity;
 pub mod forum;

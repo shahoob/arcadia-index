@@ -185,6 +185,7 @@ pub struct Profile {
     pub peers: Vec<Peer>,
     pub user_warnings: Vec<UserWarning>,
     pub last_five_uploaded_torrents: Vec<TitleGroupHierarchyLite>,
+    pub last_five_snatched_torrents: Vec<TitleGroupHierarchyLite>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]

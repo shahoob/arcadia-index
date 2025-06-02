@@ -1,6 +1,6 @@
 <template>
   <ContentContainer class="comment-container">
-    <div class="comment">
+    <div :class="{ comment: true, 'reverse-user-position': reverseUserPosition }">
       <div class="user">
         <img
           class="avatar"
@@ -41,11 +41,13 @@ import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 import { timeAgo } from '@/services/helpers'
 import type { ForumPostHierarchy } from '@/services/api/forumService'
 import { useI18n } from 'vue-i18n'
+import type { ConversationMessageHierarchy } from '@/services/api/conversationService'
 
 const { t } = useI18n()
 
 defineProps<{
-  comment: TitleGroupCommentHierarchy | ForumPostHierarchy
+  comment: TitleGroupCommentHierarchy | ForumPostHierarchy | ConversationMessageHierarchy
+  reverseUserPosition?: boolean
 }>()
 </script>
 
@@ -55,19 +57,27 @@ defineProps<{
 }
 .comment {
   display: flex;
+  &.reverse-user-position {
+    flex-direction: row-reverse;
+  }
 }
 .user {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  margin-right: 7px;
   background-color: var(--color-background-primary);
   border-radius: 7px;
 }
 .avatar {
   width: 7em;
   border-radius: 7px;
+}
+.reverse-user-position {
+  .comment-body {
+    text-align: left;
+    width: 100%;
+  }
 }
 .comment-body {
   padding: 7px;
