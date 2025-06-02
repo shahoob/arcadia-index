@@ -75,6 +75,7 @@ pub struct ConversationOverview {
     pub subject: String,
     pub sender_id: i64,
     pub receiver_id: i64,
+    pub correspondant: UserLite,
     pub last_message: ConversationMessageHierarchyLite,
 }
 

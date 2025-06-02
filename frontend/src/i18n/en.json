@@ -42,7 +42,8 @@
     "page": "Page",
     "ascending": "Ascending",
     "descending": "Descending",
-    "send": "Send"
+    "send": "Send",
+    "started": "Started"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -110,8 +111,10 @@
   "conversation": {
     "start_conversation": "Start a conversation with {0}",
     "subject": "Subject",
+    "correspondant": "Correspondant",
     "message": "Message | Messages",
-    "conversation": "Conversation | Conversations"
+    "conversation": "Conversation | Conversations",
+    "last_message": "Last message"
   },
   "community": {
     "new_comment": "New comment",

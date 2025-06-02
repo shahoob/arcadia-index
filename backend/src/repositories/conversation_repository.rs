@@ -78,6 +78,12 @@ pub async fn find_user_conversations(pool: &PgPool, user_id: i64) -> Result<Valu
                                 'warned', u.warned,
                                 'banned', u.banned
                             )
+                        ),
+                        'correspondant', jsonb_build_object(
+                            'id', co.id,
+                            'username', co.username,
+                            'warned', co.warned,
+                            'banned', co.banned
                         )
                     )
                     ORDER BY lm.created_at DESC
@@ -100,6 +106,8 @@ pub async fn find_user_conversations(pool: &PgPool, user_id: i64) -> Result<Valu
         ) AS lm ON TRUE
         JOIN
             users AS u ON lm.created_by_id = u.id
+        JOIN
+            users AS co ON (CASE WHEN c.sender_id = $1 THEN c.receiver_id ELSE c.sender_id END) = co.id
         WHERE
             c.sender_id = $1 OR c.receiver_id = $1;
         "#,

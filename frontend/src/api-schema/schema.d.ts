@@ -656,6 +656,7 @@ export interface components {
             created_by: components["schemas"]["UserLite"];
         };
         ConversationOverview: {
+            correspondant: components["schemas"]["UserLite"];
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
