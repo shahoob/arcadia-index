@@ -48,6 +48,7 @@
       severity="secondary"
       :label="t('general.submit')"
       @click="handleRegister"
+      :loading
     />
   </div>
 </template>
@@ -61,6 +62,7 @@ import { register } from '@/services/api/authService'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const form = ref({
   email: '',
@@ -69,18 +71,17 @@ const form = ref({
   password_verify: '',
 })
 
-const router = useRouter()
+const loading = ref(false)
 
 const handleRegister = async () => {
+  loading.value = true
   try {
-    // Register the user
     await register(form.value)
-
-    // Redirect to login page after successful registration
     router.push('/login')
   } catch (error) {
     console.error('Registration failed:', error)
   }
+  loading.value = false
 }
 </script>
 <style scoped>

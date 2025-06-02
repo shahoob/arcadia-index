@@ -133,7 +133,7 @@ const toggleDarkMode = () => {
   padding: 5px 0;
   align-items: center;
   transition: 0.3s ease;
-  &.sign-out:hover {
+  &.sign-out {
     color: var(--p-red-600);
   }
 }
