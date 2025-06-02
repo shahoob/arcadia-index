@@ -206,6 +206,9 @@ pub enum Error {
 
     #[error("could not find conversation")]
     CouldNotFindConversation(#[source] sqlx::Error),
+
+    #[error("could not find conversations")]
+    CouldNotFindConversations(#[source] sqlx::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

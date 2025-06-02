@@ -58,6 +58,60 @@ pub async fn create_conversation_message(
     Ok(message)
 }
 
+pub async fn find_user_conversations(pool: &PgPool, user_id: i64) -> Result<Value> {
+    let conversations = sqlx::query!(
+        r#"
+        SELECT
+            COALESCE(
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', c.id,
+                        'created_at', c.created_at,
+                        'subject', c.subject,
+                        'sender_id', c.sender_id,
+                        'receiver_id', c.receiver_id,
+                        'last_message', jsonb_build_object(
+                            'created_at', lm.created_at,
+                            'created_by', jsonb_build_object(
+                                'id', u.id,
+                                'username', u.username,
+                                'warned', u.warned,
+                                'banned', u.banned
+                            )
+                        )
+                    )
+                    ORDER BY lm.created_at DESC
+                ),
+                '[]'::jsonb
+            ) AS conversations_json
+        FROM
+            conversations AS c
+        JOIN LATERAL (
+            SELECT
+                cm.created_at,
+                cm.created_by_id
+            FROM
+                conversation_messages AS cm
+            WHERE
+                cm.conversation_id = c.id
+            ORDER BY
+                cm.created_at DESC
+            LIMIT 1
+        ) AS lm ON TRUE
+        JOIN
+            users AS u ON lm.created_by_id = u.id
+        WHERE
+            c.sender_id = $1 OR c.receiver_id = $1;
+        "#,
+        user_id,
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotFindConversations)?;
+
+    Ok(conversations.conversations_json.unwrap())
+}
+
 pub async fn find_conversation(
     pool: &PgPool,
     conversation_id: i64,

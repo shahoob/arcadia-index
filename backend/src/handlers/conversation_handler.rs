@@ -1,14 +1,16 @@
 use crate::{
     Arcadia, Result,
+    handlers::UserId,
     models::{
         conversation::{
-            Conversation, ConversationHierarchy, ConversationMessage, UserCreatedConversation,
-            UserCreatedConversationMessage,
+            Conversation, ConversationHierarchy, ConversationMessage, ConversationOverview,
+            UserCreatedConversation, UserCreatedConversationMessage,
         },
         user::User,
     },
     repositories::conversation_repository::{
         create_conversation, create_conversation_message, find_conversation,
+        find_user_conversations,
     },
 };
 use actix_web::{HttpResponse, web};
@@ -49,12 +51,28 @@ pub struct GetConversationQuery {
 pub async fn get_conversation(
     query: web::Query<GetConversationQuery>,
     arc: web::Data<Arcadia>,
-    current_user: User,
+    current_user_id: UserId,
 ) -> Result<HttpResponse> {
     let conversation_with_messages =
-        find_conversation(&arc.pool, query.id, current_user.id).await?;
+        find_conversation(&arc.pool, query.id, current_user_id.0).await?;
 
-    Ok(HttpResponse::Created().json(conversation_with_messages))
+    Ok(HttpResponse::Ok().json(conversation_with_messages))
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/conversations",
+    responses(
+        (status = 200, description = "Found the conversations and some of their metadata", body=Vec<ConversationOverview>),
+    )
+)]
+pub async fn get_user_conversations(
+    arc: web::Data<Arcadia>,
+    current_user_id: UserId,
+) -> Result<HttpResponse> {
+    let conversations = find_user_conversations(&arc.pool, current_user_id.0).await?;
+
+    Ok(HttpResponse::Ok().json(conversations))
 }
 
 #[utoipa::path(

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
+use crate::models::user::UserLite;
+
 use super::user::UserLiteAvatar;
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -56,4 +58,22 @@ pub struct ConversationHierarchy {
     pub sender: UserLiteAvatar,
     pub receiver: UserLiteAvatar,
     pub messages: Vec<ConversationMessageHierarchy>,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct ConversationMessageHierarchyLite {
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: DateTime<Utc>,
+    pub created_by: UserLite,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct ConversationOverview {
+    pub id: i64,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: DateTime<Utc>,
+    pub subject: String,
+    pub sender_id: i64,
+    pub receiver_id: i64,
+    pub last_message: ConversationMessageHierarchyLite,
 }

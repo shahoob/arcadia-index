@@ -7,7 +7,9 @@ use crate::handlers::{
         add_affiliated_artists, add_artists, get_artist_publications, get_artists_lite,
     },
     auth_handler::{login, refresh_token, register, validate_bearer_auth},
-    conversation_handler::{add_conversation, add_conversation_message, get_conversation},
+    conversation_handler::{
+        add_conversation, add_conversation_message, get_conversation, get_user_conversations,
+    },
     edition_group_handler::add_edition_group,
     forum_handler::{
         add_forum_post, add_forum_thread, get_forum, get_forum_sub_category_threads,
@@ -92,6 +94,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/wiki/article", web::get().to(get_wiki_article))
             .route("/conversation", web::post().to(add_conversation))
             .route("/conversation", web::get().to(get_conversation))
+            .route("/conversations", web::get().to(get_user_conversations))
             .route(
                 "/conversation/message",
                 web::post().to(add_conversation_message),

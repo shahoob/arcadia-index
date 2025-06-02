@@ -13,7 +13,7 @@ use crate::{
         },
         conversation::{
             Conversation, ConversationHierarchy, ConversationMessage, ConversationMessageHierarchy,
-            UserCreatedConversation, UserCreatedConversationMessage,
+            ConversationOverview, UserCreatedConversation, UserCreatedConversationMessage,
         },
         edition_group::EditionGroup,
         forum::{
@@ -81,6 +81,7 @@ use crate::{
         crate::handlers::wiki_handler::get_wiki_article,
         crate::handlers::conversation_handler::add_conversation,
         crate::handlers::conversation_handler::get_conversation,
+        crate::handlers::conversation_handler::get_user_conversations,
         crate::handlers::conversation_handler::add_conversation_message,
     ),
     components(schemas(
@@ -142,7 +143,8 @@ use crate::{
         UserCreatedConversationMessage,
         Conversation,
         ConversationHierarchy,
-        ConversationMessageHierarchy
+        ConversationMessageHierarchy,
+        ConversationOverview,
     ),)
 )]
 pub struct ApiDoc;
