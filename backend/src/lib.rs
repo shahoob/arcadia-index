@@ -216,7 +216,41 @@ pub type Result<T> = std::result::Result<T, Error>;
 impl actix_web::ResponseError for Error {
     #[inline]
     fn status_code(&self) -> actix_web::http::StatusCode {
-        actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+        use actix_web::http::StatusCode;
+        
+        match self {
+            // 400 Bad Request
+            Error::UsernameAlreadyExists |
+            Error::InvitationKeyInvalid |
+            Error::InvitationKeyRequired |
+            Error::InvitationKeyAlreadyUsed |
+            Error::WrongUsernameOrPassword |
+            Error::TorrentFileInvalid |
+            Error::InvalidUserIdOrTorrentId => StatusCode::BAD_REQUEST,
+            
+            // 401 Unauthorized
+            Error::InvalidOrExpiredRefreshToken => StatusCode::UNAUTHORIZED,
+            
+            // 403 Forbidden
+            Error::AccountBanned |
+            Error::InsufficientPrivileges => StatusCode::FORBIDDEN,
+            
+            // 404 Not Found
+            Error::UserNotFound(_) |
+            Error::UserWithIdNotFound(_) |
+            Error::SeriesWithIdNotFound(_) |
+            Error::DottorrentFileNotFound => StatusCode::NOT_FOUND,
+            
+            // 409 Conflict
+            Error::NoInvitationsAvailable |
+            Error::NotEnoughBonusPointsAvailable |
+            Error::NotEnoughFreeleechTokensAvailable |
+            Error::InsufficientBonusPointsForBounty |
+            Error::InsufficientUploadForBounty => StatusCode::CONFLICT,
+            
+            // 500 Internal Server Error
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {
