@@ -59,6 +59,48 @@ async fn test_open_registration(pool: PgPool) {
     );
 }
 
+#[sqlx::test]
+async fn test_duplicate_username_registration(pool: PgPool) {
+    let service = common::create_test_app(pool, OpenSignups::Enabled, 1.0, 1.0).await;
+
+    // Register first user
+    let req = test::TestRequest::post()
+        .insert_header(("X-Forwarded-For", "10.10.4.88"))
+        .uri("/api/register")
+        .set_json(RegisterRequest {
+            username: "duplicate_user",
+            password: "test_password",
+            password_verify: "test_password",
+            email: "test_email@testdomain.com",
+        })
+        .to_request();
+
+    let resp = test::call_service(&service, req).await;
+    assert_eq!(resp.status(), StatusCode::CREATED);
+
+    // Try to register second user with same username
+    let req = test::TestRequest::post()
+        .insert_header(("X-Forwarded-For", "10.10.4.89"))
+        .uri("/api/register")
+        .set_json(RegisterRequest {
+            username: "duplicate_user",
+            password: "different_password",
+            password_verify: "different_password",
+            email: "different_email@testdomain.com",
+        })
+        .to_request();
+
+    let resp = test::call_service(&service, req).await;
+    
+    // Verify appropriate error response
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+    
+    // Check error message in response body
+    let body = test::read_body(resp).await;
+    let error: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(error["error"], "username already exists");
+}
+
 #[sqlx::test(fixtures("with_test_user", "with_test_user_invite"))]
 async fn test_closed_registration_failures(pool: PgPool) {
     let service = common::create_test_app(pool, OpenSignups::Disabled, 1.0, 1.0).await;
