@@ -1,4 +1,4 @@
-First, thanks for considering contributing to Arcadia !
+First, thanks for considering contributing to Arcadia!
 
 ## Developer setup
 
@@ -46,6 +46,20 @@ At runtime, Arcadia's backend will source environment variables to influence it'
 #### Frontend
 
 At build time, the frontend will be hardcoded with the site's API location sourced from an enviroment variable. A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.example .env`.
+
+## Code Structure
+
+### Backend
+
+API calls are forwarded to `handlers`, database requests are done by `repositories`, objects are defined by `models`. Directories with those names contain the relevant code.
+
+A swagger for the API is available at `http://localhost:8080/swagger-ui/`
+
+If you make changes to structs that are listed in the swagger, you must regenerate the typescript interfaces with this command (from the frontend directory, while the backend is running) :
+
+```bash
+npx openapi-typescript http://127.0.0.1:8080/swagger-json/openapi.json -o ./src/api-schema/schema.d.ts
+```
 
 ### Run the project:
 
