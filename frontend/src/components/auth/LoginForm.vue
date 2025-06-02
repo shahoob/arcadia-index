@@ -16,6 +16,7 @@
         v-model="form.password"
         :placeholder="t('user.password')"
         :feedback="false"
+        toggleMask
       />
     </div>
     <div class="remember-wrapper">

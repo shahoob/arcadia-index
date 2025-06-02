@@ -23,24 +23,26 @@
           $form.username.error?.message
         }}</Message> -->
     <div class="flex flex-col gap-1">
-      <InputText
+      <Password
         class="form-item"
         name="password"
-        type="text"
-        :placeholder="t('user.password')"
         v-model="form.password"
+        :placeholder="t('user.password')"
+        :feedback="false"
+        toggleMask
       />
       <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
           $form.email.error?.message
         }}</Message> -->
     </div>
     <div class="flex flex-col gap-1">
-      <InputText
+      <Password
         class="form-item"
         name="password_verify"
-        type="text"
-        :placeholder="t('user.password_verify')"
         v-model="form.password_verify"
+        :placeholder="t('user.password_verify')"
+        :feedback="false"
+        toggleMask
       />
       <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
           $form.email.error?.message
@@ -57,6 +59,7 @@
 </template>
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -74,10 +77,15 @@ const form = ref({
 
 const router = useRouter()
 
-const handleRegister = () => {
-  register(form.value).then((data) => {
-    localStorage.setItem('token', data.token)
+const handleRegister = async () => {
+  try {
+    // Register the user
+    await register(form.value)
+
+    // Redirect to login page after successful registration
     router.push('/login')
-  })
+  } catch (error) {
+    console.error('Registration failed:', error)
+  }
 }
 </script>
