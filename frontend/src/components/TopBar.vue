@@ -40,7 +40,7 @@
             ref="op"
           >
             <RouterLink to="/messages">
-              <div class="user-action flex gap-2 px-2 cursor-pointer" @click="handleLogout">
+              <div class="user-action flex gap-2 px-2 cursor-pointer">
                 <i class="pi pi-envelope" />
                 <small class="font-medium">{{ t('user.message', 2) }}</small>
               </div>
