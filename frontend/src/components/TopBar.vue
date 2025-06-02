@@ -39,7 +39,7 @@
             :dismissable="false"
             ref="op"
           >
-            <RouterLink to="/conversation">
+            <RouterLink to="/conversations">
               <div class="user-action flex gap-2 px-2 cursor-pointer">
                 <i class="pi pi-envelope" />
                 <small class="font-medium">{{ t('conversation.conversation', 2) }}</small>

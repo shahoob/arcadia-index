@@ -84,6 +84,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_user_conversations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/edition-group": {
         parameters: {
             query?: never;
@@ -633,6 +649,26 @@ export interface components {
             created_by: components["schemas"]["UserLiteAvatar"];
             /** Format: int64 */
             id: number;
+        };
+        ConversationMessageHierarchyLite: {
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+        };
+        ConversationOverview: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            last_message: components["schemas"]["ConversationMessageHierarchyLite"];
+            /** Format: int64 */
+            receiver_id: number;
+            /** Format: int64 */
+            sender_id: number;
+            subject: string;
+        };
+        ConversationsOverview: {
+            conversations: components["schemas"]["ConversationOverview"][];
         };
         DownloadTorrentQuery: {
             /** Format: int64 */
@@ -1864,6 +1900,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConversationMessage"];
+                };
+            };
+        };
+    };
+    get_user_conversations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Found the conversations and some of their metadata */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationsOverview"];
                 };
             };
         };

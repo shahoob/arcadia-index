@@ -13,7 +13,8 @@ use crate::{
         },
         conversation::{
             Conversation, ConversationHierarchy, ConversationMessage, ConversationMessageHierarchy,
-            ConversationOverview, UserCreatedConversation, UserCreatedConversationMessage,
+            ConversationOverview, ConversationsOverview, UserCreatedConversation,
+            UserCreatedConversationMessage,
         },
         edition_group::EditionGroup,
         forum::{
@@ -145,6 +146,7 @@ use crate::{
         ConversationHierarchy,
         ConversationMessageHierarchy,
         ConversationOverview,
+        ConversationsOverview,
     ),)
 )]
 pub struct ApiDoc;

@@ -96,6 +96,11 @@ const router = createRouter({
       name: 'Conversation',
       component: () => import('../views/conversation/ConversationView.vue'),
     },
+    {
+      path: '/conversations',
+      name: 'Conversations',
+      component: () => import('../views/conversation/ConversationsView.vue'),
+    },
   ],
 })
 

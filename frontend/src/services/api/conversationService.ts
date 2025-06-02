@@ -17,6 +17,12 @@ export const getConversation = async (conversationId: number) => {
   return (await api.get<ConversationHierarchy>(`/conversation?id=${conversationId}`)).data
 }
 
+export type ConversationsOverview = components['schemas']['ConversationsOverview']
+
+export const getConversations = async () => {
+  return (await api.get<ConversationsOverview[]>('/conversations')).data
+}
+
 export type UserCreatedConversationMessage = components['schemas']['UserCreatedConversationMessage']
 
 export type ConversationMessage = components['schemas']['ConversationMessage']

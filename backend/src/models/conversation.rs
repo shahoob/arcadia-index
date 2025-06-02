@@ -77,3 +77,8 @@ pub struct ConversationOverview {
     pub receiver_id: i64,
     pub last_message: ConversationMessageHierarchyLite,
 }
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct ConversationsOverview {
+    conversations: Vec<ConversationOverview>,
+}

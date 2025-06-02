@@ -3,7 +3,7 @@ use crate::{
     handlers::UserId,
     models::{
         conversation::{
-            Conversation, ConversationHierarchy, ConversationMessage, ConversationOverview,
+            Conversation, ConversationHierarchy, ConversationMessage, ConversationsOverview,
             UserCreatedConversation, UserCreatedConversationMessage,
         },
         user::User,
@@ -15,6 +15,7 @@ use crate::{
 };
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
+use serde_json::json;
 use utoipa::IntoParams;
 
 #[utoipa::path(
@@ -63,7 +64,7 @@ pub async fn get_conversation(
     get,
     path = "/api/conversations",
     responses(
-        (status = 200, description = "Found the conversations and some of their metadata", body=Vec<ConversationOverview>),
+        (status = 200, description = "Found the conversations and some of their metadata", body=ConversationsOverview),
     )
 )]
 pub async fn get_user_conversations(
@@ -72,7 +73,7 @@ pub async fn get_user_conversations(
 ) -> Result<HttpResponse> {
     let conversations = find_user_conversations(&arc.pool, current_user_id.0).await?;
 
-    Ok(HttpResponse::Ok().json(conversations))
+    Ok(HttpResponse::Ok().json(json!({"conversations": conversations})))
 }
 
 #[utoipa::path(
