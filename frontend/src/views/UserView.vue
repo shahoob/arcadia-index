@@ -11,12 +11,21 @@
             class="warned pi pi-exclamation-triangle"
           />
         </div>
-        <div v-if="userStore.class === 'staff'" class="actions">
-          <i
-            v-tooltip.top="t('user.warn')"
-            class="cursor-pointer pi pi-exclamation-triangle"
-            @click="warnUserDialogVisible = true"
-          />
+        <div class="actions">
+          <RouterLink
+            :to="`/conversation/new?receiverId=${user.id}&username=${user.username}`"
+            class="no-color"
+            v-if="userStore.id !== user.id"
+          >
+            <i v-tooltip.top="t('user.message_user', [user.username])" class="pi pi-envelope" />
+          </RouterLink>
+          <template v-if="userStore.class === 'staff'">
+            <i
+              v-tooltip.top="t('user.warn')"
+              class="cursor-pointer pi pi-exclamation-triangle"
+              @click="warnUserDialogVisible = true"
+            />
+          </template>
         </div>
       </div>
       <ContentContainer :containerTitle="t('general.description')" class="section">
@@ -125,6 +134,11 @@ watch(
   }
   .warned {
     color: yellow;
+  }
+}
+.actions {
+  i {
+    margin-left: 7px;
   }
 }
 .section {

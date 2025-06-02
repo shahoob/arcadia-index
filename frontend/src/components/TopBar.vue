@@ -39,10 +39,10 @@
             :dismissable="false"
             ref="op"
           >
-            <RouterLink to="/messages">
+            <RouterLink to="/conversation">
               <div class="user-action flex gap-2 px-2 cursor-pointer">
                 <i class="pi pi-envelope" />
-                <small class="font-medium">{{ t('user.message', 2) }}</small>
+                <small class="font-medium">{{ t('conversation.conversation', 2) }}</small>
               </div>
             </RouterLink>
             <div class="user-action sign-out flex gap-2 px-2 cursor-pointer" @click="handleLogout">

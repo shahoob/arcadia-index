@@ -15,7 +15,6 @@ const initialState: User = {
   forum_posts: 0,
   forum_threads: 0,
   freeleech_tokens: 0,
-  group_comments: 0,
   id: 0,
   invitations: 0,
   invited: 0,
@@ -43,6 +42,9 @@ const initialState: User = {
   torrent_comments: 0,
   uploaded: 0,
   username: '',
+  warned: false,
+  banned: false,
+  staff_note: '',
 }
 
 export const useUserStore = defineStore('user', {

@@ -41,7 +41,8 @@
     "both": "Both",
     "page": "Page",
     "ascending": "Ascending",
-    "descending": "Descending"
+    "descending": "Descending",
+    "send": "Send"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -87,7 +88,7 @@
     "password_verify": "Verify password",
     "email": "E-mail",
     "logout": "Logout",
-    "message": "Message | Messages",
+    "message_user": "Send a message to {0}",
     "user": "User | Users",
     "class": "Class",
     "joined_at": "Joined",
@@ -105,6 +106,12 @@
     "snatches": "Snatches",
     "no_uploads_explanation": "This user hasn't uploaded any torrents yet, or they are all uploaded as anonymous.",
     "no_snatches_explanation": "This user hasn't snatched any torrents yet."
+  },
+  "conversation": {
+    "start_conversation": "Start a conversation with {0}",
+    "subject": "Subject",
+    "message": "Message | Messages",
+    "conversation": "Conversation | Conversations"
   },
   "community": {
     "new_comment": "New comment",
