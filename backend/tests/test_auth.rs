@@ -119,8 +119,8 @@ async fn test_closed_registration_failures(pool: PgPool) {
 
     let resp = test::call_service(&service, req).await;
 
-    // TODO: change to FORBIDDEN
-    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    // No invitation key provided when closed registration - returns BAD_REQUEST
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
     assert_eq!(
         resp.headers().get("Content-Type"),
         Some(&HeaderValue::from_static("application/json"))
@@ -140,8 +140,8 @@ async fn test_closed_registration_failures(pool: PgPool) {
 
     let resp = test::call_service(&service, req).await;
 
-    // TODO: change to FORBIDDEN
-    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    // Invalid invitation key - returns BAD_REQUEST
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
     assert_eq!(
         resp.headers().get("Content-Type"),
         Some(&HeaderValue::from_static("application/json"))
@@ -197,8 +197,8 @@ async fn test_closed_registration_success(pool: PgPool) {
 
     let resp = test::call_service(&service, req).await;
 
-    // TODO: change to FORBIDDEN
-    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    // Invitation key already used - returns BAD_REQUEST
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
 }
 
 #[sqlx::test(fixtures("with_test_user", "with_expired_test_user_invite"))]
@@ -218,8 +218,8 @@ async fn test_closed_registration_expired_failure(pool: PgPool) {
 
     let resp = test::call_service(&service, req).await;
 
-    // TODO: change to FORBIDDEN
-    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    // Expired invitation key - returns BAD_REQUEST
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
     assert_eq!(
         resp.headers().get("Content-Type"),
         Some(&HeaderValue::from_static("application/json"))
