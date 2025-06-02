@@ -63,6 +63,9 @@ pub enum Error {
     #[error("could not create user")]
     CouldNotCreateUser(#[source] sqlx::Error),
 
+    #[error("username already exists")]
+    UsernameAlreadyExists,
+
     #[error("could not create edition group")]
     CouldNotCreateEditionGroup(#[source] sqlx::Error),
 
