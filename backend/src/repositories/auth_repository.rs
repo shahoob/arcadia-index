@@ -12,7 +12,7 @@ use argon2::{
 use rand::Rng;
 use sqlx::{PgPool, types::ipnetwork::IpNetwork};
 
-pub async fn username_exists(pool: &PgPool, username: &str) -> Result<bool> {
+pub async fn does_username_exist(pool: &PgPool, username: &str) -> Result<bool> {
     let result = sqlx::query!(
         "SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)",
         username
@@ -39,7 +39,7 @@ pub async fn create_user(
     let passkey_lower = passkey as i64;
 
     // Check username availability first
-    if username_exists(pool, &user.username).await? {
+    if does_username_exist(pool, &user.username).await? {
         return Err(Error::UsernameAlreadyExists);
     }
 
