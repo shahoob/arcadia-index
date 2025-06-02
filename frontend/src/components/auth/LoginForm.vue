@@ -1,24 +1,20 @@
 <template>
-  <Form :initialValues="form" @submit="handleLogin">
-    <div class="flex flex-col gap-1">
-      <InputText
-        class="form-item"
-        name="username"
-        type="text"
-        :placeholder="t('user.username')"
-        v-model="form.username"
-      />
-    </div>
-    <div class="flex flex-col gap-1">
-      <Password
-        class="form-item"
-        name="password"
-        v-model="form.password"
-        :placeholder="t('user.password')"
-        :feedback="false"
-        toggleMask
-      />
-    </div>
+  <Form :initialValues="form" @submit="handleLogin" class="form">
+    <InputText
+      class="form-item"
+      name="username"
+      type="text"
+      :placeholder="t('user.username')"
+      v-model="form.username"
+    />
+    <Password
+      class="form-item"
+      name="password"
+      v-model="form.password"
+      :placeholder="t('user.password')"
+      :feedback="false"
+      toggleMask
+    />
     <div class="remember-wrapper">
       <Checkbox inputId="remember-me" v-model="form.remember_me" binary />
       <label for="remember-me"> {{ t('auth.remember_me') }} </label>
@@ -70,3 +66,9 @@ const handleLogin = async () => {
   })
 }
 </script>
+<style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+}
+</style>

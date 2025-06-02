@@ -39,16 +39,15 @@
             :dismissable="false"
             ref="op"
           >
-            <div class="flex flex-col gap-4 w-[25rem]">
-              <ul class="flex flex-col p-0 m-0 list-none">
-                <li
-                  class="flex gap-2 px-2 cursor-pointer list-item rounded-border hover:bg-emphasis"
-                  @click="handleLogout"
-                >
-                  <i class="pi pi-sign-out small" />
-                  <small class="font-medium">{{ t('general.logout') }}</small>
-                </li>
-              </ul>
+            <RouterLink to="/messages">
+              <div class="user-action flex gap-2 px-2 cursor-pointer" @click="handleLogout">
+                <i class="pi pi-envelope" />
+                <small class="font-medium">{{ t('user.message', 2) }}</small>
+              </div>
+            </RouterLink>
+            <div class="user-action sign-out flex gap-2 px-2 cursor-pointer" @click="handleLogout">
+              <i class="pi pi-sign-out" />
+              <small class="font-medium">{{ t('user.logout') }}</small>
             </div>
           </Popover>
         </RouterLink>
@@ -114,33 +113,28 @@ const toggleDarkMode = () => {
   padding: 0 7px;
   width: 100%;
 }
-
-.list-item {
-  align-items: center;
-  transition: 0.3s ease;
-}
-
-.list-item:hover {
-  color: var(--p-red-600);
-}
-
 .user-stats {
   font-size: 0.85em;
   display: flex;
   align-items: center;
-
   .stat {
     margin: 0px 10px;
     display: flex;
     align-items: center;
   }
-
   i {
     margin-right: 7px;
   }
 }
-
 .actions .p-button {
   margin-left: 7px;
+}
+.user-action {
+  padding: 5px 0;
+  align-items: center;
+  transition: 0.3s ease;
+  &.sign-out:hover {
+    color: var(--p-red-600);
+  }
 }
 </style>

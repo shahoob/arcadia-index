@@ -40,7 +40,6 @@
     "no": "No",
     "both": "Both",
     "page": "Page",
-    "logout": "Logout",
     "ascending": "Ascending",
     "descending": "Descending"
   },
@@ -87,6 +86,8 @@
     "password": "Password",
     "password_verify": "Verify password",
     "email": "E-mail",
+    "logout": "Logout",
+    "message": "Message | Messages",
     "user": "User | Users",
     "class": "Class",
     "joined_at": "Joined",
