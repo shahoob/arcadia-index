@@ -69,7 +69,7 @@ npx openapi-typescript http://127.0.0.1:8080/swagger-json/openapi.json -o ./src/
 > docker-compose up db -d
 > ```
 >
-> Also don't forgot to use `sudo` if you aren't in the `docker` group!
+> Also don't forget to use `sudo` if you aren't in the `docker` group!
 
 #### Backend
 
