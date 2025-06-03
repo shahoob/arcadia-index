@@ -10,7 +10,7 @@ The backend is built with Rust for speed and safety. The frontend is built with 
   </a>
 </p>
 
-For contributions see [backend/CONTRIBUTING.md](backend/CONTRIBUTING.md) or [frontend/CONTRIBUTING.md](frontend/CONTRIBUTING.md)
+For contributions see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Screenshots
 

@@ -4,12 +4,14 @@ on:
   push:
     paths:
       - 'frontend/**'
+      - '!**.md' # In the case that markdown is going to be used for documentation, don't forget to change this ;)
       - '.github/workflows/frontend.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'frontend/**'
+      - '!**.md'
       - '.github/workflows/frontend.yml'
 
 jobs:
