@@ -96,6 +96,9 @@ pub enum Error {
     #[error("this torrent isn't in the title group of the request")]
     TorrentTitleGroupNotMatchingRequestedOne,
 
+    #[error("this torrent request is already filled")]
+    TorrentRequestAlreadyFilled,
+
     #[error("could not create torrent request vote")]
     CouldNotCreateTorrentRequestVote(#[source] sqlx::Error),
 
@@ -250,6 +253,8 @@ impl actix_web::ResponseError for Error {
             Error::NoInvitationsAvailable
             | Error::NotEnoughBonusPointsAvailable
             | Error::NotEnoughFreeleechTokensAvailable
+            | Error::TorrentRequestAlreadyFilled
+            | Error::TorrentTitleGroupNotMatchingRequestedOne
             | Error::InsufficientBonusPointsForBounty
             | Error::InsufficientUploadForBounty => StatusCode::CONFLICT,
 

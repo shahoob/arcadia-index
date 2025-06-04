@@ -78,6 +78,23 @@ pub async fn fill_torrent_request(
         return Err(Error::TorrentTitleGroupNotMatchingRequestedOne);
     }
 
+    let is_torrent_request_filled = sqlx::query_scalar!(
+        r#"
+        SELECT EXISTS (
+            SELECT 1
+            FROM torrent_requests tr
+            WHERE tr.id = $1 AND tr.filled_at IS NOT NULL
+        )
+        "#,
+        torrent_request_id
+    )
+    .fetch_one(pool)
+    .await?;
+
+    if is_torrent_request_filled.unwrap() {
+        return Err(Error::TorrentRequestAlreadyFilled);
+    }
+
     #[derive(Debug)]
     struct BountySummary {
         total_upload: i64,
