@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            JSON_BUILD_OBJECT(\n                'id', ft.id,\n                'forum_sub_category', json_build_object(\n                    'id', ft.forum_sub_category_id,\n                    'name', ft.name\n                ),\n                'created_at', ft.created_at,\n                'created_by_id', ft.created_by_id,\n                'posts_amount', ft.posts_amount,\n                'sticky', ft.sticky,\n                'locked', ft.locked\n            ) AS thread_data\n        FROM\n            forum_threads AS ft\n        JOIN\n            forum_posts AS fp ON ft.id = fp.forum_thread_id\n        JOIN\n            users AS u ON fp.created_by_id = u.id\n        WHERE\n            ft.name ILIKE LOWER('%' || $1 || '%')\n        GROUP BY\n            ft.id,\n            ft.forum_sub_category_id,\n            ft.name,\n            ft.created_at,\n            ft.created_by_id,\n            ft.posts_amount,\n            ft.sticky,\n            ft.locked\n        LIMIT $3\n        OFFSET $2;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "thread_data",
+        "type_info": "Json"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "d15148e963d887f96a9a4e657e0c2369f68d5f95c5d3c0e9ec7c9300c0ec4bf5"
+}

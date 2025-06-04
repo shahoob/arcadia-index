@@ -2,8 +2,14 @@
   <h1 class="title">Search</h1>
 
   <Form class="wrapper" @submit="onSubmit">
-    <InputText name="title" type="text" :placeholder="t('general.title')" v-model="searchForm.title" size="small"
-      class="input" />
+    <InputText
+      name="title"
+      type="text"
+      :placeholder="t('general.title')"
+      v-model="searchForm.title"
+      size="small"
+      class="input"
+    />
     <Button type="submit">button</Button>
   </Form>
 </template>
@@ -26,13 +32,12 @@ const searchForm = ref({
 const onSubmit = (e: FormSubmitEvent<Record<string, string>>) => {
   const { title } = e.values
 
-  const shouldRedirect = router.currentRoute.value.path === "/forum"
+  const shouldRedirect = router.currentRoute.value.path === '/forum'
 
   if (shouldRedirect) {
     return router.push(`/forum/search?title=${title}`)
   }
 }
-
 </script>
 
 <style scoped>
@@ -47,5 +52,6 @@ const onSubmit = (e: FormSubmitEvent<Record<string, string>>) => {
   margin-bottom: 10px;
 }
 
-.input {}
+.input {
+}
 </style>
