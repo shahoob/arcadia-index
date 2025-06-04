@@ -26,39 +26,7 @@
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
-          <span v-if="slotProps.data.container && title_group.content_type != 'music'">{{
-            slotProps.data.container
-          }}</span>
-          <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }}</span>
-          <span v-if="slotProps.data.video_resolution">
-            / {{ slotProps.data.video_resolution }}</span
-          >
-          <span v-if="slotProps.data.audio_codec">
-            <span v-if="title_group.content_type != 'music'"> / </span
-            >{{ slotProps.data.audio_codec }}</span
-          >
-          <span v-if="slotProps.data.audio_channels"> / {{ slotProps.data.audio_channels }}</span>
-          <span v-if="slotProps.data.audio_bitrate_sampling">
-            / {{ slotProps.data.audio_bitrate_sampling }}</span
-          >
-          <span
-            v-if="
-              slotProps.data.languages.length === 1 && slotProps.data.languages[0] !== 'English'
-            "
-          >
-            / {{ slotProps.data.languages[0] }}
-          </span>
-          <span v-if="slotProps.data.languages.length > 1"> / Multi-Language </span>
-          <span v-for="(feature, index) in slotProps.data.features" :key="index">
-            / <span class="bold">{{ feature }}</span>
-          </span>
-          <span v-if="slotProps.data.release_group"> / {{ slotProps.data.release_group }}</span>
-          <span v-if="slotProps.data.trumpable != ''">
-            / <span class="warning">Trumpable</span>
-          </span>
-          <span v-if="slotProps.data.reports.length !== 0">
-            / <span class="danger">Reported</span>
-          </span>
+          <TorrentSlug :contentType="title_group.content_type" :torrent="slotProps.data" />
         </a>
       </template>
     </Column>
@@ -196,6 +164,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
+import TorrentSlug from '../torrent/TorrentSlug.vue'
 import Column from 'primevue/column'
 import Image from 'primevue/image'
 import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'

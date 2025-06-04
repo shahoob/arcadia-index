@@ -1251,7 +1251,7 @@ export interface components {
             };
             /** Format: int64 */
             id: number;
-            languages?: components["schemas"]["Language"][] | null;
+            languages: components["schemas"]["Language"][];
             /** Format: int64 */
             leechers: number;
             mediainfo: string;
@@ -1264,7 +1264,7 @@ export interface components {
             /** Format: int64 */
             snatched: number;
             staff_checked: boolean;
-            subtitle_languages?: components["schemas"]["Language"][] | null;
+            subtitle_languages: components["schemas"]["Language"][];
             trumpable?: string | null;
             /** Format: date-time */
             updated_at: string;
@@ -1304,7 +1304,7 @@ export interface components {
             };
             /** Format: int64 */
             id: number;
-            languages?: components["schemas"]["Language"][] | null;
+            languages: components["schemas"]["Language"][];
             /** Format: int64 */
             leechers: number;
             mediainfo: string;
@@ -1318,7 +1318,7 @@ export interface components {
             /** Format: int64 */
             snatched: number;
             staff_checked: boolean;
-            subtitle_languages?: components["schemas"]["Language"][] | null;
+            subtitle_languages: components["schemas"]["Language"][];
             trumpable?: string | null;
             /** Format: date-time */
             updated_at: string;
@@ -1352,9 +1352,10 @@ export interface components {
             };
             /** Format: int64 */
             id: number;
-            languages?: components["schemas"]["Language"][] | null;
+            languages: components["schemas"]["Language"][];
             /** Format: int64 */
             leechers: number;
+            release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
             /** Format: int64 */
@@ -1364,7 +1365,7 @@ export interface components {
             /** Format: int64 */
             snatched: number;
             staff_checked: boolean;
-            subtitle_languages?: components["schemas"]["Language"][] | null;
+            subtitle_languages: components["schemas"]["Language"][];
             trumpable?: string | null;
             /** Format: double */
             upload_factor: number;
