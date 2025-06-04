@@ -453,6 +453,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/torrent-request/fill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["fill_torrent_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/torrent-request/vote": {
         parameters: {
             query?: never;
@@ -1124,7 +1140,7 @@ export interface components {
             tagline?: string | null;
             tags: string[];
             title_group_comments: components["schemas"]["TitleGroupCommentHierarchy"][];
-            torrent_requests: components["schemas"]["TorrentRequest"][];
+            torrent_requests: components["schemas"]["TorrentRequestHierarchyLite"][];
             /** Format: date-time */
             updated_at: string;
         };
@@ -1387,10 +1403,6 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
-            /** Format: int64 */
-            bounty_bonus_points: number;
-            /** Format: int64 */
-            bounty_upload: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1399,6 +1411,12 @@ export interface components {
             description?: string | null;
             edition_name?: string | null;
             features?: components["schemas"]["Features"][] | null;
+            /** Format: date-time */
+            filled_at: string;
+            /** Format: int64 */
+            filled_by_torrent_id?: number | null;
+            /** Format: int64 */
+            filled_by_user_id?: number | null;
             /** Format: int64 */
             id: number;
             languages: components["schemas"]["Language"][];
@@ -1408,6 +1426,50 @@ export interface components {
             title_group_id: number;
             /** Format: date-time */
             updated_at: string;
+            video_codec?: null | components["schemas"]["VideoCodec"];
+            video_resolution?: string | null;
+        };
+        TorrentRequestBounties: {
+            /** Format: int64 */
+            bonus_points: number;
+            /** Format: int64 */
+            upload: number;
+        };
+        TorrentRequestFill: {
+            /** Format: int64 */
+            torrent_id: number;
+            /** Format: int64 */
+            torrent_request_id: number;
+        };
+        TorrentRequestHierarchyLite: {
+            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
+            audio_channels?: string | null;
+            audio_codec?: null | components["schemas"]["AudioCodec"];
+            bounties: components["schemas"]["TorrentRequestBounties"];
+            container: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+            description?: string | null;
+            edition_name?: string | null;
+            features?: components["schemas"]["Features"][] | null;
+            /** Format: date-time */
+            filled_at: string;
+            /** Format: int64 */
+            filled_by_torrent_id?: number | null;
+            /** Format: int64 */
+            filled_by_user_id?: number | null;
+            /** Format: int64 */
+            id: number;
+            languages: components["schemas"]["Language"][];
+            release_group?: string | null;
+            subtitle_languages: components["schemas"]["Language"][];
+            /** Format: int64 */
+            title_group_id: number;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: int32 */
+            user_votes_amount: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
         };
@@ -1666,14 +1728,11 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
-            /** Format: int64 */
-            bounty_bonus_points: number;
-            /** Format: int64 */
-            bounty_upload: number;
             container: string;
             description?: string | null;
             edition_name?: string | null;
             features?: components["schemas"]["Features"][] | null;
+            initial_vote: components["schemas"]["UserCreatedTorrentRequestVote"];
             languages: components["schemas"]["Language"][];
             release_group?: string | null;
             subtitle_languages: components["schemas"]["Language"][];
@@ -2565,6 +2624,28 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TorrentRequest"];
                 };
+            };
+        };
+    };
+    fill_torrent_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TorrentRequestFill"];
+            };
+        };
+        responses: {
+            /** @description Successfully filled the torrent request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

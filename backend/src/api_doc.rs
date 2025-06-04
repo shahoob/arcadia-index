@@ -29,7 +29,10 @@ use crate::{
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::{Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete, UploadedTorrent},
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
-        torrent_request::{TorrentRequest, UserCreatedTorrentRequest},
+        torrent_request::{
+            TorrentRequest, TorrentRequestFill, TorrentRequestHierarchyLite,
+            UserCreatedTorrentRequest,
+        },
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{
             Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken, Register, User,
@@ -67,6 +70,7 @@ use crate::{
         crate::handlers::title_group_handler::get_title_group,
         crate::handlers::title_group_handler::get_title_group_info_lite,
         crate::handlers::torrent_request_handler::add_torrent_request,
+        crate::handlers::torrent_request_handler::fill_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
         crate::handlers::user_handler::warn_user,
@@ -147,6 +151,8 @@ use crate::{
         ConversationMessageHierarchy,
         ConversationOverview,
         ConversationsOverview,
+        TorrentRequestHierarchyLite,
+        TorrentRequestFill
     ),)
 )]
 pub struct ApiDoc;

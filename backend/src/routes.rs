@@ -30,7 +30,7 @@ use crate::handlers::{
         delete_torrent, download_dottorrent_file, find_torrents, get_top_torrents, upload_torrent,
     },
     torrent_report_handler::add_torrent_report,
-    torrent_request_handler::add_torrent_request,
+    torrent_request_handler::{add_torrent_request, fill_torrent_request},
     torrent_request_vote_handler::add_torrent_request_vote,
     user_handler::{get_me, get_user, warn_user},
     wiki_handler::{add_wiki_article, get_wiki_article},
@@ -75,6 +75,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/series", web::post().to(add_series))
             .route("/series", web::get().to(get_series))
             .route("/torrent-request", web::post().to(add_torrent_request))
+            .route(
+                "/torrent-request/fill",
+                web::post().to(fill_torrent_request),
+            )
             .route(
                 "/torrent-request/vote",
                 web::post().to(add_torrent_request_vote),

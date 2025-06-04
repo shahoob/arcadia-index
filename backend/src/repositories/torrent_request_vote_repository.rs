@@ -30,13 +30,6 @@ pub async fn create_torrent_request_vote(
                 VALUES ($1, $2, $3, $4)
                 RETURNING *
             ),
-            updated_request AS (
-                UPDATE torrent_requests tr
-                SET
-                    bounty_upload = tr.bounty_upload + $3,
-                    bounty_bonus_points = tr.bounty_bonus_points + $4
-                WHERE tr.id = $1
-            ),
             updated_user AS (
                 UPDATE users u
                 SET

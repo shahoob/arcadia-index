@@ -1,36 +1,77 @@
 <template>
-  <span v-if="torrent.container && contentType != 'music'">{{ torrent.container }}</span>
-  <span v-if="torrent.video_codec"> / {{ torrent.video_codec }}</span>
-  <span v-if="torrent.video_resolution"> / {{ torrent.video_resolution }}</span>
-  <span v-if="torrent.audio_codec">
-    <span v-if="contentType != 'music'"> / </span>{{ torrent.audio_codec }}
-  </span>
-  <span v-if="torrent.audio_channels"> / {{ torrent.audio_channels }}</span>
-  <span v-if="torrent.audio_bitrate_sampling"> / {{ torrent.audio_bitrate_sampling }}</span>
-  <span v-if="torrent.languages.length === 1 && torrent.languages[0] !== 'English'">
-    / {{ torrent.languages[0] }}
-  </span>
-  <span v-if="torrent.languages.length > 1"> / {{ t('torrent.multi_language') }} </span>
-  <span v-for="(feature, index) in torrent.features" :key="index">
-    / <span class="bold">{{ feature }}</span>
-  </span>
-  <span v-if="torrent.release_group"> / {{ torrent.release_group }}</span>
-  <span v-if="'trumpable' in torrent && torrent.trumpable != ''">
-    / <span class="warning">{{ t('torrent.trumpable') }}</span>
-  </span>
-  <span v-if="'reports' in torrent && torrent.reports.length !== 0">
-    / <span class="danger">{{ t('general.reported') }}</span>
-  </span>
+  <template v-for="(part, partIndex) in computedSlug" :key="partIndex">
+    <template v-if="part.length > 0">
+      <span v-for="(item, itemIndex) in part" :key="itemIndex">
+        <template v-if="itemIndex > 0 || (partIndex > 0 && computedSlug[partIndex - 1].length > 0)">
+          /
+        </template>
+        <span :class="{ bold: partIndex === 1 }">{{ item }}</span>
+      </span>
+    </template>
+  </template>
 </template>
+
 <script lang="ts" setup>
 import type { TorrentRequest } from '@/services/api/torrentRequestService'
 import type { ContentType, TorrentHierarchyLite } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   torrent: TorrentHierarchyLite | TorrentRequest
   contentType: ContentType
 }>()
+
+const computedSlug = computed<string[][]>(() => {
+  const firstPart: string[] = []
+  const features: string[] = []
+  const releaseGroup: string[] = []
+
+  if (props.torrent.container && props.contentType !== 'music') {
+    firstPart.push(props.torrent.container)
+  }
+  if (props.torrent.video_codec) {
+    firstPart.push(props.torrent.video_codec)
+  }
+  if (props.torrent.video_resolution) {
+    firstPart.push(props.torrent.video_resolution)
+  }
+  if (props.torrent.audio_codec) {
+    if (props.contentType !== 'music') {
+      firstPart.push(props.torrent.audio_codec)
+    } else {
+      firstPart.push(props.torrent.audio_codec)
+    }
+  }
+  if (props.torrent.audio_channels) {
+    firstPart.push(props.torrent.audio_channels)
+  }
+  if (props.torrent.audio_bitrate_sampling) {
+    firstPart.push(props.torrent.audio_bitrate_sampling)
+  }
+  if (props.torrent.languages.length === 1 && props.torrent.languages[0] !== 'English') {
+    firstPart.push(props.torrent.languages[0])
+  }
+  if (props.torrent.languages.length > 1) {
+    firstPart.push(t('torrent.multi_language'))
+  }
+  if ('trumpable' in props.torrent && props.torrent.trumpable !== '') {
+    firstPart.push(t('torrent.trumpable'))
+  }
+  if ('reports' in props.torrent && props.torrent.reports.length !== 0) {
+    firstPart.push(t('general.reported'))
+  }
+
+  if (props.torrent.features) {
+    props.torrent.features.forEach((feature) => features.push(feature))
+  }
+
+  if (props.torrent.release_group) {
+    releaseGroup.push(props.torrent.release_group)
+  }
+
+  return [firstPart, features, releaseGroup]
+})
 </script>

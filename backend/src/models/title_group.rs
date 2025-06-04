@@ -9,8 +9,8 @@ use super::{
     edition_group::{EditionGroupHierarchy, EditionGroupHierarchyLite, EditionGroupInfoLite},
     series::SeriesLite,
     title_group_comment::TitleGroupCommentHierarchy,
-    torrent_request::TorrentRequest,
 };
+use crate::models::torrent_request::TorrentRequestHierarchyLite;
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "content_type_enum")]
@@ -244,7 +244,7 @@ pub struct TitleGroupAndAssociatedData {
     pub series: SeriesLite,
     pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
     pub title_group_comments: Vec<TitleGroupCommentHierarchy>,
-    pub torrent_requests: Vec<TorrentRequest>,
+    pub torrent_requests: Vec<TorrentRequestHierarchyLite>,
     pub is_subscribed: bool,
     pub in_same_master_group: Vec<TitleGroupLite>,
 }

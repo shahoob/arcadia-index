@@ -32,34 +32,36 @@ export const bytesToReadable = (bytes: number): string => {
   return `${size.toFixed(unitIndex === 0 ? 0 : 2)} ${units[unitIndex]}`
 }
 export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string => {
-  let slug = ''
+  const attributes: string[] = []
 
+  let dateRange = ''
   if (editionGroup.additional_information?.date_from) {
-    slug +=
+    dateRange +=
       new Date(editionGroup.additional_information.date_from).toISOString().split('T')[0] + ' to '
   }
-  slug += new Date(editionGroup.release_date).toISOString().split('T')[0]
+  dateRange += new Date(editionGroup.release_date).toISOString().split('T')[0]
 
+  let itemRange = ''
   if (editionGroup.additional_information?.first_item) {
-    slug +=
-      ' (' +
-      editionGroup.additional_information.first_item +
-      ' to ' +
-      editionGroup.additional_information.last_item +
-      ')'
+    itemRange = ` (${editionGroup.additional_information.first_item} to ${editionGroup.additional_information.last_item})`
   }
-  slug += ' - ' + editionGroup.name
+
+  attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
+
   if (editionGroup.additional_information?.label) {
-    slug += ' / ' + editionGroup.additional_information?.label
+    attributes.push(editionGroup.additional_information.label)
   }
   if (editionGroup.additional_information?.catalogue_number) {
-    slug += ' / ' + editionGroup.additional_information?.catalogue_number
+    attributes.push(editionGroup.additional_information.catalogue_number)
   }
   if (editionGroup.source) {
-    slug += ' / ' + editionGroup.source
+    attributes.push(editionGroup.source)
   }
-  slug += editionGroup.distributor ? ' / ' + editionGroup.distributor : ''
-  return slug
+  if (editionGroup.distributor) {
+    attributes.push(editionGroup.distributor)
+  }
+
+  return attributes.join(' / ')
 }
 export const getFeatures = (contentType: string): string[] => {
   if (contentType == 'book' || contentType == 'music') {

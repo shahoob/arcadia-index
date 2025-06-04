@@ -61,13 +61,65 @@ pub async fn find_title_group(
                 LEFT JOIN users u ON u.id = t.created_by_id
                 GROUP BY t.edition_group_id
             ),
+            torrent_request_with_bounties AS (
+                SELECT
+                    tr.*,
+                    u.username,
+                    u.warned,
+                    u.banned,
+                    COALESCE(SUM(trv.bounty_upload), 0) AS total_upload_bounty,
+                    COALESCE(SUM(trv.bounty_bonus_points), 0) AS total_bonus_bounty,
+                    COUNT(DISTINCT trv.created_by_id) AS user_votes_amount
+                FROM torrent_requests tr
+                LEFT JOIN torrent_request_votes trv ON tr.id = trv.torrent_request_id
+                LEFT JOIN users u ON u.id = tr.created_by_id -- Join with users table
+                GROUP BY
+                    tr.id,
+                    tr.title_group_id,
+                    tr.created_at,
+                    tr.updated_at,
+                    tr.created_by_id,
+                    tr.filled_by_user_id,
+                    tr.filled_by_torrent_id,
+                    tr.filled_at,
+                    tr.edition_name,
+                    tr.release_group,
+                    tr.description,
+                    tr.languages,
+                    tr.container,
+                    tr.audio_codec,
+                    tr.audio_channels,
+                    tr.audio_bitrate_sampling,
+                    tr.video_codec,
+                    tr.features,
+                    tr.subtitle_languages,
+                    tr.video_resolution,
+                    u.username,
+                    u.warned,
+                    u.banned
+            ),
             torrent_request_data AS (
                 SELECT
-                    tr.title_group_id,
-                    jsonb_agg(to_jsonb(tr)) AS torrent_requests
-                FROM torrent_requests tr
-                LEFT JOIN users u ON u.id = tr.created_by_id
-                GROUP BY tr.title_group_id
+                    trb.title_group_id,
+                    jsonb_agg(
+                        (to_jsonb(trb) - 'created_by_id') ||
+                        jsonb_build_object(
+                            'created_by', jsonb_build_object(
+                                'id', trb.created_by_id,
+                                'username', trb.username,
+                                'warned', trb.warned,
+                                'banned', trb.banned
+                            ),
+                            'bounties', jsonb_build_object(
+                                'upload', trb.total_upload_bounty,
+                                'bonus_points', trb.total_bonus_bounty
+                            ),
+                            'user_votes_amount', trb.user_votes_amount
+                        )
+                        ORDER BY trb.id
+                    ) AS torrent_requests
+                FROM torrent_request_with_bounties trb
+                GROUP BY trb.title_group_id
             ),
             edition_data AS (
                 SELECT

@@ -93,6 +93,9 @@ pub enum Error {
     #[error("could not create torrent request")]
     CouldNotCreateTorrentRequest(#[source] sqlx::Error),
 
+    #[error("this torrent isn't in the title group of the request")]
+    TorrentTitleGroupNotMatchingRequestedOne,
+
     #[error("could not create torrent request vote")]
     CouldNotCreateTorrentRequestVote(#[source] sqlx::Error),
 
@@ -220,37 +223,36 @@ impl actix_web::ResponseError for Error {
     #[inline]
     fn status_code(&self) -> actix_web::http::StatusCode {
         use actix_web::http::StatusCode;
-        
+
         match self {
             // 400 Bad Request
-            Error::UsernameAlreadyExists |
-            Error::InvitationKeyInvalid |
-            Error::InvitationKeyRequired |
-            Error::InvitationKeyAlreadyUsed |
-            Error::WrongUsernameOrPassword |
-            Error::TorrentFileInvalid |
-            Error::InvalidUserIdOrTorrentId => StatusCode::BAD_REQUEST,
-            
+            Error::UsernameAlreadyExists
+            | Error::InvitationKeyInvalid
+            | Error::InvitationKeyRequired
+            | Error::InvitationKeyAlreadyUsed
+            | Error::WrongUsernameOrPassword
+            | Error::TorrentFileInvalid
+            | Error::InvalidUserIdOrTorrentId => StatusCode::BAD_REQUEST,
+
             // 401 Unauthorized
             Error::InvalidOrExpiredRefreshToken => StatusCode::UNAUTHORIZED,
-            
+
             // 403 Forbidden
-            Error::AccountBanned |
-            Error::InsufficientPrivileges => StatusCode::FORBIDDEN,
-            
+            Error::AccountBanned | Error::InsufficientPrivileges => StatusCode::FORBIDDEN,
+
             // 404 Not Found
-            Error::UserNotFound(_) |
-            Error::UserWithIdNotFound(_) |
-            Error::SeriesWithIdNotFound(_) |
-            Error::DottorrentFileNotFound => StatusCode::NOT_FOUND,
-            
+            Error::UserNotFound(_)
+            | Error::UserWithIdNotFound(_)
+            | Error::SeriesWithIdNotFound(_)
+            | Error::DottorrentFileNotFound => StatusCode::NOT_FOUND,
+
             // 409 Conflict
-            Error::NoInvitationsAvailable |
-            Error::NotEnoughBonusPointsAvailable |
-            Error::NotEnoughFreeleechTokensAvailable |
-            Error::InsufficientBonusPointsForBounty |
-            Error::InsufficientUploadForBounty => StatusCode::CONFLICT,
-            
+            Error::NoInvitationsAvailable
+            | Error::NotEnoughBonusPointsAvailable
+            | Error::NotEnoughFreeleechTokensAvailable
+            | Error::InsufficientBonusPointsForBounty
+            | Error::InsufficientUploadForBounty => StatusCode::CONFLICT,
+
             // 500 Internal Server Error
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }

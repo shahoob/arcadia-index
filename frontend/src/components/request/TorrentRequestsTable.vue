@@ -8,11 +8,13 @@
     <Column field="edition_name" header="Edition"></Column>
     <Column header="Bounty">
       <template #body="slotProps">
-        {{ bytesToReadable(slotProps.data.bounty_upload) }} +
-        {{ slotProps.data.bounty_bonus_points }} bp
+        {{ bytesToReadable(slotProps.data.bounties.upload) }} +
+        {{ slotProps.data.bounties.bonus_points }} bp
       </template>
     </Column>
-    <Column field="votes" header="Votes"></Column>
+    <Column header="Votes">
+      <template #body="slotProps"> {{ slotProps.data.user_votes_amount }} </template>
+    </Column>
   </DataTable>
 </template>
 
@@ -20,8 +22,8 @@
 import { Column, DataTable } from 'primevue'
 import type { TorrentRequest } from '@/services/api/torrentRequestService'
 import TorrentSlug from '../torrent/TorrentSlug.vue'
-import { bytesToReadable } from '@/services/helpers'
 import type { ContentType } from '@/services/api/torrentService'
+import { bytesToReadable } from '@/services/helpers'
 
 defineProps<{
   torrentRequests: TorrentRequest[]

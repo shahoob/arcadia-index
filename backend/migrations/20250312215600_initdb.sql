@@ -408,13 +408,14 @@ CREATE TABLE torrent_requests (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
+    filled_by_user_id BIGINT,
+    filled_by_torrent_id BIGINT,
+    filled_at TIMESTAMP WITH TIME ZONE,
     edition_name TEXT,
     release_group VARCHAR(20),
     description TEXT,
     languages language_enum[] NOT NULL,
     container VARCHAR(8),
-    bounty_upload BIGINT NOT NULL,
-    bounty_bonus_points BIGINT NOT NULL,
     -- Audio
     audio_codec audio_codec_enum,
     audio_channels VARCHAR(8),
@@ -425,7 +426,9 @@ CREATE TABLE torrent_requests (
     subtitle_languages language_enum[] NOT NULL,
     video_resolution VARCHAR(6),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (created_by_id) REFERENCES users(id),
+    FOREIGN KEY (filled_by_user_id) REFERENCES users(id),
+    FOREIGN KEY (filled_by_torrent_id) REFERENCES torrents(id)
 );
 CREATE TABLE torrent_request_votes(
     id BIGSERIAL PRIMARY KEY,
