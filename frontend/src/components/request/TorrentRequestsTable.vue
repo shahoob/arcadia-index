@@ -1,11 +1,8 @@
 <template>
   <DataTable :value="torrentRequests" size="small">
     <Column header="Requirements">
-      <!-- TODO: Add more details -->
       <template #body="slotProps">
-        <span v-if="slotProps.data.container">{{ slotProps.data.container }}</span>
-        <span v-else>{{ t('torrent.any_container') }}</span>
-        <span v-if="slotProps.data.video_codec"> / {{ slotProps.data.video_codec }} </span>
+        <TorrentSlug :torrent="slotProps.data" :contentType />
       </template>
     </Column>
     <Column field="edition_name" header="Edition"></Column>
@@ -22,13 +19,13 @@
 <script setup lang="ts">
 import { Column, DataTable } from 'primevue'
 import type { TorrentRequest } from '@/services/api/torrentRequestService'
+import TorrentSlug from '../torrent/TorrentSlug.vue'
 import { bytesToReadable } from '@/services/helpers'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
+import type { ContentType } from '@/services/api/torrentService'
 
 defineProps<{
   torrentRequests: TorrentRequest[]
+  contentType: ContentType
 }>()
 </script>
 <style scoped></style>

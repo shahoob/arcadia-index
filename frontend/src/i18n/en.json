@@ -193,7 +193,9 @@
     "clients_and_ips": "Clients and IP-Addresses",
     "uploaded_by": "Uploaded by",
     "staff_checked": "Checked by staff",
-    "snatched_at": "Snatched at"
+    "snatched_at": "Snatched at",
+    "multi_language": "Multi-Langauge",
+    "trumpable": "Trumpable"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

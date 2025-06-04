@@ -17,9 +17,9 @@ pub async fn create_torrent_request(
         (title_group_id, created_by_id, edition_name,
         release_group, description, languages, container, audio_codec,
         audio_channels, video_codec, features, subtitle_languages, video_resolution,
-        bounty_upload, bounty_bonus_points)
+        bounty_upload, bounty_bonus_points, audio_bitrate_sampling)
         VALUES ($1, $2, $3, $4, $5, $6::language_enum[], $7, $8::audio_codec_enum, $9,
-        $10::video_codec_enum, $11::features_enum[], $12, $13, $14, $15)
+        $10::video_codec_enum, $11::features_enum[], $12, $13, $14, $15, $16)
         RETURNING *;
     "#;
 
@@ -39,6 +39,7 @@ pub async fn create_torrent_request(
         .bind(&torrent_request.video_resolution)
         .bind(torrent_request.bounty_upload)
         .bind(torrent_request.bounty_bonus_points)
+        .bind(&torrent_request.audio_bitrate_sampling)
         .fetch_one(pool)
         .await
         .map_err(Error::CouldNotCreateTorrentRequest)?;

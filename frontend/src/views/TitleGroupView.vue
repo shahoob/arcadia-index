@@ -77,7 +77,10 @@
             }})</AccordionHeader
           >
           <AccordionContent>
-            <TorrentRequestsTable :torrentRequests="title_group.torrent_requests" />
+            <TorrentRequestsTable
+              :torrentRequests="title_group.torrent_requests"
+              :contentType="title_group.content_type"
+            />
           </AccordionContent>
         </AccordionPanel>
       </Accordion>

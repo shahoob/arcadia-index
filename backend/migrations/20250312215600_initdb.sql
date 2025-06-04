@@ -418,6 +418,7 @@ CREATE TABLE torrent_requests (
     -- Audio
     audio_codec audio_codec_enum,
     audio_channels VARCHAR(8),
+    audio_bitrate_sampling audio_bitrate_sampling_enum,
     -- Video
     video_codec video_codec_enum,
     features features_enum[] NOT NULL,

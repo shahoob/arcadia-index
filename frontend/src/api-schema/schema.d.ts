@@ -1384,6 +1384,7 @@ export interface components {
             reported_torrent_id: number;
         };
         TorrentRequest: {
+            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
             /** Format: int64 */
@@ -1400,9 +1401,9 @@ export interface components {
             features?: components["schemas"]["Features"][] | null;
             /** Format: int64 */
             id: number;
-            languages?: components["schemas"]["Language"][] | null;
+            languages: components["schemas"]["Language"][];
             release_group?: string | null;
-            subtitle_languages?: components["schemas"]["Language"][] | null;
+            subtitle_languages: components["schemas"]["Language"][];
             /** Format: int64 */
             title_group_id: number;
             /** Format: date-time */
@@ -1662,6 +1663,7 @@ export interface components {
             reported_torrent_id: number;
         };
         UserCreatedTorrentRequest: {
+            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
             /** Format: int64 */
@@ -1672,9 +1674,9 @@ export interface components {
             description?: string | null;
             edition_name?: string | null;
             features?: components["schemas"]["Features"][] | null;
-            languages?: components["schemas"]["Language"][] | null;
+            languages: components["schemas"]["Language"][];
             release_group?: string | null;
-            subtitle_languages?: components["schemas"]["Language"][] | null;
+            subtitle_languages: components["schemas"]["Language"][];
             /** Format: int64 */
             title_group_id: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
