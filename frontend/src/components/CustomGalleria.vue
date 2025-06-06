@@ -46,9 +46,10 @@ const imageClicked = (index: number) => {
 .thumbnails {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .thumbnail {
-  width: 25%;
+  width: 19%;
   margin: 0.3%;
   border-radius: 7px;
 }

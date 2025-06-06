@@ -20,13 +20,13 @@
 
 <script setup lang="ts">
 import { Column, DataTable } from 'primevue'
-import type { TorrentRequest } from '@/services/api/torrentRequestService'
+import type { TorrentRequestHierarchyLite } from '@/services/api/torrentRequestService'
 import TorrentSlug from '../torrent/TorrentSlug.vue'
 import type { ContentType } from '@/services/api/torrentService'
 import { bytesToReadable } from '@/services/helpers'
 
 defineProps<{
-  torrentRequests: TorrentRequest[]
+  torrentRequests: TorrentRequestHierarchyLite[]
   contentType: ContentType
 }>()
 </script>

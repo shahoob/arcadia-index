@@ -71,11 +71,9 @@
         class="torrent-requests dense-accordion"
       >
         <AccordionPanel value="0">
-          <AccordionHeader
-            >{{ t('torrent.requests') }} ({{
-              title_group.torrent_requests.length
-            }})</AccordionHeader
-          >
+          <AccordionHeader>
+            {{ t('torrent.requests') }} ({{ title_group.torrent_requests.length }})
+          </AccordionHeader>
           <AccordionContent>
             <TorrentRequestsTable
               :torrentRequests="title_group.torrent_requests"
