@@ -48,6 +48,7 @@ use crate::{
     paths(
         crate::handlers::auth_handler::register,
         crate::handlers::auth_handler::login,
+        crate::handlers::user_application_handler::add_user_application,
         crate::handlers::auth_handler::refresh_token,
         crate::handlers::artist_handler::get_artist_publications,
         crate::handlers::artist_handler::add_artists,

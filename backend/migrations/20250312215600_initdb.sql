@@ -46,6 +46,13 @@ CREATE TABLE users (
 
     UNIQUE(passkey_upper, passkey_lower)
 );
+CREATE TABLE user_applications (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    body TEXT NOT NULL,
+    referral TEXT NOT NULL,
+    email TEXT NOT NULL
+);
 CREATE TABLE user_warnings (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

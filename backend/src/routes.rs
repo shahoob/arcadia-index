@@ -32,6 +32,7 @@ use crate::handlers::{
     torrent_report_handler::add_torrent_report,
     torrent_request_handler::{add_torrent_request, fill_torrent_request},
     torrent_request_vote_handler::add_torrent_request_vote,
+    user_application_handler::add_user_application,
     user_handler::{get_me, get_user, warn_user},
     wiki_handler::{add_wiki_article, get_wiki_article},
 };
@@ -42,6 +43,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .wrap(HttpAuthentication::with_fn(validate_bearer_auth))
             .route("/register", web::post().to(register))
             .route("/login", web::post().to(login))
+            .route("/user-application", web::post().to(add_user_application))
             .route("/refresh-token", web::post().to(refresh_token))
             .route("/user", web::get().to(get_user))
             .route("/user/warn", web::post().to(warn_user))

@@ -89,7 +89,10 @@ pub async fn register(
 
     // Send welcome email
     if let Ok(email_service) = EmailService::new(&arc) {
-        if let Err(e) = email_service.send_registration_email(&new_user.email, &new_user.username).await {
+        if let Err(e) = email_service
+            .send_registration_email(&new_user.email, &new_user.username)
+            .await
+        {
             // Log the error but don't fail the registration
             log::warn!("Failed to send welcome email to {}: {}", new_user.email, e);
         }
@@ -159,7 +162,7 @@ pub async fn validate_bearer_auth(
     // These routes are explicitly not authenticated.
     if matches!(
         req.path(),
-        "/api/login" | "/api/register" | "/api/refresh-token"
+        "/api/login" | "/api/register" | "/api/refresh-token" | "/api/user-application"
     ) {
         return Ok(req);
     }
