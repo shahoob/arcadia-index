@@ -517,6 +517,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/user-application": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["add_user_application"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/user/warn": {
         parameters: {
             query?: never;
@@ -1749,6 +1765,11 @@ export interface components {
             /** Format: int64 */
             torrent_request_id: number;
         };
+        UserCreatedUserApplication: {
+            body: string;
+            email: string;
+            referral: string;
+        };
         UserCreatedUserWarning: {
             ban: boolean;
             /** Format: date-time */
@@ -2715,6 +2736,28 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PublicProfile"];
                 };
+            };
+        };
+    };
+    add_user_application: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedUserApplication"];
+            };
+        };
+        responses: {
+            /** @description Successfully sent the application */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

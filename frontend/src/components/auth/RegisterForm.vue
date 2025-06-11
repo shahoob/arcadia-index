@@ -46,9 +46,9 @@
       class="form-item w-full"
       type="submit"
       severity="secondary"
-      :label="t('general.submit')"
       @click="handleRegister"
       :loading
+      :label="t('user.register')"
     />
   </div>
 </template>

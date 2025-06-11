@@ -1,10 +1,7 @@
 <template>
   <div id="app-container" v-if="isAppReady">
     <Toast />
-    <div
-      class="navbars-container"
-      v-if="['/login', '/register'].indexOf(router.currentRoute.value.path) < 0"
-    >
+    <div class="navbars-container" v-if="isProtectedRoute">
       <TopBar />
       <MenuBar class="menu-bar" />
       <SearchBars class="search-bars" />
@@ -25,6 +22,7 @@ import { useUserStore } from './stores/user'
 import { getMe } from './services/api/userService'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 // enable dark mode by default
 document.documentElement.classList.add('dark-theme')
@@ -33,10 +31,14 @@ const isAppReady = ref(false)
 const route = useRoute()
 const router = useRouter()
 
+const isProtectedRoute = computed(() => {
+  return ['/login', '/register', '/apply'].indexOf(route.path) < 0
+})
+
 router.isReady().then(async () => {
   const token = localStorage.getItem('token')
 
-  if (route.path !== '/login' && route.path !== '/register') {
+  if (isProtectedRoute.value) {
     if (token) {
       try {
         // refresh user on page reload or fetch user after registration

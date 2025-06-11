@@ -38,6 +38,7 @@ use crate::{
             Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken, Register, User,
             UserCreatedUserWarning, UserWarning,
         },
+        user_application::UserCreatedUserApplication,
         wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
     },
 };
@@ -153,7 +154,8 @@ use crate::{
         ConversationOverview,
         ConversationsOverview,
         TorrentRequestHierarchyLite,
-        TorrentRequestFill
+        TorrentRequestFill,
+        UserCreatedUserApplication
     ),)
 )]
 pub struct ApiDoc;
