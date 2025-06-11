@@ -60,9 +60,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '@/services/api/authService'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 
 const form = ref({
   email: '',
@@ -76,7 +78,7 @@ const loading = ref(false)
 const handleRegister = async () => {
   loading.value = true
   try {
-    await register(form.value)
+    await register(form.value, (route.query.invitation_key as string) ?? '')
     router.push('/login')
   } catch (error) {
     console.error('Registration failed:', error)
