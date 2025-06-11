@@ -175,7 +175,6 @@ const toggleSubscribtion = async () => {
     }
     title_group.value.is_subscribed = !title_group.value.is_subscribed
     showToast(
-      'success',
       'Success',
       t(
         `title_group.${
@@ -184,6 +183,7 @@ const toggleSubscribtion = async () => {
             : 'unsubscription_successfull'
         }`,
       ),
+      'success',
       3000,
     )
     togglingSubscription.value = false
