@@ -1,6 +1,6 @@
 <template>
   <div class="auth-view">
-    <div class="title">Arcadia</div>
+    <div class="title">{{ siteName }}</div>
     <div class="auth-links">
       <RouterLink to="/apply" v-if="route.path !== '/apply' && route.path !== '/register'">
         {{ t('user.apply') }}
@@ -22,6 +22,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { t } = useI18n()
+const siteName = import.meta.env.VITE_SITE_NAME
 </script>
 
 <style>
