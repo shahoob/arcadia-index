@@ -73,8 +73,8 @@ export const uploadTorrent = async (torrentForm: object) => {
   ).data
 }
 
-export const downloadTorrent = async (torrentId: number) => {
-  const response = await api.get('/torrent?id=' + torrentId, {
+export const downloadTorrent = async (torrent: Torrent, titleGroupName: string) => {
+  const response = await api.get('/torrent?id=' + torrent.id, {
     responseType: 'blob',
   })
 
@@ -82,7 +82,7 @@ export const downloadTorrent = async (torrentId: number) => {
   const url = window.URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `${torrentId}.torrent`
+  a.download = `[${import.meta.env.VITE_SITE_NAME}] - ${titleGroupName} (${torrent.id}).torrent`
   document.body.appendChild(a)
   a.click()
   window.URL.revokeObjectURL(url)

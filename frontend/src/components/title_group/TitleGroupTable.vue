@@ -40,7 +40,7 @@
         <i
           v-tooltip.top="t('torrent.download')"
           class="action pi pi-download"
-          @click="downloadTorrent(slotProps.data.id)"
+          @click="downloadTorrent(slotProps.data, title_group.name)"
         />
         <i
           v-tooltip.top="t('general.report')"
