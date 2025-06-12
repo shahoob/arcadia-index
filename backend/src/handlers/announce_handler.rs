@@ -200,8 +200,8 @@ async fn handle_announce(
             &arc.pool,
             upload_to_credit,
             download_to_credit,
-            real_uploaded as i64,
-            real_downloaded as i64,
+            real_uploaded as i64 - old_real_uploaded,
+            real_downloaded as i64 - old_real_downloaded,
             current_user.id,
         )
         .await;

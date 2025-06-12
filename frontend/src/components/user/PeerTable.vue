@@ -13,12 +13,12 @@
     <Column field="ip" header="IP"></Column>
     <Column field="port" header="Port"></Column>
     <Column field="user_agent" header="User Agent"></Column>
-    <Column field="real_downloaded" header="Real Upload">
+    <Column field="real_downloaded" :header="t('user.real_downloaded')">
       <template #body="slotProps">
         {{ bytesToReadable(slotProps.data.real_downloaded) }}
       </template>
     </Column>
-    <Column field="real_uploaded" header="Real Download">
+    <Column field="real_uploaded" :header="t('user.real_uploaded')">
       <template #body="slotProps">
         {{ bytesToReadable(slotProps.data.real_uploaded) }}
       </template>
@@ -31,6 +31,9 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import type { Peer } from '@/services/api/userService'
 import { bytesToReadable, timeAgo } from '@/services/helpers'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineProps<{
   peers: Peer[]
