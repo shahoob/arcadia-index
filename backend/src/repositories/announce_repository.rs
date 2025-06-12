@@ -83,6 +83,7 @@ pub async fn update_total_seedtime(
     user_id: i64,
     torrent_id: i64,
     announce_interval: u32,
+    grace_period: u32,
 ) -> Result<PgQueryResult, Error> {
     // normally, there should always already be an entry, added when the user snatched the torrent
     // but if they used the file from another user, and edited it with their own passkey, this will still work
@@ -108,7 +109,7 @@ pub async fn update_total_seedtime(
         torrent_id,
         user_id,
         // grace period of 60 seconds in case there was network latency/server load
-        (announce_interval + 60).to_string()
+        (announce_interval + grace_period).to_string()
     )
     .execute(pool)
     .await

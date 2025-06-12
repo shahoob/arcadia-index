@@ -219,6 +219,7 @@ async fn handle_announce(
             current_user.id,
             torrent.id,
             arc.tracker_announce_interval,
+            arc.tracker_announce_interval_grace_period,
         )
         .await;
     }

@@ -145,13 +145,14 @@ pub async fn find_torrent_peers(pool: &PgPool, torrent_id: &i64, user_id: &i64) 
         .collect::<Vec<_>>()
 }
 
-pub async fn remove_inactive_peers(pool: &PgPool, seconds_since_last_announce: f64) -> Result<()> {
-    sqlx::query!(
+pub async fn remove_inactive_peers(pool: &PgPool, seconds_since_last_announce: f64) -> Result<u64> {
+    let removed_peers_amount = sqlx::query!(
         r#"DELETE FROM peers WHERE last_seen_at < NOW() - INTERVAL '1 second' * $1"#,
         seconds_since_last_announce
     )
     .execute(pool)
-    .await?;
+    .await?
+    .rows_affected();
 
-    Ok(())
+    Ok(removed_peers_amount)
 }

@@ -65,6 +65,12 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("ARCADIA_TRACKER_ANNOUNCE_INTERVAL is not a valid u32");
 
+    let tracker_announce_interval_grace_period: u32 =
+        env::var("ARCADIA_TRACKER_ANNOUNCE_INTERVAL_GRACE_PERIOD")
+            .expect("ARCADIA_TRACKER_ANNOUNCE_INTERVAL_GRACE_PERIOD env var is not set")
+            .parse()
+            .expect("ARCADIA_TRACKER_ANNOUNCE_INTERVAL_GRACE_PERIOD is not a valid u32");
+
     let allowed_torrent_clients = env::var("ARCADIA_ALLOWED_TORRENT_CLIENTS")
         .ok()
         .map(|s| {
@@ -85,16 +91,20 @@ async fn main() -> std::io::Result<()> {
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f64");
 
     let smtp_host = env::var("SMTP_HOST").ok();
-    let smtp_port = env::var("SMTP_PORT")
-        .ok()
-        .and_then(|s| s.parse().ok());
+    let smtp_port = env::var("SMTP_PORT").ok().and_then(|s| s.parse().ok());
     let smtp_username = env::var("SMTP_USERNAME").ok();
     let smtp_password = env::var("SMTP_PASSWORD").ok();
     let smtp_from_email = env::var("SMTP_FROM_EMAIL").ok();
     let smtp_from_name = env::var("SMTP_FROM_NAME").ok();
 
     // Log email configuration status
-    if smtp_host.is_some() && smtp_port.is_some() && smtp_username.is_some() && smtp_password.is_some() && smtp_from_email.is_some() && smtp_from_name.is_some() {
+    if smtp_host.is_some()
+        && smtp_port.is_some()
+        && smtp_username.is_some()
+        && smtp_password.is_some()
+        && smtp_from_email.is_some()
+        && smtp_from_name.is_some()
+    {
         println!("Email service configured and enabled");
     } else {
         println!("Email service not configured - emails will be skipped");
@@ -108,6 +118,7 @@ async fn main() -> std::io::Result<()> {
         frontend_url: frontend_url.clone(),
         tracker_url: tracker_url.clone(),
         tracker_announce_interval,
+        tracker_announce_interval_grace_period,
         allowed_torrent_clients: allowed_torrent_clients.clone(),
         global_download_factor,
         global_upload_factor,
