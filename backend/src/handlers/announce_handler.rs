@@ -195,16 +195,22 @@ async fn handle_announce(
         let download_to_credit = ((real_downloaded as i64 - old_real_downloaded) as f64
             * download_factor as f64)
             .ceil() as i64;
+        let real_uploaded_to_credit = real_uploaded as i64 - old_real_uploaded;
+        let real_downloaded_to_credit = real_downloaded as i64 - old_real_downloaded;
 
-        let _ = credit_user_upload_download(
-            &arc.pool,
-            upload_to_credit,
-            download_to_credit,
-            real_uploaded as i64 - old_real_uploaded,
-            real_downloaded as i64 - old_real_downloaded,
-            current_user.id,
-        )
-        .await;
+        // if the client restarted, without sending a "stop" event, keeping the same ip/port
+        // calculated upload/download might be negative
+        if real_uploaded_to_credit >= 0 && real_downloaded_to_credit >= 0 {
+            let _ = credit_user_upload_download(
+                &arc.pool,
+                upload_to_credit,
+                download_to_credit,
+                real_uploaded_to_credit,
+                real_downloaded_to_credit,
+                current_user.id,
+            )
+            .await;
+        }
     }
 
     if ann.left == Some(0u64) {
