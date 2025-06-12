@@ -18,13 +18,13 @@
             rows="5"
             @update:model-value="mediainfoUpdated"
           />
-          <label for="mediainfo">Mediainfo</label>
+          <label for="mediainfo">{{ t('torrent.mediainfo_autofill') }}</label>
         </FloatLabel>
         <Message v-if="$form.mediainfo?.invalid" severity="error" size="small" variant="simple">
           {{ $form.mediainfo.error?.message }}
         </Message>
       </div>
-      <div v-if="step > 1">
+      <div>
         <div class="line">
           <div class="release-name">
             <FloatLabel>
@@ -81,7 +81,9 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
+            <FloatLabel
+              v-if="['movie', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0"
+            >
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_coded"
@@ -102,7 +104,9 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(content_type) >= 0">
+            <FloatLabel
+              v-if="['movie', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0"
+            >
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -124,7 +128,10 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
+              v-if="
+                ['movie', 'tv_show', 'music', 'collection'].indexOf(titleGroupStore.content_type) >=
+                0
+              "
             >
               <Select
                 v-model="torrentForm.audio_codec"
@@ -147,7 +154,10 @@
           </div>
           <div>
             <FloatLabel
-              v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(content_type) >= 0"
+              v-if="
+                ['movie', 'tv_show', 'music', 'collection'].indexOf(titleGroupStore.content_type) >=
+                0
+              "
             >
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
@@ -169,7 +179,9 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(content_type) >= 0">
+            <FloatLabel
+              v-if="['Movie', 'TV-Show', 'Collection'].indexOf(titleGroupStore.content_type) >= 0"
+            >
               <Select
                 v-model="torrentForm.audio_channels"
                 inputId="audio_channels"
@@ -192,7 +204,11 @@
         </div>
         <div>
           <FloatLabel
-            v-if="['movie', 'tv_show', 'book', 'software', 'collection'].indexOf(content_type) >= 0"
+            v-if="
+              ['movie', 'tv_show', 'book', 'software', 'collection'].indexOf(
+                titleGroupStore.content_type,
+              ) >= 0
+            "
           >
             <MultiSelect
               v-model="torrentForm.languages"
@@ -214,7 +230,7 @@
           <MultiSelect
             v-model="torrentForm.features"
             display="chip"
-            :options="getFeatures(content_type)"
+            :options="getFeatures(titleGroupStore.content_type)"
             filter
             size="small"
             name="features"
@@ -299,7 +315,6 @@ import { useI18n } from 'vue-i18n'
 import { getFeatures, getLanguages } from '@/services/helpers'
 
 const torrentFile = ref({ files: [] as unknown[] })
-const step = ref(1)
 const torrentForm = ref({
   edition_group_id: '',
   release_name: '',
@@ -366,7 +381,7 @@ const selectableAudioBitrateSamplings = [
 ]
 const selectableAudioChannels = ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1']
 const uploadingTorrent = ref(false)
-let content_type = ''
+const titleGroupStore = useTitleGroupStore()
 
 const { t } = useI18n()
 
@@ -377,9 +392,9 @@ const emit = defineEmits<{
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UploadedTorrent, { message: string }[]>> = {}
 
-  if (values.release_name.length < 5) {
-    errors.release_name = [{ message: t('error.write_more_than_x_chars', [5]) }]
-  }
+  // if (values.release_name.length < 5) {
+  //   errors.release_name = [{ message: t('error.write_more_than_x_chars', [5]) }]
+  // }
   // if (values.release_group.length < 2) {
   //   errors.release_group = [{ message: 'Write more than 2 characters' }]
   // }
@@ -428,9 +443,7 @@ const onFileSelect = (event: FileUploadSelectEvent) => {
 }
 const mediainfoUpdated = () => {
   const mediainfoExtractedInfo = getFileInfo(torrentForm.value.mediainfo)
-  console.log(mediainfoExtractedInfo)
   Object.assign(torrentForm.value, mediainfoExtractedInfo)
-  step.value = 2
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true
@@ -443,7 +456,6 @@ const sendTorrent = () => {
     })
 }
 onMounted(() => {
-  content_type = useTitleGroupStore().content_type
   const editionGroupStore = useEditionGroupStore()
   torrentForm.value.edition_group_id = editionGroupStore.id.toString()
 })
