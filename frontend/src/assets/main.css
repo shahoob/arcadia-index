@@ -15,8 +15,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
   color: white;
+  min-height: 100vh;
 }
 
 #view-container {

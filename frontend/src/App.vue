@@ -9,6 +9,7 @@
     <div id="view-container">
       <router-view></router-view>
     </div>
+    <FooterBar />
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import { getMe } from './services/api/userService'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import FooterBar from './components/FooterBar.vue'
 
 // enable dark mode by default
 document.documentElement.classList.add('dark-theme')
@@ -70,5 +72,9 @@ router.isReady().then(async () => {
 .search-bars {
   margin-top: 10px;
   margin-bottom: 20px;
+}
+#footer {
+  margin-top: auto;
+  width: 100vw;
 }
 </style>

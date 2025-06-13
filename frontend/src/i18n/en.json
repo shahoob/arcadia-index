@@ -222,5 +222,8 @@
     "invalid_url": "Invalid url",
     "artist_must_have_at_lease_one_role": "Artist must have at least 1 role",
     "invalid_name": "Invalid name"
+  },
+  "footer": {
+    "site_and_design": "Site and design"
   }
 }
