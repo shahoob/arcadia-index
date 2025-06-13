@@ -23,7 +23,7 @@ async fn main() -> std::io::Result<()> {
     if let Ok(env_path) = dotenvy::dotenv() {
         println!("Loading environment from {}", env_path.display());
     } else {
-        println!("No .env present");
+        println!("No .env present, using env vars from the host instead");
     }
 
     env_logger::init_from_env(env_logger::Env::default().default_filter_or("debug"));
