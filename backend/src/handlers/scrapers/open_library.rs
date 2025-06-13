@@ -1,4 +1,4 @@
-use crate::Result;
+use crate::{Result, handlers::scrapers::ExternalDBData};
 use actix_web::{HttpResponse, web};
 use chrono::Utc;
 // Datelike and Timelike are needed in the tests, even though they are not directly referenced
@@ -59,6 +59,13 @@ pub struct GetOpenLibraryQuery {
     id: String,
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/external_db/open_library",
+    responses(
+        (status = 200, description = "", body=ExternalDBData),
+    )
+)]
 pub async fn get_open_library_data(query: web::Query<GetOpenLibraryQuery>) -> Result<HttpResponse> {
     let url = format!("https://openlibrary.org/works/{}.json", query.id);
 

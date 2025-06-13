@@ -33,7 +33,6 @@
         :options="selectableContentTypes"
         class="select"
         size="small"
-        @update:modelValue="manualCreation = false"
       >
         <template #option="slotProps">
           <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
@@ -46,104 +45,33 @@
       </Select>
       <label for="content_type">{{ t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
-    <div class="external-db-inputs-wrapper" v-if="!manualCreation">
+    <div class="external-db-inputs-wrapper">
       <div class="external-db-inputs" v-if="content_type == 'movie'">
-        <FloatLabel>
-          <IconField>
-            <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
-            <label for="tmdb_id">TMDB id</label>
-            <InputIcon
-              :class="{
-                pi: true,
-                'pi-search': !gettingExternalDatabaseData,
-                'pi-hourglass': gettingExternalDatabaseData,
-                'pi-spin': gettingExternalDatabaseData,
-                'cursor-pointer': true,
-              }"
-              @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/movie')"
-            />
-          </IconField>
-        </FloatLabel>
+        <ExternalDBSearchBar
+          inputPlaceholder="TMDB id"
+          database="tmdb/movie"
+          @dataFound="externalDBDataFound"
+        />
         or
-        <FloatLabel>
-          <InputText size="small" name="imdb_id" />
-          <label for="imdb_id">IMDB id</label>
-        </FloatLabel>
+        <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/movie" />
       </div>
       <div class="external-db-inputs" v-if="content_type == 'tv_show'">
-        <FloatLabel>
-          <InputText size="small" name="tvdb_id" />
-          <label for="tvdb_id">TVDB id</label>
-        </FloatLabel>
+        <ExternalDBSearchBar inputPlaceholder="TVDB id" database="tvdb" />
         or
-        <FloatLabel>
-          <IconField>
-            <InputText size="small" name="tmdb_id" v-model="external_database_ids.tmdb" />
-            <label for="tmdb_id">TMDB id</label>
-            <InputIcon
-              :class="{
-                pi: true,
-                'pi-search': !gettingExternalDatabaseData,
-                'pi-hourglass': gettingExternalDatabaseData,
-                'pi-spin': gettingExternalDatabaseData,
-                'cursor-pointer': true,
-              }"
-              @click="getExternalDBData(external_database_ids.tmdb, 'tmdb/tv')"
-            />
-          </IconField>
-        </FloatLabel>
+        <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/tv" />
         or
-        <FloatLabel>
-          <InputText size="small" name="imdb_id" />
-          <label for="imdb_id">IMDB id</label>
-        </FloatLabel>
+        <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/tv" />
       </div>
       <div class="external-db-inputs" v-if="content_type == 'music'">
-        <FloatLabel>
-          <InputText size="small" name="musicbrainz_id" />
-          <label for="musicbrainz_id">Musicbrainz id</label>
-        </FloatLabel>
+        <ExternalDBSearchBar inputPlaceholder="Musicbrainz id" database="musicbrainz" />
         or
-        <FloatLabel>
-          <InputText size="small" name="discogs_id" />
-          <label for="discogs_id">Discogs id</label>
-        </FloatLabel>
+        <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" />
       </div>
       <div class="external-db-inputs" v-if="content_type == 'book'">
-        <FloatLabel>
-          <IconField>
-            <InputText
-              size="small"
-              name="openlibrary_id"
-              v-model="external_database_ids.openlibrary"
-            />
-            <label for="openlibrary_id">Open Library id</label>
-            <InputIcon
-              :class="{
-                pi: true,
-                'pi-search': !gettingExternalDatabaseData,
-                'pi-hourglass': gettingExternalDatabaseData,
-                'pi-spin': gettingExternalDatabaseData,
-
-                'cursor-pointer': true,
-              }"
-              @click="getExternalDBData(external_database_ids.openlibrary, 'openlibrary')"
-            />
-          </IconField>
-        </FloatLabel>
-      </div>
-      <div class="external-db-inputs" style="margin-left: 5px">
-        or
-        <span
-          class="cursor-pointer"
-          style="margin-left: 10px; color: var(--color-secondary); font-size: 1.2em"
-          @click="(step = 2) && (manualCreation = true)"
-        >
-          create the title manually
-        </span>
+        <ExternalDBSearchBar inputPlaceholder="Open Library id" database="openlibrary" />
       </div>
     </div>
-    <div v-if="step > 1">
+    <div>
       <CreateOrEditTitleGroup
         :content_type="content_type"
         @done="titleGroupCreated"
@@ -157,12 +85,8 @@
 import { onMounted, ref } from 'vue'
 import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
-import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import { getExternalDatabaseData } from '@/services/api/externalDatabasesService'
-import InputIcon from 'primevue/inputicon'
-import IconField from 'primevue/iconfield'
 import {
   getTitleGroupLite,
   type ContentType,
@@ -173,11 +97,11 @@ import {
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
 import { useI18n } from 'vue-i18n'
+import ExternalDBSearchBar from './ExternalDBSearchBar.vue'
+import type { ExternalDBData } from '@/services/api/externalDatabasesService'
 
 const action = ref('select') // create | select
 const titleGroupId = ref<number | null>(null)
-const step = ref(1)
-const manualCreation = ref(false)
 const selectableContentTypes: ContentType[] = [
   'movie',
   'tv_show',
@@ -188,14 +112,7 @@ const selectableContentTypes: ContentType[] = [
 ]
 const content_type = ref<ContentType>('movie') // consider either
 const gettingTitleGroupInfo = ref(false)
-let initialTitleGroupForm: UserCreatedTitleGroup | null = null
-const external_database_ids = {
-  openlibrary: '',
-  tmdb: '',
-  imdb: '',
-  musicbrainz: '',
-}
-let gettingExternalDatabaseData = false
+const initialTitleGroupForm = ref<UserCreatedTitleGroup | null>(null)
 const titleGroupStore = useTitleGroupStore()
 
 const { t } = useI18n()
@@ -205,18 +122,9 @@ const emit = defineEmits<{
   done: [titleGroup?: TitleGroup]
 }>()
 
-const getExternalDBData = (item_id: string | number, database: string) => {
-  gettingExternalDatabaseData = true
-  getExternalDatabaseData(item_id, database).then((data) => {
-    data.title_group.original_release_date = new Date(data.title_group.original_release_date)
-    initialTitleGroupForm = data.title_group
-    // if the api also returns some info about the specific edition, pass it to the edition component
-    if (data.edition_group) {
-      emit('gotEditionData', data.edition_group)
-    }
-    step.value = 2
-    gettingExternalDatabaseData = false
-  })
+const externalDBDataFound = (data: ExternalDBData) => {
+  initialTitleGroupForm.value = data.title_group
+  //TODO: emit if we also get some edition data
 }
 
 const sendSelectedTitleGroup = async (): Promise<void> => {

@@ -4,6 +4,7 @@ use crate::{
     handlers::{
         artist_handler::GetArtistPublicationsQuery,
         auth_handler::RegisterQuery,
+        scrapers::ExternalDBData,
         torrent_handler::{DownloadTorrentQuery, GetTopTorrentsQuery},
     },
     models::{
@@ -90,6 +91,7 @@ use crate::{
         crate::handlers::conversation_handler::get_conversation,
         crate::handlers::conversation_handler::get_user_conversations,
         crate::handlers::conversation_handler::add_conversation_message,
+        crate::handlers::scrapers::open_library::get_open_library_data,
     ),
     components(schemas(
         Register,
@@ -155,7 +157,8 @@ use crate::{
         ConversationsOverview,
         TorrentRequestHierarchyLite,
         TorrentRequestFill,
-        UserCreatedUserApplication
+        UserCreatedUserApplication,
+        ExternalDBData
     ),)
 )]
 pub struct ApiDoc;

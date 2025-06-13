@@ -2,6 +2,7 @@ use std::vec;
 
 use crate::{
     Result,
+    handlers::scrapers::ExternalDBData,
     models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
 };
 use actix_web::{HttpResponse, web};
@@ -139,6 +140,13 @@ pub struct TmdbQuery {
     id: u32,
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/external_db/tmdb/movie",
+    responses(
+        (status = 200, description = "", body=ExternalDBData),
+    )
+)]
 pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpResponse> {
     let token = std::env::var("TMDB_API_TOKEN").expect("TMDB_API_TOKEN must be set");
 
@@ -185,6 +193,13 @@ pub async fn get_tmdb_movie_data(query: web::Query<TmdbQuery>) -> Result<HttpRes
     Ok(HttpResponse::Ok().json(serde_json::json!({ "title_group": title_group })))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/external_db/tmdb/tv",
+    responses(
+        (status = 200, description = "", body=ExternalDBData),
+    )
+)]
 pub async fn get_tmdb_tv_data(query: web::Query<TmdbQuery>) -> Result<HttpResponse> {
     let token = std::env::var("TMDB_API_TOKEN").expect("TMDB_API_TOKEN must be set");
 

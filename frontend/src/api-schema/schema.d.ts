@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/external_db/open_library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["get_open_library_data"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/forum": {
         parameters: {
             query?: never;
@@ -781,6 +797,9 @@ export interface components {
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
+        };
+        ExternalDBData: {
+            title_group: components["schemas"]["UserCreatedTitleGroup"];
         };
         /** @enum {string} */
         Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
@@ -2028,6 +2047,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EditionGroup"];
+                };
+            };
+        };
+    };
+    get_open_library_data: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalDBData"];
                 };
             };
         };
