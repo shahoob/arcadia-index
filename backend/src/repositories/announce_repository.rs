@@ -100,7 +100,7 @@ pub async fn update_total_seedtime(
                 ELSE torrent_activities.first_seen_seeding_at
             END,
             total_seed_time = CASE
-                WHEN torrent_activities.last_seen_seeding_at < NOW() - ($3 || ' seconds')::INTERVAL
+                WHEN torrent_activities.last_seen_seeding_at > NOW() - ($3 || ' seconds')::INTERVAL
                 THEN torrent_activities.total_seed_time + EXTRACT(EPOCH FROM (NOW() - torrent_activities.last_seen_seeding_at))::BIGINT
                 ELSE torrent_activities.total_seed_time
             END,
@@ -108,7 +108,6 @@ pub async fn update_total_seedtime(
         "#,
         torrent_id,
         user_id,
-        // grace period of 60 seconds in case there was network latency/server load
         (announce_interval + grace_period).to_string()
     )
     .execute(pool)
