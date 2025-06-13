@@ -62,7 +62,7 @@ router.isReady().then(async () => {
 
 <style>
 .navbars-container {
-  width: 100%;
+  width: 100vw;
 }
 .menu-bar {
   margin-top: 10px;
