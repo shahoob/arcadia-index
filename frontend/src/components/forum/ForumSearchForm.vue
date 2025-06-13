@@ -2,14 +2,8 @@
   <h1 class="title">Search</h1>
 
   <Form class="wrapper" @submit="onSubmit">
-    <InputText
-      name="title"
-      type="text"
-      :placeholder="t('general.title')"
-      v-model="searchForm.title"
-      size="small"
-      class="input"
-    />
+    <InputText name="title" type="text" :placeholder="t('general.title')" v-model="searchForm.title" size="small"
+      class="input" />
     <Button type="submit">button</Button>
   </Form>
 </template>
@@ -50,8 +44,5 @@ const onSubmit = (e: FormSubmitEvent<Record<string, string>>) => {
 
 .title-search {
   margin-bottom: 10px;
-}
-
-.input {
 }
 </style>
