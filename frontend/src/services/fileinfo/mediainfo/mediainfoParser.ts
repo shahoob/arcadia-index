@@ -29,8 +29,7 @@ export default class MediainfoParser {
       if (!section.match(/([a-zA-Z]+).*\n([\s\S]+)/)) {
         continue
       }
-      const [rawSectionName, sectionBody] =
-        section.match(/([a-zA-Z]+).*\n([\s\S]+)/)?.slice(1) ?? []
+      const [rawSectionName, sectionBody] = section.match(/([a-zA-Z]+).*\n([\s\S]+)/)?.slice(1) ?? []
       const sectionName = rawSectionName.toLowerCase() as keyof ParseResult
       const fields = this.extractFields({ sectionName, sectionBody })
       if (Array.isArray(result[sectionName])) {
@@ -43,10 +42,7 @@ export default class MediainfoParser {
     return result
   }
 
-  extractFields({
-    sectionName: _sectionName,
-    sectionBody,
-  }: Record<string, string>): Record<string, string> {
+  extractFields({ sectionName: _sectionName, sectionBody }: Record<string, string>): Record<string, string> {
     const result: Record<string, string> = {}
     const lines = splitIntoLines(sectionBody)
     for (const line of lines) {

@@ -1,11 +1,7 @@
 <template>
   <DataTable
     v-model:expandedRows="expandedRows"
-    :value="
-      title_group.edition_groups.flatMap(
-        (edition_group: EditionGroupHierarchyLite) => edition_group.torrents,
-      )
-    "
+    :value="title_group.edition_groups.flatMap((edition_group: EditionGroupHierarchyLite) => edition_group.torrents)"
     rowGroupMode="subheader"
     :groupRowsBy="isGrouped ? 'edition_group_id' : undefined"
     sortMode="single"
@@ -20,9 +16,7 @@
     <Column :header="t('torrent.properties')" style="min-width: 300px">
       <template #body="slotProps">
         <a
-          :href="
-            preview ? `/title-group/${title_group.id}?torrentId=${slotProps.data.id}` : undefined
-          "
+          :href="preview ? `/title-group/${title_group.id}?torrentId=${slotProps.data.id}` : undefined"
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
@@ -37,16 +31,8 @@
     </Column>
     <Column header="">
       <template #body="slotProps">
-        <i
-          v-tooltip.top="t('torrent.download')"
-          class="action pi pi-download"
-          @click="downloadTorrent(slotProps.data, title_group.name)"
-        />
-        <i
-          v-tooltip.top="t('general.report')"
-          class="action pi pi-flag"
-          @click="reportTorrent(slotProps.data.id)"
-        />
+        <i v-tooltip.top="t('torrent.download')" class="action pi pi-download" @click="downloadTorrent(slotProps.data, title_group.name)" />
+        <i v-tooltip.top="t('general.report')" class="action pi pi-flag" @click="reportTorrent(slotProps.data.id)" />
         <i v-tooltip.top="t('torrent.copy_permalink')" class="action pi pi-link" />
         <i v-tooltip.top="t('general.edit')" class="action pi pi-pen-to-square" />
       </template>
@@ -111,18 +97,11 @@
             <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel
-          v-if="slotProps.data.screenshots && slotProps.data.screenshots.length > 0"
-          value="3"
-        >
+        <AccordionPanel v-if="slotProps.data.screenshots && slotProps.data.screenshots.length > 0" value="3">
           <AccordionHeader>{{ t('general.screenshots') }}</AccordionHeader>
           <AccordionContent>
             <div class="screenshots-container">
-              <div
-                v-for="(screenshot, index) in slotProps.data.screenshots"
-                :key="index"
-                class="screenshot"
-              >
+              <div v-for="(screenshot, index) in slotProps.data.screenshots" :key="index" class="screenshot">
                 <Image :src="screenshot" preview class="screenshot-image">
                   <template #previewicon>
                     <i class="pi pi-search"></i>
@@ -136,10 +115,7 @@
           <AccordionHeader>{{ t('torrent.file_list') }}</AccordionHeader>
           <AccordionContent>
             <DataTable :value="slotProps.data.file_list.files" tableStyle="min-width: 50rem">
-              <Column
-                field="name"
-                :header="(slotProps.data.file_list.parent_folder ?? '') + '/'"
-              ></Column>
+              <Column field="name" :header="(slotProps.data.file_list.parent_folder ?? '') + '/'"></Column>
               <Column field="size" :header="t('torrent.size')">
                 <template #body="slotProps">
                   {{ bytesToReadable(slotProps.data.size) }}
@@ -151,12 +127,7 @@
       </Accordion>
     </template>
   </DataTable>
-  <Dialog
-    closeOnEscape
-    modal
-    :header="t('torrent.report_torrent')"
-    v-model:visible="reportTorrentDialogVisible"
-  >
+  <Dialog closeOnEscape modal :header="t('torrent.report_torrent')" v-model:visible="reportTorrentDialogVisible">
     <ReportTorrentDialog :torrentId="reportingTorrentId" @reported="torrentReported" />
   </Dialog>
 </template>
@@ -233,9 +204,7 @@ const purifyHtml = (html: string) => {
   return DOMPurify.sanitize(html)
 }
 const getEditionGroupSlugById = (editionGroupId: number): string => {
-  const editionGroup = title_group.edition_groups.find(
-    (group: EditionGroupInfoLite) => group.id === editionGroupId,
-  )
+  const editionGroup = title_group.edition_groups.find((group: EditionGroupInfoLite) => group.id === editionGroupId)
   return editionGroup ? getEditionGroupSlug(editionGroup) : ''
 }
 
@@ -243,9 +212,7 @@ onMounted(() => {
   const torrentIdParam = route.query.torrentId?.toString()
   if (torrentIdParam) {
     const torrentId = parseInt(torrentIdParam)
-    const matchingTorrent = title_group.edition_groups
-      .flatMap((edition_group) => edition_group.torrents)
-      .find((torrent) => torrent.id === torrentId)
+    const matchingTorrent = title_group.edition_groups.flatMap((edition_group) => edition_group.torrents).find((torrent) => torrent.id === torrentId)
 
     if (matchingTorrent) {
       toggleRow(matchingTorrent)

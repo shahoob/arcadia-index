@@ -1,28 +1,13 @@
 <template>
   <div v-if="search_results">
-    <TorrentSearchInputs
-      class="torrent-search-inputs"
-      @search="search"
-      :loading
-      :initialForm
-      :showStaffOptions="userStore.class === 'staff'"
-    />
+    <TorrentSearchInputs class="torrent-search-inputs" @search="search" :loading :initialForm :showStaffOptions="userStore.class === 'staff'" />
     <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
       <div class="title-groups">
-        <TitleGroupPreviewCoverOnly
-          v-for="title_group in search_results.title_groups"
-          :key="title_group.id"
-          :titleGroup="title_group"
-        />
+        <TitleGroupPreviewCoverOnly v-for="title_group in search_results.title_groups" :key="title_group.id" :titleGroup="title_group" />
       </div>
     </ContentContainer>
     <div v-if="title_group_preview_mode == 'table'">
-      <TitleGroupPreviewTable
-        v-for="title_group in search_results.title_groups"
-        :key="title_group.id"
-        :title_group="title_group"
-        class="preview-table"
-      />
+      <TitleGroupPreviewTable v-for="title_group in search_results.title_groups" :key="title_group.id" :title_group="title_group" class="preview-table" />
     </div>
   </div>
 </template>
@@ -32,11 +17,7 @@ import { ref, onMounted } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
-import {
-  searchTorrentsLite,
-  type TorrentSearch,
-  type TorrentSearchResults,
-} from '@/services/api/torrentService'
+import { searchTorrentsLite, type TorrentSearch, type TorrentSearchResults } from '@/services/api/torrentService'
 import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'

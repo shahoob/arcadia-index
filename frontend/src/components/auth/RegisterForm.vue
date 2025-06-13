@@ -1,55 +1,22 @@
 <template>
   <div class="form">
-    <InputText
-      class="form-item"
-      name="email"
-      type="text"
-      :placeholder="t('user.email')"
-      v-model="form.email"
-    />
+    <InputText class="form-item" name="email" type="text" :placeholder="t('user.email')" v-model="form.email" />
     <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
           $form.username.error?.message
         }}</Message> -->
-    <InputText
-      class="form-item"
-      name="username"
-      type="text"
-      :placeholder="t('user.username')"
-      v-model="form.username"
-    />
+    <InputText class="form-item" name="username" type="text" :placeholder="t('user.username')" v-model="form.username" />
     <!-- <Message v-if="$form.username?.invalid" severity="error" size="small" variant="simple">{{
           $form.username.error?.message
         }}</Message> -->
-    <Password
-      class="form-item"
-      name="password"
-      v-model="form.password"
-      :placeholder="t('user.password')"
-      :feedback="false"
-      toggleMask
-    />
+    <Password class="form-item" name="password" v-model="form.password" :placeholder="t('user.password')" :feedback="false" toggleMask />
     <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
           $form.email.error?.message
         }}</Message> -->
-    <Password
-      class="form-item"
-      name="password_verify"
-      v-model="form.password_verify"
-      :placeholder="t('user.password_verify')"
-      :feedback="false"
-      toggleMask
-    />
+    <Password class="form-item" name="password_verify" v-model="form.password_verify" :placeholder="t('user.password_verify')" :feedback="false" toggleMask />
     <!-- <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
           $form.email.error?.message
         }}</Message> -->
-    <Button
-      class="form-item w-full"
-      type="submit"
-      severity="secondary"
-      @click="handleRegister"
-      :loading
-      :label="t('user.register')"
-    />
+    <Button class="form-item w-full" type="submit" severity="secondary" @click="handleRegister" :loading :label="t('user.register')" />
   </div>
 </template>
 <script setup lang="ts">

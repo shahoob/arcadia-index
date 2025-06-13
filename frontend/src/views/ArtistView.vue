@@ -8,27 +8,15 @@
     }"
   >
     <div class="main">
-      <ArtistFullHeader
-        :artist
-        v-if="userStore.settings.site_appearance.item_detail_layout == 'header'"
-      />
+      <ArtistFullHeader :artist v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
       <ArtistSlimHeader v-else class="slim-header" :artist />
       <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
         <div class="title-groups">
-          <TitleGroupPreviewCoverOnly
-            v-for="title_group in title_groups"
-            :key="title_group.id"
-            :titleGroup="title_group"
-          />
+          <TitleGroupPreviewCoverOnly v-for="title_group in title_groups" :key="title_group.id" :titleGroup="title_group" />
         </div>
       </ContentContainer>
       <div v-if="title_group_preview_mode == 'table'">
-        <TitleGroupPreviewTable
-          v-for="title_group in title_groups"
-          :key="title_group.id"
-          :title_group="title_group"
-          class="preview-table"
-        />
+        <TitleGroupPreviewTable v-for="title_group in title_groups" :key="title_group.id" :title_group="title_group" class="preview-table" />
       </div>
     </div>
     <ArtistSidebar :artist />

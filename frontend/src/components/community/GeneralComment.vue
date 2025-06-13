@@ -2,25 +2,13 @@
   <ContentContainer class="comment-container">
     <div :class="{ comment: true, 'reverse-user-position': reverseUserPosition }">
       <div class="user">
-        <img
-          class="avatar"
-          :src="comment.created_by.avatar ?? '/default_user_avatar.svg'"
-          :alt="comment.created_by.username + '\'s avatar'"
-        />
+        <img class="avatar" :src="comment.created_by.avatar ?? '/default_user_avatar.svg'" :alt="comment.created_by.username + '\'s avatar'" />
         <RouterLink :to="`/user/${comment.created_by.id}`">
           <span class="username">
             {{ comment.created_by.username }}
 
-            <i
-              v-if="comment.created_by.banned"
-              v-tooltip.top="t('user.banned')"
-              class="banned pi pi-ban"
-            />
-            <i
-              v-if="!comment.created_by.banned && comment.created_by.warned"
-              v-tooltip.top="t('user.warned')"
-              class="warned pi pi-exclamation-triangle"
-            />
+            <i v-if="comment.created_by.banned" v-tooltip.top="t('user.banned')" class="banned pi pi-ban" />
+            <i v-if="!comment.created_by.banned && comment.created_by.warned" v-tooltip.top="t('user.warned')" class="warned pi pi-exclamation-triangle" />
           </span>
         </RouterLink>
         <span class="time-ago">

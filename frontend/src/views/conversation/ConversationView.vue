@@ -10,12 +10,7 @@
         @inputEmptied="emptyInput = false"
       >
         <template #buttons>
-          <Button
-            type="submit"
-            :label="t('general.send')"
-            icon="pi pi-send"
-            :loading="sendingMessage"
-          />
+          <Button type="submit" :label="t('general.send')" icon="pi pi-send" :loading="sendingMessage" />
         </template>
       </BBCodeEditor>
     </Form>
@@ -23,12 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  getConversation,
-  postConversationMessage,
-  type ConversationHierarchy,
-  type UserCreatedConversationMessage,
-} from '@/services/api/conversationService'
+import { getConversation, postConversationMessage, type ConversationHierarchy, type UserCreatedConversationMessage } from '@/services/api/conversationService'
 import { Form } from '@primevue/forms'
 import { onMounted } from 'vue'
 import { ref } from 'vue'

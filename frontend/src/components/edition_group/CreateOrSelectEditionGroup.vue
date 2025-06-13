@@ -9,13 +9,7 @@
   </div>
   <div id="select-edition-group" v-if="action == 'select'">
     <FloatLabel>
-      <Select
-        v-model="selected_edition_group"
-        inputId="edition_group"
-        :options="titleGroup.edition_groups"
-        size="small"
-        class="select-existing-edition"
-      >
+      <Select v-model="selected_edition_group" inputId="edition_group" :options="titleGroup.edition_groups" size="small" class="select-existing-edition">
         <template #option="slotProps">
           <div>
             {{ getEditionGroupSlug(slotProps.option) }}
@@ -52,12 +46,7 @@ import { ref } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import {
-  createEditionGroup,
-  type EditionGroup,
-  type EditionGroupInfoLite,
-  type UserCreatedEditionGroup,
-} from '@/services/api/torrentService'
+import { createEditionGroup, type EditionGroup, type EditionGroupInfoLite, type UserCreatedEditionGroup } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 import { getEditionGroupSlug } from '@/services/helpers'

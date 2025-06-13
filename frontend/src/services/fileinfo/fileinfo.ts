@@ -15,11 +15,7 @@ function preProcess(text: string) {
 
 function getType(text: string) {
   text = preProcess(text)
-  return text.match(/Disc (Title|Label)\s*:/i)
-    ? 'bdinfo'
-    : text.match(/Complete name\s*:/i)
-      ? 'mediainfo'
-      : null
+  return text.match(/Disc (Title|Label)\s*:/i) ? 'bdinfo' : text.match(/Complete name\s*:/i) ? 'mediainfo' : null
 }
 
 export const getFileInfo = (text: string) => {

@@ -14,14 +14,7 @@
   </Galleria>
 
   <div class="thumbnails">
-    <img
-      v-for="(image, index) of images"
-      :key="index"
-      class="thumbnail"
-      :src="image"
-      style="cursor: pointer"
-      @click="imageClicked(index)"
-    />
+    <img v-for="(image, index) of images" :key="index" class="thumbnail" :src="image" style="cursor: pointer" @click="imageClicked(index)" />
   </div>
 </template>
 

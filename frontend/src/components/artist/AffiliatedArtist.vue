@@ -1,9 +1,6 @@
 <template>
   <div class="affiliated-artist">
-    <Image
-      :src="affiliated_artist.artist.pictures[0] ?? '/default_artist_picture.svg'"
-      :preview="affiliated_artist.artist.pictures.length !== 0"
-    >
+    <Image :src="affiliated_artist.artist.pictures[0] ?? '/default_artist_picture.svg'" :preview="affiliated_artist.artist.pictures.length !== 0">
       <template #previewicon>
         <i class="pi pi-search"></i>
       </template>
@@ -11,9 +8,7 @@
     <RouterLink :to="`/artist/${affiliated_artist.artist.id}`">
       <div class="name">{{ affiliated_artist.artist.name }}</div>
     </RouterLink>
-    <span class="nickname" v-if="affiliated_artist.nickname">
-      ({{ affiliated_artist.nickname }})
-    </span>
+    <span class="nickname" v-if="affiliated_artist.nickname"> ({{ affiliated_artist.nickname }}) </span>
     <div class="roles">
       <template v-for="(role, i) in affiliated_artist.roles" :key="role">
         <span class="role">{{ t(`artist.role.${role}`) }}</span>

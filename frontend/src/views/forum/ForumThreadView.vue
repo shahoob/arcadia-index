@@ -4,14 +4,7 @@
       {{ forumThread.name }}
     </div>
     <GeneralComment v-for="post in forumThread.posts" :key="post.id" :comment="post" />
-    <Form
-      v-slot="$form"
-      :initialValues="newPost"
-      :resolver
-      @submit="onFormSubmit"
-      validateOnSubmit
-      :validateOnValueUpdate="false"
-    >
+    <Form v-slot="$form" :initialValues="newPost" :resolver @submit="onFormSubmit" validateOnSubmit :validateOnValueUpdate="false">
       <div class="new-post">
         <BBCodeEditor
           :emptyInput="bbcodeEditorEmptyInput"
@@ -20,13 +13,7 @@
           :label="t('forum.new_post')"
         >
           <template #buttons>
-            <Button
-              type="submit"
-              label="Post"
-              icon="pi pi-send"
-              :loading="sendingPost"
-              class="post-button"
-            />
+            <Button type="submit" label="Post" icon="pi pi-send" :loading="sendingPost" class="post-button" />
           </template>
         </BBCodeEditor>
         <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
@@ -38,13 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  getForumThread,
-  postForumPost,
-  type ForumThreadsAndPosts,
-  type UserCreatedForumPost,
-  type ForumPostHierarchy,
-} from '@/services/api/forumService'
+import { getForumThread, postForumPost, type ForumThreadsAndPosts, type UserCreatedForumPost, type ForumPostHierarchy } from '@/services/api/forumService'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'

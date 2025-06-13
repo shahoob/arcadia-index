@@ -1,31 +1,12 @@
 <template>
   <Form :initialValues="form" @submit="handleLogin" class="form">
-    <InputText
-      class="form-item"
-      name="username"
-      type="text"
-      :placeholder="t('user.username')"
-      v-model="form.username"
-    />
-    <Password
-      class="form-item"
-      name="password"
-      v-model="form.password"
-      :placeholder="t('user.password')"
-      :feedback="false"
-      toggleMask
-    />
+    <InputText class="form-item" name="username" type="text" :placeholder="t('user.username')" v-model="form.username" />
+    <Password class="form-item" name="password" v-model="form.password" :placeholder="t('user.password')" :feedback="false" toggleMask />
     <div class="remember-wrapper">
       <Checkbox inputId="remember-me" v-model="form.remember_me" binary />
       <label for="remember-me"> {{ t('auth.remember_me') }} </label>
     </div>
-    <Button
-      class="form-item w-full"
-      type="submit"
-      severity="secondary"
-      :label="t('user.login')"
-      :loading
-    />
+    <Button class="form-item w-full" type="submit" severity="secondary" :label="t('user.login')" :loading />
   </Form>
 </template>
 <script setup lang="ts">

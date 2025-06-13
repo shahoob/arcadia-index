@@ -1,12 +1,7 @@
 <template>
   <ContentContainer class="header-wrapper artist-full-header">
     <div class="header">
-      <Image
-        class="artist-pictures"
-        v-if="artist.pictures?.length"
-        :src="artist.pictures[0]"
-        preview
-      >
+      <Image class="artist-pictures" v-if="artist.pictures?.length" :src="artist.pictures[0]" preview>
         <template #previewicon>
           <i class="pi pi-search"></i>
         </template>

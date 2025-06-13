@@ -1,9 +1,7 @@
 <template>
   <div class="title">
     <span v-if="title_group.series?.id">
-      <RouterLink class="prefix" :to="`/series/${title_group.series.id}`"
-        >{{ title_group.series.name }}
-      </RouterLink>
+      <RouterLink class="prefix" :to="`/series/${title_group.series.id}`">{{ title_group.series.name }} </RouterLink>
       -
     </span>
     <span v-if="title_group.platform">

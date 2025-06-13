@@ -160,17 +160,13 @@ export default class MediainfoConverter {
     const scanType = video['scan type']
 
     const width = Number(video.width && (video.width.match(/[0-9 ]+/)?.[0].replace(/ /g, '') ?? ''))
-    const height = Number(
-      video.height && (video.height.match(/[0-9 ]+/)?.[0].replace(/ /g, '') ?? ''),
-    )
+    const height = Number(video.height && (video.height.match(/[0-9 ]+/)?.[0].replace(/ /g, '') ?? ''))
 
     // 1920x567 -> 1080p
     let videoResolution: string | [string, string] =
       /2160p/i.test(completeName) || width === 3840
         ? '2160p'
-        : /1080i/i.test(completeName) ||
-            ((width === 1920 || (Number(width) < 1920 && height === 1080)) &&
-              (scanType === 'Interlaced' || scanType === 'MBAFF'))
+        : /1080i/i.test(completeName) || ((width === 1920 || (Number(width) < 1920 && height === 1080)) && (scanType === 'Interlaced' || scanType === 'MBAFF'))
           ? '1080i'
           : /1080p/i.test(completeName) || width === 1920 || (width < 1920 && height === 1080)
             ? '1080p'
@@ -205,11 +201,7 @@ export default class MediainfoConverter {
       if (language.match(/chinese|mandarin/i)) {
         language = 'Chinese'
         const title = compact([text['language'], text['title']]).join('\n')
-        extra = title.match(/traditional|繁|cht/i)
-          ? ' Traditional'
-          : title.match(/simplified|简|chs/i)
-            ? ' Simplified'
-            : ' Simplified'
+        extra = title.match(/traditional|繁|cht/i) ? ' Traditional' : title.match(/simplified|简|chs/i) ? ' Simplified' : ' Simplified'
       }
       subtitleLanguages.push(`${language}${extra}`)
     }

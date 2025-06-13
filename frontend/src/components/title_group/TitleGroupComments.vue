@@ -2,14 +2,7 @@
   <div class="comments">
     <GeneralComment v-for="comment in comments" :key="comment.id" :comment="comment" />
   </div>
-  <Form
-    v-slot="$form"
-    :initialValues="new_comment"
-    :resolver
-    @submit="onFormSubmit"
-    validateOnSubmit
-    :validateOnValueUpdate="false"
-  >
+  <Form v-slot="$form" :initialValues="new_comment" :resolver @submit="onFormSubmit" validateOnSubmit :validateOnValueUpdate="false">
     <div class="new-comment">
       <BBCodeEditor
         :empty-input="bbcodeEditorEmptyInput"
@@ -18,13 +11,7 @@
         :label="t('community.new_comment')"
       >
         <template #buttons>
-          <Button
-            type="submit"
-            label="Post"
-            icon="pi pi-send"
-            :loading="sending_comment"
-            class="post-button"
-          />
+          <Button type="submit" label="Post" icon="pi pi-send" :loading="sending_comment" class="post-button" />
         </template>
       </BBCodeEditor>
       <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
@@ -39,11 +26,7 @@ import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import GeneralComment from '../community/GeneralComment.vue'
 import { Button } from 'primevue'
-import {
-  postTitleGroupComment,
-  type TitleGroupCommentHierarchy,
-  type UserCreatedTitleGroupComment,
-} from '@/services/api/commentService'
+import { postTitleGroupComment, type TitleGroupCommentHierarchy, type UserCreatedTitleGroupComment } from '@/services/api/commentService'
 import BBCodeEditor from '../community/BBCodeEditor.vue'
 import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import Message from 'primevue/message'

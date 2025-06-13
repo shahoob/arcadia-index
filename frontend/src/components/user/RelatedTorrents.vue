@@ -4,11 +4,7 @@
     :containerTitleLink="`/torrents?${props.type === 'uploads' ? 'created_by_id' : 'snatched_by_id'}=${userId}`"
   >
     <div class="last-uploads" v-if="titleGroups">
-      <TitleGroupPreviewCoverOnly
-        v-for="titleGroup in titleGroups"
-        :key="titleGroup.id"
-        :titleGroup="titleGroup"
-      />
+      <TitleGroupPreviewCoverOnly v-for="titleGroup in titleGroups" :key="titleGroup.id" :titleGroup="titleGroup" />
     </div>
     <div v-else>
       {{ t(`user.no_${props.type}_explanation`) }}

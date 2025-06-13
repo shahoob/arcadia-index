@@ -22,17 +22,9 @@
         <ExternalLink v-for="link in title_group.external_links" :key="link" :link="link" />
       </div>
     </ContentContainer>
-    <ContentContainer
-      :container-title="t('artist.artist', 2)"
-      v-if="title_group.affiliated_artists.length != 0"
-    >
+    <ContentContainer :container-title="t('artist.artist', 2)" v-if="title_group.affiliated_artists.length != 0">
       <div class="affiliated-artists">
-        <AffiliatedArtist
-          class="affiliated-artist"
-          v-for="artist in title_group.affiliated_artists"
-          :key="artist.artist_id"
-          :affiliated_artist="artist"
-        />
+        <AffiliatedArtist class="affiliated-artist" v-for="artist in title_group.affiliated_artists" :key="artist.artist_id" :affiliated_artist="artist" />
       </div>
     </ContentContainer>
     <ContentContainer
@@ -40,11 +32,7 @@
       v-if="title_group.in_same_master_group.length != 0"
     >
       <div class="flex justify-content-center links">
-        <MasterGroupLink
-          v-for="tg in title_group.in_same_master_group"
-          :key="tg.id"
-          :title_group="tg"
-        />
+        <MasterGroupLink v-for="tg in title_group.in_same_master_group" :key="tg.id" :title_group="tg" />
       </div>
     </ContentContainer>
     <ContentContainer :container-title="t('general.series')" v-if="title_group.series.id">

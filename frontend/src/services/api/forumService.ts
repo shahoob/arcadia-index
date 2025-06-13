@@ -11,11 +11,8 @@ export const getForum = async (): Promise<ForumOverview> => {
 
 export type ForumSubCategoryHierarchy = components['schemas']['ForumSubCategoryHierarchy']
 
-export const getForumSubCategory = async (
-  forumSubCategoryId: number,
-): Promise<ForumSubCategoryHierarchy> => {
-  return (await api.get<ForumSubCategoryHierarchy>('/forum/sub-category?id=' + forumSubCategoryId))
-    .data
+export const getForumSubCategory = async (forumSubCategoryId: number): Promise<ForumSubCategoryHierarchy> => {
+  return (await api.get<ForumSubCategoryHierarchy>('/forum/sub-category?id=' + forumSubCategoryId)).data
 }
 
 export type ForumThreadsAndPosts = components['schemas']['ForumThreadAndPosts']

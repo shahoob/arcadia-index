@@ -7,10 +7,7 @@
     </Column>
     <Column field="edition_name" header="Edition"></Column>
     <Column header="Bounty">
-      <template #body="slotProps">
-        {{ bytesToReadable(slotProps.data.bounties.upload) }} +
-        {{ slotProps.data.bounties.bonus_points }} bp
-      </template>
+      <template #body="slotProps"> {{ bytesToReadable(slotProps.data.bounties.upload) }} + {{ slotProps.data.bounties.bonus_points }} bp </template>
     </Column>
     <Column header="Votes">
       <template #body="slotProps"> {{ slotProps.data.user_votes_amount }} </template>

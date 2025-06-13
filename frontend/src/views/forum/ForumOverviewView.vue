@@ -1,11 +1,6 @@
 <template>
   <div v-if="forumOverview">
-    <ForumCategoryOverview
-      class="forum-category"
-      v-for="category in forumOverview.forum_categories"
-      :key="category.id"
-      :forum-category="category"
-    />
+    <ForumCategoryOverview class="forum-category" v-for="category in forumOverview.forum_categories" :key="category.id" :forum-category="category" />
   </div>
 </template>
 

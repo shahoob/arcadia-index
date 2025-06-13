@@ -9,11 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  reportTorrent,
-  type TorrentReport,
-  type UserCreatedTorrentReport,
-} from '@/services/api/torrentService'
+import { reportTorrent, type TorrentReport, type UserCreatedTorrentReport } from '@/services/api/torrentService'
 import { Textarea, FloatLabel } from 'primevue'
 import Button from 'primevue/button'
 import { ref } from 'vue'

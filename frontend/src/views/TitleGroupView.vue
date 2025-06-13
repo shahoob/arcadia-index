@@ -14,10 +14,7 @@
         'with-sidebar': userStore.settings.site_appearance.item_detail_layout.includes('sidebar'),
       }"
     >
-      <TitleGroupFullHeader
-        :title_group
-        v-if="userStore.settings.site_appearance.item_detail_layout == 'header'"
-      />
+      <TitleGroupFullHeader :title_group v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
       <TitleGroupSlimHeader v-else :title_group class="slim-header" />
       <div class="actions">
         <div>
@@ -32,21 +29,11 @@
         </div>
         <div>
           <i v-tooltip.top="t('general.edit')" class="pi pi-pen-to-square" />
-          <i
-            @click="uploadTorrent"
-            v-tooltip.top="t('torrent.upload_torrent')"
-            class="pi pi-upload"
-          />
+          <i @click="uploadTorrent" v-tooltip.top="t('torrent.upload_torrent')" class="pi pi-upload" />
           <i v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
         </div>
         <FloatLabel class="sort-by-select" variant="on">
-          <Select
-            v-model="sortBy"
-            inputId="sort_by"
-            :options="selectableSortingOptions"
-            class="select"
-            size="small"
-          >
+          <Select v-model="sortBy" inputId="sort_by" :options="selectableSortingOptions" class="select" size="small">
             <template #option="slotProps">
               <span>{{ t(`torrent.${slotProps.option}`) }}</span>
             </template>
@@ -58,35 +45,18 @@
         </FloatLabel>
       </div>
       <TitleGroupTable :title_group="title_group" :sortBy :preview="false" />
-      <ContentContainer
-        :container-title="t('general.screenshots')"
-        class="screenshots"
-        v-if="title_group.screenshots.length !== 0"
-      >
+      <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="title_group.screenshots.length !== 0">
         <CustomGalleria :images="title_group.screenshots" />
       </ContentContainer>
-      <Accordion
-        v-if="title_group.torrent_requests.length != 0"
-        value="0"
-        class="torrent-requests dense-accordion"
-      >
+      <Accordion v-if="title_group.torrent_requests.length != 0" value="0" class="torrent-requests dense-accordion">
         <AccordionPanel value="0">
-          <AccordionHeader>
-            {{ t('torrent.requests') }} ({{ title_group.torrent_requests.length }})
-          </AccordionHeader>
+          <AccordionHeader> {{ t('torrent.requests') }} ({{ title_group.torrent_requests.length }}) </AccordionHeader>
           <AccordionContent>
-            <TorrentRequestsTable
-              :torrentRequests="title_group.torrent_requests"
-              :contentType="title_group.content_type"
-            />
+            <TorrentRequestsTable :torrentRequests="title_group.torrent_requests" :contentType="title_group.content_type" />
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
-      <ContentContainer
-        class="description"
-        v-if="title_group"
-        :container-title="t('title_group.description')"
-      >
+      <ContentContainer class="description" v-if="title_group" :container-title="t('title_group.description')">
         <div class="title-group-description">
           <BBCodeRenderer :content="title_group.description" />
         </div>
@@ -99,10 +69,7 @@
       </ContentContainer>
       <TitleGroupComments :comments="title_group.title_group_comments" @newComment="newComment" />
     </div>
-    <div
-      class="sidebar"
-      v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')"
-    >
+    <div class="sidebar" v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')">
       <TitleGroupSidebar :title_group />
     </div>
   </div>
@@ -174,18 +141,7 @@ const toggleSubscribtion = async () => {
       await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
     }
     title_group.value.is_subscribed = !title_group.value.is_subscribed
-    showToast(
-      'Success',
-      t(
-        `title_group.${
-          title_group.value.is_subscribed
-            ? 'subscription_successfull'
-            : 'unsubscription_successfull'
-        }`,
-      ),
-      'success',
-      3000,
-    )
+    showToast('Success', t(`title_group.${title_group.value.is_subscribed ? 'subscription_successfull' : 'unsubscription_successfull'}`), 'success', 3000)
     togglingSubscription.value = false
   }
 }

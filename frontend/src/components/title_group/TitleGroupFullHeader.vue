@@ -22,20 +22,13 @@
         <div class="textual-information">
           <div class="title">
             {{ title_group.name }}
-            <span class="title-metadata">
-              ({{ title_group.original_release_date.substring(0, 4) }})
-            </span>
+            <span class="title-metadata"> ({{ title_group.original_release_date.substring(0, 4) }}) </span>
           </div>
           <div class="information-line">
             <span class="item-title">{{ t('general.tags') }}:</span>
-            <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">
-              {{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span>
-            </div>
+            <div class="item" v-for="(tag, index) in title_group.tags" :key="tag">{{ tag }}<span v-if="index !== title_group.tags.length - 1">,</span></div>
           </div>
-          <div
-            class="information-line"
-            v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''"
-          >
+          <div class="information-line" v-if="title_group.name_aliases.length != 0 && title_group.name_aliases[0] != ''">
             <span class="item-title">{{ t('general.alias', 2) }}:</span>
             <div v-for="(alias, index) in title_group.name_aliases" :key="alias">
               {{ alias }}<span v-if="index !== title_group.name_aliases.length - 1">,</span>

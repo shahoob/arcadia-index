@@ -1,14 +1,6 @@
 <template>
   <div class="title">{{ t('conversation.start_conversation', [username]) }}</div>
-  <Form
-    v-slot="$form"
-    :initialValues="newConversation"
-    :resolver
-    @submit="sendConversation"
-    validateOnSubmit
-    :validateOnValueUpdate="false"
-    validateOnBlur
-  >
+  <Form v-slot="$form" :initialValues="newConversation" :resolver @submit="sendConversation" validateOnSubmit :validateOnValueUpdate="false" validateOnBlur>
     <FloatLabel class="conversation-subject" variant="in">
       <InputText v-model="newConversation.subject" name="subject" :format="false" />
       <label for="master_group_id">{{ t('conversation.subject') }}</label>
@@ -17,11 +9,7 @@
       {{ $form.subject.error.message }}
     </Message>
     <div class="bbcode-editor">
-      <BBCodeEditor
-        :label="t('conversation.message')"
-        :emptyInput="false"
-        @valueChange="(val) => (newConversation.first_message.content = val)"
-      >
+      <BBCodeEditor :label="t('conversation.message')" :emptyInput="false" @valueChange="(val) => (newConversation.first_message.content = val)">
         <template #message>
           <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
             {{ $form.content.error.message }}

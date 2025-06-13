@@ -6,18 +6,10 @@
         <i class="pi pi-upload" />
         {{ bytesToReadable(user.uploaded) }}
       </div>
-      <span class="stat" v-tooltip.bottom="'Downloaded'">
-        <i class="pi pi-download" />{{ bytesToReadable(user.downloaded) }}
-      </span>
-      <span class="stat" v-tooltip.bottom="'Ratio'">
-        <i class="pi pi-wave-pulse" />{{ user.ratio }}
-      </span>
-      <span class="stat" v-tooltip.bottom="'Bonus points'">
-        <i class="pi pi-money-bill" />{{ user.bonus_points }}
-      </span>
-      <span class="stat" v-tooltip.bottom="'Freeleech tokens'">
-        <i class="pi pi-ticket" />{{ user.freeleech_tokens }}
-      </span>
+      <span class="stat" v-tooltip.bottom="'Downloaded'"> <i class="pi pi-download" />{{ bytesToReadable(user.downloaded) }} </span>
+      <span class="stat" v-tooltip.bottom="'Ratio'"> <i class="pi pi-wave-pulse" />{{ user.ratio }} </span>
+      <span class="stat" v-tooltip.bottom="'Bonus points'"> <i class="pi pi-money-bill" />{{ user.bonus_points }} </span>
+      <span class="stat" v-tooltip.bottom="'Freeleech tokens'"> <i class="pi pi-ticket" />{{ user.freeleech_tokens }} </span>
     </div>
     <div class="right">
       <div class="actions">
@@ -26,19 +18,8 @@
         </RouterLink>
         <Button icon="pi pi-moon" @click="toggleDarkMode()" severity="secondary" size="small" />
         <RouterLink :to="`/user/${user.id}`">
-          <Button
-            :onmouseenter="show"
-            :onmouseleave="onLeaveUserIcon"
-            icon="pi pi-user"
-            severity="secondary"
-            size="small"
-          />
-          <Popover
-            :onmouseleave="onLeavePopover"
-            :onmouseenter="() => (isHoveringDropdown = true)"
-            :dismissable="false"
-            ref="op"
-          >
+          <Button :onmouseenter="show" :onmouseleave="onLeaveUserIcon" icon="pi pi-user" severity="secondary" size="small" />
+          <Popover :onmouseleave="onLeavePopover" :onmouseenter="() => (isHoveringDropdown = true)" :dismissable="false" ref="op">
             <RouterLink to="/conversations">
               <div class="user-action flex gap-2 px-2 cursor-pointer">
                 <i class="pi pi-envelope" />

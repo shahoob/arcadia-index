@@ -1,27 +1,8 @@
 <template>
   <Form :initialValues="form" @submit="handleLogin" class="form">
-    <InputText
-      class="form-item"
-      name="email"
-      type="text"
-      :placeholder="t('user.email')"
-      v-model="form.email"
-    />
-    <Textarea
-      class="form-item"
-      name="body"
-      type="text"
-      rows="15"
-      :placeholder="t('user.application_body')"
-      v-model="form.body"
-    />
-    <Button
-      class="form-item w-full"
-      type="submit"
-      severity="secondary"
-      :label="t('user.apply')"
-      :loading
-    />
+    <InputText class="form-item" name="email" type="text" :placeholder="t('user.email')" v-model="form.email" />
+    <Textarea class="form-item" name="body" type="text" rows="15" :placeholder="t('user.application_body')" v-model="form.body" />
+    <Button class="form-item w-full" type="submit" severity="secondary" :label="t('user.apply')" :loading />
   </Form>
   <span style="margin-top: 10px" v-if="applicationSent">{{ t('user.application_sent') }}</span>
 </template>
@@ -30,10 +11,7 @@ import InputText from 'primevue/inputtext'
 import { Textarea } from 'primevue'
 import { Form } from '@primevue/forms'
 import Button from 'primevue/button'
-import {
-  postUserApplication,
-  type UserCreatedUserApplication,
-} from '@/services/api/userApplicationService'
+import { postUserApplication, type UserCreatedUserApplication } from '@/services/api/userApplicationService'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 

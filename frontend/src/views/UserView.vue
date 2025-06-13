@@ -5,26 +5,14 @@
         <div class="username">
           {{ user.username }}
           <i v-if="user.banned" v-tooltip.top="t('user.banned')" class="banned pi pi-ban" />
-          <i
-            v-if="!user.banned && user.warned"
-            v-tooltip.top="t('user.warned')"
-            class="warned pi pi-exclamation-triangle"
-          />
+          <i v-if="!user.banned && user.warned" v-tooltip.top="t('user.warned')" class="warned pi pi-exclamation-triangle" />
         </div>
         <div class="actions">
-          <RouterLink
-            :to="`/conversation/new?receiverId=${user.id}&username=${user.username}`"
-            class="no-color"
-            v-if="userStore.id !== user.id"
-          >
+          <RouterLink :to="`/conversation/new?receiverId=${user.id}&username=${user.username}`" class="no-color" v-if="userStore.id !== user.id">
             <i v-tooltip.top="t('user.message_user', [user.username])" class="pi pi-envelope" />
           </RouterLink>
           <template v-if="userStore.class === 'staff'">
-            <i
-              v-tooltip.top="t('user.warn')"
-              class="cursor-pointer pi pi-exclamation-triangle"
-              @click="warnUserDialogVisible = true"
-            />
+            <i v-tooltip.top="t('user.warn')" class="cursor-pointer pi pi-exclamation-triangle" @click="warnUserDialogVisible = true" />
           </template>
         </div>
       </div>
@@ -34,18 +22,8 @@
       <ContentContainer v-if="peers" :containerTitle="t('torrent.clients_and_ips')" class="section">
         <PeerTable :peers />
       </ContentContainer>
-      <RelatedTorrents
-        :titleGroups="uploadedTorrents"
-        class="section"
-        :userId="user.id"
-        type="uploads"
-      />
-      <RelatedTorrents
-        :titleGroups="snatchedTorrents"
-        class="section"
-        :userId="user.id"
-        type="snatches"
-      />
+      <RelatedTorrents :titleGroups="uploadedTorrents" class="section" :userId="user.id" type="uploads" />
+      <RelatedTorrents :titleGroups="snatchedTorrents" class="section" :userId="user.id" type="snatches" />
     </div>
     <UserSidebar :user class="sidebar" />
   </div>
@@ -91,9 +69,7 @@ const fetchUser = async () => {
     } = await getMe())
     userStore.setUser(user.value as User)
   } else {
-    ;({ user: user.value, last_five_uploaded_torrents: uploadedTorrents.value } = await getUser(
-      parseInt(route.params.id.toString()),
-    ))
+    ;({ user: user.value, last_five_uploaded_torrents: uploadedTorrents.value } = await getUser(parseInt(route.params.id.toString())))
   }
 }
 

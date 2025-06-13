@@ -36,8 +36,7 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
 
   let dateRange = ''
   if (editionGroup.additional_information?.date_from) {
-    dateRange +=
-      new Date(editionGroup.additional_information.date_from).toISOString().split('T')[0] + ' to '
+    dateRange += new Date(editionGroup.additional_information.date_from).toISOString().split('T')[0] + ' to '
   }
   dateRange += new Date(editionGroup.release_date).toISOString().split('T')[0]
 
@@ -123,20 +122,7 @@ export const getSources = (contentType: ContentType) => {
   return sources
 }
 export const getArtistRoles = () => {
-  return [
-    'main',
-    'producer',
-    'guest',
-    'composer',
-    'conductor',
-    'dj_compiler',
-    'remixer',
-    'arranger',
-    'director',
-    'cinematographer',
-    'actor',
-    'author',
-  ]
+  return ['main', 'producer', 'guest', 'composer', 'conductor', 'dj_compiler', 'remixer', 'arranger', 'director', 'cinematographer', 'actor', 'author']
 }
 export const isValidUrl = (url: string) => {
   try {

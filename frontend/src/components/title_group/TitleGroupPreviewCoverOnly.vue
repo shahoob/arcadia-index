@@ -1,12 +1,7 @@
 <template>
   <div class="title-group-preview-cover-only">
     <RouterLink :to="`/title-group/${titleGroup.id}`">
-      <img
-        class="title-group-cover"
-        :src="titleGroup.covers[0]"
-        v-tooltip.top="titleGroup.name"
-        alt="Title Group Cover"
-      />
+      <img class="title-group-cover" :src="titleGroup.covers[0]" v-tooltip.top="titleGroup.name" alt="Title Group Cover" />
     </RouterLink>
   </div>
 </template>

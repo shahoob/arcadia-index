@@ -8,33 +8,18 @@
     }"
   >
     <div class="main">
-      <SeriesFullHeader
-        :series
-        v-if="userStore.settings.site_appearance.item_detail_layout == 'header'"
-      />
+      <SeriesFullHeader :series v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
       <SeriesSlimHeader v-else class="slim-header" :series />
       <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
         <div class="title-groups">
-          <TitleGroupPreviewCoverOnly
-            v-for="title_group in title_groups"
-            :key="title_group.id"
-            :titleGroup="title_group"
-          />
+          <TitleGroupPreviewCoverOnly v-for="title_group in title_groups" :key="title_group.id" :titleGroup="title_group" />
         </div>
       </ContentContainer>
       <div v-if="title_group_preview_mode == 'table'">
-        <TitleGroupPreviewTable
-          v-for="title_group in title_groups"
-          :key="title_group.id"
-          :title_group="title_group"
-          class="preview-table"
-        />
+        <TitleGroupPreviewTable v-for="title_group in title_groups" :key="title_group.id" :title_group="title_group" class="preview-table" />
       </div>
     </div>
-    <SeriesSidebar
-      :series
-      v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')"
-    />
+    <SeriesSidebar :series v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')" />
   </div>
 </template>
 

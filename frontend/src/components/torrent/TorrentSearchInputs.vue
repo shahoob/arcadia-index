@@ -3,12 +3,7 @@
     <div id="torrent-search-inputs">
       <div class="line">
         <FloatLabel>
-          <InputText
-            class="title-group-name"
-            size="small"
-            v-model="searchForm.title_group.name"
-            name="title_group_name"
-          />
+          <InputText class="title-group-name" size="small" v-model="searchForm.title_group.name" name="title_group_name" />
           <label for="title_group_name">{{ t('general.search_terms') }}</label>
         </FloatLabel>
       </div>
@@ -19,25 +14,11 @@
       <div class="line">
         <div class="dropdown">
           <label for="sortByDropdown">{{ t('general.sort_by') }}</label>
-          <Dropdown
-            v-model="searchForm.sort_by"
-            :options="sortByOptions"
-            optionLabel="label"
-            optionValue="value"
-            size="small"
-            input-id="sortByDropdown"
-          />
+          <Dropdown v-model="searchForm.sort_by" :options="sortByOptions" optionLabel="label" optionValue="value" size="small" input-id="sortByDropdown" />
         </div>
         <div class="dropdown">
           <label for="orderDropdown">{{ t('general.order_by') }}</label>
-          <Dropdown
-            v-model="searchForm.order"
-            :options="orderOptions"
-            optionLabel="label"
-            optionValue="value"
-            size="small"
-            input-id="orderDropdown"
-          />
+          <Dropdown v-model="searchForm.order" :options="orderOptions" optionLabel="label" optionValue="value" size="small" input-id="orderDropdown" />
         </div>
       </div>
       <div class="staff-options line" v-if="showStaffOptions">
@@ -70,12 +51,7 @@
     </div>
   </ContentContainer>
   <div class="pagination">
-    <Button
-      :disabled="searchForm.page < 2"
-      @click="searchForm.page-- && emit('search', searchForm)"
-      label="<"
-      size="small"
-    />
+    <Button :disabled="searchForm.page < 2" @click="searchForm.page-- && emit('search', searchForm)" label="<" size="small" />
     {{ t('general.page') }} {{ searchForm.page }}
     <Button @click="searchForm.page++ && emit('search', searchForm)" label=">" size="small" />
   </div>

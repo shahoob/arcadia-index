@@ -1,14 +1,6 @@
 <template>
   <div class="title">{{ t('forum.new_thread') }}</div>
-  <Form
-    v-slot="$form"
-    :initialValues="newThread"
-    :resolver
-    @submit="sendThread"
-    validateOnSubmit
-    :validateOnValueUpdate="false"
-    validateOnBlur
-  >
+  <Form v-slot="$form" :initialValues="newThread" :resolver @submit="sendThread" validateOnSubmit :validateOnValueUpdate="false" validateOnBlur>
     <FloatLabel class="thread-name" variant="in">
       <InputText v-model="newThread.name" name="name" :format="false" />
       <label for="master_group_id">{{ t('forum.thread_name') }}</label>
@@ -17,11 +9,7 @@
       {{ $form.name.error.message }}
     </Message>
     <div class="bbcode-editor">
-      <BBCodeEditor
-        :label="t('forum.new_post')"
-        :emptyInput="false"
-        @valueChange="(val) => (newThread.first_post.content = val)"
-      >
+      <BBCodeEditor :label="t('forum.new_post')" :emptyInput="false" @valueChange="(val) => (newThread.first_post.content = val)">
         <template #message>
           <Message v-if="$form.content?.invalid" severity="error" size="small" variant="simple">
             {{ $form.content.error.message }}
