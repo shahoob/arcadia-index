@@ -40,23 +40,23 @@
       <label for="content_type">{{ t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
     <div class="external-db-inputs-wrapper">
-      <div class="external-db-inputs" v-if="content_type == 'movie'">
+      <!-- <div class="external-db-inputs" v-if="content_type == 'movie'">
         <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/movie" @dataFound="externalDBDataFound" />
         or
         <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/movie" @dataFound="externalDBDataFound" />
-      </div>
-      <div class="external-db-inputs" v-if="content_type == 'tv_show'">
+      </div> -->
+      <!-- <div class="external-db-inputs" v-if="content_type == 'tv_show'">
         <ExternalDBSearchBar inputPlaceholder="TVDB id" database="tvdb" @dataFound="externalDBDataFound" />
         or
         <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/tv" @dataFound="externalDBDataFound" />
         or
         <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/tv" @dataFound="externalDBDataFound" />
-      </div>
-      <div class="external-db-inputs" v-if="content_type == 'music'">
+      </div> -->
+      <!-- <div class="external-db-inputs" v-if="content_type == 'music'">
         <ExternalDBSearchBar inputPlaceholder="Musicbrainz id" database="musicbrainz" @dataFound="externalDBDataFound" />
         or
         <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" @dataFound="externalDBDataFound" />
-      </div>
+      </div> -->
       <div class="external-db-inputs" v-if="content_type == 'book'">
         <ExternalDBSearchBar inputPlaceholder="Open Library id" database="openlibrary" @dataFound="externalDBDataFound" />
       </div>
@@ -150,7 +150,6 @@ onMounted(() => {
 .external-db-inputs-wrapper {
   display: flex;
   align-items: center;
-  margin-bottom: 55px;
 }
 
 .external-db-inputs {

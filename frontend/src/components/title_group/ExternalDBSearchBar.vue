@@ -8,8 +8,6 @@
           pi: true,
           'pi-search': !loading,
           'pi-hourglass': loading,
-          'pi-spin': loading,
-
           'cursor-pointer': true,
         }"
         @click="getExternalDBData(externalDBId)"
