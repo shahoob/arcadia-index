@@ -30,6 +30,7 @@ impl HttpResponseBuilderExt for HttpResponseBuilder {
 
 impl ResponseError for announce::Error {
     fn error_response(&self) -> HttpResponse {
+        log::error!("The request generated this error: {}", self);
         HttpResponse::BadRequest().body(format!("{}", self))
     }
 }
@@ -72,6 +73,7 @@ impl actix_web::ResponseError for Error {
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {
+        log::error!("The request generated this error: {}", self);
         #[derive(Debug, Serialize)]
         struct WrappedError {
             #[serde(rename = "failure reason")]
@@ -108,6 +110,7 @@ pub enum UserAgentExtractError {
 
 impl ResponseError for UserAgentExtractError {
     fn error_response(&self) -> HttpResponse {
+        log::error!("The request generated this error: {}", self);
         HttpResponse::BadRequest().body(format!("{}", self))
     }
 }

@@ -268,6 +268,7 @@ impl actix_web::ResponseError for Error {
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {
+        log::error!("The request generated this error: {}", self);
         actix_web::HttpResponse::build(self.status_code()).json(serde_json::json!({
             "error": format!("{self}"),
         }))
