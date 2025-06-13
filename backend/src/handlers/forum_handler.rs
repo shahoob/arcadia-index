@@ -2,8 +2,8 @@ use crate::{
     Arcadia, Result,
     models::{
         forum::{
-            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThread, ForumThreadAndPosts,
-            UserCreatedForumPost, UserCreatedForumThread,
+            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThread,
+            ForumThreadHierarchy, UserCreatedForumPost, UserCreatedForumThread,
         },
         user::User,
     },
@@ -89,7 +89,7 @@ pub async fn get_forum_sub_category_threads(
 
 #[derive(Debug, Deserialize, IntoParams)]
 pub struct GetForumThreadQuery {
-    pub name: String,
+    pub title: String,
     pub offset: Option<i64>,
     pub limit: Option<i64>,
 }
@@ -104,7 +104,7 @@ pub struct GetForumThreadQueryId {
     path = "/api/forum/thread",
     params(GetForumThreadQuery, GetForumThreadQueryId),
     responses(
-        (status = 200, description = "Returns the threads and its posts", body=ForumThreadAndPosts),
+        (status = 200, description = "Returns the threads and its posts", body=Vec<ForumThreadHierarchy>)
     )
 )]
 pub async fn get_forum_thread(
@@ -120,7 +120,7 @@ pub async fn get_forum_thread(
             let offset = q.0.offset.unwrap_or(0);
             let limit = q.0.limit.unwrap_or(10);
 
-            query_forum_thread(&arc.pool, q.0.name, offset, limit).await
+            query_forum_thread(&arc.pool, q.0.title, offset, limit).await
         }
         _ => Err(crate::Error::InvalidUserIdOrTorrentId),
     }?;

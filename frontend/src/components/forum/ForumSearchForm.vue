@@ -2,9 +2,8 @@
   <h1 class="title">Search</h1>
 
   <Form class="wrapper" @submit="onSubmit">
-    <InputText name="title" type="text" :placeholder="t('general.title')" v-model="searchForm.title" size="small"
-      class="input" />
-    <Button type="submit">button</Button>
+    <InputText name="title" type="text" :placeholder="t('general.title')" v-model="searchForm.title" size="small" class="input" />
+    <Button type="submit">Search</Button>
   </Form>
 </template>
 

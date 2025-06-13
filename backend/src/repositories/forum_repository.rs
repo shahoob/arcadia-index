@@ -2,7 +2,10 @@ use serde_json::Value;
 use sqlx::PgPool;
 
 use crate::{
-    models::forum::{ForumPost, ForumThread, ForumThreadHierarchy, UserCreatedForumPost, UserCreatedForumThread}, Error, Result
+    Error, Result,
+    models::forum::{
+        ForumPost, ForumThread, UserCreatedForumPost, UserCreatedForumThread,
+    },
 };
 
 pub async fn create_forum_post(
@@ -262,7 +265,6 @@ pub async fn query_forum_thread(
     limit: i64,
 ) -> Result<Vec<Value>> {
     let forum_thread = sqlx::query!(
-        // ForumThreadHierarchy,
         r#"
         SELECT
             json_build_object(

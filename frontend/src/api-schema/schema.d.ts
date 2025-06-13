@@ -853,7 +853,7 @@ export interface components {
             name: string;
             /** Format: int64 */
             posts_amount: number;
-            threads: components["schemas"]["ForumThreadHierarchy"][];
+            threads?: components["schemas"]["ForumThreadHierarchy"][] | null;
             /** Format: int64 */
             threads_amount: number;
         };
@@ -894,6 +894,7 @@ export interface components {
             created_by: components["schemas"]["UserLite"];
             /** Format: int64 */
             id: number;
+            latest_post: components["schemas"]["ForumThreadPostLite"];
             locked: boolean;
             name: string;
             /** Format: int64 */
@@ -907,8 +908,6 @@ export interface components {
             /** Format: int64 */
             id: number;
             name: string;
-            /** Format: int64 */
-            posts_amount: number;
         };
         GetArtistPublicationsQuery: {
             /** Format: int64 */
@@ -2138,11 +2137,14 @@ export interface operations {
     };
     get_forum_thread: {
         parameters: {
-            query: {
+            query?: never;
+            header?: never;
+            path: {
+                title: string;
+                offset: number | null;
+                limit: number | null;
                 id: number;
             };
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -2153,7 +2155,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ForumThreadAndPosts"];
+                    "application/json": components["schemas"]["ForumThreadHierarchy"][];
                 };
             };
         };

@@ -13,31 +13,27 @@ export type ForumSubCategoryHierarchy = components['schemas']['ForumSubCategoryH
 
 export const getForumSubCategory = async (forumSubCategoryId: number): Promise<ForumSubCategoryHierarchy> => {
   return (await api.get<ForumSubCategoryHierarchy>('/forum/sub-category?id=' + forumSubCategoryId)).data
+}
 
 export type ForumThreadAndPosts = components['schemas']['ForumThreadAndPosts']
 
-export const getForumThreadAndPosts = async (
-  params: {
-    id: number,
-  } | {
-    name: string,
-    offset?: number,
-    limit?: number,
-  }
-): Promise<ForumThreadAndPosts> => {
-  if ("id" in params) {
-    return (await api.get<ForumThreadAndPosts>(`/forum/thread?id=${params.id}`))
-      .data
-  }
-  return (await api.get<ForumThreadAndPosts>(`/forum/thread?name=${params.name}`))
-    .data
-}
+export type ForumThreadHierarchy = components['schemas']['ForumThreadHierarchy']
 
-export const getForumSubCategory = async (
-  forumSubCategoryId: number,
-): Promise<ForumSubCategoryHierarchy> => {
-  return (await api.get<ForumSubCategoryHierarchy>('/forum/sub-category?id=' + forumSubCategoryId))
-    .data
+export const getForumThreads = async (
+  params:
+    | {
+        id: number
+      }
+    | {
+        title: string
+        offset?: number
+        limit?: number
+      },
+): Promise<ForumThreadHierarchy[]> => {
+  if ('id' in params) {
+    return (await api.get<ForumThreadHierarchy[]>(`/forum/thread?id=${params.id}`)).data
+  }
+  return (await api.get<ForumThreadHierarchy[]>(`/forum/thread?title=${params.title}`)).data
 }
 
 export type ForumThreadsAndPosts = components['schemas']['ForumThreadAndPosts']
