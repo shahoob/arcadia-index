@@ -2,8 +2,7 @@ use serde_json::Value;
 use sqlx::PgPool;
 
 use crate::{
-    Error, Result,
-    models::forum::{ForumPost, ForumThread, UserCreatedForumPost, UserCreatedForumThread},
+    models::forum::{ForumPost, ForumThread, ForumThreadHierarchy, UserCreatedForumPost, UserCreatedForumThread}, Error, Result
 };
 
 pub async fn create_forum_post(
@@ -263,37 +262,60 @@ pub async fn query_forum_thread(
     limit: i64,
 ) -> Result<Vec<Value>> {
     let forum_thread = sqlx::query!(
+        // ForumThreadHierarchy,
         r#"
         SELECT
-            JSON_BUILD_OBJECT(
+            json_build_object(
                 'id', ft.id,
-                'forum_sub_category', json_build_object(
-                    'id', ft.forum_sub_category_id,
-                    'name', ft.name
-                ),
+                'name', ft.name,
                 'created_at', ft.created_at,
-                'created_by_id', ft.created_by_id,
-                'posts_amount', ft.posts_amount,
+                'forum_sub_category_id', ft.forum_sub_category_id,
                 'sticky', ft.sticky,
-                'locked', ft.locked
-            ) AS thread_data
+                'locked', ft.locked,
+                'posts_amount', ft.posts_amount,
+                'created_by', json_build_object(
+                    'id', u.id,
+                    'username', u.username,
+                    'warned', u.warned,
+                    'banned', u.banned
+                ),
+                'latest_post', CASE
+                    WHEN fp_latest.id IS NOT NULL THEN json_build_object(
+                        'id', fp_latest.id,
+                        'created_at', fp_latest.created_at,
+                        'created_by', json_build_object(
+                            'id', u.id,
+                            'username', u.username,
+                            'warned', u.warned,
+                            'banned', u.banned
+                        )
+                    )
+                    ELSE NULL
+                END
+            )
         FROM
             forum_threads AS ft
         JOIN
             forum_posts AS fp ON ft.id = fp.forum_thread_id
         JOIN
             users AS u ON fp.created_by_id = u.id
+        LEFT JOIN LATERAL (
+            SELECT
+                fp.id,
+                fp.created_at,
+                fp.created_by_id
+            FROM
+                forum_posts fp
+            WHERE
+                fp.forum_thread_id = ft.id
+            ORDER BY
+                fp.created_at DESC
+            LIMIT 1
+        ) AS fp_latest ON TRUE
+        LEFT JOIN
+            users u_post ON fp_latest.created_by_id = u_post.id
         WHERE
             ft.name ILIKE LOWER('%' || $1 || '%')
-        GROUP BY
-            ft.id,
-            ft.forum_sub_category_id,
-            ft.name,
-            ft.created_at,
-            ft.created_by_id,
-            ft.posts_amount,
-            ft.sticky,
-            ft.locked
         LIMIT $3
         OFFSET $2;
         "#,
@@ -301,12 +323,11 @@ pub async fn query_forum_thread(
         offset,
         limit
     )
-    .map(|v| v.thread_data.unwrap())
+    .map(|v| v.json_build_object.unwrap())
     .fetch_all(pool)
     .await
     .map_err(Error::CouldNotFindForumThread)?;
 
-    //TODO: unwrap can fail, return Error::CouldNotFindForumThread
     Ok(forum_thread)
 }
 
@@ -322,19 +343,7 @@ pub async fn find_forum_thread(pool: &PgPool, forum_thread_id: i64) -> Result<Va
                 'created_by_id', ft.created_by_id,
                 'posts_amount', ft.posts_amount,
                 'sticky', ft.sticky,
-                'locked', ft.locked,
-                'posts', JSON_AGG(
-                    JSON_BUILD_OBJECT(
-                        'id', fp.id,
-                        'content', fp.content,
-                        'created_at', fp.created_at,
-                        'created_by', JSON_BUILD_OBJECT(
-                            'id', u.id,
-                            'username', u.username,
-                            'avatar', u.avatar
-                        )
-                    ) ORDER BY fp.created_at ASC
-                )
+                'locked', ft.locked
             ) AS thread_data
         FROM
             forum_threads AS ft

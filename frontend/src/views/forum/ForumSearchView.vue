@@ -11,7 +11,7 @@
   <!--     </RouterLink> -->
   <!--   </div> -->
   <!-- </div> -->
-  <DataTable :value="search?.posts">
+  <DataTable v-if="search" :value="search.posts">
     <!-- <Column field="forum" :header="t('general.name')"> -->
     <!--   <template #body="slotProps"> -->
     <!--     <RouterLink :to="`/forum/thread/${slotProps.data.id}`"> -->
