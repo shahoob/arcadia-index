@@ -27,13 +27,7 @@
   </div>
   <div id="create-title-group" v-if="action == 'create'">
     <FloatLabel>
-      <Select
-        v-model="content_type"
-        inputId="content_type"
-        :options="selectableContentTypes"
-        class="select"
-        size="small"
-      >
+      <Select v-model="content_type" inputId="content_type" :options="selectableContentTypes" class="select" size="small">
         <template #option="slotProps">
           <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
         </template>
@@ -47,36 +41,28 @@
     </FloatLabel>
     <div class="external-db-inputs-wrapper">
       <div class="external-db-inputs" v-if="content_type == 'movie'">
-        <ExternalDBSearchBar
-          inputPlaceholder="TMDB id"
-          database="tmdb/movie"
-          @dataFound="externalDBDataFound"
-        />
+        <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/movie" @dataFound="externalDBDataFound" />
         or
-        <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/movie" />
+        <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/movie" @dataFound="externalDBDataFound" />
       </div>
       <div class="external-db-inputs" v-if="content_type == 'tv_show'">
-        <ExternalDBSearchBar inputPlaceholder="TVDB id" database="tvdb" />
+        <ExternalDBSearchBar inputPlaceholder="TVDB id" database="tvdb" @dataFound="externalDBDataFound" />
         or
-        <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/tv" />
+        <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/tv" @dataFound="externalDBDataFound" />
         or
-        <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/tv" />
+        <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/tv" @dataFound="externalDBDataFound" />
       </div>
       <div class="external-db-inputs" v-if="content_type == 'music'">
-        <ExternalDBSearchBar inputPlaceholder="Musicbrainz id" database="musicbrainz" />
+        <ExternalDBSearchBar inputPlaceholder="Musicbrainz id" database="musicbrainz" @dataFound="externalDBDataFound" />
         or
-        <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" />
+        <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" @dataFound="externalDBDataFound" />
       </div>
       <div class="external-db-inputs" v-if="content_type == 'book'">
-        <ExternalDBSearchBar inputPlaceholder="Open Library id" database="openlibrary" />
+        <ExternalDBSearchBar inputPlaceholder="Open Library id" database="openlibrary" @dataFound="externalDBDataFound" />
       </div>
     </div>
     <div>
-      <CreateOrEditTitleGroup
-        :content_type="content_type"
-        @done="titleGroupCreated"
-        :initialTitleGroupForm
-      />
+      <CreateOrEditTitleGroup :content_type="content_type" @done="titleGroupCreated" :initialTitleGroupForm />
     </div>
   </div>
 </template>
@@ -87,13 +73,7 @@ import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import {
-  getTitleGroupLite,
-  type ContentType,
-  type TitleGroup,
-  type UserCreatedEditionGroup,
-  type UserCreatedTitleGroup,
-} from '@/services/api/torrentService'
+import { getTitleGroupLite, type ContentType, type TitleGroup, type UserCreatedEditionGroup, type UserCreatedTitleGroup } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
 import { useI18n } from 'vue-i18n'
@@ -102,14 +82,7 @@ import type { ExternalDBData } from '@/services/api/externalDatabasesService'
 
 const action = ref('select') // create | select
 const titleGroupId = ref<number | null>(null)
-const selectableContentTypes: ContentType[] = [
-  'movie',
-  'tv_show',
-  'music',
-  'software',
-  'book',
-  'collection',
-]
+const selectableContentTypes: ContentType[] = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
 const content_type = ref<ContentType>('movie') // consider either
 const gettingTitleGroupInfo = ref(false)
 const initialTitleGroupForm = ref<UserCreatedTitleGroup | null>(null)
