@@ -52,7 +52,7 @@
     "artist": "Artist | Artists",
     "name": "Name",
     "nickname": "Nickname",
-    "nickname_explanation": "eg: name of the character played",
+    "nickname_explanation": "optional, eg: name of the character played",
     "new_artist": "New artist",
     "existing_artist": "Existing artist",
     "role": {

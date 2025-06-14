@@ -65,7 +65,7 @@
     </div>
     <div class="release-date">
       <label for="release_date" class="block">{{ t('general.release_date') }}</label>
-      <DatePicker v-model="release_date" showIcon :showOnFocus="false" inputId="release_date" size="small" dateFormat="yy-mm-dd" name="release_date" />
+      <DatePicker v-model="release_date" showIcon iconDisplay="input" inputId="release_date" size="small" dateFormat="yy-mm-dd" name="release_date" />
       <Message v-if="$form.release_date?.invalid" severity="error" size="small" variant="simple">
         {{ $form.release_date.error?.message }}
       </Message>

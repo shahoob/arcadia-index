@@ -2,7 +2,7 @@
   <div>
     <div class="title">{{ t('torrent.upload_torrent') }}</div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0" :disabled="uploadStep != 1">
+      <AccordionPanel value="0">
         <AccordionHeader>{{ t('title_group.title') }}</AccordionHeader>
         <AccordionContent>
           <CreateOrSelectTitleGroup @done="titleGroupDone" />
@@ -10,18 +10,18 @@
       </AccordionPanel>
     </Accordion>
     <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0" :disabled="uploadStep != 2">
+      <AccordionPanel value="0">
         <AccordionHeader>{{ t('torrent.edition') }}</AccordionHeader>
         <AccordionContent>
-          <CreateOrSelectEditionGroup v-if="uploadStep > 1" @done="editionGroupDone" />
+          <CreateOrSelectEditionGroup @done="editionGroupDone" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
     <Accordion :value="torrentAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0" :disabled="uploadStep != 3">
+      <AccordionPanel value="0">
         <AccordionHeader>{{ t('torrent.torrent') }}</AccordionHeader>
         <AccordionContent>
-          <CreateOrEditTorrent v-if="uploadStep > 2" @done="torrentDone" />
+          <CreateOrEditTorrent @done="torrentDone" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -49,22 +49,22 @@ const editionGroupStore = useEditionGroupStore()
 const titleGroupStore = useTitleGroupStore()
 
 const titleGroupAccordionValue = ref('0')
-const editionGroupAccordionValue = ref('')
-const torrentAccordionValue = ref('')
+const editionGroupAccordionValue = ref('0')
+const torrentAccordionValue = ref('0')
 const uploadStep = ref(1)
 const editionGroup = ref({})
 
 const titleGroupDone = () => {
-  titleGroupAccordionValue.value = ''
-  editionGroupAccordionValue.value = '0'
+  // titleGroupAccordionValue.value = ''
+  // editionGroupAccordionValue.value = '0'
   uploadStep.value = 2
 }
 
 const editionGroupDone = (eg: EditionGroupInfoLite) => {
   editionGroup.value = eg
   editionGroupStore.id = eg.id
-  editionGroupAccordionValue.value = ''
-  torrentAccordionValue.value = '0'
+  // editionGroupAccordionValue.value = ''
+  // torrentAccordionValue.value = '0'
   uploadStep.value = 3
 }
 

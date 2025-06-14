@@ -98,7 +98,7 @@
     </div>
     <div class="original-release-date">
       <label for="original_release_date" class="block">{{ t('title_group.original_release_date') }}</label>
-      <DatePicker v-model="original_release_date" showIcon :showOnFocus="false" inputId="original_release_date" size="small" name="original_release_date" />
+      <DatePicker v-model="original_release_date" showIcon iconDisplay="input" inputId="original_release_date" size="small" name="original_release_date" />
       <Message v-if="$form.original_release_date?.invalid" severity="error" size="small" variant="simple">
         {{ $form.original_release_date.error?.message }}
       </Message>
