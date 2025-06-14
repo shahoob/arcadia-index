@@ -42,6 +42,9 @@ services:
         condition: service_healthy
   backend:
     container_name: arcadia_backend
+    volumes:
+      - cargo-registry:/usr/local/cargo/registry
+      - cargo-target:/app/target
     build:
       context: backend
       dockerfile: Dockerfile
@@ -92,3 +95,5 @@ services:
 
 volumes:
   db_data:
+  cargo-registry:
+  cargo-target:

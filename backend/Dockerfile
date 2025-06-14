@@ -19,6 +19,7 @@ COPY Cargo.toml Cargo.lock ./
 # Helps speed up repetitive docker builds by A LOT
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/usr/local/cargo/registry \
     apt-get update && apt-get install -y libssl-dev openssl curl pkg-config
 
 COPY migrations/ migrations/
