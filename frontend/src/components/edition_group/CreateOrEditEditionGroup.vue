@@ -70,7 +70,7 @@
         {{ $form.release_date.error?.message }}
       </Message>
     </div>
-    <div class="covers input-list">
+    <!-- <div class="covers input-list">
       <label>{{ t('general.cover', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.covers" :key="index">
         <InputText size="small" v-model="editionGroupForm.covers[index]" :name="`covers[${index}]`" />
@@ -80,8 +80,8 @@
           {{ ($form.covers as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
-    </div>
-    <div class="external-links input-list">
+    </div> -->
+    <!-- <div class="external-links input-list">
       <label>{{ t('general.external_link', 2) }}</label>
       <div v-for="(link, index) in editionGroupForm.external_links" :key="index">
         <InputText size="small" v-model="editionGroupForm.external_links[index]" :name="`external_links[${index}]`" />
@@ -91,7 +91,7 @@
           {{ ($form.external_links as unknown as FormFieldState[])[index].error?.message }}
         </Message>
       </div>
-    </div>
+    </div> -->
     <div class="flex justify-content-center">
       <Button label="Validate edition" icon="pi pi-check" size="small" class="validate-button" type="submit" :loading="sendingEditionGroup" />
     </div>
@@ -106,7 +106,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import { Form, type FormFieldState, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
+import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import { useI18n } from 'vue-i18n'
 import { getSources, isValidUrl } from '@/services/helpers'
 import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
@@ -194,18 +194,18 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
     emit('validated', editionGroupForm.value)
   }
 }
-const addCover = () => {
-  editionGroupForm.value.covers.push('')
-}
-const removeCover = (index: number) => {
-  editionGroupForm.value.covers.splice(index, 1)
-}
-const addLink = () => {
-  editionGroupForm.value.external_links.push('')
-}
-const removeLink = (index: number) => {
-  editionGroupForm.value.external_links.splice(index, 1)
-}
+// const addCover = () => {
+//   editionGroupForm.value.covers.push('')
+// }
+// const removeCover = (index: number) => {
+//   editionGroupForm.value.covers.splice(index, 1)
+// }
+// const addLink = () => {
+//   editionGroupForm.value.external_links.push('')
+// }
+// const removeLink = (index: number) => {
+//   editionGroupForm.value.external_links.splice(index, 1)
+// }
 
 onMounted(() => {
   if (titleGroup.id !== 0) {
