@@ -9,7 +9,7 @@ use crate::{
     },
     repositories::forum_repository::{
         create_forum_post, create_forum_thread, find_forum_overview,
-        find_forum_sub_category_threads, find_forum_thread, query_forum_thread,
+        find_forum_sub_category_threads, find_forum_thread, search_forum,
     },
 };
 use actix_web::{HttpResponse, web};
@@ -120,7 +120,7 @@ pub async fn get_forum_thread(
             let offset = q.0.offset.unwrap_or(0);
             let limit = q.0.limit.unwrap_or(10);
 
-            query_forum_thread(&arc.pool, q.0.title, offset, limit).await
+            search_forum(&arc.pool, q.0.title, offset, limit).await
         }
         _ => Err(crate::Error::InvalidUserIdOrTorrentId),
     }?;

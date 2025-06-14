@@ -258,7 +258,7 @@ pub async fn find_forum_sub_category_threads(
     Ok(forum_sub_category.result_json.unwrap())
 }
 
-pub async fn query_forum_thread(
+pub async fn search_forum(
     pool: &PgPool,
     name: String,
     offset: i64,
