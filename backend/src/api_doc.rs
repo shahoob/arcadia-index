@@ -72,6 +72,7 @@ use crate::{
         crate::handlers::title_group_handler::add_title_group,
         crate::handlers::title_group_handler::get_title_group,
         crate::handlers::title_group_handler::get_title_group_info_lite,
+        crate::handlers::title_group_handler::search_title_group_info_lite,
         crate::handlers::torrent_request_handler::add_torrent_request,
         crate::handlers::torrent_request_handler::fill_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,

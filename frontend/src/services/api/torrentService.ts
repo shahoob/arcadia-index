@@ -1,5 +1,6 @@
 import type { components } from '@/api-schema/schema'
 import api from './api.ts'
+import type { TitleGroupHierarchyLite } from './artistService.ts'
 
 export type TitleGroup = components['schemas']['TitleGroup']
 
@@ -19,6 +20,10 @@ export const getTitleGroup = async (id: number): Promise<TitleGroupAndAssociated
 
 export const getTitleGroupLite = async (id: number): Promise<TitleGroupLite> => {
   return (await api.get<TitleGroupLite>('/title-group/lite?id=' + id)).data
+}
+
+export const searchTitleGroupLite = async (name: string): Promise<TitleGroupHierarchyLite[]> => {
+  return (await api.get<TitleGroupHierarchyLite[]>('/search/title-group/lite?name=' + name)).data
 }
 
 export type UserCreatedTitleGroup = components['schemas']['UserCreatedTitleGroup']

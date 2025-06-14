@@ -2,10 +2,16 @@
   <div>
     <div class="title">{{ t('torrent.upload_torrent') }}</div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0">
-        <AccordionHeader>{{ t('title_group.title') }}</AccordionHeader>
+      <AccordionPanel value="0" :disabled="titleGroupDisabled">
+        <AccordionHeader>
+          <div style="display: flex">
+            {{ t('title_group.title') }}
+            <div v-if="titleGroupStore.id !== 0" style="display: flex">:<TitleGroupSlimHeader style="margin-left: 5px" :title_group="titleGroupStore" /></div>
+          </div>
+        </AccordionHeader>
         <AccordionContent>
-          <CreateOrSelectTitleGroup @done="titleGroupDone" />
+          <!-- <CreateOrSelectTitleGroup @done="titleGroupDone" /> -->
+          <CreateOrEditTitleGroup @done="titleGroupDone" :initial-title-group-form="null" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -33,31 +39,38 @@ import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
-import CreateOrSelectTitleGroup from '@/components/title_group/CreateOrSelectTitleGroup.vue'
 import CreateOrSelectEditionGroup from '@/components/edition_group/CreateOrSelectEditionGroup.vue'
 import CreateOrEditTorrent from '@/components/torrent/CreateOrEditTorrent.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import type { EditionGroupInfoLite, Torrent } from '@/services/api/torrentService'
+import type { EditionGroupInfoLite, TitleGroup, Torrent } from '@/services/api/torrentService'
+import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
+import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
+import { onMounted } from 'vue'
 
 const router = useRouter()
 const { t } = useI18n()
 
 const editionGroupStore = useEditionGroupStore()
-const titleGroupStore = useTitleGroupStore()
+const titleGroupStore = ref(useTitleGroupStore())
 
 const titleGroupAccordionValue = ref('0')
+const titleGroupDisabled = ref(false)
 const editionGroupAccordionValue = ref('0')
 const torrentAccordionValue = ref('0')
-const uploadStep = ref(1)
 const editionGroup = ref({})
 
-const titleGroupDone = () => {
-  // titleGroupAccordionValue.value = ''
-  // editionGroupAccordionValue.value = '0'
-  uploadStep.value = 2
+const titleGroupDone = (titleGroup?: TitleGroup) => {
+  titleGroupAccordionValue.value = ''
+  titleGroupDisabled.value = true
+  if (titleGroup) {
+    titleGroupStore.value.id = titleGroup.id
+    titleGroupStore.value.name = titleGroup.name
+    console.log(titleGroup.name)
+    titleGroupStore.value.original_release_date = titleGroup.original_release_date
+  }
 }
 
 const editionGroupDone = (eg: EditionGroupInfoLite) => {
@@ -65,15 +78,23 @@ const editionGroupDone = (eg: EditionGroupInfoLite) => {
   editionGroupStore.id = eg.id
   // editionGroupAccordionValue.value = ''
   // torrentAccordionValue.value = '0'
-  uploadStep.value = 3
 }
 
 const torrentDone = (torrent: Torrent) => {
-  router.push('/title-group/' + titleGroupStore.id + '?torrentId=' + torrent.id)
+  router.push('/title-group/' + titleGroupStore.value.id + '?torrentId=' + torrent.id)
 }
+
+onMounted(() => {
+  if (titleGroupStore.value.id !== 0) {
+    titleGroupDone()
+  }
+})
 </script>
 
 <style scoped>
+.form {
+  padding-top: 5px;
+}
 .title {
   margin-bottom: 20px;
   color: var(--color-primary);

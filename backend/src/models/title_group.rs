@@ -168,6 +168,9 @@ pub struct TitleGroupLite {
     pub id: i64,
     pub name: String,
     pub content_type: ContentType,
+    #[schema(value_type = String, format = DateTime)]
+    pub original_release_date: DateTime<Utc>,
+    pub covers: Vec<String>,
     pub edition_groups: Vec<EditionGroupInfoLite>,
     pub platform: Option<Platform>,
 }

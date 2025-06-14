@@ -79,7 +79,29 @@ pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_group = find_title_group_info_lite(&arc.pool, query.id).await?;
+    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None).await?;
 
     Ok(HttpResponse::Ok().json(title_group))
+}
+
+#[derive(Debug, Deserialize, IntoParams)]
+pub struct SearchTitleGroupLiteQuery {
+    name: String,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/search/title-group/lite",
+    params(SearchTitleGroupLiteQuery),
+    responses(
+        (status = 200, description = "Returns title groups with their name containing the provided string", body=Vec<TitleGroupLite>),
+    )
+)]
+pub async fn search_title_group_info_lite(
+    arc: web::Data<Arcadia>,
+    query: web::Query<SearchTitleGroupLiteQuery>,
+) -> Result<HttpResponse> {
+    let title_groups = find_title_group_info_lite(&arc.pool, None, Some(&query.name)).await?;
+
+    Ok(HttpResponse::Ok().json(title_groups))
 }

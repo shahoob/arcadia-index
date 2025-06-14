@@ -203,32 +203,47 @@ pub async fn find_title_group(
 
     Ok(title_group.title_group_data.unwrap())
 }
-pub async fn find_title_group_info_lite(pool: &PgPool, title_group_id: i64) -> Result<Value> {
-    let title_group = sqlx::query!(
-        r#"SELECT jsonb_build_object(
-    'id', tg.id, 'content_type', tg.content_type, 'name', tg.name,
-    'edition_groups', COALESCE(
-        jsonb_agg(
-            jsonb_build_object(
-                'id', eg.id,
-                'name', eg.name,
-                'release_date', eg.release_date,
-                'distributor', eg.distributor,
-                'source', eg.source,
-                'additional_information', eg.additional_information
-            )
-        ) FILTER (WHERE eg.id IS NOT NULL),
-        '[]'::jsonb
-    )
-)
-FROM title_groups tg
-LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
-WHERE tg.id = $1
-GROUP BY tg.id;"#,
-        title_group_id
+pub async fn find_title_group_info_lite(
+    pool: &PgPool,
+    title_group_id: Option<i64>,
+    title_group_name: Option<&str>,
+) -> Result<Value> {
+    let title_groups = sqlx::query!(
+        r#"
+        SELECT jsonb_agg(data)
+        FROM (
+            SELECT jsonb_build_object(
+                'id', tg.id, 'content_type', tg.content_type, 'name', tg.name, 'platform', tg.platform, 'covers', tg.covers,
+                'original_release_date', tg.original_release_date,
+                'edition_groups', COALESCE(
+                    jsonb_agg(
+                        jsonb_build_object(
+                            'id', eg.id,
+                            'name', eg.name,
+                            'release_date', eg.release_date,
+                            'distributor', eg.distributor,
+                            'source', eg.source,
+                            'additional_information', eg.additional_information
+                        )
+                    ) FILTER (WHERE eg.id IS NOT NULL),
+                    '[]'::jsonb
+                )
+            ) as data
+            FROM title_groups tg
+            LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
+            WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
+               OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
+            GROUP BY tg.id
+            LIMIT 5
+        ) AS subquery;
+        "#,
+        title_group_id,
+        title_group_name
     )
     .fetch_one(pool)
     .await?;
 
-    Ok(title_group.jsonb_build_object.unwrap())
+    Ok(title_groups
+        .jsonb_agg
+        .unwrap_or_else(|| serde_json::Value::Array(vec![])))
 }
