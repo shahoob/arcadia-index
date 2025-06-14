@@ -73,6 +73,7 @@ const titleGroupDone = (titleGroup?: TitleGroup | TitleGroupLite) => {
   titleGroupDisabled.value = true
   if (titleGroup) {
     titleGroupStore.value.id = titleGroup.id
+    titleGroupStore.value.content_type = titleGroup.content_type
     titleGroupStore.value.name = titleGroup.name
     titleGroupStore.value.original_release_date = titleGroup.original_release_date
     if ('edition_groups' in titleGroup) {

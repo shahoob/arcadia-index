@@ -101,7 +101,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['Movie', 'TV-Show', 'Collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv-show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
               <Select
                 v-model="torrentForm.audio_channels"
                 inputId="audio_channels"
@@ -118,7 +118,7 @@
           </div>
         </div>
         <div>
-          <FloatLabel v-if="['movie', 'tv_show', 'book', 'software', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+          <FloatLabel v-if="titleGroupStore.content_type !== 'music'">
             <MultiSelect
               v-model="torrentForm.languages"
               inputId="languages"
@@ -265,19 +265,19 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.container == '') {
     errors.container = [{ message: t('error.select_container') }]
   }
-  if (!values.video_codec) {
+  if (['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_codec) {
     errors.video_codec = [{ message: t('error.select_codec') }]
   }
-  if (!values.video_resolution) {
+  if (['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_resolution) {
     errors.video_resolution = [{ message: t('error.select_resolution') }]
   }
-  if (!values.audio_codec) {
+  if (['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_codec) {
     errors.audio_codec = [{ message: t('error.select_codec') }]
   }
-  if (!values.audio_bitrate_sampling) {
+  if (['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_bitrate_sampling) {
     errors.audio_bitrate_sampling = [{ message: t('error.select_bitrate') }]
   }
-  if (values.languages && values.languages.length === 0) {
+  if (titleGroupStore.value.content_type !== 'music' && values.languages && values.languages.length === 0) {
     errors.languages = [{ message: t('error.select_at_least_x_language', [1]) }]
   }
   if (!torrentForm.value.torrent_file) {
