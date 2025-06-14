@@ -73,7 +73,14 @@ import { InputNumber } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
-import { getTitleGroupLite, type ContentType, type TitleGroup, type UserCreatedEditionGroup, type UserCreatedTitleGroup } from '@/services/api/torrentService'
+import {
+  getTitleGroupLite,
+  type ContentType,
+  type TitleGroup,
+  type TitleGroupLite,
+  type UserCreatedEditionGroup,
+  type UserCreatedTitleGroup,
+} from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditTitleGroup from '../title_group/CreateOrEditTitleGroup.vue'
 import { useI18n } from 'vue-i18n'
@@ -92,7 +99,7 @@ const { t } = useI18n()
 
 const emit = defineEmits<{
   gotEditionData: [editionGroup: UserCreatedEditionGroup]
-  done: [titleGroup?: TitleGroup]
+  done: [titleGroup?: TitleGroup | TitleGroupLite]
 }>()
 
 const externalDBDataFound = (data: ExternalDBData) => {
@@ -117,7 +124,7 @@ const sendSelectedTitleGroup = async (): Promise<void> => {
   }
 }
 
-const titleGroupCreated = async (titleGroup: TitleGroup) => {
+const titleGroupCreated = async (titleGroup: TitleGroup | TitleGroupLite) => {
   titleGroupStore.id = titleGroup.id
   titleGroupStore.content_type = titleGroup.content_type
   emit('done', titleGroup)

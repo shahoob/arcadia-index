@@ -167,22 +167,22 @@ const resolver = ({ values }: FormResolverOptions) => {
   // if (values.description.length < 10) {
   //   errors.description = [{ message: 'Write more than 10 characters' }]
   // }
-  values.external_links.forEach((link: string, index: number) => {
-    if (!isValidUrl(link) && link != '') {
-      if (!('external_links' in errors)) {
-        errors.external_links = []
-      }
-      errors.external_links![index] = { message: t('error.invalid_url') }
-    }
-  })
-  values.covers.forEach((link: string, index: number) => {
-    if (!isValidUrl(link) && link != '') {
-      if (!('covers' in errors)) {
-        errors.covers = []
-      }
-      errors.covers![index] = { message: t('error.invalid_url') }
-    }
-  })
+  // values.external_links.forEach((link: string, index: number) => {
+  //   if (!isValidUrl(link) && link != '') {
+  //     if (!('external_links' in errors)) {
+  //       errors.external_links = []
+  //     }
+  //     errors.external_links![index] = { message: t('error.invalid_url') }
+  //   }
+  // })
+  // values.covers.forEach((link: string, index: number) => {
+  //   if (!isValidUrl(link) && link != '') {
+  //     if (!('covers' in errors)) {
+  //       errors.covers = []
+  //     }
+  //     errors.covers![index] = { message: t('error.invalid_url') }
+  //   }
+  // })
 
   return {
     errors,

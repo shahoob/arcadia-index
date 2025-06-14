@@ -16,8 +16,12 @@
       </AccordionPanel>
     </Accordion>
     <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0">
-        <AccordionHeader>{{ t('torrent.edition') }}</AccordionHeader>
+      <AccordionPanel value="0" :disabled="editionGroupDisabled">
+        <AccordionHeader>
+          <span>
+            {{ t('torrent.edition') }}<span v-if="editionGroup" class="bold">: {{ getEditionGroupSlug(editionGroup) }}</span>
+          </span>
+        </AccordionHeader>
         <AccordionContent>
           <CreateOrSelectEditionGroup @done="editionGroupDone" />
         </AccordionContent>
@@ -45,38 +49,43 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import type { EditionGroupInfoLite, TitleGroup, Torrent } from '@/services/api/torrentService'
+import type { EditionGroupInfoLite, TitleGroup, TitleGroupLite, Torrent } from '@/services/api/torrentService'
 import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { onMounted } from 'vue'
+import { getEditionGroupSlug } from '@/services/helpers'
 
 const router = useRouter()
 const { t } = useI18n()
 
-const editionGroupStore = useEditionGroupStore()
+const editionGroupStore = ref(useEditionGroupStore())
 const titleGroupStore = ref(useTitleGroupStore())
 
 const titleGroupAccordionValue = ref('0')
 const titleGroupDisabled = ref(false)
 const editionGroupAccordionValue = ref('0')
+const editionGroupDisabled = ref(false)
 const torrentAccordionValue = ref('0')
-const editionGroup = ref({})
+const editionGroup = ref<EditionGroupInfoLite | null>(null)
 
-const titleGroupDone = (titleGroup?: TitleGroup) => {
+const titleGroupDone = (titleGroup?: TitleGroup | TitleGroupLite) => {
   titleGroupAccordionValue.value = ''
   titleGroupDisabled.value = true
   if (titleGroup) {
     titleGroupStore.value.id = titleGroup.id
     titleGroupStore.value.name = titleGroup.name
-    console.log(titleGroup.name)
     titleGroupStore.value.original_release_date = titleGroup.original_release_date
+    if ('edition_groups' in titleGroup) {
+      titleGroupStore.value.edition_groups = titleGroup.edition_groups
+    }
   }
 }
 
 const editionGroupDone = (eg: EditionGroupInfoLite) => {
   editionGroup.value = eg
-  editionGroupStore.id = eg.id
-  // editionGroupAccordionValue.value = ''
+  editionGroupStore.value.id = eg.id
+  editionGroupAccordionValue.value = ''
+  editionGroupDisabled.value = true
   // torrentAccordionValue.value = '0'
 }
 

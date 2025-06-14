@@ -9,7 +9,14 @@
   </div>
   <div id="select-edition-group" v-if="action == 'select'">
     <FloatLabel>
-      <Select v-model="selected_edition_group" inputId="edition_group" :options="titleGroup.edition_groups" size="small" class="select-existing-edition">
+      <Select
+        v-model="selected_edition_group"
+        @value-change="sendEditionGroup"
+        inputId="edition_group"
+        :options="titleGroupStore.edition_groups"
+        size="small"
+        class="select-existing-edition"
+      >
         <template #option="slotProps">
           <div>
             {{ getEditionGroupSlug(slotProps.option) }}
@@ -23,20 +30,10 @@
       </Select>
       <label for="edition_group">{{ t('torrent.edition') }}</label>
     </FloatLabel>
-    <div class="flex justify-content-center">
-      <Button
-        label="Validate edition"
-        @click="() => sendEditionGroup()"
-        icon="pi pi-check"
-        size="small"
-        class="validate-button"
-        :loading="creatingEditionGroup"
-      />
-    </div>
   </div>
   <div v-if="action === 'create'">
     <div v-if="step > 0">
-      <CreateOrEditEditionGroup :titleGroup @validated="sendEditionGroup" />
+      <CreateOrEditEditionGroup :titleGroup="titleGroupStore" @validated="sendEditionGroup" :sending-edition-group="creatingEditionGroup" />
     </div>
   </div>
 </template>
@@ -45,20 +42,18 @@
 import { ref } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
-import Button from 'primevue/button'
 import { createEditionGroup, type EditionGroup, type EditionGroupInfoLite, type UserCreatedEditionGroup } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
 
-// eslint-disable-next-line prefer-const
-let action = ref('select') // create | select
+const action = ref('select') // create | select
 const step = 1
 
-const titleGroup = useTitleGroupStore()
+const titleGroupStore = useTitleGroupStore()
 const selected_edition_group = ref<EditionGroupInfoLite | null>(null)
-let creatingEditionGroup = false
+const creatingEditionGroup = ref(false)
 
 const { t } = useI18n()
 
@@ -73,12 +68,12 @@ const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
       emit('done', selected_edition_group.value)
     }
   } else if (editionGroupForm !== undefined) {
-    creatingEditionGroup = true
+    creatingEditionGroup.value = true
     const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
     // otherwise there is a json parse error, last char is "Z"
     // formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
     createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
-      creatingEditionGroup = false
+      creatingEditionGroup.value = false
       emit('done', data)
     })
   }

@@ -241,7 +241,8 @@ const selectableAudioBitrateSamplings = [
 ]
 const selectableAudioChannels = ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1']
 const uploadingTorrent = ref(false)
-const titleGroupStore = useTitleGroupStore()
+const titleGroupStore = ref(useTitleGroupStore())
+const editionGroupStore = ref(useEditionGroupStore())
 
 const { t } = useI18n()
 
@@ -307,6 +308,7 @@ const mediainfoUpdated = () => {
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true
+  torrentForm.value.edition_group_id = editionGroupStore.value.id.toString()
   uploadTorrent(torrentForm.value)
     .then((data) => {
       emit('done', data)
@@ -315,10 +317,7 @@ const sendTorrent = () => {
       uploadingTorrent.value = false
     })
 }
-onMounted(() => {
-  const editionGroupStore = useEditionGroupStore()
-  torrentForm.value.edition_group_id = editionGroupStore.id.toString()
-})
+onMounted(() => {})
 </script>
 <style scoped>
 #create-torrent {

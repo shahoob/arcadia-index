@@ -10,7 +10,14 @@
     validateOnBlur
   >
     <FloatLabel>
-      <Select v-model="titleGroupForm.content_type" inputId="content_type" :options="selectableContentTypes" class="select" size="small">
+      <Select
+        v-model="titleGroupForm.content_type"
+        @update:model-value="(content_type) => (titleGroupStore.content_type = content_type)"
+        inputId="content_type"
+        :options="selectableContentTypes"
+        class="select"
+        size="small"
+      >
         <template #option="slotProps">
           <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
         </template>
@@ -227,11 +234,13 @@ import { useI18n } from 'vue-i18n'
 import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
 import { watch } from 'vue'
 import TitleGroupSearchBar from './TitleGroupSearchBar.vue'
+import { useTitleGroupStore } from '@/stores/titleGroup'
 
 interface Props {
   initialTitleGroupForm: UserCreatedTitleGroup | null
 }
 const { initialTitleGroupForm = null } = defineProps<Props>()
+const titleGroupStore = ref(useTitleGroupStore())
 
 const sendingTitleGroup = ref(false)
 
@@ -280,7 +289,7 @@ const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
 const { t } = useI18n()
 
 const emit = defineEmits<{
-  done: [titleGroup: TitleGroup]
+  done: [titleGroup: TitleGroup | TitleGroupLite]
 }>()
 
 // type FormErrors = {
@@ -369,7 +378,7 @@ const artistSelected = (artist: ArtistLite, index: number) => {
   titleGroupForm.value.affiliated_artists[index].artist_id = artist.id
 }
 const titleGroupSelected = (titleGroup: TitleGroupLite) => {
-  console.log(titleGroup)
+  emit('done', titleGroup)
 }
 const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   if (!valid) {
