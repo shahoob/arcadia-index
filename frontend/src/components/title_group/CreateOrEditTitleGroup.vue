@@ -1,6 +1,28 @@
 <template>
-  <Form v-slot="$form" :initialValues="titleGroupForm" :resolver @submit="sendTitleGroup" validateOnSubmit :validateOnValueUpdate="false" validateOnBlur>
-    <div class="line" v-if="content_type == 'software'">
+  <Form
+    class="form"
+    v-slot="$form"
+    :initialValues="titleGroupForm"
+    :resolver
+    @submit="sendTitleGroup"
+    validateOnSubmit
+    :validateOnValueUpdate="false"
+    validateOnBlur
+  >
+    <FloatLabel>
+      <Select v-model="titleGroupForm.content_type" inputId="content_type" :options="selectableContentTypes" class="select" size="small">
+        <template #option="slotProps">
+          <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
+        </template>
+        <template #value="slotProps">
+          <span v-if="slotProps.value">
+            {{ t(`title_group.content_type.${slotProps.value}`) }}
+          </span>
+        </template>
+      </Select>
+      <label for="content_type">{{ t('title_group.content_type.content_type') }}</label>
+    </FloatLabel>
+    <div class="line" v-if="titleGroupForm.content_type == 'software'">
       <FloatLabel>
         <InputNumber size="small" v-model="titleGroupForm.master_group_id" name="master_group_id" :format="false" />
         <label for="master_group_id">{{ t('master_group.master_group_id') }}</label>
@@ -8,10 +30,14 @@
     </div>
     <div class="line">
       <div class="name">
-        <FloatLabel>
-          <InputText size="small" v-model="titleGroupForm.name" name="name" />
-          <label for="name">{{ t('general.name') }}</label>
-        </FloatLabel>
+        <TitleGroupSearchBar
+          class="name-input"
+          :placeholder="t('general.name')"
+          :clearInputOnSelect="false"
+          v-model="titleGroupForm.name"
+          @titleGroupSelected="titleGroupSelected"
+          name="name"
+        />
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
         </Message>
@@ -21,7 +47,7 @@
           <Select
             v-model="titleGroupForm.category"
             inputId="category"
-            :options="selectableCategories[content_type]"
+            :options="selectableCategories[titleGroupForm.content_type]"
             size="small"
             name="category"
             class="select"
@@ -52,7 +78,7 @@
       </Message>
     </div>
     <div class="line">
-      <div v-if="content_type == 'software'">
+      <div v-if="titleGroupForm.content_type == 'software'">
         <FloatLabel>
           <Select v-model="titleGroupForm.platform" inputId="platform" :options="getPlatforms()" class="select" size="small" name="platform" filter />
           <label for="platform">{{ t('title_group.platform') }}</label>
@@ -148,7 +174,7 @@
         </Message>
       </div>
     </div>
-    <div class="screenshots input-list" v-if="content_type == 'software'">
+    <div class="screenshots input-list" v-if="titleGroupForm.content_type == 'software'">
       <label>{{ t('general.screenshots') }}</label>
       <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
         <InputText size="small" v-model="titleGroupForm.screenshots[index]" />
@@ -188,20 +214,28 @@ import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
 import ArtistSearchBar from '../artist/ArtistSearchBar.vue'
 import { InputNumber } from 'primevue'
-import { createTitleGroup, type ContentType, type TitleGroup, type TitleGroupCategory, type UserCreatedTitleGroup } from '@/services/api/torrentService'
+import {
+  createTitleGroup,
+  type ContentType,
+  type TitleGroup,
+  type TitleGroupCategory,
+  type TitleGroupLite,
+  type UserCreatedTitleGroup,
+} from '@/services/api/torrentService'
 import { createArtists, type Artist, type ArtistLite, type UserCreatedAffiliatedArtist, type UserCreatedArtist } from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
 import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
 import { watch } from 'vue'
+import TitleGroupSearchBar from './TitleGroupSearchBar.vue'
 
 interface Props {
-  content_type: ContentType
   initialTitleGroupForm: UserCreatedTitleGroup | null
 }
-const { content_type, initialTitleGroupForm = null } = defineProps<Props>()
+const { initialTitleGroupForm = null } = defineProps<Props>()
 
 const sendingTitleGroup = ref(false)
 
+const selectableContentTypes: ContentType[] = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
 const titleGroupForm = ref<UserCreatedTitleGroup>({
   name: '',
   description: '',
@@ -273,7 +307,7 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.platform == '') {
     errors.platform = [{ message: t('error.select_platform') }]
   }
-  if (content_type !== 'music' && values.original_language == '') {
+  if (titleGroupForm.value.content_type !== 'music' && values.original_language == '') {
     errors.original_language = [{ message: t('error.select_language') }]
   }
   if (values.country_from == '') {
@@ -334,12 +368,14 @@ const resolver = ({ values }: FormResolverOptions) => {
 const artistSelected = (artist: ArtistLite, index: number) => {
   titleGroupForm.value.affiliated_artists[index].artist_id = artist.id
 }
+const titleGroupSelected = (titleGroup: TitleGroupLite) => {
+  console.log(titleGroup)
+}
 const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   if (!valid) {
     return
   }
   sendingTitleGroup.value = true
-  titleGroupForm.value.content_type = content_type
   titleGroupForm.value.tags = tagsString.value.trim().split(',')
   titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter((screenshot) => screenshot.trim() !== '')
   // create artists that need to be created
@@ -373,11 +409,6 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
       sendingTitleGroup.value = false
     })
 }
-// const onFormSubmit = ({ valid }: FormSubmitEvent) => {
-//   if (valid) {
-//    emit('validated', { ...titleGroupForm.value, content_type })
-//   }
-// }
 const addAffiliatedArtist = () => {
   affiliated_artists_names.value.push('')
   titleGroupForm.value.affiliated_artists.push({
@@ -433,44 +464,33 @@ watch(
   width: 100%;
   height: 10em;
 }
-
 .name {
   width: 50%;
-
-  input {
-    width: 100%;
-  }
+  margin-right: 10px !important;
 }
-
 .tags {
   width: 50%;
-
   input {
     width: 100%;
   }
 }
-
 .select {
   width: 200px;
 }
-
-.p-floatlabel {
+.p-floatlabel,
+.name-input {
   margin-top: 30px;
 }
-
 .original-release-date {
   margin-top: 30px;
 }
-
 .input-list {
   margin-top: 15px;
 }
-
 .input-list .p-component {
   margin-right: 5px;
   margin-bottom: 5px;
 }
-
 .input-list input {
   &:not(.artist) {
     width: 400px;
@@ -485,7 +505,6 @@ watch(
     color: green;
   }
 }
-
 .validate-button {
   margin-top: 20px;
 }

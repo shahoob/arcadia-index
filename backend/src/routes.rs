@@ -25,7 +25,9 @@ use crate::handlers::{
     series_handler::{add_series, get_series},
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
-    title_group_handler::{add_title_group, get_title_group, get_title_group_info_lite},
+    title_group_handler::{
+        add_title_group, get_title_group, get_title_group_info_lite, search_title_group_info_lite,
+    },
     torrent_handler::{
         delete_torrent, download_dottorrent_file, find_torrents, get_top_torrents, upload_torrent,
     },
@@ -55,6 +57,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route(
                 "/title-group/lite",
                 web::get().to(get_title_group_info_lite),
+            )
+            .route(
+                "/search/title-group/lite",
+                web::get().to(search_title_group_info_lite),
             )
             .route("/edition-group", web::post().to(add_edition_group))
             .route("/torrent", web::post().to(upload_torrent))

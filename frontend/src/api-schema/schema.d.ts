@@ -341,6 +341,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/search/title-group/lite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["search_title_group_info_lite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/search/torrent/lite": {
         parameters: {
             query?: never;
@@ -1266,10 +1282,13 @@ export interface components {
         };
         TitleGroupLite: {
             content_type: components["schemas"]["ContentType"];
+            covers: string[];
             edition_groups: components["schemas"]["EditionGroupInfoLite"][];
             /** Format: int64 */
             id: number;
             name: string;
+            /** Format: date-time */
+            original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
         };
         Torrent: {
@@ -2390,6 +2409,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ArtistLite"][];
+                };
+            };
+        };
+    };
+    search_title_group_info_lite: {
+        parameters: {
+            query: {
+                name: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns title groups with their name containing the provided string */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TitleGroupLite"][];
                 };
             };
         };

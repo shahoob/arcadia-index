@@ -15,7 +15,7 @@
       }"
     >
       <TitleGroupFullHeader :title_group v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
-      <TitleGroupSlimHeader v-else :title_group class="slim-header" />
+      <TitleGroupSlimHeader v-else :title_group class="slim-header title" />
       <div class="actions">
         <div>
           <i v-if="togglingSubscription" class="pi pi-hourglass" />
@@ -126,6 +126,8 @@ const fetchTitleGroup = async () => {
 const uploadTorrent = () => {
   if (title_group.value) {
     titleGroupStore.id = title_group.value.id
+    titleGroupStore.original_release_date = title_group.value.original_release_date
+    titleGroupStore.name = title_group.value.name
     titleGroupStore.edition_groups = title_group.value.edition_groups
     titleGroupStore.content_type = title_group.value.content_type
     router.push({ path: '/upload' })

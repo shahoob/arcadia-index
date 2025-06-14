@@ -1,6 +1,6 @@
 <template>
-  <div class="title">
-    <span v-if="title_group.series?.id">
+  <div>
+    <span v-if="'series' in title_group && title_group.series?.id">
       <RouterLink class="prefix" :to="`/series/${title_group.series.id}`">{{ title_group.series.name }} </RouterLink>
       -
     </span>
@@ -15,10 +15,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import type { TitleGroupAndAssociatedData, TitleGroupLite } from '@/services/api/torrentService'
 
 defineProps<{
-  title_group: TitleGroupAndAssociatedData
+  title_group: TitleGroupAndAssociatedData | TitleGroupLite
 }>()
 </script>
 <style scoped>

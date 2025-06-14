@@ -103,7 +103,9 @@ const externalDBDataFound = (data: ExternalDBData) => {
 const sendSelectedTitleGroup = async (): Promise<void> => {
   gettingTitleGroupInfo.value = true
   if (!titleGroupStore.id && titleGroupId.value) {
-    const titleGroupLite = await getTitleGroupLite(titleGroupId.value)
+    const titleGroupLite = await getTitleGroupLite(titleGroupId.value).finally(() => {
+      gettingTitleGroupInfo.value = false
+    })
     if (titleGroupLite) {
       titleGroupStore.id = titleGroupLite.id
       titleGroupStore.edition_groups = titleGroupLite.edition_groups
@@ -113,7 +115,6 @@ const sendSelectedTitleGroup = async (): Promise<void> => {
   if (titleGroupStore.id) {
     emit('done')
   }
-  gettingTitleGroupInfo.value = false
 }
 
 const titleGroupCreated = async (titleGroup: TitleGroup) => {
