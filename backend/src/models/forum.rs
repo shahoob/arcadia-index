@@ -92,7 +92,7 @@ pub struct ForumSubCategoryHierarchy {
     pub posts_amount: i64,
     pub forbidden_classes: Vec<String>,
     pub latest_post_in_thread: ForumThreadPostLite,
-    pub threads: Vec<ForumThreadHierarchy>,
+    pub threads: Option<Vec<ForumThreadHierarchy>>,
     pub category: ForumCategoryLite,
 }
 
@@ -103,6 +103,7 @@ pub struct ForumThreadHierarchy {
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
     pub created_by: UserLite,
+    pub latest_post: ForumThreadPostLite,
     pub posts_amount: i64,
     pub sticky: bool,
     pub locked: bool,
@@ -115,7 +116,6 @@ pub struct ForumThreadPostLite {
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
     pub created_by: UserLite,
-    pub posts_amount: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
