@@ -676,14 +676,17 @@ SELECT
     t.edition_group_id,
     t.created_at,
     t.updated_at,
+    -- Always keep the actual created_by_id for internal queries
+    t.created_by_id,
+    -- Add display fields that respect anonymity
     CASE
         WHEN t.uploaded_as_anonymous THEN NULL
         ELSE t.created_by_id
-    END as created_by_id,
+    END as display_created_by_id,
     CASE
         WHEN t.uploaded_as_anonymous THEN NULL
         ELSE json_build_object('id', u.id, 'username', u.username)
-    END AS created_by,
+    END AS display_created_by,
     t.info_hash,
     t.languages,
     t.release_name,
@@ -732,7 +735,8 @@ ORDER BY
         p_limit BIGINT DEFAULT NULL,
         p_offset BIGINT DEFAULT NULL,
         p_torrent_created_by_id BIGINT DEFAULT NULL,
-        p_torrent_snatched_by_id BIGINT DEFAULT NULL
+        p_torrent_snatched_by_id BIGINT DEFAULT NULL,
+        p_requesting_user_id BIGINT DEFAULT NULL
     )
     RETURNS TABLE (
         title_group_id BIGINT,
@@ -757,7 +761,9 @@ ORDER BY
                 OR (p_torrent_reported = TRUE AND t.reports::jsonb <> '[]'::jsonb)
                 OR (p_torrent_reported = FALSE AND t.reports::jsonb = '[]'::jsonb)
             )
-            AND (p_torrent_created_by_id IS NULL OR t.created_by_id = p_torrent_created_by_id)
+            AND (p_torrent_created_by_id IS NULL OR 
+                 (t.created_by_id = p_torrent_created_by_id AND 
+                  (NOT t.uploaded_as_anonymous OR t.created_by_id = p_requesting_user_id)))
             AND (p_torrent_snatched_by_id IS NULL OR st.torrent_id IS NOT NULL)
         ),
         edition_groups_with_torrents AS (
@@ -786,7 +792,17 @@ ORDER BY
                             'audio_bitrate_sampling', ft.audio_bitrate_sampling, 'audio_channels', ft.audio_channels,
                             'video_codec', ft.video_codec, 'features', ft.features,
                             'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
-                            'reports', ft.reports, 'snatched_at', ft.snatched_at
+                            'reports', ft.reports, 'snatched_at', ft.snatched_at,
+                            -- Handle anonymity: show creator info only if requesting user is the uploader or if not anonymous
+                            'created_by_id', CASE 
+                                WHEN ft.uploaded_as_anonymous AND (p_requesting_user_id IS NULL OR ft.created_by_id != p_requesting_user_id) THEN NULL
+                                ELSE ft.created_by_id
+                            END,
+                            'created_by', CASE 
+                                WHEN ft.uploaded_as_anonymous AND (p_requesting_user_id IS NULL OR ft.created_by_id != p_requesting_user_id) THEN NULL
+                                ELSE ft.display_created_by
+                            END,
+                            'uploaded_as_anonymous', ft.uploaded_as_anonymous
                         )) ORDER BY ft.id
                     ) FILTER (WHERE ft.id IS NOT NULL), '[]'::jsonb)
                 )) AS eg_data,

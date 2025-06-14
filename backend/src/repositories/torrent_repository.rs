@@ -240,13 +240,13 @@ pub async fn get_torrent(
     })
 }
 
-pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> Result<Value> {
+pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch, requesting_user_id: Option<i64>) -> Result<Value> {
     let search_results = sqlx::query!(
         r#"
         WITH title_group_data AS (
             SELECT
                 tgl.title_group_data AS lite_title_group
-            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) tgl
+            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) tgl
         )
         SELECT jsonb_agg(lite_title_group) AS title_groups
         FROM title_group_data;
@@ -261,6 +261,7 @@ pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch) -> R
         (torrent_search.page - 1) * torrent_search.page_size,
         torrent_search.torrent.created_by_id,
         torrent_search.torrent.snatched_by_id,
+        requesting_user_id,
     )
     .fetch_one(pool)
     .await
@@ -291,7 +292,7 @@ pub async fn find_top_torrents(pool: &PgPool, period: &str, amount: i64) -> Resu
         title_group_data AS (
             SELECT
                 tgl.title_group_data AS lite_title_group -- 'affiliated_artists' is already inside tgl.title_group_data
-            FROM get_title_groups_and_edition_group_and_torrents_lite() tgl
+            FROM get_title_groups_and_edition_group_and_torrents_lite('', NULL, NULL, TRUE, 'title_group_original_release_date', 'desc', NULL, NULL, NULL, NULL, NULL) tgl
             JOIN title_groups tg ON tgl.title_group_id = tg.id
             JOIN title_group_search tgs ON tg.id = tgs.title_group_id
         )
