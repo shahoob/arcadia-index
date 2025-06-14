@@ -98,8 +98,9 @@ pub async fn download_dottorrent_file(
 pub async fn find_torrents(
     form: web::Json<TorrentSearch>,
     arc: web::Data<Arcadia>,
+    current_user: User,
 ) -> Result<HttpResponse> {
-    let search_results = search_torrents(&arc.pool, &form).await?;
+    let search_results = search_torrents(&arc.pool, &form, Some(current_user.id)).await?;
 
     Ok(HttpResponse::Ok().json(search_results))
 }

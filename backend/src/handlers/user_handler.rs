@@ -34,6 +34,7 @@ pub struct GetUserQuery {
 pub async fn get_user(
     arc: web::Data<Arcadia>,
     query: web::Query<GetUserQuery>,
+    current_user: User,
 ) -> Result<HttpResponse> {
     let user = find_user_profile(&arc.pool, &query.id).await?;
 
@@ -55,11 +56,11 @@ pub async fn get_user(
         sort_by: TorrentSearchSortField::TorrentCreatedAt,
         order: TorrentSearchOrder::Desc,
     };
-    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
     torrent_search.torrent.snatched_by_id = Some(query.id);
     torrent_search.torrent.created_by_id = None;
     torrent_search.sort_by = TorrentSearchSortField::TorrentSnatchedAt;
-    let snatched_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    let snatched_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
 
     Ok(HttpResponse::Created().json(json!({
         "user":user,
@@ -97,11 +98,11 @@ pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> Result<H
         sort_by: TorrentSearchSortField::TorrentCreatedAt,
         order: TorrentSearchOrder::Desc,
     };
-    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
     torrent_search.torrent.snatched_by_id = Some(current_user.id);
     torrent_search.torrent.created_by_id = None;
     torrent_search.sort_by = TorrentSearchSortField::TorrentSnatchedAt;
-    let snatched_torrents = search_torrents(&arc.pool, &torrent_search).await?;
+    let snatched_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
     Ok(HttpResponse::Ok().json(json!({
             "user": current_user,
             "peers":peers,

@@ -54,7 +54,15 @@ pub async fn find_title_group(
                 SELECT
                     t.edition_group_id,
                     jsonb_agg(
-                        to_jsonb(t)
+                        -- Handle anonymity: show creator info only if requesting user is the uploader or if not anonymous
+                        CASE 
+                            WHEN t.uploaded_as_anonymous AND t.created_by_id != $1 THEN
+                                (to_jsonb(t) - 'created_by_id' - 'display_created_by_id' - 'display_created_by') ||
+                                jsonb_build_object('created_by_id', NULL, 'created_by', NULL, 'uploaded_as_anonymous', true)
+                            ELSE
+                                (to_jsonb(t) - 'display_created_by_id' - 'display_created_by') ||
+                                jsonb_build_object('created_by', to_jsonb(u))
+                        END
                         ORDER BY t.size DESC
                     ) AS torrents
                 FROM torrents_and_reports t
