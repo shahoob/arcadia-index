@@ -200,7 +200,8 @@
     "snatched_at": "Snatched at",
     "multi_language": "Multi-Langauge",
     "trumpable": "Trumpable",
-    "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)"
+    "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
+    "complete_edition_group_first": "Create or select an edition group first"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

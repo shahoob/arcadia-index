@@ -171,7 +171,16 @@
         </div>
       </div>
       <div class="flex justify-content-center">
-        <Button label="Validate torrent" type="submit" icon="pi pi-check" size="small" class="validate-button" :loading="uploadingTorrent" />
+        <Button
+          label="Validate torrent"
+          type="submit"
+          icon="pi pi-check"
+          size="small"
+          class="validate-button"
+          :loading="uploadingTorrent"
+          :disabled="editionGroupStore.id === 0"
+          v-tooltip.top="{ disabled: editionGroupStore.id !== 0, value: t('torrent.complete_edition_group_first') }"
+        />
       </div>
     </div>
   </Form>
