@@ -13,7 +13,7 @@ use crate::handlers::{
     edition_group_handler::add_edition_group,
     forum_handler::{
         add_forum_post, add_forum_thread, get_forum, get_forum_sub_category_threads,
-        get_forum_thread,
+        get_forum_thread, search_forum_thread,
     },
     gift_handler::send_gift,
     invitation_handler::send_invitation,
@@ -100,6 +100,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 web::get().to(get_forum_sub_category_threads),
             )
             .route("/forum/thread", web::get().to(get_forum_thread))
+            .route("/search/forum/thread", web::get().to(search_forum_thread))
             .route("/forum/thread", web::post().to(add_forum_thread))
             .route("/forum/post", web::post().to(add_forum_post))
             .route("/wiki/article", web::post().to(add_wiki_article))

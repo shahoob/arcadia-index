@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { getForumThreads } from '@/services/api/forumService'
+import { searchForumThreads } from '@/services/api/forumService'
 import type { ForumThreadHierarchy } from '@/services/api/forumService'
 import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
@@ -33,17 +33,9 @@ const route = useRoute()
 const search = ref<ForumThreadHierarchy[]>()
 
 onMounted(() => {
-  const isId = 'id' in route.query
-
-  if (isId) {
-    getForumThreads({ id: route.query.id as unknown as number }).then((v) => {
-      search.value = v
-    })
-  } else {
-    getForumThreads({ title: route.query.title as string }).then((v) => {
-      search.value = v
-    })
-  }
+  searchForumThreads({ title: route.query.title as string }).then((v) => {
+    search.value = v
+  })
 })
 </script>
 

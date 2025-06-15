@@ -2,8 +2,8 @@ use crate::{
     Arcadia, Result,
     models::{
         forum::{
-            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThread,
-            ForumThreadHierarchy, UserCreatedForumPost, UserCreatedForumThread,
+            ForumOverview, ForumPost, ForumSubCategoryHierarchy, ForumThread, ForumThreadHierarchy,
+            UserCreatedForumPost, UserCreatedForumThread,
         },
         user::User,
     },
@@ -102,28 +102,40 @@ pub struct GetForumThreadQueryId {
 #[utoipa::path(
     get,
     path = "/api/forum/thread",
-    params(GetForumThreadQuery, GetForumThreadQueryId),
+    params(GetForumThreadQueryId),
     responses(
-        (status = 200, description = "Returns the threads and its posts", body=Vec<ForumThreadHierarchy>)
+        (status = 200, description = "Returns the thread and its posts", body=ForumThreadHierarchy)
     )
 )]
 pub async fn get_forum_thread(
     arc: web::Data<Arcadia>,
-    query_id: Option<web::Query<GetForumThreadQueryId>>,
-    query: Option<web::Query<GetForumThreadQuery>>,
+    query_id: web::Query<GetForumThreadQueryId>,
 ) -> Result<HttpResponse> {
     //TODO: restrict access to some sub_categories based on forbidden_classes
 
-    let thread = match (query_id, query) {
-        (Some(q), _) => find_forum_thread(&arc.pool, q.0.id).await.map(|v| vec![v]),
-        (_, Some(q)) => {
-            let offset = q.0.offset.unwrap_or(0);
-            let limit = q.0.limit.unwrap_or(10);
-
-            search_forum(&arc.pool, q.0.title, offset, limit).await
-        }
-        _ => Err(crate::Error::InvalidUserIdOrTorrentId),
-    }?;
+    let thread = find_forum_thread(&arc.pool, query_id.0.id).await?;
 
     Ok(HttpResponse::Ok().json(thread))
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/search/forum/threads",
+    params(GetForumThreadQuery),
+    responses(
+        (status = 200, description = "Returns the threads and its posts", body=Vec<ForumThreadHierarchy>)
+    )
+)]
+pub async fn search_forum_thread(
+    arc: web::Data<Arcadia>,
+    query: web::Query<GetForumThreadQuery>,
+) -> Result<HttpResponse> {
+    //TODO: restrict access to some sub_categories based on forbidden_classes
+
+    let offset = query.0.offset.unwrap_or(0);
+    let limit = query.0.limit.unwrap_or(10);
+
+    let threads = search_forum(&arc.pool, query.0.title, offset, limit).await?;
+
+    Ok(HttpResponse::Ok().json(threads))
 }

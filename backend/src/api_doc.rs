@@ -84,6 +84,7 @@ use crate::{
         crate::handlers::forum_handler::get_forum,
         crate::handlers::forum_handler::get_forum_sub_category_threads,
         crate::handlers::forum_handler::get_forum_thread,
+        crate::handlers::forum_handler::search_forum_thread,
         crate::handlers::forum_handler::add_forum_thread,
         crate::handlers::forum_handler::add_forum_post,
         crate::handlers::wiki_handler::add_wiki_article,
