@@ -248,7 +248,7 @@ onMounted(() => {
 }
 
 .p-floatlabel {
-  margin-top: 30px;
+  margin-top: 25px;
 }
 
 .validate-button {

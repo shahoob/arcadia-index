@@ -1,40 +1,31 @@
 <template>
-  <div class="title" v-if="action == 'select'">
-    {{ t('edition_group.select_edition') }}
-    <span class="alternative" @click="action = 'create'">({{ t('general.or_create_one') }})</span>
-  </div>
-  <div class="title" v-if="action == 'create'">
-    {{ t('edition_group.create_edition') }}
-    <span class="alternative" @click="action = 'select'">({{ t('general.or_select_one') }})</span>
-  </div>
   <div id="select-edition-group" v-if="action == 'select'">
     <FloatLabel>
       <Select
-        v-model="selected_edition_group"
-        @value-change="sendEditionGroup"
+        v-model="selectedEditionGroup"
+        @value-change="editionGroupSelected"
         inputId="edition_group"
-        :options="titleGroupStore.edition_groups"
+        :options="[...titleGroupStore.edition_groups, t('general.create_new_one')]"
         size="small"
         class="select-existing-edition"
       >
-        <template #option="slotProps">
-          <div>
-            {{ getEditionGroupSlug(slotProps.option) }}
-          </div>
-        </template>
-        <template #value="slotProps" v-if="selected_edition_group">
-          <div>
+        <template #value="slotProps">
+          <span v-if="slotProps.value && typeof slotProps.value !== 'string'">
             {{ getEditionGroupSlug(slotProps.value) }}
-          </div>
+          </span>
+        </template>
+        <template #option="slotProps">
+          <span v-if="typeof slotProps.option === 'string'"> {{ slotProps.option }}</span>
+          <span v-else>
+            {{ getEditionGroupSlug(slotProps.option) }}
+          </span>
         </template>
       </Select>
       <label for="edition_group">{{ t('torrent.edition') }}</label>
     </FloatLabel>
   </div>
   <div v-if="action === 'create'">
-    <div v-if="step > 0">
-      <CreateOrEditEditionGroup :titleGroup="titleGroupStore" @validated="sendEditionGroup" :sending-edition-group="creatingEditionGroup" />
-    </div>
+    <CreateOrEditEditionGroup :titleGroup="titleGroupStore" @validated="sendEditionGroup" :sending-edition-group="creatingEditionGroup" />
   </div>
 </template>
 
@@ -48,11 +39,10 @@ import CreateOrEditEditionGroup from './CreateOrEditEditionGroup.vue'
 import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
 
-const action = ref('select') // create | select
-const step = 1
+const action = ref<'create' | 'select'>('select')
 
 const titleGroupStore = useTitleGroupStore()
-const selected_edition_group = ref<EditionGroupInfoLite | null>(null)
+const selectedEditionGroup = ref<EditionGroupInfoLite | string | null>(null)
 const creatingEditionGroup = ref(false)
 
 const { t } = useI18n()
@@ -60,36 +50,26 @@ const { t } = useI18n()
 const emit = defineEmits<{
   done: [editionGroup: EditionGroupInfoLite]
 }>()
-
-const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
-  if (action.value == 'select') {
-    // this should be an invariant - TODO: should we emit a warning if the value is actually null?
-    if (selected_edition_group.value) {
-      emit('done', selected_edition_group.value)
-    }
-  } else if (editionGroupForm !== undefined) {
-    creatingEditionGroup.value = true
-    const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
-    // otherwise there is a json parse error, last char is "Z"
-    // formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
-    createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
-      creatingEditionGroup.value = false
-      emit('done', data)
-    })
+const editionGroupSelected = () => {
+  // this should be an invariant - TODO: should we emit a warning if the value is actually null?
+  if (typeof selectedEditionGroup.value === 'string') {
+    action.value = 'create'
+  } else if (selectedEditionGroup.value) {
+    emit('done', selectedEditionGroup.value)
   }
+}
+const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
+  creatingEditionGroup.value = true
+  const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
+  // otherwise there is a json parse error, last char is "Z"
+  // formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
+  createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
+    creatingEditionGroup.value = false
+    emit('done', data)
+  })
 }
 </script>
 <style scoped>
-.title .alternative {
-  font-size: 0.8em;
-  color: var(--color-secondary);
-  cursor: pointer;
-}
-
-.p-floatlabel {
-  margin: 30px 0px;
-}
-
 .select-existing-edition {
   width: 500px;
 }

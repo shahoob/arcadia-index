@@ -37,14 +37,18 @@
     </div>
     <div class="line">
       <div class="name">
-        <TitleGroupSearchBar
+        <!-- <TitleGroupSearchBar
           class="name-input"
           :placeholder="t('general.name')"
           :clearInputOnSelect="false"
           v-model="titleGroupForm.name"
           @titleGroupSelected="titleGroupSelected"
           name="name"
-        />
+        /> -->
+        <FloatLabel>
+          <InputText size="small" v-model="titleGroupForm.name" name="name" class="name-input" />
+          <label for="name">{{ t('general.name') }}</label>
+        </FloatLabel>
         <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
         </Message>
@@ -233,13 +237,14 @@ import { createArtists, type Artist, type ArtistLite, type UserCreatedAffiliated
 import { useI18n } from 'vue-i18n'
 import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
 import { watch } from 'vue'
-import TitleGroupSearchBar from './TitleGroupSearchBar.vue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import { onMounted } from 'vue'
 
 interface Props {
   initialTitleGroupForm: UserCreatedTitleGroup | null
+  initialTitleGroupName: string
 }
-const { initialTitleGroupForm = null } = defineProps<Props>()
+const { initialTitleGroupForm = null, initialTitleGroupName = '' } = defineProps<Props>()
 const titleGroupStore = ref(useTitleGroupStore())
 
 const sendingTitleGroup = ref(false)
@@ -377,9 +382,7 @@ const resolver = ({ values }: FormResolverOptions) => {
 const artistSelected = (artist: ArtistLite, index: number) => {
   titleGroupForm.value.affiliated_artists[index].artist_id = artist.id
 }
-const titleGroupSelected = (titleGroup: TitleGroupLite) => {
-  emit('done', titleGroup)
-}
+
 const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   if (!valid) {
     return
@@ -390,7 +393,7 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   // create artists that need to be created
   const artistsToCreate: UserCreatedArtist[] = []
   titleGroupForm.value.affiliated_artists.forEach((artist, index) => {
-    if (artist.artist_id === 0) {
+    if (artist.artist_id === 0 && affiliated_artists_names.value[index] !== '') {
       artistsToCreate.push({
         name: affiliated_artists_names.value[index],
         pictures: [],
@@ -401,14 +404,15 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   let createdArtists: Artist[] = []
   if (artistsToCreate.length !== 0) {
     createdArtists = await createArtists(artistsToCreate)
+    titleGroupForm.value.affiliated_artists.forEach((artist) => {
+      if (artist.artist_id === 0) {
+        artist.artist_id = createdArtists[0].id
+        createdArtists.shift()
+      }
+    })
   }
-  titleGroupForm.value.affiliated_artists.forEach((artist) => {
-    if (artist.artist_id === 0) {
-      artist.artist_id = createdArtists[0].id
-      createdArtists.shift()
-    }
-  })
-
+  // removing the artists that haven't been created (empty inputs)
+  titleGroupForm.value.affiliated_artists = titleGroupForm.value.affiliated_artists.filter((aa) => aa.artist_id !== 0)
   const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm.value))
   createTitleGroup(formattedTitleGroupForm)
     .then((data) => {
@@ -467,6 +471,9 @@ watch(
   },
   { immediate: true },
 )
+onMounted(() => {
+  titleGroupForm.value.name = initialTitleGroupName
+})
 </script>
 <style scoped>
 .description {
@@ -475,7 +482,9 @@ watch(
 }
 .name {
   width: 50%;
-  margin-right: 10px !important;
+  .name-input {
+    width: 100%;
+  }
 }
 .tags {
   width: 50%;
@@ -486,8 +495,7 @@ watch(
 .select {
   width: 200px;
 }
-.p-floatlabel,
-.name-input {
+.p-floatlabel {
   margin-top: 30px;
 }
 .original-release-date {

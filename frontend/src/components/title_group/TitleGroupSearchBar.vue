@@ -12,7 +12,8 @@
   >
     <template #option="slotProps">
       <!-- <div>{{ slotProps.option.name }} ({{ slotProps.option.original_release_date.substring(0, 4) }})</div> -->
-      <TitleGroupSlimHeader :title_group="slotProps.option" />
+      <span v-if="typeof slotProps.option === 'string'">{{ slotProps.option }}</span>
+      <TitleGroupSlimHeader v-else :title_group="slotProps.option" />
     </template>
   </AutoComplete>
 </template>
@@ -22,17 +23,22 @@ import { ref, watch } from 'vue'
 import { AutoComplete, type AutoCompleteOptionSelectEvent } from 'primevue'
 import { searchTitleGroupLite, type TitleGroupLite } from '@/services/api/torrentService'
 import TitleGroupSlimHeader from './TitleGroupSlimHeader.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   placeholder: string
   clearInputOnSelect: boolean
   modelValue: string
+  createOption: boolean
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [string]
   titleGroupSelected: [TitleGroupLite]
+  createNew: []
 }>()
+
+const { t } = useI18n()
 
 const name = ref('')
 
@@ -44,16 +50,21 @@ watch(
   { immediate: true },
 )
 
-const foundTitleGroups = ref<TitleGroupLite[]>()
+const foundTitleGroups = ref<(TitleGroupLite | string)[]>()
 
 const titleGroupSelected = (event: AutoCompleteOptionSelectEvent) => {
-  const selectedTitleGroupName = (event.value as TitleGroupLite).name
-  emit('titleGroupSelected', event.value)
-  emit('update:modelValue', selectedTitleGroupName)
-  if (props.clearInputOnSelect) {
-    name.value = ''
+  if (typeof event.value === 'string') {
+    // selected create option
+    emit('createNew')
   } else {
-    name.value = selectedTitleGroupName
+    const selectedTitleGroupName = (event.value as TitleGroupLite).name
+    emit('titleGroupSelected', event.value)
+    emit('update:modelValue', selectedTitleGroupName)
+    if (props.clearInputOnSelect) {
+      name.value = ''
+    } else {
+      name.value = selectedTitleGroupName
+    }
   }
 }
 
@@ -65,6 +76,9 @@ const search = () => {
   if (name.value !== '') {
     searchTitleGroupLite(name.value).then((titleGroups) => {
       foundTitleGroups.value = titleGroups
+      if (props.createOption) {
+        foundTitleGroups.value?.push(t('general.create_new_one'))
+      }
     })
   } else {
     foundTitleGroups.value = []

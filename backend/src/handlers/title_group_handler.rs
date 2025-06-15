@@ -32,12 +32,14 @@ pub async fn add_title_group(
 ) -> Result<HttpResponse> {
     let created_title_group = create_title_group(&arc.pool, &form, &current_user).await?;
 
-    for artist in &mut form.affiliated_artists {
-        artist.title_group_id = created_title_group.id
-    }
+    if !form.affiliated_artists.is_empty() {
+        for artist in &mut form.affiliated_artists {
+            artist.title_group_id = created_title_group.id
+        }
 
-    let _ =
-        create_artists_affiliation(&arc.pool, &form.affiliated_artists, current_user.id).await?;
+        let _ = create_artists_affiliation(&arc.pool, &form.affiliated_artists, current_user.id)
+            .await?;
+    }
 
     Ok(HttpResponse::Created().json(created_title_group))
 }
@@ -79,7 +81,7 @@ pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None).await?;
+    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None, 1).await?;
 
     Ok(HttpResponse::Ok().json(title_group))
 }
@@ -94,14 +96,14 @@ pub struct SearchTitleGroupLiteQuery {
     path = "/api/search/title-group/lite",
     params(SearchTitleGroupLiteQuery),
     responses(
-        (status = 200, description = "Returns title groups with their name containing the provided string", body=Vec<TitleGroupLite>),
+        (status = 200, description = "Returns title groups with their name containing the provided string, only the 5 first matches", body=Vec<TitleGroupLite>),
     )
 )]
 pub async fn search_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<SearchTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_groups = find_title_group_info_lite(&arc.pool, None, Some(&query.name)).await?;
+    let title_groups = find_title_group_info_lite(&arc.pool, None, Some(&query.name), 5).await?;
 
     Ok(HttpResponse::Ok().json(title_groups))
 }

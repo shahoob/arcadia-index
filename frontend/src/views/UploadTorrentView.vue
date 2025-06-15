@@ -11,12 +11,19 @@
         </AccordionHeader>
         <AccordionContent>
           <!-- <CreateOrSelectTitleGroup @done="titleGroupDone" /> -->
-          <CreateOrEditTitleGroup @done="titleGroupDone" :initial-title-group-form="null" />
+          <CreateOrSelectTitleGroup @done="titleGroupDone" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
-    <Accordion :value="editionGroupAccordionValue" class="upload-step-accordion">
-      <AccordionPanel value="0" :disabled="editionGroupDisabled">
+    <Accordion
+      :value="editionGroupAccordionValue"
+      class="upload-step-accordion"
+      v-tooltip.top="{
+        value: t('edition_group.complete_title_group_first'),
+        disabled: titleGroupDisabled,
+      }"
+    >
+      <AccordionPanel value="0" :disabled="editionGroupDisabled || !titleGroupDisabled">
         <AccordionHeader>
           <span>
             {{ t('torrent.edition') }}<span v-if="editionGroup" class="bold">: {{ getEditionGroupSlug(editionGroup) }}</span>
@@ -50,10 +57,10 @@ import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import type { EditionGroupInfoLite, TitleGroup, TitleGroupLite, Torrent } from '@/services/api/torrentService'
-import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { onMounted } from 'vue'
 import { getEditionGroupSlug } from '@/services/helpers'
+import CreateOrSelectTitleGroup from '@/components/title_group/CreateOrSelectTitleGroup.vue'
 
 const router = useRouter()
 const { t } = useI18n()

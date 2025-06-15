@@ -13,8 +13,6 @@
     "release_date": "Release date",
     "cover": "Cover | Covers",
     "external_link": "External link | External links",
-    "or_create_one": "or create one",
-    "or_select_one": "or select an existing one",
     "screenshots": "Screenshots",
     "name": "Name",
     "title": "Title",
@@ -45,7 +43,8 @@
     "ascending": "Ascending",
     "descending": "Descending",
     "send": "Send",
-    "started": "Started"
+    "started": "Started",
+    "create_new_one": "Create a new one"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -148,9 +147,6 @@
     "title": "Title",
     "platform": "Platform",
     "original_release_date": "Original release date",
-    "select_title": "Select a title group",
-    "create_title": "Create a title group",
-    "title_group_id": "Title group id",
     "subscription_successfull": "Subscription successfull",
     "unsubscription_successfull": "Unsubscription successfull",
     "content_type": {
@@ -168,8 +164,7 @@
     "label": "Label",
     "catalogue_number": "Catalogue number",
     "source": "Source",
-    "select_edition": "Select an edition",
-    "create_edition": "Create one"
+    "complete_title_group_first": "Create or select a title group first"
   },
   "torrent": {
     "size": "Size",

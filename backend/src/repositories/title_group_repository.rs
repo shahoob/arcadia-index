@@ -55,7 +55,7 @@ pub async fn find_title_group(
                     t.edition_group_id,
                     jsonb_agg(
                         -- Handle anonymity: show creator info only if requesting user is the uploader or if not anonymous
-                        CASE 
+                        CASE
                             WHEN t.uploaded_as_anonymous AND t.created_by_id != $1 THEN
                                 (to_jsonb(t) - 'created_by_id' - 'display_created_by_id' - 'display_created_by') ||
                                 jsonb_build_object('created_by_id', NULL, 'created_by', NULL, 'uploaded_as_anonymous', true)
@@ -215,6 +215,7 @@ pub async fn find_title_group_info_lite(
     pool: &PgPool,
     title_group_id: Option<i64>,
     title_group_name: Option<&str>,
+    limit: u32,
 ) -> Result<Value> {
     let title_groups = sqlx::query!(
         r#"
@@ -242,11 +243,12 @@ pub async fn find_title_group_info_lite(
             WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
                OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
             GROUP BY tg.id
-            LIMIT 5
+            LIMIT $3
         ) AS subquery;
         "#,
         title_group_id,
-        title_group_name
+        title_group_name,
+        limit as i32
     )
     .fetch_one(pool)
     .await?;
