@@ -16,6 +16,7 @@ use crate::handlers::{
         get_forum_thread, search_forum_thread,
     },
     gift_handler::send_gift,
+    home_handler::get_home,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
     scrapers::{
@@ -47,6 +48,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/login", web::post().to(login))
             .route("/user-application", web::post().to(add_user_application))
             .route("/refresh-token", web::post().to(refresh_token))
+            .route("/home", web::get().to(get_home))
             .route("/user", web::get().to(get_user))
             .route("/user/warn", web::post().to(warn_user))
             .route("/me", web::get().to(get_me))

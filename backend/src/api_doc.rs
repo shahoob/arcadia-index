@@ -4,6 +4,7 @@ use crate::{
     handlers::{
         artist_handler::GetArtistPublicationsQuery,
         auth_handler::RegisterQuery,
+        home_handler::HomePage,
         scrapers::ExternalDBData,
         torrent_handler::{DownloadTorrentQuery, GetTopTorrentsQuery},
     },
@@ -52,6 +53,7 @@ use crate::{
         crate::handlers::auth_handler::login,
         crate::handlers::user_application_handler::add_user_application,
         crate::handlers::auth_handler::refresh_token,
+        crate::handlers::home_handler::get_home,
         crate::handlers::artist_handler::get_artist_publications,
         crate::handlers::artist_handler::add_artists,
         crate::handlers::artist_handler::add_affiliated_artists,
@@ -160,7 +162,8 @@ use crate::{
         TorrentRequestHierarchyLite,
         TorrentRequestFill,
         UserCreatedUserApplication,
-        ExternalDBData
+        ExternalDBData,
+        HomePage
     ),)
 )]
 pub struct ApiDoc;

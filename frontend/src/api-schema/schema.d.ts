@@ -212,6 +212,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_home"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/invitation": {
         parameters: {
             query?: never;
@@ -333,6 +349,22 @@ export interface paths {
         };
         /** @description Case insensitive */
         get: operations["get_artists_lite"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/search/forum/threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["search_forum_thread"];
         put?: never;
         post?: never;
         delete?: never;
@@ -847,6 +879,21 @@ export interface components {
             /** Format: date-time */
             updated_at: string;
         };
+        ForumPostAndThreadName: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            forum_thread_id: number;
+            forum_thread_name: string;
+            /** Format: int64 */
+            id: number;
+            sticky: boolean;
+            /** Format: date-time */
+            updated_at: string;
+        };
         ForumPostHierarchy: {
             content: string;
             /** Format: date-time */
@@ -948,6 +995,9 @@ export interface components {
             sender_id: number;
             /** Format: date-time */
             sent_at: string;
+        };
+        HomePage: {
+            recent_announcements: components["schemas"]["ForumPostAndThreadName"][];
         };
         Invitation: {
             /** Format: date-time */
@@ -2156,25 +2206,22 @@ export interface operations {
     };
     get_forum_thread: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                title: string;
-                offset: number | null;
-                limit: number | null;
+            query: {
                 id: number;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Returns the threads and its posts */
+            /** @description Returns the thread and its posts */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ForumThreadHierarchy"][];
+                    "application/json": components["schemas"]["ForumThreadHierarchy"];
                 };
             };
         };
@@ -2223,6 +2270,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Gift"];
+                };
+            };
+        };
+    };
+    get_home: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomePage"];
                 };
             };
         };
@@ -2413,6 +2479,30 @@ export interface operations {
             };
         };
     };
+    search_forum_thread: {
+        parameters: {
+            query: {
+                title: string;
+                offset?: number | null;
+                limit?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the threads and its posts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForumThreadHierarchy"][];
+                };
+            };
+        };
+    };
     search_title_group_info_lite: {
         parameters: {
             query: {
@@ -2424,7 +2514,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns title groups with their name containing the provided string */
+            /** @description Returns title groups with their name containing the provided string, only the 5 first matches */
             200: {
                 headers: {
                     [name: string]: unknown;

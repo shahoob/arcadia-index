@@ -45,6 +45,7 @@ defineProps<{
 }
 .comment {
   display: flex;
+  align-items: flex-start;
   &.reverse-user-position {
     flex-direction: row-reverse;
   }

@@ -3,6 +3,7 @@ use sqlx::PgPool;
 
 use crate::{
     Error, Result,
+    handlers::home_handler::ForumPostAndThreadName,
     models::forum::{ForumPost, ForumThread, UserCreatedForumPost, UserCreatedForumThread},
 };
 
@@ -383,4 +384,39 @@ pub async fn find_forum_thread(pool: &PgPool, forum_thread_id: i64) -> Result<Va
 
     //TODO: unwrap can fail, return Error::CouldNotFindForumThread
     Ok(forum_thread.thread_data.unwrap())
+}
+
+pub async fn find_first_thread_posts_in_sub_category(
+    pool: &PgPool,
+    forum_sub_category_id: i32,
+    limit: u32,
+) -> Result<Vec<ForumPostAndThreadName>> {
+    sqlx::query_as!(
+        ForumPostAndThreadName,
+        r#"
+        SELECT DISTINCT ON (ft.id)
+            fp.id,
+            fp.forum_thread_id,
+            fp.created_at as "created_at!",
+            fp.updated_at as "updated_at!",
+            fp.created_by_id,
+            fp.content,
+            fp.sticky,
+            ft.name as "forum_thread_name"
+        FROM
+            forum_threads AS ft
+        JOIN
+            forum_posts AS fp ON ft.id = fp.forum_thread_id
+        WHERE
+            ft.forum_sub_category_id = $1
+        ORDER BY
+            ft.id, fp.created_at ASC
+        LIMIT $2
+        "#,
+        forum_sub_category_id,
+        limit as i32
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(Error::CouldNotFindForumThreadsFirstPost)
 }
