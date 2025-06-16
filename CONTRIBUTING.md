@@ -102,7 +102,7 @@ The default user defined in the test data is `picolo` with password `test`.
 If you wish to create your own additional test data, you can then dump it to a file with this command (if you want to share it in the repo):
 
 ```bash
-docker exec -i arcadia_db pg_dump -U arcadia -d arcadia --data-only > backend/migrations/fixtures/fixtures.sql
+docker exec -i arcadia_db pg_dump -U arcadia -d arcadia --data-only --inserts > backend/migrations/fixtures/fixtures.sql
 ```
 
 You can then launch the server:
