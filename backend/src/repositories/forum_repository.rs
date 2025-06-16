@@ -3,9 +3,7 @@ use sqlx::PgPool;
 
 use crate::{
     Error, Result,
-    models::forum::{
-        ForumPost, ForumThread, UserCreatedForumPost, UserCreatedForumThread,
-    },
+    models::forum::{ForumPost, ForumThread, UserCreatedForumPost, UserCreatedForumThread},
 };
 
 pub async fn create_forum_post(
@@ -161,7 +159,7 @@ pub async fn find_forum_overview(pool: &PgPool) -> Result<Value> {
                             WHERE
                                 fsc.forum_category_id = fc.id
                         )
-                    ) ORDER BY fc.name
+                    ) ORDER BY fc.id
                 )
             ) AS forum_overview
         FROM

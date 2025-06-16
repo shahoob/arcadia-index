@@ -46,6 +46,8 @@ CREATE TABLE users (
 
     UNIQUE(passkey_upper, passkey_lower)
 );
+INSERT INTO users (username, email, password_hash, registered_from_ip, settings, passkey_upper, passkey_lower)
+VALUES ('creator', 'none@domain.com', 'none', '127.0.0.1', '{}'::jsonb, '1', '1');
 CREATE TABLE user_applications (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -593,12 +595,13 @@ CREATE TABLE forum_categories (
 
     FOREIGN KEY (created_by_id) REFERENCES users(id)
 );
+INSERT INTO forum_categories (created_by_id, name) VALUES (1, 'Site');
 CREATE TABLE forum_sub_categories (
-    id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY NOT NULL,
     forum_category_id INT NOT NULL,
     name TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_by_id BIGINT NOT NULL,
+    created_by_id BIGINT,
     threads_amount BIGINT NOT NULL DEFAULT 0,
     posts_amount BIGINT NOT NULL DEFAULT 0,
     forbidden_classes VARCHAR(50) [] NOT NULL DEFAULT ARRAY[]::VARCHAR(50)[],
@@ -606,6 +609,7 @@ CREATE TABLE forum_sub_categories (
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_category_id) REFERENCES forum_categories(id)
 );
+INSERT INTO forum_sub_categories (created_by_id, forum_category_id,name, threads_amount, posts_amount) VALUES (1, 1, 'Announcements', 1, 1);
 CREATE TABLE forum_threads (
     id BIGSERIAL PRIMARY KEY,
     forum_sub_category_id INT NOT NULL,
@@ -619,6 +623,7 @@ CREATE TABLE forum_threads (
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_sub_category_id) REFERENCES forum_sub_categories(id)
 );
+INSERT INTO forum_threads (created_by_id, forum_sub_category_id, name, posts_amount) VALUES (1, 1, 'Welcome to the site!', 1);
 CREATE TABLE forum_posts (
     id BIGSERIAL PRIMARY KEY,
     forum_thread_id BIGINT NOT NULL,
@@ -631,6 +636,7 @@ CREATE TABLE forum_posts (
     FOREIGN KEY (created_by_id) REFERENCES users(id),
     FOREIGN KEY (forum_thread_id) REFERENCES forum_threads(id)
 );
+INSERT INTO forum_posts (created_by_id, forum_thread_id, content) VALUES (1, 1, 'Welcome!');
 CREATE TABLE wiki_articles (
     id BIGSERIAL PRIMARY KEY,
     title TEXT NOT NULL,
@@ -761,8 +767,8 @@ ORDER BY
                 OR (p_torrent_reported = TRUE AND t.reports::jsonb <> '[]'::jsonb)
                 OR (p_torrent_reported = FALSE AND t.reports::jsonb = '[]'::jsonb)
             )
-            AND (p_torrent_created_by_id IS NULL OR 
-                 (t.created_by_id = p_torrent_created_by_id AND 
+            AND (p_torrent_created_by_id IS NULL OR
+                 (t.created_by_id = p_torrent_created_by_id AND
                   (NOT t.uploaded_as_anonymous OR t.created_by_id = p_requesting_user_id)))
             AND (p_torrent_snatched_by_id IS NULL OR st.torrent_id IS NOT NULL)
         ),
@@ -794,11 +800,11 @@ ORDER BY
                             'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
                             'reports', ft.reports, 'snatched_at', ft.snatched_at,
                             -- Handle anonymity: show creator info only if requesting user is the uploader or if not anonymous
-                            'created_by_id', CASE 
+                            'created_by_id', CASE
                                 WHEN ft.uploaded_as_anonymous AND (p_requesting_user_id IS NULL OR ft.created_by_id != p_requesting_user_id) THEN NULL
                                 ELSE ft.created_by_id
                             END,
-                            'created_by', CASE 
+                            'created_by', CASE
                                 WHEN ft.uploaded_as_anonymous AND (p_requesting_user_id IS NULL OR ft.created_by_id != p_requesting_user_id) THEN NULL
                                 ELSE ft.display_created_by
                             END,
