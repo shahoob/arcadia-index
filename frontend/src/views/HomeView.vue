@@ -1,6 +1,6 @@
 <template>
   <div class="announcements">
-    <AnnouncementComponent v-for="announcement in recentAnnouncements" :key="announcement.id" :announcement />
+    <AnnouncementComponent v-for="announcement in recentAnnouncements" :key="announcement.id" :announcement class="announcement" />
   </div>
 </template>
 
@@ -24,4 +24,8 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style>
+.announcement {
+  margin-bottom: 10px;
+}
+</style>

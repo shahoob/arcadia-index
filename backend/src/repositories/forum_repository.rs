@@ -410,7 +410,7 @@ pub async fn find_first_thread_posts_in_sub_category(
         WHERE
             ft.forum_sub_category_id = $1
         ORDER BY
-            ft.id, fp.created_at ASC
+            ft.id DESC, fp.created_at ASC
         LIMIT $2
         "#,
         forum_sub_category_id,
