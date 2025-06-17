@@ -52,6 +52,7 @@ const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
 const uploadedTorrents = ref<TitleGroupHierarchyLite[]>([])
 const snatchedTorrents = ref<TitleGroupHierarchyLite[]>([])
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -61,6 +62,7 @@ const warnUserDialogVisible = ref(false)
 
 const fetchUser = async () => {
   if (parseInt(route.params.id.toString()) == userStore.id) {
+    // logged in user
     ;({
       peers: peers.value,
       user: user.value,
@@ -69,8 +71,11 @@ const fetchUser = async () => {
     } = await getMe())
     userStore.setUser(user.value as User)
   } else {
+    // viewing another user
     ;({ user: user.value, last_five_uploaded_torrents: uploadedTorrents.value } = await getUser(parseInt(route.params.id.toString())))
   }
+
+  document.title = `User '${user.value.username}' - ${siteName}`
 }
 
 onMounted(async () => {

@@ -40,10 +40,12 @@ const newMessage = ref<UserCreatedConversationMessage>({
   conversation_id: 0,
 })
 const emptyInput = ref(false)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const fetchConversation = async (conversationId: number) => {
   getConversation(conversationId).then((c) => {
     conversation.value = c
+    document.title = `${c.subject} - ${siteName}`
   })
 }
 
