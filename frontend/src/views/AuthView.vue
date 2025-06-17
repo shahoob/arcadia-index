@@ -27,7 +27,7 @@ const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(() => {
   document.title = `Login - ${siteName}`
-});
+})
 </script>
 
 <style>

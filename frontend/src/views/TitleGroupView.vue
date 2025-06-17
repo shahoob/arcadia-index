@@ -129,9 +129,7 @@ const fetchTitleGroup = async () => {
     For series, the title group name just holds the season name (i.e. 'Season 1')
     so we want to show the series name itself in the document title as well.
   */
-  document.title = titleGroup.series.name
-    ? `${titleGroup.name} (${titleGroup.series.name}) - ${siteName}`
-    : `${titleGroup.name} - ${siteName}`
+  document.title = titleGroup.series.name ? `${titleGroup.name} (${titleGroup.series.name}) - ${siteName}` : `${titleGroup.name} - ${siteName}`
 }
 
 const uploadTorrent = () => {

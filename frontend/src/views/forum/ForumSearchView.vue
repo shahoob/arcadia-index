@@ -38,9 +38,7 @@ onMounted(() => {
     search.value = v
   })
 
-  document.title = route.query.title
-    ? `Forum '${route.query.title}' - ${siteName}`
-    : `Forum - ${siteName}`
+  document.title = route.query.title ? `Forum '${route.query.title}' - ${siteName}` : `Forum - ${siteName}`
 })
 </script>
 

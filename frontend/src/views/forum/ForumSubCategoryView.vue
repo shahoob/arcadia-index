@@ -53,9 +53,7 @@ const siteName = import.meta.env.VITE_SITE_NAME
 onMounted(async () => {
   forumSubCategory.value = await getForumSubCategory(parseInt(route.params.id as string))
 
-  document.title = forumSubCategory.value
-    ? `${forumSubCategory.value.name} - ${siteName}`
-    : `Forum category - ${siteName}`
+  document.title = forumSubCategory.value ? `${forumSubCategory.value.name} - ${siteName}` : `Forum category - ${siteName}`
 })
 </script>
 
