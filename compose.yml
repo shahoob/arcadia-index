@@ -53,11 +53,6 @@ services:
     env_file:
       - backend/.env.docker
       - backend/.env
-    depends_on:
-      db:
-        condition: service_healthy
-      init_db:
-        condition: service_completed_successfully
     develop:
       watch:
         - path: ./backend
@@ -81,9 +76,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5173:80
-    depends_on:
-      backend:
-        condition: service_started
     develop:
       watch:
         - path: ./frontend/dist
