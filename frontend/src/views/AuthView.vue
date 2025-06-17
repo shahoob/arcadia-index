@@ -22,6 +22,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { t } = useI18n()
+const siteName = import.meta.env.VITE_SITE_NAME
 </script>
 
 <style>
