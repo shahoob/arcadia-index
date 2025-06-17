@@ -47,9 +47,14 @@ const newPost = ref<UserCreatedForumPost>({
 })
 const sendingPost = ref(false)
 const bbcodeEditorEmptyInput = ref(false)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(async () => {
   forumThread.value = await getForumThread(parseInt(route.params.id as string))
+
+  document.title = forumThread.value
+    ? `${forumThread.value.name} - ${siteName}`
+    : `Forum thread - ${siteName}`
 })
 
 const resolver = () => {

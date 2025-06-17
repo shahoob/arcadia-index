@@ -52,6 +52,7 @@ const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
 const uploadedTorrents = ref<TitleGroupHierarchyLite[]>([])
 const snatchedTorrents = ref<TitleGroupHierarchyLite[]>([])
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -68,8 +69,10 @@ const fetchUser = async () => {
       last_five_snatched_torrents: snatchedTorrents.value,
     } = await getMe())
     userStore.setUser(user.value as User)
+    document.title = `User '${user.value.username}' - ${siteName}`
   } else {
     ;({ user: user.value, last_five_uploaded_torrents: uploadedTorrents.value } = await getUser(parseInt(route.params.id.toString())))
+    document.title = `User '${user.value.username}' - ${siteName}`
   }
 }
 

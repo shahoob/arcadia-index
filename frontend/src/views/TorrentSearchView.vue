@@ -37,6 +37,7 @@ const initialForm = ref<TorrentSearch>({
   sort_by: 'torrent_created_at',
   order: 'desc',
 })
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const search = async (torrentSearch: TorrentSearch) => {
   loading.value = true
@@ -58,6 +59,7 @@ const loadSearchForm = async () => {
 
 onMounted(async () => {
   loadSearchForm()
+  document.title = `Torrent Search - ${siteName}`
 })
 
 watch(

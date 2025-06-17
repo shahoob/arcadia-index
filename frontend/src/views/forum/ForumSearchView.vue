@@ -31,11 +31,16 @@ const { t } = useI18n()
 const route = useRoute()
 
 const search = ref<ForumThreadHierarchy[]>()
+const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(() => {
   searchForumThreads({ title: route.query.title as string }).then((v) => {
     search.value = v
   })
+
+  document.title = route.query.title
+    ? `Forum '${route.query.title}' - ${siteName}`
+    : `Forum - ${siteName}`
 })
 </script>
 

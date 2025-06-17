@@ -45,6 +45,7 @@ const newConversation = ref<UserCreatedConversation>({
   receiver_id: 0,
 })
 const sendingConversation = ref(false)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const resolver = ({ values }: FormResolverOptions) => {
   const errors = { subject: {}, content: {} }
@@ -76,6 +77,7 @@ const sendConversation = async ({ valid }: FormSubmitEvent) => {
 }
 onMounted(() => {
   username.value = route.query.username as string
+  document.title = `New conversation with ${route.query.username} - ${siteName}`
 })
 </script>
 

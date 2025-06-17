@@ -17,6 +17,7 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 const wikiArticle = ref<WikiArticle>()
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const fetchWikiArticle = async (articleId: number) => {
   getWikiArticle(articleId).then((article) => {
@@ -25,6 +26,7 @@ const fetchWikiArticle = async (articleId: number) => {
 }
 
 onMounted(() => {
+  document.title = `Wiki - ${siteName}`
   fetchWikiArticle(parseInt(route.params.id as string))
 })
 </script>

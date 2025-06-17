@@ -16,6 +16,7 @@
 import ApplyForm from '@/components/auth/ApplyForm.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -23,6 +24,10 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const { t } = useI18n()
 const siteName = import.meta.env.VITE_SITE_NAME
+
+onMounted(() => {
+  document.title = `Login - ${siteName}`
+});
 </script>
 
 <style>

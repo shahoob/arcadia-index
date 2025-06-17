@@ -48,9 +48,14 @@ const { t } = useI18n()
 const route = useRoute()
 
 const forumSubCategory = ref<null | ForumSubCategoryHierarchy>(null)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(async () => {
   forumSubCategory.value = await getForumSubCategory(parseInt(route.params.id as string))
+
+  document.title = forumSubCategory.value
+    ? `${forumSubCategory.value.name} - ${siteName}`
+    : `Forum category - ${siteName}`
 })
 </script>
 

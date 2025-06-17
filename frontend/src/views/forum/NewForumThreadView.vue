@@ -28,7 +28,7 @@ import { FloatLabel, InputText, Button, Message } from 'primevue'
 import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import BBCodeEditor from '@/components/community/BBCodeEditor.vue'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { postForumThread, type UserCreatedForumThread } from '@/services/api/forumService'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -43,6 +43,7 @@ const newThread = ref<UserCreatedForumThread>({
   forum_sub_category_id: 0,
 })
 const sendingThread = ref(false)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const resolver = ({ values }: FormResolverOptions) => {
   const errors = { name: {}, content: {} }
@@ -72,6 +73,10 @@ const sendThread = async ({ valid }: FormSubmitEvent) => {
       })
   }
 }
+
+onMounted(() => {
+  document.title = `New forum thread - ${siteName}`
+})
 </script>
 
 <style scoped>

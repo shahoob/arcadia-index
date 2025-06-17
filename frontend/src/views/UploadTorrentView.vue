@@ -74,6 +74,7 @@ const editionGroupAccordionValue = ref('0')
 const editionGroupDisabled = ref(false)
 const torrentAccordionValue = ref('0')
 const editionGroup = ref<EditionGroupInfoLite | null>(null)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const titleGroupDone = (titleGroup?: TitleGroup | TitleGroupLite) => {
   titleGroupAccordionValue.value = ''
@@ -102,6 +103,8 @@ const torrentDone = (torrent: Torrent) => {
 }
 
 onMounted(() => {
+  document.title = `Upload torrent - ${siteName}`
+
   if (titleGroupStore.value.id !== 0) {
     titleGroupDone()
   }
