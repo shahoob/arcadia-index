@@ -5,21 +5,96 @@ use musicbrainz_rs::{
     client::MusicBrainzClient,
     entity::{
         CoverartResponse,
+        release::Release,
         release_group::{ReleaseGroup, ReleaseGroupPrimaryType},
     },
 };
 use regex::Regex;
 use serde::Deserialize;
+use serde_json::json;
 
 use crate::{
     Arcadia, Error, Result,
     handlers::scrapers::ExternalDBData,
-    models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
+    models::{
+        edition_group::{UserCreatedEditionGroup, create_default_edition_group},
+        title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
+    },
 };
 
 fn naive_date_to_utc_midnight(date: NaiveDate) -> DateTime<Utc> {
     Utc.from_local_datetime(&date.and_hms_opt(0, 0, 0).unwrap())
         .unwrap()
+}
+
+async fn get_musicbrainz_release_group_data(
+    id: &str,
+    client: &MusicBrainzClient,
+) -> Result<UserCreatedTitleGroup> {
+    let musicbrainz_title_group = ReleaseGroup::fetch()
+        .id(id)
+        .execute_with_client(client)
+        .await
+        .map_err(Error::ErrorGettingMusicbrainzData)?;
+    let cover = ReleaseGroup::fetch_coverart()
+        .id(id)
+        .execute_with_client(client)
+        .await
+        .map_or_else(
+            |_| String::new(),
+            |c| match c {
+                CoverartResponse::Url(url) => url,
+                CoverartResponse::Json(coverart) => coverart
+                    .images
+                    .first()
+                    .map_or_else(String::new, |img| img.image.clone()),
+            },
+        );
+
+    Ok(UserCreatedTitleGroup {
+        name: musicbrainz_title_group.title,
+        original_release_date: musicbrainz_title_group
+            .first_release_date
+            .map(naive_date_to_utc_midnight)
+            .unwrap_or_else(|| {
+                naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
+            }),
+        category: Some(
+            musicbrainz_title_group
+                .primary_type
+                .unwrap_or(ReleaseGroupPrimaryType::UnrecognizedReleaseGroupPrimaryType)
+                .into(),
+        ),
+        content_type: ContentType::Music,
+        external_links: vec![format!("https://musicbrainz.org/release-group/{}", id)],
+        covers: vec![cover],
+        ..create_default_title_group()
+    })
+}
+
+async fn get_musicbrainz_release_data(
+    id: &str,
+    client: &MusicBrainzClient,
+) -> Result<UserCreatedEditionGroup> {
+    let musicbrainz_edition_group = Release::fetch()
+        .id(id)
+        .execute_with_client(client)
+        .await
+        .map_err(Error::ErrorGettingMusicbrainzData)?;
+    //TODO: add label when available in api wrapper
+    Ok(UserCreatedEditionGroup {
+        additional_information: Some(
+            json!({"catalogue_number": musicbrainz_edition_group.barcode.clone().unwrap_or("".to_string())}),
+        ),
+        release_date: musicbrainz_edition_group
+            .date
+            .map(naive_date_to_utc_midnight)
+            .unwrap_or_else(|| {
+                naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
+            }),
+        external_links: vec![format!("https://musicbrainz.org/release/{}", id)],
+        ..create_default_edition_group()
+    })
 }
 
 #[derive(Debug, PartialEq)]
@@ -48,58 +123,22 @@ pub async fn get_musibrainz_data(
         .expect("Regex error")
         .captures(&query.url).map(|caps| (match caps[1].as_ref() { "release" => MusicBrainzEntityType::Release, _ => MusicBrainzEntityType::ReleaseGroup }, caps[2].to_string()))
         .expect("No MusicBrainz release/release-group match found in URL");
+    let mut client = MusicBrainzClient::default();
+    client
+        .set_user_agent(&format!("{} ({})", arc.tracker_name, arc.frontend_url))
+        .unwrap();
 
-    let response = match entity_type {
+    let mut title_group: Option<UserCreatedTitleGroup> = None;
+    let mut edition_group: Option<UserCreatedEditionGroup> = None;
+    match entity_type {
         MusicBrainzEntityType::ReleaseGroup => {
-            let mut client = MusicBrainzClient::default();
-            client
-                .set_user_agent(&format!("{} ({})", arc.tracker_name, arc.frontend_url))
-                .unwrap();
-            let musicbrainz_title_group = ReleaseGroup::fetch()
-                .id(&id)
-                .execute_with_client(&client)
-                .await
-                .map_err(Error::ErrorGetMusicbrainzReleaseGroup)?;
-            let cover = ReleaseGroup::fetch_coverart()
-                .id(&id)
-                .execute_with_client(&client)
-                .await
-                .map_or_else(
-                    |_| String::new(),
-                    |c| match c {
-                        CoverartResponse::Url(url) => url,
-                        CoverartResponse::Json(coverart) => coverart
-                            .images
-                            .first()
-                            .map_or_else(String::new, |img| img.image.clone()),
-                    },
-                );
-
-            let title_group = UserCreatedTitleGroup {
-                name: musicbrainz_title_group.title,
-                original_release_date: musicbrainz_title_group
-                    .first_release_date
-                    .map(naive_date_to_utc_midnight)
-                    .unwrap_or_else(|| {
-                        naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
-                    }),
-                category: Some(
-                    musicbrainz_title_group
-                        .primary_type
-                        .unwrap_or(ReleaseGroupPrimaryType::UnrecognizedReleaseGroupPrimaryType)
-                        .into(),
-                ),
-                content_type: ContentType::Music,
-                external_links: vec![format!("https://musicbrainz.org/release-group/{}", id)],
-                covers: vec![cover],
-                ..create_default_title_group()
-            };
-            serde_json::json!({"title_group": title_group})
+            title_group = Some(get_musicbrainz_release_group_data(&id, &client).await?);
         }
         MusicBrainzEntityType::Release => {
-            // TODO: return edition group
-            serde_json::json!("{}")
+            //TODO: also fetch title group when available in api wrapper
+            edition_group = Some(get_musicbrainz_release_data(&id, &client).await?);
         }
     };
-    Ok(HttpResponse::Ok().json(response))
+    Ok(HttpResponse::Ok()
+        .json(serde_json::json!({"title_group": title_group, "edition_group": edition_group})))
 }

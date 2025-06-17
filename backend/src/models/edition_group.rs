@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::{prelude::FromRow, types::Json};
@@ -63,11 +63,11 @@ pub struct EditionGroup {
     pub title_group_id: i64,
     pub name: String, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: DateTime<Local>, // public release, (also, for Collections, date of the last (chronologically) item included)
+    pub release_date: DateTime<Utc>, // public release, (also, for Collections, date of the last (chronologically) item included)
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>, // database entry creation
+    pub created_at: DateTime<Utc>, // database entry creation
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Local>,
+    pub updated_at: DateTime<Utc>,
     pub created_by_id: i64,
     pub description: Option<String>, // specific to the edition
     pub distributor: Option<String>, // web: [web stores/distributors], physical: [shop if specific edition ?]
@@ -78,24 +78,22 @@ pub struct EditionGroup {
     // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: numer/name of the last item)
     // for music: (label, catalogue_number)
     #[schema(value_type = HashMap<String, String>)]
-    pub additional_information: Option<Json<Value>>,
+    pub additional_information: Option<Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedEditionGroup {
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: DateTime<Local>,
+    pub release_date: DateTime<Utc>,
     pub description: Option<String>,
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
     pub source: Option<Source>,
     #[schema(value_type = HashMap<String, String>)]
-    pub additional_information: Option<Json<Value>>,
-    // one of them should be given
-    pub title_group_id: Option<i64>,
-    // pub title_group: Option<UserCreatedTitleGroup>,
+    pub additional_information: Option<Value>,
+    pub title_group_id: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -104,7 +102,7 @@ pub struct EditionGroupHierarchyLite {
     pub title_group_id: i64,
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: DateTime<Local>,
+    pub release_date: DateTime<Utc>,
     pub distributor: Option<String>,
     pub covers: Vec<String>,
     pub source: Option<Source>,
@@ -119,11 +117,11 @@ pub struct EditionGroupHierarchy {
     pub title_group_id: i64,
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: DateTime<Local>,
+    pub release_date: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Local>,
+    pub created_at: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Local>,
+    pub updated_at: DateTime<Utc>,
     pub created_by_id: i64,
     pub description: Option<String>,
     pub distributor: Option<String>,
@@ -140,9 +138,23 @@ pub struct EditionGroupInfoLite {
     pub id: i64,
     pub name: String,
     #[schema(value_type = String, format = DateTime)]
-    pub release_date: DateTime<Local>,
+    pub release_date: DateTime<Utc>,
     pub distributor: Option<String>,
     pub source: Option<Source>,
     #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Json<Value>>,
+}
+
+pub fn create_default_edition_group() -> UserCreatedEditionGroup {
+    UserCreatedEditionGroup {
+        name: "".to_string(),
+        release_date: Utc::now(),
+        description: None,
+        distributor: None,
+        covers: vec![],
+        external_links: vec![],
+        source: None,
+        additional_information: None,
+        title_group_id: 0,
+    }
 }
