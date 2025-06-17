@@ -325,10 +325,8 @@ const onFileSelect = (event: FileUploadSelectEvent) => {
 }
 const mediainfoUpdated = async () => {
   const mediainfoExtractedInfo = getFileInfo(torrentForm.value.mediainfo)
-  // todo: update the form
   Object.assign(torrentForm.value, mediainfoExtractedInfo)
   await nextTick()
-  console.log(formRef)
   formRef.value?.setValues(mediainfoExtractedInfo)
 }
 const sendTorrent = () => {
