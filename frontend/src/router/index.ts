@@ -114,7 +114,7 @@ const router = createRouter({
       path: '/forum/thread/new',
       name: 'NewForumThread',
       meta: {
-        documentTitle: "New forum thread",
+        documentTitle: 'New forum thread',
       },
       component: () => import('../views/forum/NewForumThreadView.vue'),
     },
@@ -122,7 +122,7 @@ const router = createRouter({
       path: '/wiki/article/:id',
       name: 'WikiArticle',
       meta: {
-        documentTitle: "Wiki",
+        documentTitle: 'Wiki',
       },
       component: () => import('../views/WikiView.vue'),
     },

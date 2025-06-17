@@ -44,12 +44,12 @@ router.beforeEach((to, from, next) => {
       The View for this route handles it's own
       document title because it's dynamic.
     */
-    return next();
+    return next()
   }
 
-  document.title = `${to.meta.documentTitle || to.name} - ${siteName}`;
+  document.title = `${to.meta.documentTitle || to.name} - ${siteName}`
 
-return next();
+  return next()
 })
 
 router.isReady().then(async () => {
