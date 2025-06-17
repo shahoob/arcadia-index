@@ -114,13 +114,22 @@ const selectableSortingOptions = ['edition', 'size', 'seeders', 'completed', 'cr
 const title_group = ref<TitleGroupAndAssociatedData>()
 const sortBy = ref('edition')
 const togglingSubscription = ref(false)
+const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(async () => {
   await fetchTitleGroup()
 })
 
 const fetchTitleGroup = async () => {
-  title_group.value = await getTitleGroup(parseInt(route.params.id.toString()))
+  const titleGroup = await getTitleGroup(parseInt(route.params.id.toString()))
+
+  title_group.value = titleGroup
+
+  /*
+    For series, the title group name just holds the season name (i.e. 'Season 1')
+    so we want to show the series name itself in the document title as well.
+  */
+  document.title = titleGroup.series.name ? `${titleGroup.name} (${titleGroup.series.name}) - ${siteName}` : `${titleGroup.name} - ${siteName}`
 }
 
 const uploadTorrent = () => {

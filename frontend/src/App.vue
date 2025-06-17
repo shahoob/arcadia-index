@@ -32,9 +32,28 @@ document.documentElement.classList.add('dark-theme')
 const isAppReady = ref(false)
 const route = useRoute()
 const router = useRouter()
+const siteName = import.meta.env.VITE_SITE_NAME
 
 const isProtectedRoute = computed(() => {
   return ['/login', '/register', '/apply'].indexOf(route.path) < 0
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.dynamicDocumentTitle) {
+    /*
+      The View for this route handles it's own
+      document title because it's dynamic.
+    */
+    return next()
+  }
+
+  /*
+    Favour a custom document title if is defined, otherwise,
+    fall back to use the route name at least.
+  */
+  document.title = `${to.meta.documentTitle || to.name} - ${siteName}`
+
+  return next()
 })
 
 router.isReady().then(async () => {

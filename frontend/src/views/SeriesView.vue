@@ -43,6 +43,7 @@ const route = useRoute()
 const series = ref<Series | null>(null)
 const title_groups = ref<TitleGroupHierarchyLite[]>([])
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
+const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(async () => {
   const id = Number(route.params.id)
@@ -52,6 +53,8 @@ onMounted(async () => {
     series.value = data.series
     title_groups.value = data.title_groups
   }
+
+  document.title = `${series.value.name} - ${siteName}`
 })
 </script>
 

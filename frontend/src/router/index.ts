@@ -33,12 +33,15 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: HomeView,
     },
     {
       path: '/title-group/:id',
       name: 'TitleGroup',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/TitleGroupView.vue'),
     },
     {
@@ -49,21 +52,33 @@ const router = createRouter({
     {
       path: '/series/:id',
       name: 'Series',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/SeriesView.vue'),
     },
     {
       path: '/artist/:id',
       name: 'Artist',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/ArtistView.vue'),
     },
     {
       path: '/upload',
       name: 'UploadTorrent',
+      meta: {
+        documentTitle: 'Upload torrent',
+      },
       component: () => import('../views/UploadTorrentView.vue'),
     },
     {
       path: '/user/:id',
       name: 'User',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/UserView.vue'),
     },
     {
@@ -74,36 +89,57 @@ const router = createRouter({
     {
       path: '/forum/search',
       name: 'ForumSearch',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/forum/ForumSearchView.vue'),
     },
     {
       path: '/forum/sub-category/:id',
       name: 'ForumSubCategory',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/forum/ForumSubCategoryView.vue'),
     },
     {
       path: '/forum/thread/:id',
       name: 'ForumThread',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/forum/ForumThreadView.vue'),
     },
     {
       path: '/forum/thread/new',
       name: 'NewForumThread',
+      meta: {
+        documentTitle: 'New forum thread',
+      },
       component: () => import('../views/forum/NewForumThreadView.vue'),
     },
     {
       path: '/wiki/article/:id',
       name: 'WikiArticle',
+      meta: {
+        documentTitle: 'Wiki',
+      },
       component: () => import('../views/WikiView.vue'),
     },
     {
       path: '/conversation/new',
       name: 'NewConversation',
+      meta: {
+        documentTitle: 'New conversation',
+      },
       component: () => import('../views/conversation/NewConversationView.vue'),
     },
     {
       path: '/conversation/:id',
       name: 'Conversation',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
       component: () => import('../views/conversation/ConversationView.vue'),
     },
     {
