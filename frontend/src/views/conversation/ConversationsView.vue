@@ -48,7 +48,6 @@ import { RouterLink } from 'vue-router'
 
 const { t } = useI18n()
 const conversations = ref<ConversationsOverview[]>()
-const siteName = import.meta.env.VITE_SITE_NAME
 
 const fetchConversations = async () => {
   getConversations().then((overview) => {
@@ -58,7 +57,6 @@ const fetchConversations = async () => {
 
 onMounted(() => {
   fetchConversations()
-  document.title = `Conversations - ${siteName}`
 })
 </script>
 

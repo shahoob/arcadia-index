@@ -13,11 +13,9 @@ import ForumCategoryOverview from '@/components/forum/ForumCategoryOverview.vue'
 import ForumSearchForm from '@/components/forum/ForumSearchForm.vue'
 
 const forumOverview = ref<null | ForumOverview>(null)
-const siteName = import.meta.env.VITE_SITE_NAME
 
 onMounted(async () => {
   forumOverview.value = await getForum()
-  document.title = `Forum - ${siteName}`
 })
 </script>
 

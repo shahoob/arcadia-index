@@ -64,7 +64,6 @@ const sendMessage = async () => {
 
 onMounted(() => {
   fetchConversation(parseInt(route.params.id as string))
-  document.title = `Conversations - ${siteName}`
 })
 </script>
 <style scoped>

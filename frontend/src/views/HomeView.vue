@@ -11,7 +11,6 @@ import { ref } from 'vue'
 import AnnouncementComponent from '@/components/forum/AnnouncementComponent.vue'
 
 const recentAnnouncements = ref<ForumPostAndThreadName[]>()
-const siteName = import.meta.env.VITE_SITE_NAME
 
 const fetchHome = async () => {
   getHome().then((data) => {
@@ -21,7 +20,6 @@ const fetchHome = async () => {
 }
 
 onMounted(() => {
-  document.title = `Home - ${siteName}`
   fetchHome()
 })
 </script>
