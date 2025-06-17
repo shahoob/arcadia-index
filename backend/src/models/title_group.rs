@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use musicbrainz_rs::entity::release_group::ReleaseGroupPrimaryType;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{prelude::FromRow, types::Json};
@@ -272,5 +273,16 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         series_id: None,
         screenshots: Vec::new(),
         master_group_id: None,
+    }
+}
+
+impl From<ReleaseGroupPrimaryType> for TitleGroupCategory {
+    fn from(rg_type: ReleaseGroupPrimaryType) -> Self {
+        match rg_type {
+            ReleaseGroupPrimaryType::Album => TitleGroupCategory::Album,
+            ReleaseGroupPrimaryType::Single => TitleGroupCategory::Single,
+            ReleaseGroupPrimaryType::Ep => TitleGroupCategory::Ep,
+            _ => TitleGroupCategory::Other,
+        }
     }
 }

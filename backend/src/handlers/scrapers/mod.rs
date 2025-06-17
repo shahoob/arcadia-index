@@ -3,6 +3,7 @@ use utoipa::ToSchema;
 
 use crate::models::title_group::UserCreatedTitleGroup;
 
+pub mod musicbrainz;
 pub mod open_library;
 pub mod tmdb;
 

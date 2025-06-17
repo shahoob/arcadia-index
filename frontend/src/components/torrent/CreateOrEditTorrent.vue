@@ -1,5 +1,14 @@
 <template>
-  <Form v-slot="$form" :initialValues="torrentForm" :resolver @submit="onFormSubmit" validateOnSubmit :validateOnValueUpdate="false" validateOnBlur>
+  <Form
+    ref="formRef"
+    v-slot="$form"
+    :initialValues="torrentForm"
+    :resolver
+    @submit="onFormSubmit"
+    validateOnSubmit
+    :validateOnValueUpdate="false"
+    validateOnBlur
+  >
     <div id="create-torrent">
       <div class="mediainfo">
         <FloatLabel>
@@ -205,7 +214,10 @@ import { uploadTorrent, type Torrent, type UploadedTorrent } from '@/services/ap
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useI18n } from 'vue-i18n'
 import { getFeatures, getLanguages } from '@/services/helpers'
+import { nextTick } from 'vue'
+import type { VNodeRef } from 'vue'
 
+const formRef = ref<VNodeRef | null>(null)
 const torrentFile = ref({ files: [] as unknown[] })
 const torrentForm = ref({
   edition_group_id: '',
@@ -311,9 +323,13 @@ const onFileSelect = (event: FileUploadSelectEvent) => {
     torrentForm.value.torrent_file = file
   }
 }
-const mediainfoUpdated = () => {
+const mediainfoUpdated = async () => {
   const mediainfoExtractedInfo = getFileInfo(torrentForm.value.mediainfo)
+  // todo: update the form
   Object.assign(torrentForm.value, mediainfoExtractedInfo)
+  await nextTick()
+  console.log(formRef)
+  formRef.value?.setValues(mediainfoExtractedInfo)
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true
