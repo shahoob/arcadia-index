@@ -8,6 +8,7 @@
     validateOnSubmit
     :validateOnValueUpdate="false"
     validateOnBlur
+    ref="formRef"
   >
     <FloatLabel>
       <Select
@@ -239,6 +240,7 @@ import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/servic
 import { watch } from 'vue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { onMounted } from 'vue'
+import type { VNodeRef } from 'vue'
 
 interface Props {
   initialTitleGroupForm: UserCreatedTitleGroup | null
@@ -269,6 +271,7 @@ const titleGroupForm = ref<UserCreatedTitleGroup>({
   content_type: 'movie',
 })
 const affiliated_artists_names = ref<[string]>([''])
+const formRef = ref<VNodeRef | null>(null)
 
 const original_release_date = computed({
   get() {
@@ -305,8 +308,8 @@ const emit = defineEmits<{
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
 
-  if (values.name.length < 5) {
-    errors.name = [{ message: t('error.write_more_than_x_chars', [5]) }]
+  if (values.name.length < 1) {
+    errors.name = [{ message: t('error.write_more_than_x_chars', [0]) }]
   }
   if (!titleGroupForm.value.category && selectableCategories[titleGroupForm.value.content_type]) {
     errors.category = [{ message: t('error.select_category') }]
@@ -465,14 +468,14 @@ watch(
         ...titleGroupForm.value,
         ...newValue,
       }
-      // TODO: make the form know that the inputs have been updated, it is a primevue form issue
-      // https://github.com/primefaces/primevue/issues/7784
+      formRef.value?.setValues(titleGroupForm.value)
     }
   },
   { immediate: true },
 )
 onMounted(() => {
   titleGroupForm.value.name = initialTitleGroupName
+  formRef.value?.setFieldValue('name', initialTitleGroupName)
 })
 </script>
 <style scoped>

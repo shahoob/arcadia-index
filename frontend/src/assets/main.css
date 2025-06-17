@@ -79,6 +79,7 @@ a {
 .line {
   display: flex;
   align-items: flex-start;
+  flex-wrap: wrap;
   .p-floatlabel {
     margin-right: 15px;
   }
