@@ -41,6 +41,8 @@ tokio = { version = "1", features = ["full"] }
 tokio-cron-scheduler = "0.14"
 lettre = "0.11"
 log = "0.4"
+musicbrainz_rs = "0.9.1"
+regex = "1.11.1"
 
 [patch.crates-io]
 bip_metainfo = { path = "vendored/bip_metainfo" }
