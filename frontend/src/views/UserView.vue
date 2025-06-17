@@ -62,6 +62,7 @@ const warnUserDialogVisible = ref(false)
 
 const fetchUser = async () => {
   if (parseInt(route.params.id.toString()) == userStore.id) {
+    // logged in user
     ;({
       peers: peers.value,
       user: user.value,
@@ -69,11 +70,12 @@ const fetchUser = async () => {
       last_five_snatched_torrents: snatchedTorrents.value,
     } = await getMe())
     userStore.setUser(user.value as User)
-    document.title = `User '${user.value.username}' - ${siteName}`
   } else {
+    // viewing another user
     ;({ user: user.value, last_five_uploaded_torrents: uploadedTorrents.value } = await getUser(parseInt(route.params.id.toString())))
-    document.title = `User '${user.value.username}' - ${siteName}`
   }
+
+  document.title = `User '${user.value.username}' - ${siteName}`
 }
 
 onMounted(async () => {
