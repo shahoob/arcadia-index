@@ -47,6 +47,10 @@ router.beforeEach((to, from, next) => {
     return next()
   }
 
+  /*
+    Favour a custom document title if is defined, otherwise,
+    fall back to use the route name at least.
+  */
   document.title = `${to.meta.documentTitle || to.name} - ${siteName}`
 
   return next()
