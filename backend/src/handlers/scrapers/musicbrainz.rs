@@ -31,8 +31,12 @@ async fn get_musicbrainz_release_group_data(
     id: &str,
     client: &MusicBrainzClient,
 ) -> Result<UserCreatedTitleGroup> {
+    // TODO: handle artists
     let musicbrainz_title_group = ReleaseGroup::fetch()
         .id(id)
+        .with_tags()
+        .with_aliases()
+        // .with_artists()
         .execute_with_client(client)
         .await
         .map_err(Error::ErrorGettingMusicbrainzData)?;
@@ -53,6 +57,18 @@ async fn get_musicbrainz_release_group_data(
 
     Ok(UserCreatedTitleGroup {
         name: musicbrainz_title_group.title,
+        name_aliases: musicbrainz_title_group
+            .aliases
+            .unwrap()
+            .iter()
+            .map(|alias| alias.name.clone())
+            .collect(),
+        tags: musicbrainz_title_group
+            .tags
+            .unwrap()
+            .iter()
+            .map(|tag| tag.name.clone().replace(" ", "."))
+            .collect(),
         original_release_date: musicbrainz_title_group
             .first_release_date
             .map(naive_date_to_utc_midnight)
@@ -75,26 +91,35 @@ async fn get_musicbrainz_release_group_data(
 async fn get_musicbrainz_release_data(
     id: &str,
     client: &MusicBrainzClient,
-) -> Result<UserCreatedEditionGroup> {
+) -> Result<(UserCreatedEditionGroup, Option<String>)> {
     let musicbrainz_edition_group = Release::fetch()
         .id(id)
+        .with_release_groups()
+        .with_labels()
         .execute_with_client(client)
         .await
         .map_err(Error::ErrorGettingMusicbrainzData)?;
-    //TODO: add label when available in api wrapper
-    Ok(UserCreatedEditionGroup {
-        additional_information: Some(
-            json!({"catalogue_number": musicbrainz_edition_group.barcode.clone().unwrap_or("".to_string())}),
-        ),
-        release_date: musicbrainz_edition_group
-            .date
-            .map(naive_date_to_utc_midnight)
-            .unwrap_or_else(|| {
-                naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
-            }),
-        external_links: vec![format!("https://musicbrainz.org/release/{}", id)],
-        ..create_default_edition_group()
-    })
+    println!("{:?}", musicbrainz_edition_group.release_group);
+    Ok((
+        UserCreatedEditionGroup {
+            additional_information: Some(json!({
+                "catalogue_number":  musicbrainz_edition_group.label_info.clone().unwrap().first().unwrap().catalog_number.clone().unwrap(), //musicbrainz_edition_group.barcode.clone().unwrap_or("".to_string()),
+                "label": musicbrainz_edition_group.label_info.unwrap().first().unwrap().label.clone().unwrap().name //format!("{:?}",musicbrainz_edition_group.label_info)
+            })),
+            release_date: musicbrainz_edition_group
+                .date
+                .map(naive_date_to_utc_midnight)
+                .unwrap_or_else(|| {
+                    naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
+                }),
+            external_links: vec![format!("https://musicbrainz.org/release/{}", id)],
+            ..create_default_edition_group()
+        },
+        match musicbrainz_edition_group.release_group {
+            Some(release_group) => Some(release_group.id),
+            _ => None,
+        },
+    ))
 }
 
 #[derive(Debug, PartialEq)]
@@ -135,10 +160,16 @@ pub async fn get_musibrainz_data(
             title_group = Some(get_musicbrainz_release_group_data(&id, &client).await?);
         }
         MusicBrainzEntityType::Release => {
-            //TODO: also fetch title group when available in api wrapper
-            edition_group = Some(get_musicbrainz_release_data(&id, &client).await?);
+            let (eg, release_group_id) = get_musicbrainz_release_data(&id, &client).await?;
+            edition_group = Some(eg);
+            if let Some(rgid) = release_group_id {
+                title_group = Some(get_musicbrainz_release_group_data(&rgid, &client).await?);
+            }
         }
     };
-    Ok(HttpResponse::Ok()
-        .json(serde_json::json!({"title_group": title_group, "edition_group": edition_group})))
+
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "title_group": title_group,
+        "edition_group": edition_group
+    })))
 }
