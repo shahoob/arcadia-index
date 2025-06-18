@@ -257,7 +257,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
     UserCreatedTitleGroup {
         name: String::from("Untitled"),
         name_aliases: Vec::new(),
-        description: String::from("No description provided"),
+        description: String::from(""),
         original_language: None,
         country_from: None,
         covers: vec!["".to_string()],

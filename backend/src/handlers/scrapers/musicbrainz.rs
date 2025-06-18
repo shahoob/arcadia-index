@@ -12,6 +12,7 @@ use musicbrainz_rs::{
 use regex::Regex;
 use serde::Deserialize;
 use serde_json::json;
+use utoipa::IntoParams;
 
 use crate::{
     Arcadia, Error, Result,
@@ -99,12 +100,11 @@ async fn get_musicbrainz_release_data(
         .execute_with_client(client)
         .await
         .map_err(Error::ErrorGettingMusicbrainzData)?;
-    println!("{:?}", musicbrainz_edition_group.release_group);
     Ok((
         UserCreatedEditionGroup {
             additional_information: Some(json!({
-                "catalogue_number":  musicbrainz_edition_group.label_info.clone().unwrap().first().unwrap().catalog_number.clone().unwrap(), //musicbrainz_edition_group.barcode.clone().unwrap_or("".to_string()),
-                "label": musicbrainz_edition_group.label_info.unwrap().first().unwrap().label.clone().unwrap().name //format!("{:?}",musicbrainz_edition_group.label_info)
+                "catalogue_number":  musicbrainz_edition_group.label_info.as_ref().and_then(|li| li.first()).and_then(|li_item| li_item.catalog_number.clone()).unwrap_or_default(), //musicbrainz_edition_group.barcode.clone().unwrap_or("".to_string()),
+                "label": musicbrainz_edition_group.label_info.as_ref().and_then(|li| li.first()).and_then(|li_item| li_item.label.as_ref()).map(|label| label.name.clone()).unwrap_or_default()
             })),
             release_date: musicbrainz_edition_group
                 .date
@@ -128,26 +128,28 @@ pub enum MusicBrainzEntityType {
     ReleaseGroup,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, IntoParams)]
 pub struct GetMusicbrainzQuery {
     url: String,
 }
 
 #[utoipa::path(
     post,
+    params(GetMusicbrainzQuery),
     path = "/api/external_db/musicbrainz",
     responses(
         (status = 200, description = "", body=ExternalDBData),
     )
 )]
-pub async fn get_musibrainz_data(
+pub async fn get_musicbrainz_data(
     query: web::Query<GetMusicbrainzQuery>,
     arc: web::Data<Arcadia>,
 ) -> Result<HttpResponse> {
     let (entity_type, id) = Regex::new(r"musicbrainz.org/(release|release-group)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})")
         .expect("Regex error")
         .captures(&query.url).map(|caps| (match caps[1].as_ref() { "release" => MusicBrainzEntityType::Release, _ => MusicBrainzEntityType::ReleaseGroup }, caps[2].to_string()))
-        .expect("No MusicBrainz release/release-group match found in URL");
+        .ok_or_else(|| Error::InvalidMusicbrainzLink)?;
+    // .expect("No MusicBrainz release/release-group match found in URL");
     let mut client = MusicBrainzClient::default();
     client
         .set_user_agent(&format!("{} ({})", arc.tracker_name, arc.frontend_url))

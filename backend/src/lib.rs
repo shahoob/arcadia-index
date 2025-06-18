@@ -226,8 +226,11 @@ pub enum Error {
     #[error("could not find conversations")]
     CouldNotFindConversations(#[source] sqlx::Error),
 
-    #[error("error getting musicbrainz release_group information")]
+    #[error("error getting musicbrainz data")]
     ErrorGettingMusicbrainzData(#[source] musicbrainz_rs::Error),
+
+    #[error("invalid musicbrainz link")]
+    InvalidMusicbrainzLink,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

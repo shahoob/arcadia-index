@@ -1,8 +1,8 @@
 <template>
   <FloatLabel>
     <IconField>
-      <InputText size="small" name="openlibrary_id" v-model="externalDBId" />
-      <label for="openlibrary_id">{{ inputPlaceholder }}</label>
+      <InputText size="small" name="input" v-model="externalDBId" />
+      <label for="input">{{ inputPlaceholder }}</label>
       <InputIcon
         :class="{
           pi: true,

@@ -10,7 +10,7 @@
     validateOnBlur
     ref="formRef"
   >
-    <FloatLabel>
+    <FloatLabel style="margin-top: 0px">
       <Select
         v-model="titleGroupForm.content_type"
         @update:model-value="(content_type) => (titleGroupStore.content_type = content_type)"
@@ -30,182 +30,198 @@
       </Select>
       <label for="content_type">{{ t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
-    <div class="line" v-if="titleGroupForm.content_type == 'software'">
-      <FloatLabel>
-        <InputNumber size="small" v-model="titleGroupForm.master_group_id" name="master_group_id" :format="false" />
-        <label for="master_group_id">{{ t('master_group.master_group_id') }}</label>
-      </FloatLabel>
+    <div class="external-db-inputs-wrapper">
+      <!-- <div class="external-db-inputs" v-if="content_type == 'movie'">
+            <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/movie" @dataFound="externalDBDataFound" />
+            or
+            <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/movie" @dataFound="externalDBDataFound" />
+          </div> -->
+      <!-- <div class="external-db-inputs" v-if="content_type == 'tv_show'">
+            <ExternalDBSearchBar inputPlaceholder="TVDB id" database="tvdb" @dataFound="externalDBDataFound" />
+            or
+            <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/tv" @dataFound="externalDBDataFound" />
+            or
+            <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/tv" @dataFound="externalDBDataFound" />
+          </div> -->
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'music'">
+        <ExternalDBSearchBar inputPlaceholder="Musicbrainz url" database="musicbrainz" @dataFound="externalDBDataFound" />
+        <!-- or -->
+        <!-- <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" @dataFound="externalDBDataFound" /> -->
+      </div>
+      <!-- <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'book'">
+        <ExternalDBSearchBar inputPlaceholder="Open Library id" database="openlibrary" />
+      </div> -->
     </div>
-    <div class="line">
-      <div class="name">
-        <!-- <TitleGroupSearchBar
-          class="name-input"
-          :placeholder="t('general.name')"
-          :clearInputOnSelect="false"
-          v-model="titleGroupForm.name"
-          @titleGroupSelected="titleGroupSelected"
-          name="name"
-        /> -->
-        <FloatLabel>
-          <InputText size="small" v-model="titleGroupForm.name" name="name" class="name-input" />
-          <label for="name">{{ t('general.name') }}</label>
-        </FloatLabel>
-        <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.name.error?.message }}
-        </Message>
-      </div>
-      <div>
-        <FloatLabel>
-          <Select
-            v-model="titleGroupForm.category"
-            inputId="category"
-            :options="selectableCategories[titleGroupForm.content_type]"
-            size="small"
-            name="category"
-            class="select"
-          />
-          <label for="category">{{ t('general.category') }}</label>
-        </FloatLabel>
-        <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.category.error?.message }}
-        </Message>
-      </div>
-      <div class="tags">
-        <FloatLabel>
-          <InputText size="small" v-model="tagsString" name="tags" />
-          <label for="tags">{{ t('general.tags_comma_separated') }}</label>
-        </FloatLabel>
-        <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.tags.error?.message }}
-        </Message>
-      </div>
-    </div>
-    <div>
+    <div class="name">
       <FloatLabel>
-        <Textarea v-model="titleGroupForm.description" name="description" class="description" autoResize rows="5" />
-        <label for="description">{{ t('general.description') }}</label>
+        <InputText size="small" v-model="titleGroupForm.name" name="name" class="name-input" />
+        <label for="name">{{ t('general.name') }}</label>
       </FloatLabel>
-      <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
-        {{ $form.description.error?.message }}
+      <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
+        {{ $form.name.error?.message }}
       </Message>
     </div>
-    <div class="line">
-      <div v-if="titleGroupForm.content_type == 'software'">
+    <div v-if="titleGroupForm.content_type !== null">
+      <div class="line" v-if="titleGroupForm.content_type == 'software'">
         <FloatLabel>
-          <Select v-model="titleGroupForm.platform" inputId="platform" :options="getPlatforms()" class="select" size="small" name="platform" filter />
-          <label for="platform">{{ t('title_group.platform') }}</label>
+          <InputNumber size="small" v-model="titleGroupForm.master_group_id" name="master_group_id" :format="false" />
+          <label for="master_group_id">{{ t('master_group.master_group_id') }}</label>
         </FloatLabel>
-        <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.platform.error?.message }}
-        </Message>
+      </div>
+      <div class="line">
+        <div>
+          <FloatLabel>
+            <Select
+              v-model="titleGroupForm.category"
+              inputId="category"
+              :options="selectableCategories[titleGroupForm.content_type]"
+              size="small"
+              name="category"
+              class="select"
+            />
+            <label for="category">{{ t('general.category') }}</label>
+          </FloatLabel>
+          <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.category.error?.message }}
+          </Message>
+        </div>
+        <div class="tags">
+          <FloatLabel>
+            <InputText size="small" v-model="tagsString" name="tags" />
+            <label for="tags">{{ t('general.tags_comma_separated') }}</label>
+          </FloatLabel>
+          <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.tags.error?.message }}
+          </Message>
+        </div>
       </div>
       <div>
         <FloatLabel>
-          <Select
-            v-model="titleGroupForm.original_language"
-            inputId="original_language"
-            :options="getLanguages()"
-            class="select"
-            size="small"
-            name="original_language"
-            filter
-          />
-          <label for="original_language">{{ t('general.original_language') }}</label>
+          <Textarea v-model="titleGroupForm.description" name="description" class="description" autoResize rows="5" />
+          <label for="description">{{ t('general.description') }}</label>
         </FloatLabel>
-        <Message v-if="$form.original_language?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.original_language.error?.message }}
+        <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.description.error?.message }}
         </Message>
       </div>
-      <div>
-        <FloatLabel>
-          <Select
-            v-model="titleGroupForm.country_from"
-            inputId="country_from"
-            :options="selectableCountries"
-            class="select"
-            size="small"
-            name="country_from"
-            filter
+      <div class="line">
+        <div v-if="titleGroupForm.content_type == 'software'">
+          <FloatLabel>
+            <Select v-model="titleGroupForm.platform" inputId="platform" :options="getPlatforms()" class="select" size="small" name="platform" filter />
+            <label for="platform">{{ t('title_group.platform') }}</label>
+          </FloatLabel>
+          <Message v-if="$form.platform?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.platform.error?.message }}
+          </Message>
+        </div>
+        <div>
+          <FloatLabel>
+            <Select
+              v-model="titleGroupForm.original_language"
+              inputId="original_language"
+              :options="getLanguages()"
+              class="select"
+              size="small"
+              name="original_language"
+              filter
+            />
+            <label for="original_language">{{ t('general.original_language') }}</label>
+          </FloatLabel>
+          <Message v-if="$form.original_language?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.original_language.error?.message }}
+          </Message>
+        </div>
+        <div>
+          <FloatLabel>
+            <Select
+              v-model="titleGroupForm.country_from"
+              inputId="country_from"
+              :options="selectableCountries"
+              class="select"
+              size="small"
+              name="country_from"
+              filter
+            />
+            <label for="country_from">{{ t('general.country') }}</label>
+          </FloatLabel>
+          <Message v-if="$form.country_from?.invalid" severity="error" size="small" variant="simple">
+            {{ $form.country_from.error?.message }}
+          </Message>
+        </div>
+      </div>
+      <div class="original-release-date">
+        <label for="original_release_date" class="block">{{ t('title_group.original_release_date') }}</label>
+        <DatePicker v-model="original_release_date" showIcon iconDisplay="input" inputId="original_release_date" size="small" name="original_release_date" />
+        <Message v-if="$form.original_release_date?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.original_release_date.error?.message }}
+        </Message>
+      </div>
+      <div class="artists input-list">
+        <label>{{ t('artist.artist', 2) }}</label>
+        <div v-for="(_link, index) in affiliated_artists_names" :key="index">
+          <ArtistSearchBar
+            :placeholder="t('artist.name')"
+            :clearInputOnSelect="false"
+            v-model="affiliated_artists_names[index]"
+            @artistSelected="(event) => artistSelected(event, index)"
           />
-          <label for="country_from">{{ t('general.country') }}</label>
-        </FloatLabel>
-        <Message v-if="$form.country_from?.invalid" severity="error" size="small" variant="simple">
-          {{ $form.country_from.error?.message }}
-        </Message>
+          <InputText
+            size="small"
+            v-model="titleGroupForm.affiliated_artists[index].nickname"
+            :placeholder="t('artist.nickname')"
+            class="artist"
+            v-tooltip.top="t('artist.nickname_explanation')"
+          />
+          <MultiSelect
+            v-model="titleGroupForm.affiliated_artists[index].roles"
+            :options="getArtistRoles()"
+            size="small"
+            class="select"
+            :placeholder="t('artist.role.role', 2)"
+          />
+          <span v-if="titleGroupForm.affiliated_artists[index].artist_id !== 0" class="artist-creation-hint existing">
+            {{ t('artist.existing_artist') }}
+          </span>
+          <span v-else-if="affiliated_artists_names[index] !== ''" class="artist-creation-hint new">{{ t('artist.new_artist') }}</span>
+          <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
+          <Button v-if="index != 0 || affiliated_artists_names.length > 1" @click="removeAffiliatedArtist(index)" icon="pi pi-minus" size="small" />
+          <Message v-if="($form.affiliated_artists as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
+            {{ ($form.affiliated_artists as unknown as FormFieldState[])[index].error?.message }}
+          </Message>
+        </div>
       </div>
-    </div>
-    <div class="original-release-date">
-      <label for="original_release_date" class="block">{{ t('title_group.original_release_date') }}</label>
-      <DatePicker v-model="original_release_date" showIcon iconDisplay="input" inputId="original_release_date" size="small" name="original_release_date" />
-      <Message v-if="$form.original_release_date?.invalid" severity="error" size="small" variant="simple">
-        {{ $form.original_release_date.error?.message }}
-      </Message>
-    </div>
-    <div class="artists input-list">
-      <label>{{ t('artist.artist', 2) }}</label>
-      <div v-for="(_link, index) in affiliated_artists_names" :key="index">
-        <ArtistSearchBar
-          :placeholder="t('artist.name')"
-          :clearInputOnSelect="false"
-          v-model="affiliated_artists_names[index]"
-          @artistSelected="(event) => artistSelected(event, index)"
-        />
-        <InputText
-          size="small"
-          v-model="titleGroupForm.affiliated_artists[index].nickname"
-          :placeholder="t('artist.nickname')"
-          class="artist"
-          v-tooltip.top="t('artist.nickname_explanation')"
-        />
-        <MultiSelect
-          v-model="titleGroupForm.affiliated_artists[index].roles"
-          :options="getArtistRoles()"
-          size="small"
-          class="select"
-          :placeholder="t('artist.role.role', 2)"
-        />
-        <span v-if="titleGroupForm.affiliated_artists[index].artist_id !== 0" class="artist-creation-hint existing">
-          {{ t('artist.existing_artist') }}
-        </span>
-        <span v-else-if="affiliated_artists_names[index] !== ''" class="artist-creation-hint new">{{ t('artist.new_artist') }}</span>
-        <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
-        <Button v-if="index != 0 || affiliated_artists_names.length > 1" @click="removeAffiliatedArtist(index)" icon="pi pi-minus" size="small" />
-        <Message v-if="($form.affiliated_artists as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
-          {{ ($form.affiliated_artists as unknown as FormFieldState[])[index].error?.message }}
-        </Message>
+      <div class="covers input-list">
+        <label>{{ t('general.cover', 2) }}</label>
+        <div v-for="(_link, index) in titleGroupForm.covers" :key="index">
+          <InputText size="small" v-model="titleGroupForm.covers[index]" />
+          <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
+          <Button v-if="index != 0 || titleGroupForm.covers.length > 1" @click="removeCover(index)" icon="pi pi-minus" size="small" />
+          <Message v-if="($form.covers as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
+            {{ ($form.covers as unknown as FormFieldState[])[index].error?.message }}
+          </Message>
+        </div>
       </div>
-    </div>
-    <div class="covers input-list">
-      <label>{{ t('general.cover', 2) }}</label>
-      <div v-for="(_link, index) in titleGroupForm.covers" :key="index">
-        <InputText size="small" v-model="titleGroupForm.covers[index]" />
-        <Button v-if="index == 0" @click="addCover" icon="pi pi-plus" size="small" />
-        <Button v-if="index != 0 || titleGroupForm.covers.length > 1" @click="removeCover(index)" icon="pi pi-minus" size="small" />
-        <Message v-if="($form.covers as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
-          {{ ($form.covers as unknown as FormFieldState[])[index].error?.message }}
-        </Message>
+      <div class="screenshots input-list" v-if="titleGroupForm.content_type == 'software'">
+        <label>{{ t('general.screenshots') }}</label>
+        <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
+          <InputText size="small" v-model="titleGroupForm.screenshots[index]" />
+          <Button v-if="index == 0" @click="addScreenshot" icon="pi pi-plus" size="small" />
+          <Button v-if="index != 0 || titleGroupForm.screenshots.length > 1" @click="removeScreenshot(index)" icon="pi pi-minus" size="small" />
+          <Message v-if="($form.screenshots as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
+            {{ ($form.screenshots as unknown as FormFieldState[])[index].error?.message }}
+          </Message>
+        </div>
       </div>
-    </div>
-    <div class="screenshots input-list" v-if="titleGroupForm.content_type == 'software'">
-      <label>{{ t('general.screenshots') }}</label>
-      <div v-for="(_link, index) in titleGroupForm.screenshots" :key="index">
-        <InputText size="small" v-model="titleGroupForm.screenshots[index]" />
-        <Button v-if="index == 0" @click="addScreenshot" icon="pi pi-plus" size="small" />
-        <Button v-if="index != 0 || titleGroupForm.screenshots.length > 1" @click="removeScreenshot(index)" icon="pi pi-minus" size="small" />
-        <Message v-if="($form.screenshots as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
-          {{ ($form.screenshots as unknown as FormFieldState[])[index].error?.message }}
-        </Message>
-      </div>
-    </div>
-    <div class="external-links input-list">
-      <label>{{ t('general.external_link', 2) }}</label>
-      <div v-for="(_link, index) in titleGroupForm.external_links" :key="index">
-        <InputText size="small" v-model="titleGroupForm.external_links[index]" :name="`external_links[${index}]`" />
-        <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
-        <Button v-if="index != 0 || titleGroupForm.external_links.length > 1" @click="removeLink(index)" icon="pi pi-minus" size="small" />
-        <Message v-if="($form.external_links as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
-          {{ ($form.external_links as unknown as FormFieldState[])[index].error?.message }}
-        </Message>
+      <div class="external-links input-list">
+        <label>{{ t('general.external_link', 2) }}</label>
+        <div v-for="(_link, index) in titleGroupForm.external_links" :key="index">
+          <InputText size="small" v-model="titleGroupForm.external_links[index]" :name="`external_links[${index}]`" />
+          <Button v-if="index == 0" @click="addLink" icon="pi pi-plus" size="small" />
+          <Button v-if="index != 0 || titleGroupForm.external_links.length > 1" @click="removeLink(index)" icon="pi pi-minus" size="small" />
+          <Message v-if="($form.external_links as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
+            {{ ($form.external_links as unknown as FormFieldState[])[index].error?.message }}
+          </Message>
+        </div>
       </div>
     </div>
     <div class="flex justify-content-center">
@@ -232,6 +248,7 @@ import {
   type TitleGroup,
   type TitleGroupCategory,
   type TitleGroupLite,
+  type UserCreatedEditionGroup,
   type UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
 import { createArtists, type Artist, type ArtistLite, type UserCreatedAffiliatedArtist, type UserCreatedArtist } from '@/services/api/artistService'
@@ -241,6 +258,8 @@ import { watch } from 'vue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { onMounted } from 'vue'
 import type { VNodeRef } from 'vue'
+import ExternalDBSearchBar from './ExternalDBSearchBar.vue'
+import type { ExternalDBData } from '@/services/api/externalDatabasesService'
 
 interface Props {
   initialTitleGroupForm: UserCreatedTitleGroup | null
@@ -252,7 +271,10 @@ const titleGroupStore = ref(useTitleGroupStore())
 const sendingTitleGroup = ref(false)
 
 const selectableContentTypes: ContentType[] = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
-const titleGroupForm = ref<UserCreatedTitleGroup>({
+type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
+  content_type: ContentType | null
+}
+const titleGroupForm = ref<UserCreatedTitleGroupForm>({
   name: '',
   description: '',
   original_language: '',
@@ -268,7 +290,7 @@ const titleGroupForm = ref<UserCreatedTitleGroup>({
   master_group_id: null,
   platform: null,
   embedded_links: {},
-  content_type: 'movie',
+  content_type: null,
 })
 const affiliated_artists_names = ref<[string]>([''])
 const formRef = ref<VNodeRef | null>(null)
@@ -298,6 +320,7 @@ const { t } = useI18n()
 
 const emit = defineEmits<{
   done: [titleGroup: TitleGroup | TitleGroupLite]
+  editionGroupDataFound: [editionGroup: UserCreatedEditionGroup]
 }>()
 
 // type FormErrors = {
@@ -308,6 +331,10 @@ const emit = defineEmits<{
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
 
+  if (!titleGroupForm.value.content_type) {
+    errors.content_type = [{ message: t('error.select_content_type') }]
+    return { errors }
+  }
   if (values.name.length < 1) {
     errors.name = [{ message: t('error.write_more_than_x_chars', [0]) }]
   }
@@ -315,7 +342,7 @@ const resolver = ({ values }: FormResolverOptions) => {
     errors.category = [{ message: t('error.select_category') }]
   }
   //TODO config: the minimum amount of tags required should be taken from the global config file
-  if (values.tags == '' || values.tags.split(',').length - 1 < 1) {
+  if (tagsString.value == '' || tagsString.value.split(',').length - 1 < 1) {
     errors.tags = [{ message: t('error.enter_at_least_x_tags', [2]) }]
   }
   if (values.description.length < 10) {
@@ -457,18 +484,33 @@ const removeScreenshot = (index: number) => {
   titleGroupForm.value.screenshots.splice(index, 1)
 }
 
+const externalDBDataFound = (data: ExternalDBData) => {
+  if (data.title_group) {
+    updateTitleGroupForm(data.title_group)
+  }
+  if (data.edition_group) {
+    emit('editionGroupDataFound', data.edition_group)
+  }
+}
+const updateTitleGroupForm = (form: UserCreatedTitleGroup) => {
+  if (form.affiliated_artists.length === 0) {
+    form.affiliated_artists = titleGroupForm.value.affiliated_artists
+  }
+  titleGroupForm.value = {
+    ...titleGroupForm.value,
+    ...form,
+  }
+  if (titleGroupForm.value.tags.length > 0) {
+    tagsString.value = titleGroupForm.value.tags.join(',')
+  }
+  formRef.value?.setValues(titleGroupForm.value)
+}
+
 watch(
   () => initialTitleGroupForm,
   (newValue) => {
     if (newValue !== null) {
-      if (newValue.affiliated_artists.length === 0) {
-        newValue.affiliated_artists = titleGroupForm.value.affiliated_artists
-      }
-      titleGroupForm.value = {
-        ...titleGroupForm.value,
-        ...newValue,
-      }
-      formRef.value?.setValues(titleGroupForm.value)
+      updateTitleGroupForm(newValue)
     }
   },
   { immediate: true },
@@ -482,6 +524,10 @@ onMounted(() => {
 .description {
   width: 100%;
   height: 10em;
+}
+.external-db-inputs-wrapper {
+  display: flex;
+  align-items: center;
 }
 .name {
   width: 50%;

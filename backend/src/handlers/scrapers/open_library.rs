@@ -5,6 +5,7 @@ use chrono::Utc;
 #[allow(unused_imports)]
 use chrono::{DateTime, Datelike, NaiveDate, Timelike};
 use serde::Deserialize;
+use utoipa::IntoParams;
 
 use crate::models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group};
 
@@ -54,13 +55,14 @@ fn parse_date(date: &str) -> Option<DateTime<Utc>> {
         .map(|ndt| DateTime::<Utc>::from_naive_utc_and_offset(ndt, *Utc::now().offset()))
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, IntoParams)]
 pub struct GetOpenLibraryQuery {
     id: String,
 }
 
 #[utoipa::path(
     post,
+    params(GetOpenLibraryQuery),
     path = "/api/external_db/open_library",
     responses(
         (status = 200, description = "", body=ExternalDBData),

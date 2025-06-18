@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/external_db/musicbrainz": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["get_musicbrainz_data"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/external_db/open_library": {
         parameters: {
             query?: never;
@@ -847,7 +863,8 @@ export interface components {
             source?: null | components["schemas"]["Source"];
         };
         ExternalDBData: {
-            title_group: components["schemas"]["UserCreatedTitleGroup"];
+            edition_group?: null | components["schemas"]["UserCreatedEditionGroup"];
+            title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
         };
         /** @enum {string} */
         Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
@@ -1756,7 +1773,7 @@ export interface components {
             release_date: string;
             source?: null | components["schemas"]["Source"];
             /** Format: int64 */
-            title_group_id?: number | null;
+            title_group_id: number;
         };
         UserCreatedForumPost: {
             content: string;
@@ -2119,9 +2136,32 @@ export interface operations {
             };
         };
     };
+    get_musicbrainz_data: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalDBData"];
+                };
+            };
+        };
+    };
     get_open_library_data: {
         parameters: {
-            query?: never;
+            query: {
+                id: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
