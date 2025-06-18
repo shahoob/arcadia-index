@@ -60,7 +60,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="['movie', 'podcast', 'video', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
               <Select v-model="torrentForm.video_codec" inputId="video_coded" :options="selectableVideoCodecs" class="select" size="small" name="video_codec" />
               <label for="video_coded">{{ t('torrent.video_codec') }}</label>
             </FloatLabel>
@@ -69,7 +69,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -85,7 +85,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'video', 'podcast', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
               <Select v-model="torrentForm.audio_codec" inputId="audio_codec" :options="selectableAudioCodecs" class="select" size="small" name="audio_codec" />
               <label for="audio_codec">{{ t('torrent.audio_codec') }}</label>
             </FloatLabel>
@@ -94,7 +94,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv_show', 'music', 'video', 'podcast', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
                 inputId="audio_coded"
@@ -110,7 +110,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv-show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="['movie', 'tv-show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
               <Select
                 v-model="torrentForm.audio_channels"
                 inputId="audio_channels"

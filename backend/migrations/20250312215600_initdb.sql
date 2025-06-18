@@ -144,8 +144,10 @@ CREATE TABLE series (
 );
 CREATE TYPE content_type_enum AS ENUM (
     'movie',
+    'video',
     'tv_show',
     'music',
+    'podcast',
     'software',
     'book',
     'collection'

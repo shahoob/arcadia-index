@@ -721,7 +721,7 @@ export interface components {
         /** @enum {string} */
         AudioCodec: "mp2" | "mp3" | "aac" | "ac3" | "dts" | "flac" | "pcm" | "true-hd" | "opus" | "dsd";
         /** @enum {string} */
-        ContentType: "movie" | "tv_show" | "music" | "software" | "book" | "collection";
+        ContentType: "movie" | "video" | "tv_show" | "music" | "podcast" | "software" | "book" | "collection";
         Conversation: {
             /** Format: date-time */
             created_at: string;

@@ -19,12 +19,18 @@ pub enum ContentType {
     #[sqlx(rename = "movie")]
     #[serde(rename = "movie")]
     Movie,
+    #[sqlx(rename = "video")]
+    #[serde(rename = "video")]
+    Video,
     #[sqlx(rename = "tv_show")]
     #[serde(rename = "tv_show")]
     TVShow,
     #[sqlx(rename = "music")]
     #[serde(rename = "music")]
     Music,
+    #[sqlx(rename = "podcast")]
+    #[serde(rename = "podcast")]
+    Podcast,
     #[sqlx(rename = "software")]
     #[serde(rename = "software")]
     Software,

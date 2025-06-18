@@ -69,7 +69,7 @@
         </FloatLabel>
       </div>
       <div class="line">
-        <div>
+        <div v-if="selectableCategories[titleGroupForm.content_type].length !== 0">
           <FloatLabel>
             <Select
               v-model="titleGroupForm.category"
@@ -270,7 +270,7 @@ const titleGroupStore = ref(useTitleGroupStore())
 
 const sendingTitleGroup = ref(false)
 
-const selectableContentTypes: ContentType[] = ['movie', 'tv_show', 'music', 'software', 'book', 'collection']
+const selectableContentTypes: ContentType[] = ['movie', 'video', 'tv_show', 'music', 'podcast', 'software', 'book', 'collection']
 type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
   content_type: ContentType | null
 }
@@ -310,7 +310,9 @@ const selectableCountries = ['France', 'UK', 'USA', 'Scotland']
 const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
   book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
   music: ['Single', 'Album', 'Ep'],
+  podcast: [],
   movie: ['FeatureFilm', 'ShortFilm'],
+  video: [],
   software: ['Program', 'Game'],
   collection: ['Other'],
   tv_show: [],

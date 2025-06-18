@@ -153,7 +153,9 @@
     "content_type": {
       "content_type": "Content type",
       "music": "Music",
+      "podcast": "Podcast",
       "movie": "Movie",
+      "video": "Video",
       "tv_show": "TV Show",
       "book": "Book",
       "software": "Software",
