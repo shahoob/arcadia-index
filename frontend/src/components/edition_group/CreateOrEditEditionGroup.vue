@@ -224,8 +224,9 @@ const updateEditionGroupForm = async (form: UserCreatedEditionGroup) => {
     ...editionGroupForm.value,
     ...form,
   }
+  // some field is apparently undefined, the whole form seems to still get populated though
   try {
-    // some field is apparently undefined, the whole form seems to still get populated though
+    // the release_date needs to be set manually otherwise another field fails before (I guess) and it's not set
     formRef.value?.setFieldValue('release_date', editionGroupForm.value.release_date.split('T')[0])
     formRef.value?.setValues(editionGroupForm.value)
   } catch (e) {
