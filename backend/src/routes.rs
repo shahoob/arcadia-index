@@ -20,6 +20,7 @@ use crate::handlers::{
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
     scrapers::{
+        isbn::get_isbn_data,
         musicbrainz::get_musicbrainz_data,
         open_library::get_open_library_data,
         tmdb::{get_tmdb_movie_data, get_tmdb_tv_data},
@@ -126,6 +127,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 web::get().to(get_tmdb_movie_data),
             )
             .route("/external_db/tmdb/tv", web::get().to(get_tmdb_tv_data))
+            .route("/external_db/isbn", web::get().to(get_isbn_data))
             .route(
                 "/external_db/musicbrainz",
                 web::get().to(get_musicbrainz_data),
