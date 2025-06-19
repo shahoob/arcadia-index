@@ -75,8 +75,9 @@ pub struct EditionGroup {
     pub external_links: Vec<String>, // (public DBs, other trackers)
     pub source: Option<Source>,
     // this information will appea in the "title bar" of the edition
-    // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: numer/name of the last item)
+    // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: number/name of the last item)
     // for music: (label, catalogue_number)
+    // for books: (format: ebook/audiobook)
     #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Value>,
 }

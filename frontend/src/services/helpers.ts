@@ -46,6 +46,9 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
   }
 
   attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
+  if (editionGroup.additional_information?.format) {
+    attributes.push(editionGroup.additional_information.format)
+  }
 
   if (editionGroup.additional_information?.label) {
     attributes.push(editionGroup.additional_information.label)
@@ -81,7 +84,7 @@ export const getSources = (contentType: ContentType) => {
   const sources = ['Web']
   switch (contentType) {
     case 'book': {
-      sources.push('Physical Book')
+      sources.push('Physical Book', 'CD')
       break
     }
     case 'music': {

@@ -46,16 +46,25 @@
           {{ $form.label.error?.message }}
         </Message>
       </div>
-      <div>
+      <div v-if="titleGroup.content_type == 'book'">
         <FloatLabel>
           <Select
-            v-model="editionGroupForm.source"
-            inputId="source"
-            :options="getSources(titleGroup.content_type)"
-            class="select-source"
+            v-model="editionGroupForm.additional_information.format"
+            inputId="format"
+            :options="['ebook', 'audiobook']"
             size="small"
-            name="source"
+            name="format"
+            class="select"
           />
+          <label for="format">{{ t('edition_group.format') }}</label>
+        </FloatLabel>
+        <Message v-if="$form.label?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.label.error?.message }}
+        </Message>
+      </div>
+      <div>
+        <FloatLabel>
+          <Select v-model="editionGroupForm.source" inputId="source" :options="getSources(titleGroup.content_type)" class="select" size="small" name="source" />
           <label for="source">{{ t('edition_group.source') }}</label>
         </FloatLabel>
         <Message v-if="$form.source?.invalid" severity="error" size="small" variant="simple">
@@ -242,10 +251,6 @@ onMounted(() => {
   if (initialEditionGroupForm !== null) {
     editionGroupForm.value = initialEditionGroupForm
   }
-  if (titleGroup.content_type == 'music') {
-    editionGroupForm.value.additional_information.label = ''
-    editionGroupForm.value.additional_information.catalogue_number = ''
-  }
 })
 </script>
 <style scoped>
@@ -254,7 +259,7 @@ onMounted(() => {
   height: 10em;
 }
 
-.select-source {
+.select {
   width: 150px;
 }
 

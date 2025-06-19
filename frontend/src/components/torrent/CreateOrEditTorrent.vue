@@ -61,8 +61,8 @@
           </div>
           <div>
             <FloatLabel v-if="['movie', 'podcast', 'video', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
-              <Select v-model="torrentForm.video_codec" inputId="video_coded" :options="selectableVideoCodecs" class="select" size="small" name="video_codec" />
-              <label for="video_coded">{{ t('torrent.video_codec') }}</label>
+              <Select v-model="torrentForm.video_codec" inputId="video_codec" :options="selectableVideoCodecs" class="select" size="small" name="video_codec" />
+              <label for="video_codec">{{ t('torrent.video_codec') }}</label>
             </FloatLabel>
             <Message v-if="$form.video_codec?.invalid" severity="error" size="small" variant="simple">
               {{ $form.video_codec.error?.message }}
@@ -85,7 +85,12 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'video', 'podcast', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel
+              v-if="
+                ['movie', 'tv_show', 'video', 'podcast', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0 ||
+                editionGroupStore.additional_information.format === 'audiobook'
+              "
+            >
               <Select v-model="torrentForm.audio_codec" inputId="audio_codec" :options="selectableAudioCodecs" class="select" size="small" name="audio_codec" />
               <label for="audio_codec">{{ t('torrent.audio_codec') }}</label>
             </FloatLabel>
@@ -94,7 +99,12 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'music', 'video', 'podcast', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel
+              v-if="
+                ['movie', 'tv_show', 'music', 'video', 'podcast', 'collection'].indexOf(titleGroupStore.content_type) >= 0 ||
+                editionGroupStore.additional_information.format === 'audiobook'
+              "
+            >
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
                 inputId="audio_coded"
