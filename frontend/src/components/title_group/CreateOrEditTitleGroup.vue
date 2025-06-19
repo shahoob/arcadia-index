@@ -187,10 +187,10 @@
             class="select"
             :placeholder="t('artist.role.role', 2)"
           />
-          <span v-if="titleGroupForm.affiliated_artists[index].artist_id !== 0" class="artist-creation-hint existing">
+          <!-- <span v-if="titleGroupForm.affiliated_artists[index].artist_id !== 0" class="artist-creation-hint existing">
             {{ t('artist.existing_artist') }}
-          </span>
-          <span v-else-if="affiliated_artists_names[index] !== ''" class="artist-creation-hint new">{{ t('artist.new_artist') }}</span>
+          </span> -->
+          <!-- <span v-else-if="affiliated_artists_names[index] !== ''" class="artist-creation-hint new">{{ t('artist.new_artist') }}</span> -->
           <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
           <Button v-if="index != 0 || affiliated_artists_names.length > 1" @click="removeAffiliatedArtist(index)" icon="pi pi-minus" size="small" />
           <Message v-if="($form.affiliated_artists as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
