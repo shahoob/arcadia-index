@@ -443,13 +443,19 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   })
   let createdArtists: Artist[] = []
   if (artistsToCreate.length !== 0) {
-    createdArtists = await createArtists(artistsToCreate)
-    titleGroupForm.value.affiliated_artists.forEach((artist) => {
-      if (artist.artist_id === 0) {
-        artist.artist_id = createdArtists[0].id
-        createdArtists.shift()
-      }
-    })
+    try {
+      createdArtists = await createArtists(artistsToCreate)
+      sendingTitleGroup.value = true
+      titleGroupForm.value.affiliated_artists.forEach((artist) => {
+        if (artist.artist_id === 0) {
+          artist.artist_id = createdArtists[0].id
+          createdArtists.shift()
+        }
+      })
+    } catch {
+      sendingTitleGroup.value = false
+      return
+    }
   }
   // removing the artists that haven't been created (empty inputs)
   titleGroupForm.value.affiliated_artists = titleGroupForm.value.affiliated_artists.filter((aa) => aa.artist_id !== 0)
