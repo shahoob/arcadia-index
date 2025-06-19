@@ -122,7 +122,7 @@ pub async fn create_torrent(
                 .collect::<Vec<&str>>(),
         )
         .bind(torrent_form.video_resolution.as_deref())
-        .bind(&*torrent_form.container)
+        .bind(&*torrent_form.container.to_lowercase())
         .bind(
             torrent_form
                 .languages
