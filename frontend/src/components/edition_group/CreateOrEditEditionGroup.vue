@@ -1,5 +1,14 @@
 <template>
-  <Form v-slot="$form" :initialValues="editionGroupForm" :resolver @submit="onFormSubmit" validateOnSubmit :validateOnValueUpdate="false" validateOnBlur>
+  <Form
+    ref="formRef"
+    v-slot="$form"
+    :initialValues="editionGroupForm"
+    :resolver
+    @submit="onFormSubmit"
+    validateOnSubmit
+    :validateOnValueUpdate="false"
+    validateOnBlur
+  >
     <div class="line">
       <div>
         <FloatLabel>
@@ -110,6 +119,7 @@ import { Form, type FormResolverOptions, type FormSubmitEvent } from '@primevue/
 import { useI18n } from 'vue-i18n'
 import { getSources } from '@/services/helpers'
 import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
+import type { VNodeRef } from 'vue'
 
 interface Props {
   titleGroup: TitleGroupLite
@@ -119,6 +129,8 @@ interface Props {
 const { titleGroup, sendingEditionGroup = false, initialEditionGroupForm = null } = defineProps<Props>()
 
 const { t } = useI18n()
+
+const formRef = ref<VNodeRef | null>(null)
 
 const emit = defineEmits<{
   validated: [editionGroup: UserCreatedEditionGroup]
@@ -136,16 +148,14 @@ const editionGroupForm = ref<UserCreatedEditionGroup>({
   additional_information: {},
 })
 
+// TODO do the same as in titlegroup
 const release_date = computed({
   get() {
-    const date = new Date(editionGroupForm.value.release_date)
-    if (!isNaN(date.getTime())) {
-      return date
-    }
-    return new Date()
+    const isValidDateStr = !isNaN(Date.parse(editionGroupForm.value.release_date ?? ''))
+    return isValidDateStr ? new Date(editionGroupForm.value.release_date ?? '') : null
   },
-  set(date) {
-    editionGroupForm.value.release_date = date.toISOString()
+  set(newValue) {
+    editionGroupForm.value.release_date = newValue?.toISOString() ?? ''
   },
 })
 
@@ -191,6 +201,7 @@ const resolver = ({ values }: FormResolverOptions) => {
 
 const onFormSubmit = ({ valid }: FormSubmitEvent) => {
   if (valid) {
+    editionGroupForm.value.title_group_id = titleGroup.id
     emit('validated', editionGroupForm.value)
   }
 }
@@ -206,11 +217,27 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
 // const removeLink = (index: number) => {
 //   editionGroupForm.value.external_links.splice(index, 1)
 // }
+//
+const updateEditionGroupForm = async (form: UserCreatedEditionGroup) => {
+  // form.release_date = form.release_date.split('T')[0]
+  editionGroupForm.value = {
+    ...editionGroupForm.value,
+    ...form,
+  }
+  try {
+    // some field is apparently undefined, the whole form seems to still get populated though
+    formRef.value?.setFieldValue('release_date', editionGroupForm.value.release_date.split('T')[0])
+    formRef.value?.setValues(editionGroupForm.value)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+defineExpose({
+  updateEditionGroupForm,
+})
 
 onMounted(() => {
-  if (titleGroup.id !== 0) {
-    editionGroupForm.value.title_group_id = titleGroup.id
-  }
   if (initialEditionGroupForm !== null) {
     editionGroupForm.value = initialEditionGroupForm
   }

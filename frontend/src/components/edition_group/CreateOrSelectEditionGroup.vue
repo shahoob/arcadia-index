@@ -25,7 +25,12 @@
     </FloatLabel>
   </div>
   <div v-if="action === 'create'">
-    <CreateOrEditEditionGroup :titleGroup="titleGroupStore" @validated="sendEditionGroup" :sending-edition-group="creatingEditionGroup" />
+    <CreateOrEditEditionGroup
+      ref="createOrEditEditionGroupRef"
+      :titleGroup="titleGroupStore"
+      @validated="sendEditionGroup"
+      :sending-edition-group="creatingEditionGroup"
+    />
   </div>
 </template>
 
@@ -46,6 +51,7 @@ const selectedEditionGroup = ref<EditionGroupInfoLite | string | null>(null)
 const creatingEditionGroup = ref(false)
 
 const { t } = useI18n()
+const createOrEditEditionGroupRef = ref<InstanceType<typeof CreateOrEditEditionGroup>>()
 
 const emit = defineEmits<{
   done: [editionGroup: EditionGroupInfoLite]
@@ -63,11 +69,25 @@ const sendEditionGroup = (editionGroupForm?: UserCreatedEditionGroup) => {
   const formattededitionGroupForm = JSON.parse(JSON.stringify(editionGroupForm))
   // otherwise there is a json parse error, last char is "Z"
   // formattededitionGroupForm.release_date = formattededitionGroupForm.release_date.slice(0, -1)
-  createEditionGroup(formattededitionGroupForm).then((data: EditionGroup) => {
-    creatingEditionGroup.value = false
-    emit('done', data)
-  })
+  createEditionGroup(formattededitionGroupForm)
+    .then((data: EditionGroup) => {
+      emit('done', data)
+    })
+    .finally(() => {
+      creatingEditionGroup.value = false
+    })
 }
+
+const updateEditionGroupForm = (form: UserCreatedEditionGroup) => {
+  if (createOrEditEditionGroupRef.value) {
+    createOrEditEditionGroupRef.value.updateEditionGroupForm(form)
+  }
+}
+
+defineExpose({
+  updateEditionGroupForm,
+  action,
+})
 </script>
 <style scoped>
 .select-existing-edition {

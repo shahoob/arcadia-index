@@ -15,7 +15,7 @@
         </AccordionHeader>
         <AccordionContent>
           <!-- <CreateOrSelectTitleGroup @done="titleGroupDone" /> -->
-          <CreateOrSelectTitleGroup @done="titleGroupDone" />
+          <CreateOrSelectTitleGroup @editionGroupDataFound="editionGroupDataFound" @done="titleGroupDone" @siwtchedToCreate="titleGroupSwitchedToCreate" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -34,7 +34,7 @@
           </span>
         </AccordionHeader>
         <AccordionContent>
-          <CreateOrSelectEditionGroup @done="editionGroupDone" />
+          <CreateOrSelectEditionGroup ref="editionRef" @done="editionGroupDone" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -60,7 +60,14 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getUploadInformation, type EditionGroupInfoLite, type TitleGroup, type TitleGroupLite, type Torrent } from '@/services/api/torrentService'
+import {
+  getUploadInformation,
+  type EditionGroupInfoLite,
+  type TitleGroup,
+  type TitleGroupLite,
+  type Torrent,
+  type UserCreatedEditionGroup,
+} from '@/services/api/torrentService'
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { onMounted } from 'vue'
 import { getEditionGroupSlug } from '@/services/helpers'
@@ -77,6 +84,7 @@ const titleGroupAccordionValue = ref('0')
 const titleGroupDisabled = ref(false)
 const editionGroupAccordionValue = ref('0')
 const editionGroupDisabled = ref(false)
+const editionRef = ref<InstanceType<typeof CreateOrSelectEditionGroup>>()
 const torrentAccordionValue = ref('0')
 const editionGroup = ref<EditionGroupInfoLite | null>(null)
 
@@ -92,6 +100,14 @@ const titleGroupDone = (titleGroup?: TitleGroup | TitleGroupLite) => {
       titleGroupStore.value.edition_groups = titleGroup.edition_groups
     }
   }
+}
+
+const titleGroupSwitchedToCreate = () => {
+  if (editionRef.value) editionRef.value.action = 'create'
+}
+
+const editionGroupDataFound = (eg: UserCreatedEditionGroup) => {
+  if (editionRef.value) editionRef.value.updateEditionGroupForm(eg)
 }
 
 const editionGroupDone = (eg: EditionGroupInfoLite) => {

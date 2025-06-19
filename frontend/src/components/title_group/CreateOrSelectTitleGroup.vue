@@ -12,13 +12,14 @@
   <CreateOrEditTitleGroup
     v-else-if="action === 'create'"
     @done="titleGroupCreated"
+    @editionGroupDataFound="(eg) => emit('editionGroupDataFound', eg)"
     :initial-title-group-name="titleGroupName"
     :initial-title-group-form="null"
   />
 </template>
 
 <script setup lang="ts">
-import type { TitleGroup, TitleGroupLite } from '@/services/api/torrentService'
+import type { TitleGroup, TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreateOrEditTitleGroup from './CreateOrEditTitleGroup.vue'
@@ -29,6 +30,8 @@ const { t } = useI18n()
 const titleGroupStore = useTitleGroupStore()
 const emit = defineEmits<{
   done: [titleGroup: TitleGroup | TitleGroupLite]
+  editionGroupDataFound: [editionGroup: UserCreatedEditionGroup]
+  siwtchedToCreate: []
 }>()
 
 const action = ref<'select' | 'create'>('select')
@@ -44,6 +47,7 @@ const titleGroupCreated = async (titleGroup: TitleGroup | TitleGroupLite) => {
 }
 const createNew = () => {
   action.value = 'create'
+  emit('siwtchedToCreate')
 }
 </script>
 <style scoped>

@@ -151,7 +151,15 @@
       </div>
       <div class="original-release-date">
         <label for="original_release_date" class="block">{{ t('title_group.original_release_date') }}</label>
-        <DatePicker v-model="original_release_date" showIcon iconDisplay="input" inputId="original_release_date" size="small" name="original_release_date" />
+        <DatePicker
+          v-model="original_release_date"
+          showIcon
+          iconDisplay="input"
+          inputId="original_release_date"
+          size="small"
+          dateFormat="yy-mm-dd"
+          name="original_release_date"
+        />
         <Message v-if="$form.original_release_date?.invalid" severity="error" size="small" variant="simple">
           {{ $form.original_release_date.error?.message }}
         </Message>
@@ -505,7 +513,10 @@ const updateTitleGroupForm = (form: UserCreatedTitleGroup) => {
   if (titleGroupForm.value.tags.length > 0) {
     tagsString.value = titleGroupForm.value.tags.join(',')
   }
-  formRef.value?.setValues(titleGroupForm.value)
+  try {
+    // some field is apparently undefined, the whole form seems to still get populated though
+    formRef.value?.setValues(titleGroupForm.value)
+  } catch {}
 }
 
 watch(
