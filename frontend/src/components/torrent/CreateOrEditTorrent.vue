@@ -254,6 +254,8 @@ const selectableVideoCodecs = ['mpeg1', 'mpeg2', 'divX', 'DivX', 'h264', 'h265',
 const selectableVideoResolutions = ['2160p', '1440p', '1080p', '720p', 'SD']
 const selectableAudioCodecs = ['aac', 'opus', 'mp3', 'mp2', 'aac', 'ac3', 'dts', 'flac', 'pcm', 'true-hd', 'dsd']
 const selectableAudioBitrateSamplings = [
+  '64',
+  '128',
   '192',
   '256',
   '320',

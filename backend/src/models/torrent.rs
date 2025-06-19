@@ -71,6 +71,12 @@ pub enum AudioChannels {
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "audio_bitrate_sampling_enum")]
 pub enum AudioBitrateSampling {
+    #[sqlx(rename = "64")]
+    #[serde(rename = "64")]
+    Bitrate64,
+    #[sqlx(rename = "128")]
+    #[serde(rename = "128")]
+    Bitrate128,
     #[sqlx(rename = "192")]
     #[serde(rename = "192")]
     Bitrate192,

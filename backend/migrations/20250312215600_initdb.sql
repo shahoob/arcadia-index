@@ -296,6 +296,8 @@ CREATE TYPE audio_codec_enum AS ENUM (
     'dsd'
 );
 CREATE TYPE audio_bitrate_sampling_enum AS ENUM(
+    '64',
+    '128',
     '192',
     '256',
     '320',
