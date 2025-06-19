@@ -112,8 +112,9 @@ const editionGroupDataFound = (eg: UserCreatedEditionGroup) => {
 
 const editionGroupDone = (eg: EditionGroupInfoLite) => {
   editionGroup.value = eg
+  // editionGroupStore.value = { ...eg, ...editionGroupStore.value }
   editionGroupStore.value.id = eg.id
-  console.log(eg.additional_information)
+  editionGroupStore.value.source = eg.source
   editionGroupStore.value.additional_information = eg.additional_information
   editionGroupAccordionValue.value = ''
   editionGroupDisabled.value = true

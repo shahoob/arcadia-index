@@ -42,6 +42,8 @@ export type EditionGroupHierarchyLite = components['schemas']['EditionGroupHiera
 
 export type EditionGroupHierarchy = components['schemas']['EditionGroupHierarchy']
 
+export type Source = components['schemas']['Source']
+
 export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) => {
   editionGroup.additional_information = Object.fromEntries(
     Object.entries(editionGroup.additional_information).filter(([, value]) => value !== null && value !== ''),
@@ -103,6 +105,8 @@ export const searchTorrentsLite = async (searchOptions: TorrentSearch) => {
 export type UserCreatedTorrentReport = components['schemas']['UserCreatedTorrentReport']
 
 export type TorrentReport = components['schemas']['TorrentReport']
+
+export type Features = components['schemas']['Features']
 
 export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => {
   return (await api.post<TorrentReport>('/report/torrent', torrentReport)).data

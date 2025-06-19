@@ -1,4 +1,4 @@
-import type { ContentType, EditionGroupInfoLite } from './api/torrentService'
+import type { ContentType, EditionGroupInfoLite, Features, Source } from './api/torrentService'
 
 export const timeAgo = (date: string) => {
   const diff = (Date.now() - new Date(date).getTime()) / 1000
@@ -65,14 +65,17 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
 
   return attributes.join(' / ')
 }
-export const getFeatures = (contentType: string): string[] => {
-  if (contentType == 'book' || contentType == 'music') {
-    return ['Cue', 'Booklet']
-  } else if (contentType == 'tv_show' || contentType == 'movie') {
-    return ['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D']
-  } else {
-    return []
+export const getFeatures = (contentType: string, format: string = '', source: Source | null = null): Features[] => {
+  let features: Features[] = []
+  if (source === 'Physical Book') {
+    features = features.concat(['OCR'])
   }
+  if ((contentType == 'book' && format === 'audiobook') || contentType == 'music') {
+    features = features.concat(['Cue', 'Booklet'])
+  } else if (contentType == 'tv_show' || contentType == 'movie') {
+    features.concat(['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D'])
+  }
+  return features
 }
 export const getLanguages = () => {
   return ['English', 'French', 'German', 'Italian', 'Spanish', 'Swedish']

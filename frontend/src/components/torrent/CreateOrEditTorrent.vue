@@ -155,7 +155,14 @@
           </Message>
         </div>
         <FloatLabel>
-          <MultiSelect v-model="torrentForm.features" display="chip" :options="getFeatures(titleGroupStore.content_type)" filter size="small" name="features" />
+          <MultiSelect
+            v-model="torrentForm.features"
+            display="chip"
+            :options="getFeatures(titleGroupStore.content_type, editionGroupStore.additional_information.format, editionGroupStore.source)"
+            filter
+            size="small"
+            name="features"
+          />
           <label for="features">{{ t('torrent.features') }}</label>
         </FloatLabel>
         <!-- <FloatLabel >

@@ -731,7 +731,7 @@ export interface components {
         /** @enum {string} */
         ArtistRole: "main" | "producer" | "guest" | "composer" | "conductor" | "dj_compiler" | "remixer" | "arranger" | "director" | "cinematographer" | "actor" | "author";
         /** @enum {string} */
-        AudioBitrateSampling: "192" | "256" | "320" | "APS (VBR)" | "V2 (VBR)" | "V1 (VBR)" | "APX (VBR)" | "V0 (VBR)" | "Lossless" | "24bit Lossless" | "DSD64" | "DSD128" | "DSD256" | "DSD512" | "Other";
+        AudioBitrateSampling: "64" | "128" | "192" | "256" | "320" | "APS (VBR)" | "V2 (VBR)" | "V1 (VBR)" | "APX (VBR)" | "V0 (VBR)" | "Lossless" | "24bit Lossless" | "DSD64" | "DSD128" | "DSD256" | "DSD512" | "Other";
         /** @enum {string} */
         AudioChannels: "1.0" | "2.0" | "2.1" | "5.0" | "5.1" | "7.1";
         /** @enum {string} */
@@ -883,7 +883,7 @@ export interface components {
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
         };
         /** @enum {string} */
-        Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "Booklet" | "Cue";
+        Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "OCR" | "Booklet" | "Cue";
         ForumCategoryHierarchy: {
             /** Format: int32 */
             id: number;

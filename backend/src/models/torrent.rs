@@ -180,6 +180,9 @@ pub enum Features {
     #[sqlx(rename = "3D")]
     #[serde(rename = "3D")]
     ThreeD,
+    #[sqlx(rename = "OCR")]
+    #[serde(rename = "OCR")]
+    Ocr,
     Booklet,
     Cue,
 }
