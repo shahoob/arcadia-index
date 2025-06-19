@@ -20,9 +20,12 @@ pub async fn create_artists(
         let artist = sqlx::query_as!(
             Artist,
             r#"
-                INSERT INTO artists (name, description, pictures, created_by_id)
-                VALUES ($1, $2, $3, $4)
-                RETURNING *
+            INSERT INTO artists (name, description, pictures, created_by_id)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (name) DO UPDATE SET
+                -- This is a no-op update that still triggers RETURNING
+                name = EXCLUDED.name
+            RETURNING *
             "#,
             artist.name,
             artist.description,
@@ -70,7 +73,12 @@ pub async fn create_artists_affiliation(
             .bind(artist.title_group_id)
             .bind(artist.artist_id)
             .bind(&artist.roles)
-            .bind(artist.nickname.clone())
+            .bind(
+                artist
+                    .nickname
+                    .clone()
+                    .map(|nick| if nick.is_empty() { None } else { Some(nick) }),
+            )
             .bind(current_user_id);
     }
 
