@@ -33,6 +33,7 @@ defineProps<{
 .title-group-preview-table {
   display: flex;
   justify-content: center;
+  align-items: start;
 }
 .right {
   width: 100%;
@@ -47,10 +48,10 @@ defineProps<{
 </style>
 <style>
 .title-group-preview-table .cover {
-  height: 20em;
   margin-right: 20px;
 }
 .title-group-preview-table .cover img {
   border-radius: 7px;
+  width: 18em;
 }
 </style>
