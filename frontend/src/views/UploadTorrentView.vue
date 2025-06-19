@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="title">{{ t('torrent.upload_torrent') }}</div>
+    <div class="announce-url">
+      <div class="explanation">{{ t('torrent.announce_url') }}:</div>
+      <div class="url">{{ announceUrl }}</div>
+    </div>
     <Accordion :value="titleGroupAccordionValue" class="upload-step-accordion">
       <AccordionPanel value="0" :disabled="titleGroupDisabled">
         <AccordionHeader>
@@ -56,7 +60,7 @@ import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import type { EditionGroupInfoLite, TitleGroup, TitleGroupLite, Torrent } from '@/services/api/torrentService'
+import { getUploadInformation, type EditionGroupInfoLite, type TitleGroup, type TitleGroupLite, type Torrent } from '@/services/api/torrentService'
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { onMounted } from 'vue'
 import { getEditionGroupSlug } from '@/services/helpers'
@@ -65,6 +69,7 @@ import CreateOrSelectTitleGroup from '@/components/title_group/CreateOrSelectTit
 const router = useRouter()
 const { t } = useI18n()
 
+const announceUrl = ref('')
 const editionGroupStore = ref(useEditionGroupStore())
 const titleGroupStore = ref(useTitleGroupStore())
 
@@ -105,10 +110,22 @@ onMounted(() => {
   if (titleGroupStore.value.id !== 0) {
     titleGroupDone()
   }
+  getUploadInformation().then((data) => {
+    announceUrl.value = data.announce_url
+  })
 })
 </script>
 
 <style scoped>
+.announce-url {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  .explanation {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+}
 .form {
   padding-top: 5px;
 }

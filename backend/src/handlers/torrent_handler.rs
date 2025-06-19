@@ -6,7 +6,7 @@ use actix_web::{
     },
     web,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use utoipa::{IntoParams, ToSchema};
 
@@ -19,6 +19,7 @@ use crate::{
     repositories::torrent_repository::{
         create_torrent, find_top_torrents, get_torrent, remove_torrent, search_torrents,
     },
+    services::torrent_service::get_announce_url,
 };
 
 #[utoipa::path(
@@ -86,6 +87,31 @@ pub async fn download_dottorrent_file(
         .insert_header(ContentType::octet_stream())
         .insert_header(cd)
         .body(torrent.file_contents))
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct UploadInformation {
+    announce_url: String,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/upload",
+    responses(
+        (status = 200, description = "Information related to uploading", body=UploadInformation),
+    )
+)]
+pub async fn get_upload_information(
+    arc: web::Data<Arcadia>,
+    current_user: User,
+) -> Result<HttpResponse> {
+    let announce_url = get_announce_url(
+        current_user.passkey_upper,
+        current_user.passkey_lower,
+        arc.tracker_url.as_ref(),
+    );
+
+    Ok(HttpResponse::Ok().json(UploadInformation { announce_url }))
 }
 
 #[utoipa::path(

@@ -4,6 +4,7 @@ use crate::{
         torrent::{Features, Torrent, TorrentSearch, TorrentToDelete, UploadedTorrent},
         user::User,
     },
+    services::torrent_service::get_announce_url,
 };
 
 use bip_metainfo::{Info, InfoBuilder, InfoHash, Metainfo, MetainfoBuilder, PieceLength};
@@ -200,17 +201,12 @@ pub async fn get_torrent(
 
     let info = Info::from_bytes(torrent.info_dict).map_err(|_| Error::TorrentFileInvalid)?;
 
-    let tracker_url = {
-        let passkey =
-            ((user.passkey_upper as u64 as u128) << 64) | (user.passkey_lower as u64 as u128);
-
-        format!("{}announce/{:x}", tracker_url, passkey)
-    };
+    let announce_url = get_announce_url(user.passkey_upper, user.passkey_lower, tracker_url);
 
     let frontend_url = format!("{}torrent/{}", frontend_url, torrent_id);
 
     let metainfo = MetainfoBuilder::new()
-        .set_main_tracker(Some(&tracker_url))
+        .set_main_tracker(Some(&announce_url))
         .set_creation_date(Some(torrent.created_at_secs))
         .set_comment(Some(&frontend_url))
         .set_created_by(Some(tracker_name))
@@ -240,7 +236,11 @@ pub async fn get_torrent(
     })
 }
 
-pub async fn search_torrents(pool: &PgPool, torrent_search: &TorrentSearch, requesting_user_id: Option<i64>) -> Result<Value> {
+pub async fn search_torrents(
+    pool: &PgPool,
+    torrent_search: &TorrentSearch,
+    requesting_user_id: Option<i64>,
+) -> Result<Value> {
     let search_results = sqlx::query!(
         r#"
         WITH title_group_data AS (

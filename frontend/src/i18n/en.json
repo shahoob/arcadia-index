@@ -172,6 +172,7 @@
   "torrent": {
     "size": "Size",
     "edition": "Edition",
+    "announce_url": "Announce url",
     "torrent": "Torrent | Torrents",
     "seeders": "Seeders",
     "leechers": "Leechers",
