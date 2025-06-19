@@ -178,8 +178,9 @@
             ref="torrentFile"
             accept="application/x-bittorrent"
             :chooseLabel="t('torrent.torrent_file')"
-            :showCancelButton="false"
+            :cancel-label="t('general.remove')"
             :showUploadButton="false"
+            :fileLimit="1"
             @select="onFileSelect"
             v-bind="$field.props"
           >

@@ -44,7 +44,8 @@
     "descending": "Descending",
     "send": "Send",
     "started": "Started",
-    "create_new_one": "Create a new one"
+    "create_new_one": "Create a new one",
+    "remove": "Remove"
   },
   "auth": {
     "remember_me": "Remember me"
