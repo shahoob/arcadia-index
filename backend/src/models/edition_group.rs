@@ -77,7 +77,7 @@ pub struct EditionGroup {
     // this information will appea in the "title bar" of the edition
     // for collections : (date_from: first item date, first_item: numer/name of the first item, last_item: number/name of the last item)
     // for music: (label, catalogue_number)
-    // for books: (format: ebook/audiobook)
+    // for books: (format: ebook/audiobook, isbn)
     #[schema(value_type = HashMap<String, String>)]
     pub additional_information: Option<Value>,
 }

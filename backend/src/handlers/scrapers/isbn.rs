@@ -1,10 +1,15 @@
-use crate::{Result, handlers::scrapers::ExternalDBData};
+use crate::{
+    Result,
+    handlers::scrapers::ExternalDBData,
+    models::edition_group::{UserCreatedEditionGroup, create_default_edition_group},
+};
 use actix_web::{HttpResponse, web};
 use chrono::Utc;
 // Datelike and Timelike are needed in the tests, even though they are not directly referenced
 #[allow(unused_imports)]
 use chrono::{DateTime, Datelike, NaiveDate, Timelike};
 use serde::Deserialize;
+use serde_json::json;
 use utoipa::IntoParams;
 
 use crate::models::title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group};
@@ -56,6 +61,7 @@ struct Book {
     works: Vec<WorkLink>,
     #[serde(rename = "covers")]
     cover_ids: Vec<u64>,
+    isbn_13: Vec<String>,
 }
 
 fn parse_date(date: &str) -> Option<DateTime<Utc>> {
@@ -107,9 +113,14 @@ pub async fn get_isbn_data(query: web::Query<GetISBNDataQuery>) -> Result<HttpRe
         ..create_default_title_group()
     };
 
+    let edition_group = UserCreatedEditionGroup {
+        additional_information: Some(json!({"isbn_13": book.isbn_13.first().unwrap()})),
+        ..create_default_edition_group()
+    };
+
     Ok(HttpResponse::Ok().json(ExternalDBData {
         title_group: Some(title_group),
-        edition_group: None,
+        edition_group: Some(edition_group),
     }))
 }
 

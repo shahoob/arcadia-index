@@ -48,6 +48,12 @@
       </div>
       <div v-if="titleGroup.content_type == 'book'">
         <FloatLabel>
+          <InputText size="small" v-model="editionGroupForm.additional_information.isbn_13" name="isbn_13" />
+          <label for="isbn_13">isbn-13</label>
+        </FloatLabel>
+      </div>
+      <div v-if="titleGroup.content_type == 'book'">
+        <FloatLabel>
           <Select
             v-model="editionGroupForm.additional_information.format"
             inputId="format"

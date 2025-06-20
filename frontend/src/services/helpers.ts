@@ -56,6 +56,9 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
   if (editionGroup.additional_information?.catalogue_number) {
     attributes.push(editionGroup.additional_information.catalogue_number)
   }
+  if (editionGroup.additional_information?.isbn_13) {
+    attributes.push(editionGroup.additional_information.isbn_13)
+  }
   if (editionGroup.source) {
     attributes.push(editionGroup.source)
   }
