@@ -48,9 +48,9 @@
         <!-- or -->
         <!-- <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" @dataFound="externalDBDataFound" /> -->
       </div>
-      <!-- <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'book'">
-        <ExternalDBSearchBar inputPlaceholder="Open Library id" database="openlibrary" />
-      </div> -->
+      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'book'">
+        <ExternalDBSearchBar inputPlaceholder="isbn" database="isbn" @dataFound="externalDBDataFound" />
+      </div>
     </div>
     <div class="name">
       <FloatLabel>
@@ -314,7 +314,7 @@ const original_release_date = computed({
 })
 
 const tagsString = ref('')
-const selectableCountries = ['France', 'UK', 'USA', 'Scotland']
+const selectableCountries = ['France', 'UK', 'USA']
 const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
   book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
   music: ['Single', 'Album', 'Ep'],

@@ -19,10 +19,7 @@ use crate::handlers::{
     home_handler::get_home,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
-    scrapers::{
-        isbn::get_isbn_data, musicbrainz::get_musicbrainz_data,
-        open_library::get_open_library_data, tmdb::get_tmdb_data,
-    },
+    scrapers::{isbn::get_isbn_data, musicbrainz::get_musicbrainz_data, tmdb::get_tmdb_data},
     series_handler::{add_series, get_series},
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
@@ -116,10 +113,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 "/conversation/message",
                 web::post().to(add_conversation_message),
             )
-            .route(
-                "/external_db/open_library",
-                web::get().to(get_open_library_data),
-            )
+            .route("/external_db/isbn", web::get().to(get_isbn_data))
             .route("/external_db/tmdb/movie", web::get().to(get_tmdb_data))
             .route("/external_db/isbn", web::get().to(get_isbn_data))
             .route(

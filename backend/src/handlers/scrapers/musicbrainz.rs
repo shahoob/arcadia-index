@@ -70,12 +70,14 @@ async fn get_musicbrainz_release_group_data(
             .iter()
             .map(|tag| tag.name.clone().replace(" ", "."))
             .collect(),
-        original_release_date: musicbrainz_title_group
-            .first_release_date
-            .map(naive_date_to_utc_midnight)
-            .unwrap_or_else(|| {
-                naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
-            }),
+        original_release_date: Some(
+            musicbrainz_title_group
+                .first_release_date
+                .map(naive_date_to_utc_midnight)
+                .unwrap_or_else(|| {
+                    naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
+                }),
+        ),
         category: Some(
             musicbrainz_title_group
                 .primary_type

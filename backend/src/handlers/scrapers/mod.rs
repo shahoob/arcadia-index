@@ -5,7 +5,6 @@ use crate::models::{edition_group::UserCreatedEditionGroup, title_group::UserCre
 
 pub mod isbn;
 pub mod musicbrainz;
-pub mod open_library;
 pub mod tmdb;
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]

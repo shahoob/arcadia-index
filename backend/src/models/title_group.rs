@@ -145,7 +145,7 @@ pub struct UserCreatedTitleGroup {
     pub tagline: Option<String>,
     pub platform: Option<Platform>,
     #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Utc>,
+    pub original_release_date: Option<DateTime<Utc>>,
     pub affiliated_artists: Vec<UserCreatedAffiliatedArtist>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
@@ -274,7 +274,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         tags: Vec::new(),
         tagline: None,
         platform: None,
-        original_release_date: Utc::now(),
+        original_release_date: Some(Utc::now()),
         affiliated_artists: Vec::new(),
         series_id: None,
         screenshots: Vec::new(),
