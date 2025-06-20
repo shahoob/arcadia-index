@@ -90,6 +90,11 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("ARCADIA_GLOBAL_DOWNLOAD_FACTOR env var is not a valid f64");
 
+    let tmdb_api_key = env::var("TMDB_API_KEY").ok();
+    if tmdb_api_key.is_none() {
+        println!("TMDB_API_KEY env var is not set. TMDB data fetching won't be available")
+    }
+
     let smtp_host = env::var("SMTP_HOST").ok();
     let smtp_port = env::var("SMTP_PORT").ok().and_then(|s| s.parse().ok());
     let smtp_username = env::var("SMTP_USERNAME").ok();
@@ -122,6 +127,7 @@ async fn main() -> std::io::Result<()> {
         allowed_torrent_clients: allowed_torrent_clients.clone(),
         global_download_factor,
         global_upload_factor,
+        tmdb_api_key,
         smtp_host,
         smtp_port,
         smtp_username,

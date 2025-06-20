@@ -29,6 +29,7 @@ pub struct Arcadia {
     pub allowed_torrent_clients: HashSet<Vec<u8>>,
     pub global_upload_factor: f64,
     pub global_download_factor: f64,
+    pub tmdb_api_key: Option<String>,
     pub smtp_host: Option<String>,
     pub smtp_port: Option<u16>,
     pub smtp_username: Option<String>,
@@ -229,8 +230,14 @@ pub enum Error {
     #[error("error getting musicbrainz data")]
     ErrorGettingMusicbrainzData(#[source] musicbrainz_rs::Error),
 
-    #[error("invalid musicbrainz link")]
-    InvalidMusicbrainzLink,
+    #[error("invalid musicbrainz url")]
+    InvalidMusicbrainzUrl,
+
+    #[error("tmdb data fetching not available")]
+    TMDBDataFetchingNotAvailable,
+
+    #[error("invalid tmdb url")]
+    InvalidTMDBUrl,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

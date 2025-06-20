@@ -261,7 +261,7 @@ pub struct TitleGroupAndAssociatedData {
 
 pub fn create_default_title_group() -> UserCreatedTitleGroup {
     UserCreatedTitleGroup {
-        name: String::from("Untitled"),
+        name: String::from(""),
         name_aliases: Vec::new(),
         description: String::from(""),
         original_language: None,

@@ -148,7 +148,7 @@ pub async fn get_musicbrainz_data(
     let (entity_type, id) = Regex::new(r"musicbrainz.org/(release|release-group)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})")
         .expect("Regex error")
         .captures(&query.url).map(|caps| (match caps[1].as_ref() { "release" => MusicBrainzEntityType::Release, _ => MusicBrainzEntityType::ReleaseGroup }, caps[2].to_string()))
-        .ok_or_else(|| Error::InvalidMusicbrainzLink)?;
+        .ok_or_else(|| Error::InvalidMusicbrainzUrl)?;
     // .expect("No MusicBrainz release/release-group match found in URL");
     let mut client = MusicBrainzClient::default();
     client

@@ -32,6 +32,7 @@ pub async fn create_test_app(
         allowed_torrent_clients: ["lt0F01".as_bytes().to_vec()].into_iter().collect(),
         global_upload_factor,
         global_download_factor,
+        tmdb_api_key: None,
         smtp_host: None,
         smtp_port: None,
         smtp_username: None,

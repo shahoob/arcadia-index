@@ -98,6 +98,7 @@ use crate::{
         crate::handlers::conversation_handler::add_conversation_message,
         crate::handlers::scrapers::open_library::get_open_library_data,
         crate::handlers::scrapers::musicbrainz::get_musicbrainz_data,
+        crate::handlers::scrapers::tmdb::get_tmdb_data,
     ),
     components(schemas(
         Register,
