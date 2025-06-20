@@ -1,5 +1,5 @@
 use actix_web::{HttpResponse, web};
-use chrono::{DateTime, NaiveDate, TimeZone, Utc};
+use chrono::NaiveDate;
 use musicbrainz_rs::{
     Fetch, FetchCoverart,
     client::MusicBrainzClient,
@@ -21,12 +21,8 @@ use crate::{
         edition_group::{UserCreatedEditionGroup, create_default_edition_group},
         title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
     },
+    services::common_service::naive_date_to_utc_midnight,
 };
-
-fn naive_date_to_utc_midnight(date: NaiveDate) -> DateTime<Utc> {
-    Utc.from_local_datetime(&date.and_hms_opt(0, 0, 0).unwrap())
-        .unwrap()
-}
 
 async fn get_musicbrainz_release_group_data(
     id: &str,
@@ -74,9 +70,7 @@ async fn get_musicbrainz_release_group_data(
             musicbrainz_title_group
                 .first_release_date
                 .map(naive_date_to_utc_midnight)
-                .unwrap_or_else(|| {
-                    naive_date_to_utc_midnight(NaiveDate::from_ymd_opt(1900, 1, 1).unwrap())
-                }),
+                .unwrap(),
         ),
         category: Some(
             musicbrainz_title_group

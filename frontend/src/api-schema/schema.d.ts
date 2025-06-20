@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/external_db/isbn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["get_isbn_data"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/external_db/musicbrainz": {
         parameters: {
             query?: never;
@@ -132,7 +148,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/external_db/open_library": {
+    "/api/external_db/tmdb": {
         parameters: {
             query?: never;
             header?: never;
@@ -141,7 +157,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["get_open_library_data"];
+        post: operations["get_tmdb_data"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2030,8 +2046,9 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Successfully created the artists, returned in the same order as the one sent */
-            200: {
+            /** @description Successfully created the artists, returned in the same order as the one sent.
+             *                 In the case of a db conflict (duplicate), the existing entry is returned (can be seen with the created_at attribute). */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2155,6 +2172,27 @@ export interface operations {
             };
         };
     };
+    get_isbn_data: {
+        parameters: {
+            query: {
+                isbn: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalDBData"];
+                };
+            };
+        };
+    };
     get_musicbrainz_data: {
         parameters: {
             query: {
@@ -2176,10 +2214,10 @@ export interface operations {
             };
         };
     };
-    get_open_library_data: {
+    get_tmdb_data: {
         parameters: {
             query: {
-                id: string;
+                url: string;
             };
             header?: never;
             path?: never;

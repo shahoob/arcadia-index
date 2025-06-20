@@ -11,9 +11,9 @@ export const getExternalDatabaseData = async (item_id: string | number, database
     case 'musicbrainz': {
       return (await api.get('external_db/musicbrainz?url=' + item_id)).data
     }
-    // case 'tmdb/movie': {
-    //   return (await api.get('external_db/tmdb/movie?id=' + item_id)).data
-    // }
+    case 'tmdb': {
+      return (await api.get('external_db/tmdb?url=' + item_id)).data
+    }
     // case 'tmdb/tv': {
     //   return (await api.get('external_db/tmdb/tv?id=' + item_id)).data
     // }

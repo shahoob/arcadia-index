@@ -114,7 +114,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 web::post().to(add_conversation_message),
             )
             .route("/external_db/isbn", web::get().to(get_isbn_data))
-            .route("/external_db/tmdb/movie", web::get().to(get_tmdb_data))
+            .route("/external_db/tmdb", web::get().to(get_tmdb_data))
             .route("/external_db/isbn", web::get().to(get_isbn_data))
             .route(
                 "/external_db/musicbrainz",

@@ -45,9 +45,9 @@ export type EditionGroupHierarchy = components['schemas']['EditionGroupHierarchy
 export type Source = components['schemas']['Source']
 
 export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) => {
-  editionGroup.additional_information = Object.fromEntries(
-    Object.entries(editionGroup.additional_information).filter(([, value]) => value !== null && value !== ''),
-  )
+  editionGroup.additional_information = editionGroup.additional_information
+    ? Object.fromEntries(Object.entries(editionGroup.additional_information).filter(([, value]) => value !== null && value !== ''))
+    : {}
   editionGroup.covers = editionGroup.covers.filter((cover) => cover.trim() !== '')
   editionGroup.external_links = editionGroup.external_links.filter((link) => link.trim() !== '')
   editionGroup.distributor = editionGroup.distributor == '' ? null : editionGroup.distributor
