@@ -176,7 +176,7 @@
         <FormField v-slot="$field" name="torrent_file" :initialValue="torrentForm.torrent_file" class="torrent-file">
           <FileUpload
             ref="torrentFile"
-            accept="application/x-bittorrent"
+            accept=".torrent"
             :chooseLabel="t('torrent.torrent_file')"
             :cancel-label="t('general.remove')"
             :showUploadButton="false"
