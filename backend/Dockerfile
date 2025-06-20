@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/target \
-    apt-get update && apt-get install -y libssl-dev openssl curl pkg-config
+    apt-get update && apt-get install -y libssl-dev openssl curl pkg-config ca-certificates
 
 COPY migrations/ migrations/
 
@@ -78,7 +78,7 @@ WORKDIR /app
 COPY --chmod=755 --from=build-debug /app/target/debug/arcadia-backend .
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-      apt-get update && apt-get install -y openssl
+    apt-get update && apt-get install -y openssl ca-certificates
 
 CMD ["./arcadia-backend"]
 
@@ -91,6 +91,6 @@ COPY --chmod=755 --from=build-prod /app/target/release/arcadia-backend .
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-      apt-get update && apt-get install -y openssl
+    apt-get update && apt-get install -y openssl ca-certificates
 
 CMD ["./arcadia-backend"]
