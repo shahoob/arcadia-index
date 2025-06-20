@@ -13,7 +13,6 @@ use crate::{
         edition_group::{UserCreatedEditionGroup, create_default_edition_group},
         title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
     },
-    repositories::edition_group_repository::create_edition_group,
     services::common_service::naive_date_to_utc_midnight,
 };
 
