@@ -1,7 +1,7 @@
 <template>
   <div id="app-container" v-if="isAppReady">
     <Toast position="top-right" group="tr" />
-    <div class="navbars-container" v-if="isProtectedRoute">
+    <div class="navbars-container" v-if="isProtectedRoute()">
       <TopBar />
       <MenuBar class="menu-bar" />
       <SearchBars class="search-bars" />
@@ -25,7 +25,6 @@ import { useUserStore } from './stores/user'
 import { getMe, type Profile } from './services/api/userService'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
 import FooterBar from './components/FooterBar.vue'
 import { useNotificationsStore } from './stores/notifications'
 
@@ -37,12 +36,15 @@ const route = useRoute()
 const router = useRouter()
 const siteName = import.meta.env.VITE_SITE_NAME
 
-const isProtectedRoute = computed(() => {
-  return ['/login', '/register', '/apply'].indexOf(route.path) < 0
-})
+const isProtectedRoute = (path?: string) => {
+  if (path === undefined) {
+    path = route.path
+  }
+  return ['/login', '/register', '/apply'].indexOf(path) < 0
+}
 
 router.beforeEach(async (to, from, next) => {
-  if (from.path === '/login') {
+  if (from.path === '/login' && isProtectedRoute(to.path)) {
     await getAppReady(true)
   }
   if (to.meta.dynamicDocumentTitle) {
@@ -66,7 +68,7 @@ const getAppReady = async (forceGetUser: boolean = false) => {
   const token = localStorage.getItem('token')
 
   let profile: null | Profile = null
-  if (isProtectedRoute.value || forceGetUser) {
+  if (isProtectedRoute() || forceGetUser) {
     if (token) {
       try {
         // refresh user on page reload or fetch user after registration
