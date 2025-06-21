@@ -761,8 +761,12 @@ export interface components {
             id: number;
             /** Format: int64 */
             receiver_id: number;
+            /** Format: date-time */
+            receiver_last_seen_at: string;
             /** Format: int64 */
             sender_id: number;
+            /** Format: date-time */
+            sender_last_seen_at: string;
             subject: string;
         };
         ConversationHierarchy: {
@@ -772,7 +776,11 @@ export interface components {
             id: number;
             messages: components["schemas"]["ConversationMessageHierarchy"][];
             receiver: components["schemas"]["UserLiteAvatar"];
+            /** Format: date-time */
+            receiver_last_seen_at: string;
             sender: components["schemas"]["UserLiteAvatar"];
+            /** Format: date-time */
+            sender_last_seen_at: string;
             subject: string;
         };
         ConversationMessage: {
@@ -808,8 +816,12 @@ export interface components {
             last_message: components["schemas"]["ConversationMessageHierarchyLite"];
             /** Format: int64 */
             receiver_id: number;
+            /** Format: date-time */
+            receiver_last_seen_at: string;
             /** Format: int64 */
             sender_id: number;
+            /** Format: date-time */
+            sender_last_seen_at: string;
             subject: string;
         };
         ConversationsOverview: {

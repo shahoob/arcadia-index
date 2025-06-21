@@ -2,7 +2,7 @@
   <div class="title">{{ t('conversation.conversation', 2) }}</div>
   <div v-if="conversations">
     <div class="card">
-      <DataTable :value="conversations">
+      <DataTable :value="conversations" :rowClass="(conversation) => (isConversationRead(conversation) ? '' : 'bg-unread')">
         <Column :header="t('conversation.subject')">
           <template #body="slotProps">
             <RouterLink :to="`/conversation/${slotProps.data.id}`">
@@ -41,18 +41,29 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useI18n } from 'vue-i18n'
 import { onMounted } from 'vue'
-import { getConversations, type ConversationsOverview } from '@/services/api/conversationService'
+import { getConversations, type ConversationOverview } from '@/services/api/conversationService'
 import { ref } from 'vue'
 import { timeAgo } from '@/services/helpers'
 import { RouterLink } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const { t } = useI18n()
-const conversations = ref<ConversationsOverview[]>()
+const conversations = ref<ConversationOverview[]>()
 
 const fetchConversations = async () => {
   getConversations().then((overview) => {
     conversations.value = overview.conversations
   })
+}
+
+const isConversationRead = (c: ConversationOverview) => {
+  const userId = useUserStore().id
+  return (
+    c.last_message.created_by.id === userId ||
+    (userId === c.receiver_id
+      ? c.receiver_last_seen_at !== null && new Date(c.receiver_last_seen_at).getTime() > new Date(c.last_message.created_at).getTime()
+      : new Date(c.sender_last_seen_at).getTime() > new Date(c.last_message.created_at).getTime())
+  )
 }
 
 onMounted(() => {

@@ -55,7 +55,7 @@ pub async fn get_conversation(
     current_user_id: UserId,
 ) -> Result<HttpResponse> {
     let conversation_with_messages =
-        find_conversation(&arc.pool, query.id, current_user_id.0).await?;
+        find_conversation(&arc.pool, query.id, current_user_id.0, true).await?;
 
     Ok(HttpResponse::Ok().json(conversation_with_messages))
 }

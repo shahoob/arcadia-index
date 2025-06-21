@@ -70,6 +70,8 @@ pub async fn find_user_conversations(pool: &PgPool, user_id: i64) -> Result<Valu
                         'subject', c.subject,
                         'sender_id', c.sender_id,
                         'receiver_id', c.receiver_id,
+                        'sender_last_seen_at', c.sender_last_seen_at,
+                        'receiver_last_seen_at', c.receiver_last_seen_at,
                         'last_message', jsonb_build_object(
                             'created_at', lm.created_at,
                             'created_by', jsonb_build_object(
@@ -124,6 +126,7 @@ pub async fn find_conversation(
     pool: &PgPool,
     conversation_id: i64,
     current_user_id: i64,
+    update_last_seen_at: bool,
 ) -> Result<Value> {
     let conversation_with_messages = sqlx::query!(
         r#"
@@ -132,6 +135,8 @@ pub async fn find_conversation(
                 'id', c.id,
                 'created_at', c.created_at,
                 'subject', c.subject,
+                'sender_last_seen_at', c.sender_last_seen_at,
+                'receiver_last_seen_at', c.receiver_last_seen_at,
                 'sender', json_build_object(
                     'id', s.id,
                     'username', s.username,
@@ -182,6 +187,28 @@ pub async fn find_conversation(
     .fetch_one(pool)
     .await
     .map_err(Error::CouldNotFindConversation)?;
+
+    sqlx::query!(
+        r#"
+        UPDATE conversations
+        SET
+            sender_last_seen_at = CASE
+                WHEN sender_id = $2 THEN NOW()
+                ELSE sender_last_seen_at
+            END,
+            receiver_last_seen_at = CASE
+                WHEN receiver_id = $2 THEN NOW()
+                ELSE receiver_last_seen_at
+            END
+        WHERE
+            id = $1 AND $3;
+        "#,
+        conversation_id,
+        current_user_id,
+        update_last_seen_at
+    )
+    .execute(pool)
+    .await?;
 
     Ok(conversation_with_messages.conversation_details.unwrap())
 }

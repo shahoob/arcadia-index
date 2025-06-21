@@ -27,6 +27,16 @@
         "ordinal": 4,
         "name": "receiver_id",
         "type_info": "Int8"
+      },
+      {
+        "ordinal": 5,
+        "name": "sender_last_seen_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "receiver_last_seen_at",
+        "type_info": "Timestamptz"
       }
     ],
     "parameters": {
@@ -41,7 +51,9 @@
       false,
       false,
       false,
-      false
+      false,
+      false,
+      true
     ]
   },
   "hash": "1ee1a987f49735358b4f6118c09b0285eda6a672cc9992278a97ae5c069cde79"

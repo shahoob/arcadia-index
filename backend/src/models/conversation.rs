@@ -15,6 +15,10 @@ pub struct Conversation {
     pub subject: String,
     pub sender_id: i64,
     pub receiver_id: i64,
+    #[schema(value_type = String, format = DateTime)]
+    pub sender_last_seen_at: DateTime<Utc>,
+    #[schema(value_type = String, format = DateTime)]
+    pub receiver_last_seen_at: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
@@ -57,6 +61,10 @@ pub struct ConversationHierarchy {
     pub subject: String,
     pub sender: UserLiteAvatar,
     pub receiver: UserLiteAvatar,
+    #[schema(value_type = String, format = DateTime)]
+    pub sender_last_seen_at: DateTime<Utc>,
+    #[schema(value_type = String, format = DateTime)]
+    pub receiver_last_seen_at: Option<DateTime<Utc>>,
     pub messages: Vec<ConversationMessageHierarchy>,
 }
 
@@ -76,6 +84,10 @@ pub struct ConversationOverview {
     pub sender_id: i64,
     pub receiver_id: i64,
     pub correspondant: UserLite,
+    #[schema(value_type = String, format = DateTime)]
+    pub sender_last_seen_at: DateTime<Utc>,
+    #[schema(value_type = String, format = DateTime)]
+    pub receiver_last_seen_at: Option<DateTime<Utc>>,
     pub last_message: ConversationMessageHierarchyLite,
 }
 

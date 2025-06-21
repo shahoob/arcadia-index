@@ -658,6 +658,8 @@ CREATE TABLE conversations (
     subject VARCHAR(255) NOT NULL,
     sender_id BIGINT NOT NULL,
     receiver_id BIGINT NOT NULL,
+    sender_last_seen_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    receiver_last_seen_at TIMESTAMP WITH TIME ZONE,
 
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (receiver_id) REFERENCES users(id)
