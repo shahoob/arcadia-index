@@ -724,18 +724,27 @@ SELECT
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
         ELSE '[]'::json
-    END AS reports
+    END AS reports,
+    CASE
+        WHEN p.status = 'seeding' THEN 'seeding'
+        WHEN p.status = 'leeching' THEN 'leeching'
+        WHEN ta.snatched_at IS NOT NULL AND p.status IS NULL THEN 'snatched'
+        ELSE NULL
+    END AS peer_status
 FROM
     torrents t
 LEFT JOIN
     users u ON t.created_by_id = u.id
 LEFT JOIN
     torrent_reports tr ON t.id = tr.reported_torrent_id
+LEFT JOIN
+    peers p ON t.id = p.torrent_id
+LEFT JOIN
+    torrent_activities ta ON t.id = ta.torrent_id AND p.status IS NULL
 GROUP BY
-    t.id, u.id, u.username
+    t.id, u.id, u.username, p.status, ta.snatched_at
 ORDER BY
     t.id;
-
 
     CREATE FUNCTION get_title_groups_and_edition_group_and_torrents_lite(
         p_title_group_name TEXT DEFAULT '',

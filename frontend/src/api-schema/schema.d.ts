@@ -1490,6 +1490,7 @@ export interface components {
             /** Format: int64 */
             leechers: number;
             mediainfo: string;
+            peer_status?: null | components["schemas"]["TorrentStatus"];
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
@@ -1537,6 +1538,7 @@ export interface components {
             languages: components["schemas"]["Language"][];
             /** Format: int64 */
             leechers: number;
+            peer_status?: null | components["schemas"]["TorrentStatus"];
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
@@ -1682,6 +1684,8 @@ export interface components {
             snatched_by_id?: number | null;
             staff_checked?: boolean | null;
         };
+        /** @enum {string} */
+        TorrentStatus: "seeding" | "leeching" | "snatched";
         TorrentToDelete: {
             displayed_reason?: string | null;
             /** Format: int64 */

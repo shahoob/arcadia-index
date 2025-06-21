@@ -7,6 +7,9 @@
       </span>
     </template>
   </template>
+  <span v-if="'peer_status' in torrent && torrent.peer_status !== null">
+    / <span :class="torrent.peer_status">{{ torrent.peer_status }}</span>
+  </span>
 </template>
 
 <script lang="ts" setup>
@@ -73,3 +76,14 @@ const computedSlug = computed<string[][]>(() => {
   return [firstPart, features, releaseGroup]
 })
 </script>
+<style scoped>
+.seeding {
+  color: green;
+}
+.leeching {
+  color: yellow;
+}
+.snatched {
+  color: white;
+}
+</style>
