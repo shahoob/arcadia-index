@@ -813,7 +813,7 @@ ORDER BY
                             'audio_bitrate_sampling', ft.audio_bitrate_sampling, 'audio_channels', ft.audio_channels,
                             'video_codec', ft.video_codec, 'features', ft.features,
                             'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
-                            'reports', ft.reports, 'snatched_at', ft.snatched_at,
+                            'reports', ft.reports, 'snatched_at', ft.snatched_at, 'peer_status', ft.peer_status,
                             -- Handle anonymity: show creator info only if requesting user is the uploader or if not anonymous
                             'created_by_id', CASE
                                 WHEN ft.uploaded_as_anonymous AND (p_requesting_user_id IS NULL OR ft.created_by_id != p_requesting_user_id) THEN NULL
