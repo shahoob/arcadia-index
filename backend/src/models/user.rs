@@ -184,6 +184,7 @@ pub struct Profile {
     pub user: User,
     pub peers: Vec<Peer>,
     pub user_warnings: Vec<UserWarning>,
+    pub unread_conversations_amount: u16,
     pub last_five_uploaded_torrents: Vec<TitleGroupHierarchyLite>,
     pub last_five_snatched_torrents: Vec<TitleGroupHierarchyLite>,
 }

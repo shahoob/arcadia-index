@@ -8,6 +8,7 @@ use crate::{
         user::{Profile, PublicProfile, User, UserCreatedUserWarning, UserWarning},
     },
     repositories::{
+        conversation_repository::find_unread_conversations_amount,
         peer_repository,
         torrent_repository::search_torrents,
         user_repository::{create_user_warning, find_user_profile, find_user_warnings},
@@ -56,11 +57,13 @@ pub async fn get_user(
         sort_by: TorrentSearchSortField::TorrentCreatedAt,
         order: TorrentSearchOrder::Desc,
     };
-    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
+    let uploaded_torrents =
+        search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
     torrent_search.torrent.snatched_by_id = Some(query.id);
     torrent_search.torrent.created_by_id = None;
     torrent_search.sort_by = TorrentSearchSortField::TorrentSnatchedAt;
-    let snatched_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
+    let snatched_torrents =
+        search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
 
     Ok(HttpResponse::Created().json(json!({
         "user":user,
@@ -98,15 +101,20 @@ pub async fn get_me(mut current_user: User, arc: web::Data<Arcadia>) -> Result<H
         sort_by: TorrentSearchSortField::TorrentCreatedAt,
         order: TorrentSearchOrder::Desc,
     };
-    let uploaded_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
+    let uploaded_torrents =
+        search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
     torrent_search.torrent.snatched_by_id = Some(current_user.id);
     torrent_search.torrent.created_by_id = None;
     torrent_search.sort_by = TorrentSearchSortField::TorrentSnatchedAt;
-    let snatched_torrents = search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
+    let snatched_torrents =
+        search_torrents(&arc.pool, &torrent_search, Some(current_user.id)).await?;
+    let unread_conversations_amount =
+        find_unread_conversations_amount(&arc.pool, current_user.id).await?;
     Ok(HttpResponse::Ok().json(json!({
             "user": current_user,
             "peers":peers,
             "user_warnings": user_warnings,
+            "unread_conversations_amount": unread_conversations_amount,
             "last_five_uploaded_torrents": uploaded_torrents.get("title_groups").unwrap(),
             "last_five_snatched_torrents": snatched_torrents.get("title_groups").unwrap()
     })))

@@ -15,7 +15,6 @@ const recentAnnouncements = ref<ForumPostAndThreadName[]>()
 const fetchHome = async () => {
   getHome().then((data) => {
     recentAnnouncements.value = data.recent_announcements
-    console.log(recentAnnouncements.value)
   })
 }
 

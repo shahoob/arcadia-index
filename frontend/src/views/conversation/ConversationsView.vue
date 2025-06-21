@@ -5,7 +5,10 @@
       <DataTable :value="conversations" :rowClass="(conversation) => (isConversationRead(conversation) ? '' : 'bg-unread')">
         <Column :header="t('conversation.subject')">
           <template #body="slotProps">
-            <RouterLink :to="`/conversation/${slotProps.data.id}`">
+            <RouterLink
+              :to="`/conversation/${slotProps.data.id}`"
+              @click="isConversationRead(slotProps.data) ? null : (notificationsStore.unread_conversations_amount -= 1)"
+            >
               {{ slotProps.data.subject }}
             </RouterLink>
           </template>
@@ -46,9 +49,11 @@ import { ref } from 'vue'
 import { timeAgo } from '@/services/helpers'
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useNotificationsStore } from '@/stores/notifications'
 
 const { t } = useI18n()
 const conversations = ref<ConversationOverview[]>()
+const notificationsStore = useNotificationsStore()
 
 const fetchConversations = async () => {
   getConversations().then((overview) => {

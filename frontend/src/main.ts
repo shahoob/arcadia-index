@@ -54,13 +54,20 @@ app.use(i18n)
 app.use(ToastService)
 app.directive('tooltip', Tooltip)
 
-export function showToast(title: string, detail: string, severity: string, life: number): void {
+export function showToast(title: string, detail: string, severity: string, life?: number, closable: boolean = true, group: string = 'tr'): void {
   app.config.globalProperties.$toast.add({
     severity: severity,
     summary: title,
     detail: detail,
     life: life,
+    closable: closable,
+    group: group,
   })
 }
+export function removeToastGroup(group: string): void {
+  app.config.globalProperties.$toast.removeGroup(group)
+}
+
+// export { i18n }
 
 app.mount('#app')

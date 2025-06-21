@@ -47,6 +47,7 @@ const { t } = useI18n()
 
 import { ref } from 'vue'
 import router from '@/router'
+import { removeToastGroup } from '@/main'
 const op = ref<InstanceType<typeof Popover> & HTMLAnchorElement>()
 
 const user = useUserStore()
@@ -77,6 +78,7 @@ const handleLogout = () => {
   localStorage.removeItem('user')
   user.removeUser()
   router.push('/login')
+  removeToastGroup('br')
 }
 
 const toggleDarkMode = () => {

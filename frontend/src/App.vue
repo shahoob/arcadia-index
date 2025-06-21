@@ -1,6 +1,6 @@
 <template>
   <div id="app-container" v-if="isAppReady">
-    <Toast />
+    <Toast position="top-right" group="tr" />
     <div class="navbars-container" v-if="isProtectedRoute">
       <TopBar />
       <MenuBar class="menu-bar" />
@@ -9,6 +9,7 @@
     <div id="view-container">
       <router-view></router-view>
     </div>
+    <NotificationToasts />
     <FooterBar />
   </div>
 </template>
@@ -18,13 +19,15 @@ import { useRouter } from 'vue-router'
 import MenuBar from './components/MenuBar.vue'
 import TopBar from './components/TopBar.vue'
 import SearchBars from './components/SearchBars.vue'
+import NotificationToasts from './components/NotificationToasts.vue'
 import { Toast } from 'primevue'
 import { useUserStore } from './stores/user'
-import { getMe } from './services/api/userService'
+import { getMe, type Profile } from './services/api/userService'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import FooterBar from './components/FooterBar.vue'
+import { useNotificationsStore } from './stores/notifications'
 
 // enable dark mode by default
 document.documentElement.classList.add('dark-theme')
@@ -38,7 +41,10 @@ const isProtectedRoute = computed(() => {
   return ['/login', '/register', '/apply'].indexOf(route.path) < 0
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  if (from.path === '/login') {
+    await getAppReady(true)
+  }
   if (to.meta.dynamicDocumentTitle) {
     /*
       The View for this route handles it's own
@@ -56,14 +62,15 @@ router.beforeEach((to, from, next) => {
   return next()
 })
 
-router.isReady().then(async () => {
+const getAppReady = async (forceGetUser: boolean = false) => {
   const token = localStorage.getItem('token')
 
-  if (isProtectedRoute.value) {
+  let profile: null | Profile = null
+  if (isProtectedRoute.value || forceGetUser) {
     if (token) {
       try {
         // refresh user on page reload or fetch user after registration
-        const profile = await getMe()
+        profile = await getMe()
         localStorage.setItem('user', JSON.stringify(profile.user))
         const userStore = useUserStore()
         userStore.setUser(profile.user)
@@ -78,6 +85,14 @@ router.isReady().then(async () => {
     }
   }
   isAppReady.value = true
+  // removeToastGroup('br')
+  if (profile) {
+    useNotificationsStore().unread_conversations_amount = profile.unread_conversations_amount
+  }
+}
+
+router.isReady().then(async () => {
+  getAppReady()
 })
 </script>
 

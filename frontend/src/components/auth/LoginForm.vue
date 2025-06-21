@@ -16,9 +16,7 @@ import { Form } from '@primevue/forms'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import { login, type Login } from '@/services/api/authService'
-import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
-import { getMe } from '@/services/api/userService'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 
@@ -29,7 +27,6 @@ const form = ref<Login>({
 })
 
 const router = useRouter()
-const userStore = useUserStore()
 const loading = ref(false)
 const { t } = useI18n()
 
@@ -39,9 +36,6 @@ const handleLogin = async () => {
     .then(async (data) => {
       localStorage.setItem('token', data.token)
       localStorage.setItem('refreshToken', data.refresh_token)
-      const profile = await getMe()
-      localStorage.setItem('user', JSON.stringify(profile.user))
-      userStore.setUser(profile.user)
       router.push('/')
     })
     .finally(() => {

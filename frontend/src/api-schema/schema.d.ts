@@ -1121,6 +1121,8 @@ export interface components {
             last_five_snatched_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             peers: components["schemas"]["Peer"][];
+            /** Format: int32 */
+            unread_conversations_amount: number;
             user: components["schemas"]["User"];
             user_warnings: components["schemas"]["UserWarning"][];
         };
