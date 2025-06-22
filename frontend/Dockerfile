@@ -6,6 +6,9 @@ WORKDIR /home/node/app
 
 COPY . .
 
+# env vars are needed at build time
+RUN [ ! -f .env ] && mv .env.docker .env
+
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --verbose --no-audit
 # This should be npm run build

@@ -2,12 +2,10 @@ First, thanks for considering contributing to Arcadia!
 
 ## Developer setup
 
-Arcadia's backend is a [REST](https://en.wikipedia.org/wiki/REST) API written in rust with the [actix](https://github.com/actix/actix-web) framework and the [sqlx](https://github.com/launchbadge/sqlx) database driver. It also uses [PostgreSQL](https://www.postgresql.org/) as it's database.
+Arcadia's backend is a [REST](https://en.wikipedia.org/wiki/REST) API written in rust with the [actix](https://github.com/actix/actix-web) framework and the [sqlx](https://github.com/launchbadge/sqlx) database driver. It also uses [PostgreSQL](https://www.postgresql.org/) as its database.
 It is made of 2 main parts: the site's API and a tracker. The site's API is meant to be used by the frontend, while the tracker is meant to be used by torrent clients (qbittorrent, deluge, etc.).
 
-It (will) also contain some scripts that are meant to be run on a regular basis (for example as cron jobs) when the site is on production.
-
-Arcadia's frontend is a [SPA](https://developer.mozilla.org/en-US/docs/Glossary/SPA) written in [TypeScript](https://www.typescriptlang.org/) and uses the [Vue.js](https://vuejs.org/) framework with [Vite](https://vite.dev/) to build it.
+Arcadia's frontend is a [SPA](https://developer.mozilla.org/en-US/docs/Glossary/SPA) written in [TypeScript](https://www.typescriptlang.org/) and uses the [Vue.js](https://vuejs.org/) framework with [PrimeVue](https://primevue.org/) components, [Vite](https://vite.dev/) builds it.
 
 > [!TIP]
 > If you don't want to install another toolchain on your system, You can also use [devcontainers](https://containers.dev/) instead.
@@ -61,7 +59,51 @@ If you make changes to structs that are listed in the swagger, you must regenera
 npx openapi-typescript http://127.0.0.1:8080/swagger-json/openapi.json -o ./src/api-schema/schema.d.ts
 ```
 
-### Run the project:
+## Run the project:
+
+### The 'regular' way
+
+#### Database
+
+Spawn an instance of postgresql and run the migrations (`/backend/migrations/*.sql`). For more information, refer to the database part of the [docker section](#backend-2) below.
+
+#### Backend
+
+Create a `.env` file from the template and update the values if needed:
+
+```bash
+cp .env.example .env
+```
+
+This command will download the dependencies, build them and build arcadia, as well as run it:
+
+```
+cargo run
+```
+
+If you encounter some errors, it is probably because some OS dependencies are missing. Install them and run the command again.
+
+#### Frontend
+
+Create a `.env` file from the template and update the values if needed:
+
+```bash
+cp .env.example .env
+```
+
+Install the dependencies:
+
+```
+npm install
+```
+
+Run the frontend:
+
+```
+npm run dev
+```
+
+### With docker
 
 > [!NOTE]
 > If running `docker compose` doesn't work, you may have an older version of the docker cli installed and may need to use `docker-compose` instead.
@@ -73,7 +115,7 @@ npx openapi-typescript http://127.0.0.1:8080/swagger-json/openapi.json -o ./src/
 
 #### Backend
 
-##### Dependencies
+##### Database
 
 The recommended method for spawning an instance of PostgreSQL is using Docker Compose:
 
@@ -105,30 +147,12 @@ If you wish to create your own additional test data, you can then dump it to a f
 docker exec -i arcadia_db pg_dump -U arcadia -d arcadia --data-only --inserts > backend/migrations/fixtures/fixtures.sql
 ```
 
-You can then launch the server:
+##### Backend
 
-```bash
-cargo run
-```
-
-This will start the server in dev mode.
-
-Alternatively you can also use Docker Compose to start the server:
+Launch the server:
 
 ```bash
 docker compose up backend -d
-```
-
-To stop the server using Docker Compose:
-
-```bash
-docker compose stop backend
-```
-
-If you need to see logs (and be able to conveniently stop it with <kbd>Control</kbd> + <kbd>C</kbd>), run it in attached mode:
-
-```bash
-docker compose up backend
 ```
 
 It may take a while for the image to build as everything is done in Docker. Yes, Docker Compose can handle that!
@@ -145,27 +169,11 @@ Now when you make changes to the backend, compose will automatically rebuild the
 
 #### Frontend
 
-Make sure the [backend is running](#backend-1)!
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-Create a `.env` file from the template and update the values if needed:
-
-```bash
-cp .env.example .env
-```
-
 Launch the server:
 
 ```bash
-npm run dev
+docker compose up frontend -d
 ```
-
-This will launch a local development server for the frontend.
 
 ## Testing
 
@@ -177,7 +185,7 @@ End-to-end tests can also be authored, they should be located in `tests/` and us
 
 ### Frontend
 
-We don't have any tests for the frontend. I'm pretty sure we'll add them once it's more "production ready". (@shahoob)
+We don't have any tests for the frontend. We'll add them once it's more "production ready".
 
 ## Contributing
 
@@ -199,3 +207,9 @@ Arcadia has [boards](https://github.com/Arcadia-Solutions/arcadia/projects) to t
 To claim a github issue, simply leave a comment on it saying that you are working on it.
 
 You can also search for `TODO`s in the code and pick one of those tasks. If you decide to do this, please open an issue first and claim it before working on the task.
+
+### Backend notes
+
+- If you make changes to/add sql queries with `sqlx`, you need to run `cargo sqlx prepare` before committing your changes. This command will generate some files that allow the queries to be tested without a database running. Our CI pipeline relies on that, and will fail if the command hasn't been ran. You can setup a [git pre-commit hook](https://www.slingacademy.com/article/git-pre-commit-hook-a-practical-guide-with-examples/) if you want.
+
+- For better code quality, we use [clippy](https://github.com/rust-lang/rust-clippy) in our CI pipeline. You can set your editor to run `cargo clippy` instead of `cargo check` (on file save, etc.).
