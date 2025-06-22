@@ -688,6 +688,8 @@ export interface components {
             created_at: string;
             /** Format: int64 */
             created_by_id: number;
+            /** Format: int64 */
+            id: number;
             nickname?: string | null;
             roles: components["schemas"]["ArtistRole"][];
             /** Format: int64 */
@@ -701,6 +703,8 @@ export interface components {
             created_at: string;
             /** Format: int64 */
             created_by_id: number;
+            /** Format: int64 */
+            id: number;
             nickname?: string | null;
             roles: components["schemas"]["ArtistRole"][];
             /** Format: int64 */
@@ -2024,7 +2028,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AffiliatedArtist"][];
+                    "application/json": components["schemas"]["AffiliatedArtistHierarchy"][];
                 };
             };
         };

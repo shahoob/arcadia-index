@@ -57,6 +57,7 @@ use crate::{
         crate::handlers::artist_handler::get_artist_publications,
         crate::handlers::artist_handler::add_artists,
         crate::handlers::artist_handler::add_affiliated_artists,
+        crate::handlers::artist_handler::remove_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::upload_torrent,
         crate::handlers::torrent_handler::get_upload_information,

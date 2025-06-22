@@ -5,7 +5,7 @@ use utoipa::ToSchema;
 
 use super::title_group::TitleGroupHierarchyLite;
 
-#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema, Clone)]
 pub struct Artist {
     pub id: i64,
     pub name: String,
@@ -89,6 +89,7 @@ pub enum ArtistRole {
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct AffiliatedArtist {
+    pub id: i64,
     pub title_group_id: i64,
     pub artist_id: i64,
     pub roles: Vec<ArtistRole>,
@@ -123,6 +124,7 @@ pub struct ArtistAndTitleGroupsLite {
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct AffiliatedArtistHierarchy {
+    pub id: i64,
     pub title_group_id: i64,
     pub artist_id: i64,
     pub roles: Vec<ArtistRole>,

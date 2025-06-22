@@ -2,7 +2,7 @@
   <template v-for="(part, partIndex) in computedSlug" :key="partIndex">
     <template v-if="part.length > 0">
       <span v-for="(item, itemIndex) in part" :key="itemIndex">
-        <template v-if="itemIndex > 0 || (partIndex > 0 && computedSlug[partIndex].length > 0)"> / </template>
+        <span class="slash" v-if="itemIndex > 0 || (partIndex > 0 && computedSlug[partIndex].length > 0)"> / </span>
         <span :class="{ bold: partIndex === 1 }">{{ item }}</span>
       </span>
     </template>
@@ -77,6 +77,9 @@ const computedSlug = computed<string[][]>(() => {
 })
 </script>
 <style scoped>
+.slash {
+  font-weight: 300;
+}
 .seeding {
   color: green;
 }

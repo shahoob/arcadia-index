@@ -233,6 +233,7 @@ CREATE TYPE artist_role_enum AS ENUM(
     'author'
 );
 CREATE TABLE affiliated_artists (
+    id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
     roles artist_role_enum[] NOT NULL,

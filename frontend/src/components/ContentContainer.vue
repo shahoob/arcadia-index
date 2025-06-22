@@ -1,9 +1,12 @@
 <template>
   <div class="content-container">
-    <RouterLink v-if="containerTitleLink" :to="containerTitleLink">
-      <div class="container-title" v-if="containerTitle">{{ containerTitle }}</div>
-    </RouterLink>
-    <div v-else-if="containerTitle" class="container-title">{{ containerTitle }}</div>
+    <div class="top">
+      <RouterLink v-if="containerTitleLink" :to="containerTitleLink">
+        <div class="container-title" v-if="containerTitle">{{ containerTitle }}</div>
+      </RouterLink>
+      <div v-else-if="containerTitle" class="container-title">{{ containerTitle }}</div>
+      <slot name="action"></slot>
+    </div>
     <slot></slot>
   </div>
 </template>
@@ -22,6 +25,10 @@ defineProps<{
   border-radius: 10px;
   background-color: var(--color-background-secondary);
   display: block !important;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
 }
 .container-title {
   color: var(--color-primary);

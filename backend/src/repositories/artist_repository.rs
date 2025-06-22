@@ -1,7 +1,8 @@
 use crate::{
     Error, Result,
     models::artist::{
-        AffiliatedArtist, Artist, ArtistLite, UserCreatedAffiliatedArtist, UserCreatedArtist,
+        AffiliatedArtist, AffiliatedArtistHierarchy, Artist, ArtistLite,
+        UserCreatedAffiliatedArtist, UserCreatedArtist,
     },
 };
 use serde_json::Value;
@@ -48,7 +49,7 @@ pub async fn create_artists_affiliation(
     pool: &PgPool,
     artists: &Vec<UserCreatedAffiliatedArtist>,
     current_user_id: i64,
-) -> Result<Vec<AffiliatedArtist>> {
+) -> Result<Vec<AffiliatedArtistHierarchy>> {
     let values: Vec<String> = (0..artists.len())
         .map(|i| {
             format!(
@@ -62,14 +63,14 @@ pub async fn create_artists_affiliation(
         })
         .collect();
 
-    let query = format!(
+    let insert_query = format!(
         "INSERT INTO affiliated_artists (title_group_id, artist_id, roles, nickname, created_by_id) VALUES {} RETURNING *",
         values.join(", ")
     );
 
-    let mut q = sqlx::query_as::<_, AffiliatedArtist>(&query);
+    let mut q_insert = sqlx::query_as::<_, AffiliatedArtist>(&insert_query);
     for artist in artists {
-        q = q
+        q_insert = q_insert
             .bind(artist.title_group_id)
             .bind(artist.artist_id)
             .bind(&artist.roles)
@@ -82,12 +83,48 @@ pub async fn create_artists_affiliation(
             .bind(current_user_id);
     }
 
-    let affiliated_artists = q
+    let created_affiliations = q_insert
         .fetch_all(pool)
         .await
         .map_err(Error::CouldNotCreateArtistAffiliation)?;
 
-    Ok(affiliated_artists)
+    let artist_ids: Vec<i64> = created_affiliations
+        .iter()
+        .map(|aff| aff.artist_id)
+        .collect();
+
+    let fetched_artists: Vec<Artist> = sqlx::query_as!(
+        Artist,
+        r#"
+        SELECT * FROM artists WHERE id = ANY($1)
+        "#,
+        &artist_ids
+    )
+    .fetch_all(pool)
+    .await
+    .unwrap();
+
+    let mut affiliated_artist_hierarchies: Vec<AffiliatedArtistHierarchy> = Vec::new();
+
+    for affiliation in created_affiliations {
+        if let Some(artist) = fetched_artists
+            .iter()
+            .find(|a| a.id == affiliation.artist_id)
+        {
+            affiliated_artist_hierarchies.push(AffiliatedArtistHierarchy {
+                id: affiliation.id,
+                title_group_id: affiliation.title_group_id,
+                artist_id: affiliation.artist_id,
+                roles: affiliation.roles,
+                nickname: affiliation.nickname,
+                created_at: affiliation.created_at,
+                created_by_id: affiliation.created_by_id,
+                artist: artist.clone(),
+            });
+        }
+    }
+
+    Ok(affiliated_artist_hierarchies)
 }
 
 pub async fn find_artist_publications(pool: &PgPool, artist_id: &i64) -> Result<Value> {
@@ -152,4 +189,18 @@ pub async fn find_artists_lite(pool: &PgPool, name: &String) -> Result<Vec<Artis
     .map_err(Error::CouldNotSearchForArtists)?;
 
     Ok(found_artists)
+}
+
+pub async fn delete_artists_affiliation(pool: &PgPool, affiliation_ids: &Vec<i64>) -> Result<()> {
+    sqlx::query!(
+        r#"
+             DELETE FROM affiliated_artists
+             WHERE id = ANY($1)
+         "#,
+        &affiliation_ids
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(())
 }

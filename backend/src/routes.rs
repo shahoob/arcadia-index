@@ -5,6 +5,7 @@ use crate::handlers::{
     announce_handler::handle_announce,
     artist_handler::{
         add_affiliated_artists, add_artists, get_artist_publications, get_artists_lite,
+        remove_affiliated_artists,
     },
     auth_handler::{login, refresh_token, register, validate_bearer_auth},
     conversation_handler::{
@@ -76,6 +77,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route(
                 "/affiliated-artists",
                 web::post().to(add_affiliated_artists),
+            )
+            .route(
+                "/affiliated-artists",
+                web::delete().to(remove_affiliated_artists),
             )
             .route(
                 "/title-group-comment",

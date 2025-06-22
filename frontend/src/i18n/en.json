@@ -46,7 +46,8 @@
     "started": "Started",
     "create_new_one": "Create a new one",
     "remove": "Remove",
-    "view": "View"
+    "view": "View",
+    "cancel": "Cancel"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -58,6 +59,7 @@
     "nickname_explanation": "optional, eg: name of the character played",
     "new_artist": "New artist",
     "existing_artist": "Existing artist",
+    "no_affiliated_artist_registered": "No affiliated artist registered",
     "role": {
       "role": "Role | Roles",
       "main": "Main",
@@ -153,6 +155,8 @@
     "original_release_date": "Original release date",
     "subscription_successfull": "Subscription successfull",
     "unsubscription_successfull": "Unsubscription successfull",
+    "edit_affiliated_artists": "Edit affiliated artists",
+    "update_artists": "Update artists",
     "content_type": {
       "content_type": "Content type",
       "music": "Music",

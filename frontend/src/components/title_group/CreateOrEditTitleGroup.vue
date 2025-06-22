@@ -164,39 +164,13 @@
           {{ $form.original_release_date.error?.message }}
         </Message>
       </div>
-      <div class="artists input-list">
+      <div>
         <label>{{ t('artist.artist', 2) }}</label>
-        <div v-for="(_link, index) in affiliated_artists_names" :key="index">
-          <ArtistSearchBar
-            :placeholder="t('artist.name')"
-            :clearInputOnSelect="false"
-            v-model="affiliated_artists_names[index]"
-            @artistSelected="(event) => artistSelected(event, index)"
-          />
-          <InputText
-            size="small"
-            v-model="titleGroupForm.affiliated_artists[index].nickname"
-            :placeholder="t('artist.nickname')"
-            class="artist"
-            v-tooltip.top="t('artist.nickname_explanation')"
-          />
-          <MultiSelect
-            v-model="titleGroupForm.affiliated_artists[index].roles"
-            :options="getArtistRoles()"
-            size="small"
-            class="select"
-            :placeholder="t('artist.role.role', 2)"
-          />
-          <!-- <span v-if="titleGroupForm.affiliated_artists[index].artist_id !== 0" class="artist-creation-hint existing">
-            {{ t('artist.existing_artist') }}
-          </span> -->
-          <!-- <span v-else-if="affiliated_artists_names[index] !== ''" class="artist-creation-hint new">{{ t('artist.new_artist') }}</span> -->
-          <Button v-if="index == 0" @click="addAffiliatedArtist" icon="pi pi-plus" size="small" />
-          <Button v-if="index != 0 || affiliated_artists_names.length > 1" @click="removeAffiliatedArtist(index)" icon="pi pi-minus" size="small" />
-          <Message v-if="($form.affiliated_artists as unknown as FormFieldState[])?.[index]?.invalid" severity="error" size="small" variant="simple">
-            {{ ($form.affiliated_artists as unknown as FormFieldState[])[index].error?.message }}
-          </Message>
-        </div>
+        <EditAffiliatedArtists
+          ref="editAffiliatedArtistsRef"
+          :contentType="titleGroupForm.content_type"
+          :initial-artists-affiliations="[{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }]"
+        />
       </div>
       <div class="covers input-list">
         <label>{{ t('general.cover', 2) }}</label>
@@ -244,11 +218,9 @@ import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
-import MultiSelect from 'primevue/multiselect'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import Message from 'primevue/message'
-import ArtistSearchBar from '../artist/ArtistSearchBar.vue'
 import { InputNumber } from 'primevue'
 import {
   createTitleGroup,
@@ -259,15 +231,15 @@ import {
   type UserCreatedEditionGroup,
   type UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
-import { createArtists, type Artist, type ArtistLite, type UserCreatedAffiliatedArtist, type UserCreatedArtist } from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
-import { getLanguages, getPlatforms, getArtistRoles, isValidUrl } from '@/services/helpers'
+import { getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
 import { watch } from 'vue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { onMounted } from 'vue'
 import type { VNodeRef } from 'vue'
 import ExternalDBSearchBar from './ExternalDBSearchBar.vue'
 import type { ExternalDBData } from '@/services/api/externalDatabasesService'
+import EditAffiliatedArtists from '../artist/EditAffiliatedArtists.vue'
 
 interface Props {
   initialTitleGroupForm: UserCreatedTitleGroup | null
@@ -293,15 +265,15 @@ const titleGroupForm = ref<UserCreatedTitleGroupForm>({
   category: null,
   country_from: '',
   name_aliases: [],
-  affiliated_artists: [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }],
+  affiliated_artists: [],
   tags: [],
   master_group_id: null,
   platform: null,
   embedded_links: {},
   content_type: null,
 })
-const affiliated_artists_names = ref<[string]>([''])
 const formRef = ref<VNodeRef | null>(null)
+const editAffiliatedArtistsRef = ref<VNodeRef | null>(null)
 
 const original_release_date = computed({
   get() {
@@ -370,24 +342,24 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.original_release_date == '') {
     errors.original_release_date = [{ message: t('error.select_date') }]
   }
-  affiliated_artists_names.value.forEach((artist_name: string, index: number) => {
-    if (artist_name === '') {
-      if (!('affiliated_artists' in errors)) {
-        errors.affiliated_artists = []
-      }
-      errors.affiliated_artists![index] = { message: t('error.invalid_name') }
-    }
-  })
-  titleGroupForm.value.affiliated_artists.forEach((artist: UserCreatedAffiliatedArtist, index: number) => {
-    if (artist.roles.length === 0) {
-      if (!('affiliated_artists' in errors)) {
-        errors.affiliated_artists = []
-      }
-      errors.affiliated_artists![index] = {
-        message: t('error.artist_must_have_at_lease_one_role'),
-      }
-    }
-  })
+  // affiliated_artists_names.value.forEach((artist_name: string, index: number) => {
+  //   if (artist_name === '') {
+  //     if (!('affiliated_artists' in errors)) {
+  //       errors.affiliated_artists = []
+  //     }
+  //     errors.affiliated_artists![index] = { message: t('error.invalid_name') }
+  //   }
+  // })
+  // titleGroupForm.value.affiliated_artists.forEach((artist: UserCreatedAffiliatedArtist, index: number) => {
+  //   if (artist.roles.length === 0) {
+  //     if (!('affiliated_artists' in errors)) {
+  //       errors.affiliated_artists = []
+  //     }
+  //     errors.affiliated_artists![index] = {
+  //       message: t('error.artist_must_have_at_lease_one_role'),
+  //     }
+  //   }
+  // })
   values.external_links.forEach((link: string, index: number) => {
     if (!isValidUrl(link)) {
       if (!('external_links' in errors)) {
@@ -419,9 +391,6 @@ const resolver = ({ values }: FormResolverOptions) => {
     errors,
   }
 }
-const artistSelected = (artist: ArtistLite, index: number) => {
-  titleGroupForm.value.affiliated_artists[index].artist_id = artist.id
-}
 
 const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   if (!valid) {
@@ -430,35 +399,15 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   sendingTitleGroup.value = true
   titleGroupForm.value.tags = tagsString.value.trim().split(',')
   titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter((screenshot) => screenshot.trim() !== '')
-  // create artists that need to be created
-  const artistsToCreate: UserCreatedArtist[] = []
-  titleGroupForm.value.affiliated_artists.forEach((artist, index) => {
-    if (artist.artist_id === 0 && affiliated_artists_names.value[index] !== '') {
-      artistsToCreate.push({
-        name: affiliated_artists_names.value[index],
-        pictures: [],
-        description: '',
-      })
-    }
-  })
-  let createdArtists: Artist[] = []
-  if (artistsToCreate.length !== 0) {
-    try {
-      createdArtists = await createArtists(artistsToCreate)
-      sendingTitleGroup.value = true
-      titleGroupForm.value.affiliated_artists.forEach((artist) => {
-        if (artist.artist_id === 0) {
-          artist.artist_id = createdArtists[0].id
-          createdArtists.shift()
-        }
-      })
-    } catch {
-      sendingTitleGroup.value = false
-      return
-    }
+
+  try {
+    // create artists that need to be created
+    await editAffiliatedArtistsRef.value.createInexistingArtists()
+  } catch {
+    sendingTitleGroup.value = false
+    return
   }
-  // removing the artists that haven't been created (empty inputs)
-  titleGroupForm.value.affiliated_artists = titleGroupForm.value.affiliated_artists.filter((aa) => aa.artist_id !== 0)
+  titleGroupForm.value.affiliated_artists = editAffiliatedArtistsRef.value.affiliated_artists
   const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm.value))
   createTitleGroup(formattedTitleGroupForm)
     .then((data) => {
@@ -468,19 +417,7 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
       sendingTitleGroup.value = false
     })
 }
-const addAffiliatedArtist = () => {
-  affiliated_artists_names.value.push('')
-  titleGroupForm.value.affiliated_artists.push({
-    artist_id: 0,
-    nickname: null,
-    roles: [],
-    title_group_id: 0,
-  })
-}
-const removeAffiliatedArtist = (index: number) => {
-  affiliated_artists_names.value.splice(index, 1)
-  titleGroupForm.value.affiliated_artists.splice(index, 1)
-}
+
 const addLink = () => {
   titleGroupForm.value.external_links.push('')
 }
@@ -572,22 +509,9 @@ onMounted(() => {
 .input-list {
   margin-top: 15px;
 }
-.input-list .p-component {
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
 .input-list input {
   &:not(.artist) {
     width: 400px;
-  }
-  &.artist {
-    width: 230px;
-  }
-}
-.artist-creation-hint {
-  margin-right: 5px;
-  &.new {
-    color: green;
   }
 }
 .validate-button {

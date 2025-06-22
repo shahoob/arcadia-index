@@ -2,15 +2,17 @@ use crate::{
     Arcadia, Result,
     handlers::UserId,
     models::artist::{
-        AffiliatedArtist, Artist, ArtistAndTitleGroupsLite, ArtistLite,
+        AffiliatedArtistHierarchy, Artist, ArtistAndTitleGroupsLite, ArtistLite,
         UserCreatedAffiliatedArtist, UserCreatedArtist,
     },
     repositories::artist_repository::{
-        create_artists, create_artists_affiliation, find_artist_publications, find_artists_lite,
+        create_artists, create_artists_affiliation, delete_artists_affiliation,
+        find_artist_publications, find_artists_lite,
     },
 };
 use actix_web::{HttpResponse, web};
 use serde::Deserialize;
+use serde_json::json;
 use utoipa::{IntoParams, ToSchema};
 
 #[utoipa::path(
@@ -35,7 +37,7 @@ pub async fn add_artists(
     post,
     path = "/api/affiliated-artists",
     responses(
-        (status = 200, description = "Successfully created the artist affiliations", body=Vec<AffiliatedArtist>),
+        (status = 200, description = "Successfully created the artist affiliations", body=Vec<AffiliatedArtistHierarchy>),
     )
 )]
 pub async fn add_affiliated_artists(
@@ -46,6 +48,28 @@ pub async fn add_affiliated_artists(
     let affiliations = create_artists_affiliation(&arc.pool, &artists, current_user_id.0).await?;
 
     Ok(HttpResponse::Created().json(affiliations))
+}
+
+#[derive(Debug, Deserialize, ToSchema, IntoParams)]
+pub struct RemoveAffiliatedArtistsQuery {
+    affiliation_ids: Vec<i64>,
+}
+
+#[utoipa::path(
+    delete,
+    path = "/api/affiliated-artists",
+    responses(
+        (status = 200, description = "Successfully removed the artist affiliations"),
+    )
+)]
+pub async fn remove_affiliated_artists(
+    query: actix_web_lab::extract::Query<RemoveAffiliatedArtistsQuery>,
+    arc: web::Data<Arcadia>,
+) -> Result<HttpResponse> {
+    // TODO: add protection based on user class
+    delete_artists_affiliation(&arc.pool, &query.affiliation_ids).await?;
+
+    Ok(HttpResponse::Ok().json(json!({"result": "success"})))
 }
 
 #[derive(Debug, Deserialize, ToSchema, IntoParams)]

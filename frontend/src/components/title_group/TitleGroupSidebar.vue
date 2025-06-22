@@ -22,9 +22,15 @@
         <ExternalLink v-for="link in title_group.external_links" :key="link" :link="link" />
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="t('artist.artist', 2)" v-if="title_group.affiliated_artists.length != 0">
-      <div class="affiliated-artists">
-        <AffiliatedArtist class="affiliated-artist" v-for="artist in title_group.affiliated_artists" :key="artist.artist_id" :affiliated_artist="artist" />
+    <ContentContainer :container-title="t('artist.artist', 2)">
+      <template #action><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template>
+      <template v-if="title_group.affiliated_artists.length != 0">
+        <div class="affiliated-artists">
+          <AffiliatedArtist class="affiliated-artist" v-for="artist in title_group.affiliated_artists" :key="artist.artist_id" :affiliated_artist="artist" />
+        </div>
+      </template>
+      <div class="wrapper-center" v-else>
+        {{ t('artist.no_affiliated_artist_registered') }}
       </div>
     </ContentContainer>
     <ContentContainer
@@ -58,6 +64,10 @@ import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const emit = defineEmits<{
+  editAffiliatedArtistsClicked: []
+}>()
 
 defineProps<{
   title_group: TitleGroupAndAssociatedData

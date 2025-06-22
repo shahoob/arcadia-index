@@ -70,8 +70,19 @@
       <TitleGroupComments :comments="title_group.title_group_comments" @newComment="newComment" />
     </div>
     <div class="sidebar" v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')">
-      <TitleGroupSidebar :title_group />
+      <TitleGroupSidebar :title_group @edit-affiliated-artists-clicked="editAffiliatedArtistsDialogVisible = true" />
     </div>
+    <Dialog modal :header="t('title_group.edit_affiliated_artists')" v-model:visible="editAffiliatedArtistsDialogVisible">
+      <EditArtistsModal
+        :artists-affiliations="
+          title_group.affiliated_artists.length === 0 ? [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }] : title_group.affiliated_artists
+        "
+        :content-type="title_group.content_type"
+        :title-group-id="title_group.id"
+        @cancelled="editAffiliatedArtistsDialogVisible = false"
+        @done="affiliatedArtistsEdited"
+      />
+    </Dialog>
   </div>
 </template>
 
@@ -101,11 +112,15 @@ import { getEditionGroupSlug } from '@/services/helpers'
 import { useI18n } from 'vue-i18n'
 import { showToast } from '@/main'
 import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
+import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
+import EditArtistsModal from '@/components/artist/EditArtistsModal.vue'
+import { Dialog } from 'primevue'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
+const editAffiliatedArtistsDialogVisible = ref(false)
 const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()
 
@@ -159,6 +174,19 @@ const toggleSubscribtion = async () => {
 
 const newComment = (comment: TitleGroupCommentHierarchy) => {
   title_group.value?.title_group_comments.push(comment)
+}
+
+const affiliatedArtistsEdited = (newAffiliatedArtists: AffiliatedArtistHierarchy[], removedAffiliatedArtistsIds: number[]) => {
+  if (title_group.value) {
+    title_group.value.affiliated_artists = title_group.value.affiliated_artists.filter((aa: AffiliatedArtistHierarchy) => {
+      // removedAffiliatedArtistsIds.indexOf(aa.id) === -1
+      // return aa
+      return !removedAffiliatedArtistsIds.includes(aa.id)
+    })
+    title_group.value.affiliated_artists = title_group.value.affiliated_artists.concat(newAffiliatedArtists)
+  }
+  console.log(title_group.value?.affiliated_artists)
+  editAffiliatedArtistsDialogVisible.value = false
 }
 
 watch(() => route.params.id, fetchTitleGroup, { immediate: true })
