@@ -1,8 +1,8 @@
 <template>
-  <FloatLabel>
+  <FloatLabel class="external-db-input">
     <IconField>
-      <InputText size="small" name="input" v-model="externalDBId" />
-      <label for="input">{{ inputPlaceholder }}</label>
+      <InputText size="small" :name="`input-${database}`" v-model="externalDBId" />
+      <label :for="`input-${database}`">{{ inputPlaceholder }}</label>
       <InputIcon
         :class="{
           pi: true,

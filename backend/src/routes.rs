@@ -20,7 +20,10 @@ use crate::handlers::{
     home_handler::get_home,
     invitation_handler::send_invitation,
     master_group_handler::add_master_group,
-    scrapers::{isbn::get_isbn_data, musicbrainz::get_musicbrainz_data, tmdb::get_tmdb_data},
+    scrapers::{
+        comic_vine::get_comic_vine_data, isbn::get_isbn_data, musicbrainz::get_musicbrainz_data,
+        tmdb::get_tmdb_data,
+    },
     series_handler::{add_series, get_series},
     subscriptions_handler::{add_subscription, remove_subscription},
     title_group_comment_handler::add_title_group_comment,
@@ -121,6 +124,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/external_db/isbn", web::get().to(get_isbn_data))
             .route("/external_db/tmdb", web::get().to(get_tmdb_data))
             .route("/external_db/isbn", web::get().to(get_isbn_data))
+            .route(
+                "/external_db/comic_vine",
+                web::get().to(get_comic_vine_data),
+            )
             .route(
                 "/external_db/musicbrainz",
                 web::get().to(get_musicbrainz_data),

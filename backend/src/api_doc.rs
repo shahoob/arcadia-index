@@ -100,6 +100,7 @@ use crate::{
         crate::handlers::scrapers::isbn::get_isbn_data,
         crate::handlers::scrapers::musicbrainz::get_musicbrainz_data,
         crate::handlers::scrapers::tmdb::get_tmdb_data,
+        crate::handlers::scrapers::comic_vine::get_comic_vine_data,
     ),
     components(schemas(
         Register,

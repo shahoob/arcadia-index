@@ -233,6 +233,9 @@ pub enum Error {
     #[error("invalid musicbrainz url")]
     InvalidMusicbrainzUrl,
 
+    #[error("invalid comic vine url")]
+    InvalidComicVineUrl,
+
     #[error("tmdb data fetching not available")]
     TMDBDataFetchingNotAvailable,
 

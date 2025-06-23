@@ -119,7 +119,7 @@ async fn get_musicbrainz_release_data(
 }
 
 #[derive(Debug, PartialEq)]
-pub enum MusicBrainzEntityType {
+pub enum MusicBrainzResourceType {
     Release,
     ReleaseGroup,
 }
@@ -143,7 +143,7 @@ pub async fn get_musicbrainz_data(
 ) -> Result<HttpResponse> {
     let (entity_type, id) = Regex::new(r"musicbrainz.org/(release|release-group)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})")
         .expect("Regex error")
-        .captures(&query.url).map(|caps| (match caps[1].as_ref() { "release" => MusicBrainzEntityType::Release, _ => MusicBrainzEntityType::ReleaseGroup }, caps[2].to_string()))
+        .captures(&query.url).map(|caps| (match caps[1].as_ref() { "release" => MusicBrainzResourceType::Release, _ => MusicBrainzResourceType::ReleaseGroup }, caps[2].to_string()))
         .ok_or_else(|| Error::InvalidMusicbrainzUrl)?;
     // .expect("No MusicBrainz release/release-group match found in URL");
     let mut client = MusicBrainzClient::default();
@@ -154,10 +154,10 @@ pub async fn get_musicbrainz_data(
     let mut title_group: Option<UserCreatedTitleGroup> = None;
     let mut edition_group: Option<UserCreatedEditionGroup> = None;
     match entity_type {
-        MusicBrainzEntityType::ReleaseGroup => {
+        MusicBrainzResourceType::ReleaseGroup => {
             title_group = Some(get_musicbrainz_release_group_data(&id, &client).await?);
         }
-        MusicBrainzEntityType::Release => {
+        MusicBrainzResourceType::Release => {
             let (eg, release_group_id) = get_musicbrainz_release_data(&id, &client).await?;
             edition_group = Some(eg);
             if let Some(rgid) = release_group_id {

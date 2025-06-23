@@ -8,6 +8,9 @@ export const getExternalDatabaseData = async (item_id: string | number, database
     case 'isbn': {
       return (await api.get('external_db/isbn?isbn=' + item_id)).data
     }
+    case 'comic_vine': {
+      return (await api.get('external_db/comic_vine?url=' + item_id)).data
+    }
     case 'musicbrainz': {
       return (await api.get('external_db/musicbrainz?url=' + item_id)).data
     }

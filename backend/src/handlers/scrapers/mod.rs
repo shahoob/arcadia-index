@@ -3,6 +3,7 @@ use utoipa::ToSchema;
 
 use crate::models::{edition_group::UserCreatedEditionGroup, title_group::UserCreatedTitleGroup};
 
+pub mod comic_vine;
 pub mod isbn;
 pub mod musicbrainz;
 pub mod tmdb;

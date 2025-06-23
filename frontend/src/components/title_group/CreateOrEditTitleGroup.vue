@@ -50,6 +50,7 @@
       </div>
       <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'book'">
         <ExternalDBSearchBar inputPlaceholder="isbn" database="isbn" @dataFound="externalDBDataFound" />
+        <ExternalDBSearchBar inputPlaceholder="Comic-Vine url" database="comic_vine" @dataFound="externalDBDataFound" />
       </div>
     </div>
     <div class="name">
@@ -481,9 +482,12 @@ onMounted(() => {
   width: 100%;
   height: 10em;
 }
-.external-db-inputs-wrapper {
+.external-db-inputs {
   display: flex;
   align-items: center;
+  .external-db-input {
+    margin-right: 10px;
+  }
 }
 .name {
   width: 50%;
