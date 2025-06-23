@@ -19,7 +19,7 @@
       />
       <MultiSelect
         v-model="affiliated_artists[index].roles"
-        :options="getArtistRoles()"
+        :options="getArtistRoles(contentType)"
         size="small"
         class="select"
         :placeholder="t('artist.role.role', 2)"

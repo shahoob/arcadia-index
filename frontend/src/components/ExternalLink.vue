@@ -31,6 +31,9 @@ const getLinkLogo = () => {
   if (props.link.includes('store.steampowered.com')) {
     return 'steam.svg'
   }
+  if (props.link.includes('comicvine.gamespot.com')) {
+    return 'comic_vine.svg'
+  }
 }
 </script>
 <style scoped>

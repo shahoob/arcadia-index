@@ -130,8 +130,28 @@ export const getSources = (contentType: ContentType) => {
   sources.push('Mixed')
   return sources
 }
-export const getArtistRoles = () => {
-  return ['main', 'producer', 'guest', 'composer', 'conductor', 'dj_compiler', 'remixer', 'arranger', 'director', 'cinematographer', 'actor', 'author']
+export const getArtistRoles = (contentType: ContentType) => {
+  const commonRoles = ['main', 'guest']
+
+  switch (contentType) {
+    case 'movie':
+    case 'tv_show':
+      return [...commonRoles, 'producer', 'director', 'cinematographer', 'actor', 'writer', 'composer']
+    case 'video':
+      return [...commonRoles, 'producer', 'director', 'cinematographer', 'actor', 'writer', 'composer', 'remixer']
+    case 'music':
+      return [...commonRoles, 'producer', 'composer', 'conductor', 'dj_compiler', 'remixer', 'arranger', 'writer']
+    case 'podcast':
+      return [...commonRoles, 'producer', 'writer', 'host']
+    case 'book':
+      return [...commonRoles, 'author', 'writer', 'illustrator', 'editor']
+    case 'software':
+      return [...commonRoles, 'developer', 'designer', 'producer', 'writer']
+    case 'collection':
+      return [...commonRoles, 'producer', 'director', 'composer', 'author', 'writer', 'editor']
+    default:
+      return commonRoles
+  }
 }
 export const isValidUrl = (url: string) => {
   try {
