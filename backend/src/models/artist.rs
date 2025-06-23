@@ -45,46 +45,60 @@ pub struct ArtistLite {
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "artist_role_enum")]
 pub enum ArtistRole {
-    // general roles
-    #[sqlx(rename = "main")]
     #[serde(rename = "main")]
+    #[sqlx(rename = "main")]
     Main,
-    #[sqlx(rename = "producer")]
-    #[serde(rename = "producer")]
-    Producer,
-    // music roles
-    #[sqlx(rename = "guest")]
     #[serde(rename = "guest")]
+    #[sqlx(rename = "guest")]
     Guest,
-    #[sqlx(rename = "composer")]
-    #[serde(rename = "composer")]
-    Composer,
-    #[sqlx(rename = "conductor")]
-    #[serde(rename = "conductor")]
-    Conductor,
-    #[sqlx(rename = "dj_compiler")]
-    #[serde(rename = "dj_compiler")]
-    DjCompiler,
-    #[sqlx(rename = "remixer")]
-    #[serde(rename = "remixer")]
-    Remixer,
-    #[sqlx(rename = "arranger")]
-    #[serde(rename = "arranger")]
-    Arranger,
-    // movie/tv roles
-    #[sqlx(rename = "director")]
+    #[serde(rename = "producer")]
+    #[sqlx(rename = "producer")]
+    Producer,
     #[serde(rename = "director")]
+    #[sqlx(rename = "director")]
     Director,
-    #[sqlx(rename = "cinematographer")]
     #[serde(rename = "cinematographer")]
+    #[sqlx(rename = "cinematographer")]
     Cinematographer,
-    #[sqlx(rename = "actor")]
     #[serde(rename = "actor")]
+    #[sqlx(rename = "actor")]
     Actor,
-    // book roles
-    #[sqlx(rename = "author")]
+    #[serde(rename = "writer")]
+    #[sqlx(rename = "writer")]
+    Writer,
+    #[serde(rename = "composer")]
+    #[sqlx(rename = "composer")]
+    Composer,
+    #[serde(rename = "remixer")]
+    #[sqlx(rename = "remixer")]
+    Remixer,
+    #[serde(rename = "conductor")]
+    #[sqlx(rename = "conductor")]
+    Conductor,
+    #[serde(rename = "dj_compiler")]
+    #[sqlx(rename = "dj_compiler")]
+    DjCompiler,
+    #[serde(rename = "arranger")]
+    #[sqlx(rename = "arranger")]
+    Arranger,
+    #[serde(rename = "host")]
+    #[sqlx(rename = "host")]
+    Host,
     #[serde(rename = "author")]
+    #[sqlx(rename = "author")]
     Author,
+    #[serde(rename = "illustrator")]
+    #[sqlx(rename = "illustrator")]
+    Illustrator,
+    #[serde(rename = "editor")]
+    #[sqlx(rename = "editor")]
+    Editor,
+    #[serde(rename = "developer")]
+    #[sqlx(rename = "developer")]
+    Developer,
+    #[serde(rename = "designer")]
+    #[sqlx(rename = "designer")]
+    Designer,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

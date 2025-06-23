@@ -73,7 +73,13 @@
       "director": "Director",
       "cinematographer": "Cinematographer",
       "actor": "Actor",
-      "author": "Author"
+      "writer": "Writer",
+      "host": "Host",
+      "author": "Author",
+      "illustrator": "Illustrator",
+      "editor": "Editor",
+      "developer": "Developer",
+      "designer": "Designer"
     }
   },
   "series": {
