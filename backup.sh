@@ -38,8 +38,8 @@ if ! docker ps --format "table {{.Names}}" | grep -q "^$DB_CONTAINER$"; then
 fi
 
 echo "Backing up database..."
-# Backup database data only (no schema)
-docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" --data-only --no-owner --no-privileges > "$BACKUP_DIR/database_data.sql"
+# Backup database with full dump (schema + data)
+docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" --no-owner --no-privileges > "$BACKUP_DIR/database_full.sql"
 
 if [ $? -eq 0 ]; then
     echo "Database backup completed successfully"
@@ -69,7 +69,7 @@ fi
 echo "Backup created on: $(date)" > "$BACKUP_DIR/backup_info.txt"
 echo "Database: $DB_NAME" >> "$BACKUP_DIR/backup_info.txt"
 echo "Container: $DB_CONTAINER" >> "$BACKUP_DIR/backup_info.txt"
-echo "Backup type: Data only" >> "$BACKUP_DIR/backup_info.txt"
+echo "Backup type: Full dump (schema + data)" >> "$BACKUP_DIR/backup_info.txt"
 
 echo "Creating zip archive..."
 # Create zip file
