@@ -1,6 +1,8 @@
 <template>
   <div id="top-bar">
-    <div class="left"></div>
+    <div class="left">
+      <img src="@/assets/logo.svg" alt="Site Logo" class="logo" />
+    </div>
     <div class="user-stats">
       <div class="stat" v-tooltip.bottom="'Uploaded'">
         <i class="pi pi-upload" />
@@ -95,6 +97,11 @@ const toggleDarkMode = () => {
   height: 45px;
   padding: 0 7px;
   width: 100%;
+}
+.left .logo {
+  height: 25px;
+  margin-top: 5px;
+  margin-right: 10px;
 }
 .user-stats {
   font-size: 0.85em;
