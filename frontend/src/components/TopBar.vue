@@ -1,7 +1,9 @@
 <template>
   <div id="top-bar">
     <div class="left">
-      <img src="@/assets/logo.svg" alt="Site Logo" class="logo" />
+      <RouterLink to="/">
+        <img src="@/assets/logo.svg" alt="Site Logo" class="logo" />
+      </RouterLink>
     </div>
     <div class="user-stats">
       <div class="stat" v-tooltip.bottom="'Uploaded'">
@@ -98,31 +100,38 @@ const toggleDarkMode = () => {
   padding: 0 7px;
   width: 100%;
 }
+
 .left .logo {
   height: 25px;
   margin-top: 5px;
   margin-right: 10px;
 }
+
 .user-stats {
   font-size: 0.85em;
   display: flex;
   align-items: center;
+
   .stat {
     margin: 0px 10px;
     display: flex;
     align-items: center;
   }
+
   i {
     margin-right: 7px;
   }
 }
+
 .actions .p-button {
   margin-left: 7px;
 }
+
 .user-action {
   padding: 5px 0;
   align-items: center;
   transition: 0.3s ease;
+
   &.sign-out {
     color: var(--p-red-600);
   }
