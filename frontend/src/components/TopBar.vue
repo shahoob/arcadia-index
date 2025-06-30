@@ -16,8 +16,8 @@
       <span class="stat" v-tooltip.bottom="'Freeleech tokens'"> <i class="pi pi-ticket" />{{ user.freeleech_tokens }} </span>
     </div>
     <div class="right">
-      <DesktopNavMenu/>
-      <MobileNavMenu/>
+      <DesktopNavMenu />
+      <MobileNavMenu />
     </div>
   </div>
 </template>
