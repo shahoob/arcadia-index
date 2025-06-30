@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import DesktopNavMenu from './desktop/DesktopNavMenu.vue'
 import MobileNavMenu from './mobile/MobileNavMenu.vue'
-
 </script>
 
 <style>
