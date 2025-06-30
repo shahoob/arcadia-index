@@ -740,10 +740,8 @@ LEFT JOIN
     torrent_reports tr ON t.id = tr.reported_torrent_id
 LEFT JOIN
     peers p ON t.id = p.torrent_id
-LEFT JOIN
-    torrent_activities ta ON t.id = ta.torrent_id AND p.status IS NULL
 GROUP BY
-    t.id, u.id, u.username, p.status, ta.snatched_at
+    t.id, u.id, u.username
 ORDER BY
     t.id;
 
