@@ -117,8 +117,7 @@ where
     assert_eq!(
         content_type,
         Some(&HeaderValue::from_static("application/json")),
-        "expected Content-Type: application/json, got {:?}",
-        content_type
+        "expected Content-Type: application/json, got {content_type:?}"
     );
 
     test::read_body_json::<T, _>(resp).await

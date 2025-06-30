@@ -101,13 +101,13 @@ impl EmailService {
         let from_mailbox = Mailbox::new(
             Some(self.from_name.clone()),
             self.from_email.parse()
-                .map_err(|e| Error::EmailConfigurationError(format!("Invalid from email: {}", e)))?
+                .map_err(|e| Error::EmailConfigurationError(format!("Invalid from email: {e}")))?
         );
 
         let to_mailbox = Mailbox::new(
             None,
             to_email.parse()
-                .map_err(|e| Error::EmailSendError(format!("Invalid recipient email: {}", e)))?
+                .map_err(|e| Error::EmailSendError(format!("Invalid recipient email: {e}")))?
         );
 
         let email = Message::builder()
@@ -116,7 +116,7 @@ impl EmailService {
             .subject(subject)
             .header(ContentType::TEXT_PLAIN)
             .body(body.to_string())
-            .map_err(|e| Error::EmailSendError(format!("Failed to build email: {}", e)))?;
+            .map_err(|e| Error::EmailSendError(format!("Failed to build email: {e}")))?;
 
         // Send the email in a blocking task to avoid blocking the async runtime
         let mailer = self.mailer.clone();
@@ -124,8 +124,8 @@ impl EmailService {
             mailer.send(&email)
         })
         .await
-        .map_err(|e| Error::EmailSendError(format!("Task join error: {}", e)))?
-        .map_err(|e| Error::EmailSendError(format!("Failed to send email: {}", e)))?;
+        .map_err(|e| Error::EmailSendError(format!("Task join error: {e}")))?
+        .map_err(|e| Error::EmailSendError(format!("Failed to send email: {e}")))?;
 
         Ok(())
     }

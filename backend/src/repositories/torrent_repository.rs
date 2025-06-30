@@ -203,7 +203,7 @@ pub async fn get_torrent(
 
     let announce_url = get_announce_url(user.passkey_upper, user.passkey_lower, tracker_url);
 
-    let frontend_url = format!("{}torrent/{}", frontend_url, torrent_id);
+    let frontend_url = format!("{frontend_url}torrent/{torrent_id}");
 
     let metainfo = MetainfoBuilder::new()
         .set_main_tracker(Some(&announce_url))

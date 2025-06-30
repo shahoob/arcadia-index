@@ -73,11 +73,10 @@ async fn fetch_comic_vine_data<T: for<'de> Deserialize<'de>>(
     let api_key = env::var("COMIC_VINCE_API_KEY").ok().unwrap();
 
     let url = format!(
-        "{}/{}/?api_key={}&format=json",
-        COMICVINE_API_BASE_URL, endpoint, api_key
+        "{COMICVINE_API_BASE_URL}/{endpoint}/?api_key={api_key}&format=json"
     );
     let response = client.get(&url).send().await;
-    println!("{:?}", response);
+    println!("{response:?}");
 
     let response = client
         .get(&url)
@@ -95,7 +94,7 @@ async fn fetch_comic_vine_data<T: for<'de> Deserialize<'de>>(
 
 async fn get_comic_vine_issue_data(id: &str, client: &Client) -> Result<UserCreatedTitleGroup> {
     let comic_vine_issue: ComicVineIssue =
-        fetch_comic_vine_data(&format!("issue/4000-{}", id), client).await?;
+        fetch_comic_vine_data(&format!("issue/4000-{id}"), client).await?;
 
     let cover_url = comic_vine_issue
         .image
