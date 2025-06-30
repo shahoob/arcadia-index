@@ -44,7 +44,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n()
 const user = useUserStore()
-let visible = ref(false)
+const visible = ref(false)
 
 const onOpenMenu = () => {
   visible.value = true
