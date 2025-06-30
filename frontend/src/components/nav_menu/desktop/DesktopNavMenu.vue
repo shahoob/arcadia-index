@@ -80,14 +80,4 @@ const toggleDarkMode = () => {
     color: var(--p-red-600);
   }
 }
-
-#desktopNavMenu {
-  display: none;
-}
-
-@media screen and (min-width: 768px) {
-  #desktopNavMenu {
-    display: block;
-  }
-}
 </style>

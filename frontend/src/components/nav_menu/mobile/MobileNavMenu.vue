@@ -66,11 +66,3 @@ const toggleDarkMode = () => {
   document.documentElement.classList.toggle('dark-theme')
 }
 </script>
-
-<style scoped>
-@media screen and (min-width: 768px) {
-  #mobileMenuTrigger {
-    display: none;
-  }
-}
-</style>

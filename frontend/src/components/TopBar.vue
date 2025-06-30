@@ -16,8 +16,7 @@
       <span class="stat" v-tooltip.bottom="'Freeleech tokens'"> <i class="pi pi-ticket" />{{ user.freeleech_tokens }} </span>
     </div>
     <div class="right">
-      <DesktopNavMenu />
-      <MobileNavMenu />
+      <NavMenu />
     </div>
   </div>
 </template>
@@ -25,8 +24,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { bytesToReadable } from '@/services/helpers'
-import MobileNavMenu from './nav_menu/mobile/MobileNavMenu.vue'
-import DesktopNavMenu from './nav_menu/desktop/DesktopNavMenu.vue'
+import NavMenu from './nav_menu/NavMenu.vue'
 
 const user = useUserStore()
 </script>
