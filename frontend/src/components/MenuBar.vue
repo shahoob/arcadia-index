@@ -23,11 +23,19 @@ const menuItems = ref([
 </script>
 
 <style scoped>
+/* the menu items on mobile appear in TopBar.vue */
 .menu-bar {
-  display: flex;
-  justify-content: center;
+  display: none;
 }
+
 .item {
   margin: 0px 7px;
+}
+
+@media only screen and (min-width: 768px) {
+  .menu-bar {
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>
