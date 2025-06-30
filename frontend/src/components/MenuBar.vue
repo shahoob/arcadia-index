@@ -23,7 +23,7 @@ const menuItems = ref([
 </script>
 
 <style scoped>
-/* the menu items on mobile appear in TopBar.vue */
+/* on mobile, the menu items here appear in MobileNavMenu.vue */
 .menu-bar {
   display: none;
 }
