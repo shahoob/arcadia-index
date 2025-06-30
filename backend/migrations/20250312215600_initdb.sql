@@ -731,13 +731,7 @@ SELECT
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
         ELSE '[]'::json
-    END AS reports,
-    CASE
-        WHEN p.status = 'seeding' THEN 'seeding'
-        WHEN p.status = 'leeching' THEN 'leeching'
-        WHEN ta.snatched_at IS NOT NULL AND p.status IS NULL THEN 'snatched'
-        ELSE NULL
-    END AS peer_status
+    END AS reports
 FROM
     torrents t
 LEFT JOIN

@@ -376,18 +376,18 @@ pub struct TorrentHierarchyLite {
     pub subtitle_languages: Vec<Language>,
     pub video_resolution: Option<String>,
     pub reports: Vec<TorrentReport>,
-    pub peer_status: Option<TorrentStatus>,
+    // pub peer_status: Option<TorrentStatus>,
 }
 
-#[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
-pub enum TorrentStatus {
-    #[serde(rename = "seeding")]
-    Seeding,
-    #[serde(rename = "leeching")]
-    Leeching,
-    #[serde(rename = "snatched")]
-    Snatched,
-}
+// #[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
+// pub enum TorrentStatus {
+//     #[serde(rename = "seeding")]
+//     Seeding,
+//     #[serde(rename = "leeching")]
+//     Leeching,
+//     #[serde(rename = "snatched")]
+//     Snatched,
+// }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentHierarchy {
@@ -430,7 +430,7 @@ pub struct TorrentHierarchy {
     pub video_resolution: Option<String>,
     pub uploader: UserLite,
     pub reports: Vec<TorrentReport>,
-    pub peer_status: Option<TorrentStatus>,
+    // pub peer_status: Option<TorrentStatus>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

@@ -14,7 +14,7 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["add_affiliated_artists"];
-        delete?: never;
+        delete: operations["remove_affiliated_artists"];
         options?: never;
         head?: never;
         patch?: never;
@@ -110,6 +110,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["add_edition_group"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external_db/comic_vine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["get_comic_vine_data"];
         delete?: never;
         options?: never;
         head?: never;
@@ -749,7 +765,7 @@ export interface components {
             pictures: string[];
         };
         /** @enum {string} */
-        ArtistRole: "main" | "producer" | "guest" | "composer" | "conductor" | "dj_compiler" | "remixer" | "arranger" | "director" | "cinematographer" | "actor" | "author";
+        ArtistRole: "main" | "guest" | "producer" | "director" | "cinematographer" | "actor" | "writer" | "composer" | "remixer" | "conductor" | "dj_compiler" | "arranger" | "host" | "author" | "illustrator" | "editor" | "developer" | "designer";
         /** @enum {string} */
         AudioBitrateSampling: "64" | "128" | "192" | "256" | "320" | "APS (VBR)" | "V2 (VBR)" | "V1 (VBR)" | "APX (VBR)" | "V0 (VBR)" | "Lossless" | "24bit Lossless" | "DSD64" | "DSD128" | "DSD256" | "DSD512" | "Other";
         /** @enum {string} */
@@ -1494,7 +1510,6 @@ export interface components {
             /** Format: int64 */
             leechers: number;
             mediainfo: string;
-            peer_status?: null | components["schemas"]["TorrentStatus"];
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
@@ -1542,7 +1557,6 @@ export interface components {
             languages: components["schemas"]["Language"][];
             /** Format: int64 */
             leechers: number;
-            peer_status?: null | components["schemas"]["TorrentStatus"];
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
@@ -1688,8 +1702,6 @@ export interface components {
             snatched_by_id?: number | null;
             staff_checked?: boolean | null;
         };
-        /** @enum {string} */
-        TorrentStatus: "seeding" | "leeching" | "snatched";
         TorrentToDelete: {
             displayed_reason?: string | null;
             /** Format: int64 */
@@ -2033,6 +2045,24 @@ export interface operations {
             };
         };
     };
+    remove_affiliated_artists: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully removed the artist affiliations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     get_artist_publications: {
         parameters: {
             query: {
@@ -2190,6 +2220,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EditionGroup"];
+                };
+            };
+        };
+    };
+    get_comic_vine_data: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalDBData"];
                 };
             };
         };
