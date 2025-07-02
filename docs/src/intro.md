@@ -15,9 +15,22 @@ Arcadia supports a wide variety of content types including:
 ### Movies
 - **Feature Film**: Full-length films with rich metadata support.
 - **Short Film**: Shorter cinematic works.
+<div>
+    <img src="media/movie.png" alt="Movie entry">
+    <p align="center"><em>Movie entry</em></p>
+</div>
 
 ### TV Shows
 - Series and seasons with episode tracking capabilities.
+
+<div>
+    <img src="media/tvshow.png" alt="TV Show - Season entry">
+    <p align="center"><em>TV Show - Season entry</em></p>
+</div>
+<div>
+    <img src="media/tvshow-series.png" alt="TV Show - Series view">
+    <p align="center"><em>TV Show - Series view</em></p>
+</div>
 
 ### Music
 - **Album**: Includes "live album" as an "edition."
@@ -32,9 +45,19 @@ Arcadia supports a wide variety of content types including:
 - **Concert Recording**: Live performance recordings.
 - **DJ Mix**: Continuous mixes by DJs.
 
+<div>
+    <img src="media/music.png" alt="Music">
+    <p align="center"><em>Music</em></p>
+</div>
+
 ### Software
 - **Game**: Video games of all genres.
 - **Program**: Applications and utilities.
+
+<div>
+    <img src="media/software-game.png" alt="Software - Game">
+    <p align="center"><em>Software - Game</em></p>
+</div>
 
 ### Written Documents
 - **Book**: Includes hardcover, paperback, and digital formats.
@@ -43,8 +66,26 @@ Arcadia supports a wide variety of content types including:
 - **Article**: Studies, theses, essays, and research papers.
 - **Manual**: Guides, music sheets, and instructional documents.
 
+<div>
+    <img src="media/book.png" alt="Book - Entry view">
+    <p align="center"><em>Book - Entry view</em></p>
+</div>
+<div>
+    <img src="media/book-illustrated.png" alt="Book - Illustrated">
+    <p align="center"><em>Book - Illustrated</em></p>
+</div>
+<div>
+    <img src="media/book-illustrated-series.png" alt="Book - Series view">
+    <p align="center"><em>Book - Series view</em></p>
+</div>
+
 ### Collections
 Collections represent a "grouping" of content to avoid multiple uploads and reduce tracker load. Examples include site dumps, full/finished series, and monthly/yearly content groupings.
+
+<div>
+    <img src="media/collection-podcast.png" alt="Podcast collection">
+    <p align="center"><em>Podcast collection</em></p>
+</div>
 
 ## Community
 
