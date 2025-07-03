@@ -27,10 +27,10 @@
             {{ timeAgo(slotProps.data.created_at) }}
           </template>
         </Column>
-        <Column :header="t('conversation.correspondant')">
+        <Column :header="t('conversation.correspondent')">
           <template #body="slotProps">
-            <RouterLink :to="`/user/${slotProps.data.correspondant.id}`">
-              {{ slotProps.data.correspondant.username }}
+            <RouterLink :to="`/user/${slotProps.data.correspondent.id}`">
+              {{ slotProps.data.correspondent.username }}
             </RouterLink>
           </template>
         </Column>
