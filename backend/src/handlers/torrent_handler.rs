@@ -13,11 +13,15 @@ use utoipa::{IntoParams, ToSchema};
 use crate::{
     Arcadia, Error, Result,
     models::{
-        torrent::{Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete, UploadedTorrent},
+        torrent::{
+            Torrent, TorrentMinimal, TorrentSearch, TorrentSearchResults, TorrentToDelete,
+            UploadedTorrent,
+        },
         user::User,
     },
     repositories::torrent_repository::{
-        create_torrent, find_top_torrents, get_torrent, remove_torrent, search_torrents,
+        create_torrent, find_registered_torrents, find_top_torrents, get_torrent, remove_torrent,
+        search_torrents,
     },
     services::torrent_service::get_announce_url,
 };
@@ -201,4 +205,23 @@ Handled by: [url={}]{}[/url]",
     remove_torrent(&arc.pool, &form, current_user.id).await?;
 
     Ok(HttpResponse::Ok().json(json!({"result": "success"})))
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/registered-torrents",
+    responses(
+        (status = 200, description = "All registered torrents", body=Vec<TorrentMinimal>),
+    )
+)]
+pub async fn get_registered_torrents(
+    arc: web::Data<Arcadia>,
+    current_user: User,
+) -> Result<HttpResponse> {
+    if current_user.class != "tracker" {
+        return Err(Error::InsufficientPrivileges);
+    };
+    let torrents = find_registered_torrents(&arc.pool).await?;
+
+    Ok(HttpResponse::Ok().json(torrents))
 }

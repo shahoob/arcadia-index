@@ -31,8 +31,8 @@ use crate::handlers::{
         add_title_group, get_title_group, get_title_group_info_lite, search_title_group_info_lite,
     },
     torrent_handler::{
-        delete_torrent, download_dottorrent_file, find_torrents, get_top_torrents,
-        get_upload_information, upload_torrent,
+        delete_torrent, download_dottorrent_file, find_torrents, get_registered_torrents,
+        get_top_torrents, get_upload_information, upload_torrent,
     },
     torrent_report_handler::add_torrent_report,
     torrent_request_handler::{add_torrent_request, fill_torrent_request},
@@ -69,6 +69,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/edition-group", web::post().to(add_edition_group))
             .route("/torrent", web::post().to(upload_torrent))
             .route("/torrent", web::get().to(download_dottorrent_file))
+            .route(
+                "/registered-torrents",
+                web::get().to(get_registered_torrents),
+            )
             .route("/upload", web::get().to(get_upload_information))
             .route("/torrent", web::delete().to(delete_torrent))
             .route("/torrent/top", web::get().to(get_top_torrents))

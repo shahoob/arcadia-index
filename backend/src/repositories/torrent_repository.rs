@@ -1,7 +1,9 @@
 use crate::{
     Error, Result,
     models::{
-        torrent::{Features, Torrent, TorrentSearch, TorrentToDelete, UploadedTorrent},
+        torrent::{
+            Features, Torrent, TorrentMinimal, TorrentSearch, TorrentToDelete, UploadedTorrent,
+        },
         user::User,
     },
     services::torrent_service::get_announce_url,
@@ -398,4 +400,17 @@ pub async fn increment_torrent_completed(pool: &PgPool, torrent_id: i64) -> Resu
     .await?;
 
     Ok(())
+}
+
+pub async fn find_registered_torrents(pool: &PgPool) -> Result<Vec<TorrentMinimal>> {
+    let torrents = sqlx::query_as!(
+        TorrentMinimal,
+        r#"
+        SELECT id, created_at, ENCODE(info_hash, 'hex') as info_hash FROM torrents
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(torrents)
 }
