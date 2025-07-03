@@ -1,79 +1,106 @@
 # Docker Setup
 
+This guide will help you get Arcadia running quickly using Docker Compose.
+
+## Prerequisites
+
+- Docker and Docker Compose installed
+- Git (to clone the repository)
+
 <div class="warning">
 
 If running `docker compose` doesn't work, you may have an older version of the docker cli installed and may need to use `docker-compose` instead.
-```bash
-docker-compose up db -d
-```
 
 Also don't forget to use `sudo` if you aren't in the `docker` group!
 </div>
 
-## Database
+## Quick Setup
 
-The recommended method for spawning an instance of PostgreSQL is using Docker Compose:
+1. **Set up environment files**:
+   ```bash
+   # Copy backend environment file
+   cp backend/.env.docker backend/.env
+
+   # Copy frontend environment file
+   cp frontend/.env.docker frontend/.env
+   ```
+
+2. **Start all services**:
+   ```bash
+   docker compose up -d
+   ```
+
+   This command will:
+   - Build the backend and frontend images
+   - Start PostgreSQL database
+   - Run database migrations automatically
+   - Start the backend API server
+   - Start the frontend development server
+
+3. **Access the application**:
+   - Frontend: `http://localhost:5137`
+   - Backend API: `http://localhost:8080`
+
+## Individual Service Management
+
+If you prefer to start services individually:
+
+### Database Only
+   ```bash
+   docker compose up db -d
+   ```
+
+### Backend Only
+   ```bash
+   docker compose up backend -d
+   ```
+
+### Frontend Only
+   ```bash
+   docker compose up frontend -d
+   ```
+
+## Development Features
+
+### Auto-rebuild with Compose Watch
+
+For development, you can use [Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/) to automatically rebuild when source code changes:
 
 ```bash
-docker compose up db -d
+docker compose up --watch
 ```
 
-Arcadia will automatically run migrations on launch. Otherwise, initialization of the database can be done with:
-
-```bash
-cargo sqlx database setup
-# If cargo doesn't know the command, install it with this command
-cargo install sqlx-cli
-```
+Or when running attached (without `-d`), press <kbd>W</kbd> to enable watch mode.
 
 ### Adding Test Data
 
-You can optionally add "fake" data to the database by running the `fixtures.sql` file in the migrations/fixtures directory. This allows to quickly have data to work with.
-
-Here is how to insert them if you are using docker:
+You can optionally add "fake" data to the database for development:
 
 ```bash
 docker exec -i arcadia_db psql -U arcadia -d arcadia < backend/migrations/fixtures/fixtures.sql
 ```
 
-The default user defined in the test data is `picolo` with password `test`.
+The default test user is `picolo` with password `test`.
 
 ### Exporting Test Data
 
-If you wish to create your own additional test data, you can then dump it to a file with this command (if you want to share it in the repo):
+To create additional test data and export it:
 
 ```bash
 docker exec -i arcadia_db pg_dump -U arcadia -d arcadia --data-only --inserts > backend/migrations/fixtures/fixtures.sql
 ```
 
-## Backend
+## Manual Database Setup (if needed)
 
-Launch the server:
-
-```bash
-docker compose up backend -d
-```
-
-It may take a while for the image to build as everything is done in Docker. Yes, Docker Compose can handle that!
-
-### Auto-rebuild with Compose Watch
-
-What Docker Compose can also handle is auto rebuilding images when source code changes as made possible by [Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/).
-
-To take advantage of that, just run this command instead:
+Arcadia automatically runs migrations on launch, but if you need to manually set up the database:
 
 ```bash
-docker compose up backend --watch
+cargo install sqlx-cli
+cargo sqlx database setup
 ```
 
-Or when running attached (as in not just turning it on and leaving it with the `--detach` / `-d` option), just press <kbd>W</kbd>.
+## Troubleshooting
 
-Now when you make changes to the backend, compose will automatically rebuild the image and restart the container with the new source code, making *somewhat* quicker to iterate while also testing in Docker.
-
-## Frontend
-
-Launch the server:
-
-```bash
-docker compose up frontend -d
-```
+- If services fail to start, check logs with: `docker compose logs [service-name]`
+- To rebuild images: `docker compose build`
+- To reset everything: `docker compose down -v && docker compose up -d`

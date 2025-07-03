@@ -6,6 +6,7 @@
   - [Standard Setup](run-standard.md)
   - [Docker Setup](run-docker.md)
 - [Developer Setup](dev-setup.md)
+- [Backup](backup.md)
 - [Testing](testing.md)
 - [Contributing](contributing.md)
 - [Legal Notice](legal.md)
