@@ -376,18 +376,18 @@ pub struct TorrentHierarchyLite {
     pub subtitle_languages: Vec<Language>,
     pub video_resolution: Option<String>,
     pub reports: Vec<TorrentReport>,
-    pub peer_status: Option<TorrentStatus>,
+    // pub peer_status: Option<TorrentStatus>,
 }
 
-#[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
-pub enum TorrentStatus {
-    #[serde(rename = "seeding")]
-    Seeding,
-    #[serde(rename = "leeching")]
-    Leeching,
-    #[serde(rename = "snatched")]
-    Snatched,
-}
+// #[derive(Debug, Deserialize, Serialize, ToSchema, Display)]
+// pub enum TorrentStatus {
+//     #[serde(rename = "seeding")]
+//     Seeding,
+//     #[serde(rename = "leeching")]
+//     Leeching,
+//     #[serde(rename = "snatched")]
+//     Snatched,
+// }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentHierarchy {
@@ -430,7 +430,7 @@ pub struct TorrentHierarchy {
     pub video_resolution: Option<String>,
     pub uploader: UserLite,
     pub reports: Vec<TorrentReport>,
-    pub peer_status: Option<TorrentStatus>,
+    // pub peer_status: Option<TorrentStatus>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -443,4 +443,13 @@ pub struct TorrentToDelete {
     pub id: i64,
     pub reason: String,
     pub displayed_reason: Option<String>,
+}
+
+#[derive(Debug, Serialize, FromRow, ToSchema)]
+pub struct TorrentMinimal {
+    pub id: i64,
+    #[schema(value_type = String, format = DateTime)]
+    pub created_at: DateTime<Local>,
+    // TODO: remove Option<>, this should never be null, but without it, the deserialization with sqlx fails somehow
+    pub info_hash: Option<String>,
 }

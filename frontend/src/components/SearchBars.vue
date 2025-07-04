@@ -48,10 +48,8 @@ const artistSelected = (artist: ArtistLite) => {
 #search-bars {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
   width: 100%;
-}
-.p-inputtext {
-  margin: 0 5px;
-  /* width: 10%; */
 }
 </style>

@@ -37,7 +37,7 @@ async fn main() -> std::io::Result<()> {
 
     let host = env::var("ACTIX_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("ACTIX_PORT").unwrap_or_else(|_| "8080".to_string());
-    println!("Server running at http://{}:{}", host, port);
+    println!("Server running at http://{host}:{port}");
 
     let open_signups = if env::var("ARCADIA_OPEN_SIGNUPS").unwrap() == "true" {
         OpenSignups::Enabled
@@ -149,12 +149,12 @@ async fn main() -> std::io::Result<()> {
                     .url("/swagger-json/openapi.json", ApiDoc::openapi()),
             )
     })
-    .bind(format!("{}:{}", host, port))?
+    .bind(format!("{host}:{port}"))?
     .run();
 
     tokio::spawn(async {
         if let Err(e) = run_periodic_tasks(arc_periodic_tasks).await {
-            eprintln!("Error running cron tasks: {:?}", e);
+            eprintln!("Error running cron tasks: {e:?}");
         }
     });
 

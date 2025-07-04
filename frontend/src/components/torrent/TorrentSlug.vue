@@ -7,9 +7,9 @@
       </span>
     </template>
   </template>
-  <span v-if="'peer_status' in torrent && torrent.peer_status !== null">
-    <span class="slash">/</span> <span :class="torrent.peer_status">{{ torrent.peer_status }}</span>
-  </span>
+  <!-- <span v-if="'peer_status' in torrent && torrent.peer_status !== null">
+    <span class="slash"> / </span> <span :class="torrent.peer_status">{{ torrent.peer_status }}</span>
+  </span> -->
 </template>
 
 <script lang="ts" setup>

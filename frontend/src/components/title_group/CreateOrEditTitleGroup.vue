@@ -357,7 +357,7 @@ const resolver = ({ values }: FormResolverOptions) => {
   //       errors.affiliated_artists = []
   //     }
   //     errors.affiliated_artists![index] = {
-  //       message: t('error.artist_must_have_at_lease_one_role'),
+  //       message: t('error.artist_must_have_at_least_one_role'),
   //     }
   //   }
   // })

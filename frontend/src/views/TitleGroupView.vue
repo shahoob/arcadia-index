@@ -167,7 +167,7 @@ const toggleSubscribtion = async () => {
       await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
     }
     title_group.value.is_subscribed = !title_group.value.is_subscribed
-    showToast('Success', t(`title_group.${title_group.value.is_subscribed ? 'subscription_successfull' : 'unsubscription_successfull'}`), 'success', 3000)
+    showToast('Success', t(`title_group.${title_group.value.is_subscribed ? 'subscription_successful' : 'unsubscription_successful'}`), 'success', 3000)
     togglingSubscription.value = false
   }
 }

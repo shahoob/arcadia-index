@@ -131,7 +131,7 @@
   "conversation": {
     "start_conversation": "Start a conversation with {0}",
     "subject": "Subject",
-    "correspondant": "Correspondant",
+    "correspondent": "Correspondent",
     "message": "Message | Messages",
     "conversation": "Conversation | Conversations",
     "last_message": "Last message"
@@ -159,8 +159,8 @@
     "title": "Title",
     "platform": "Platform",
     "original_release_date": "Original release date",
-    "subscription_successfull": "Subscription successfull",
-    "unsubscription_successfull": "Unsubscription successfull",
+    "subscription_successful": "Subscription successful",
+    "unsubscription_successful": "Unsubscription successful",
     "edit_affiliated_artists": "Edit affiliated artists",
     "update_artists": "Update artists",
     "content_type": {
@@ -216,7 +216,7 @@
     "uploaded_by": "Uploaded by",
     "staff_checked": "Checked by staff",
     "snatched_at": "Snatched at",
-    "multi_language": "Multi-Langauge",
+    "multi_language": "Multi-Language",
     "trumpable": "Trumpable",
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
     "complete_edition_group_first": "Create or select an edition group first"
@@ -236,7 +236,7 @@
     "select_at_least_x_language": "Select at least {0} language(s)",
     "select_torrent_file": "Select a torrent file",
     "invalid_url": "Invalid url",
-    "artist_must_have_at_lease_one_role": "Artist must have at least 1 role",
+    "artist_must_have_at_least_one_role": "Artist must have at least 1 role",
     "invalid_name": "Invalid name"
   },
   "footer": {

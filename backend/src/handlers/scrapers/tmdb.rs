@@ -46,7 +46,7 @@ async fn get_tmdb_movie_data(client: &Client<ReqwestClient>, id: u64) -> Result<
             tmdb_movie
                 .inner
                 .poster_path
-                .map(|path| format!("https://image.tmdb.org/t/p/w1280{}", path))
+                .map(|path| format!("https://image.tmdb.org/t/p/w1280{path}"))
                 .unwrap_or("".to_string()),
         ],
         content_type: ContentType::Movie,
