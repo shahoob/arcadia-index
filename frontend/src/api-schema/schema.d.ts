@@ -372,6 +372,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/registered-torrents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_registered_torrents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/report/torrent": {
         parameters: {
             query?: never;
@@ -1261,7 +1277,9 @@ export interface components {
             created_by_id: number;
             description: string;
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -1298,7 +1316,9 @@ export interface components {
             description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -1376,7 +1396,9 @@ export interface components {
             description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -1573,6 +1595,13 @@ export interface components {
             upload_factor: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
+        };
+        TorrentMinimal: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            info_hash?: string | null;
         };
         TorrentReport: {
             description: string;
@@ -1882,7 +1911,9 @@ export interface components {
             covers: string[];
             description: string;
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -2599,6 +2630,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    get_registered_torrents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All registered torrents */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TorrentMinimal"][];
                 };
             };
         };

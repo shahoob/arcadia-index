@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use musicbrainz_rs::entity::release_group::ReleaseGroupPrimaryType;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-use sqlx::{prelude::FromRow, types::Json};
+use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
 use super::{
@@ -109,13 +109,13 @@ pub struct TitleGroup {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>, // (public DBs, other trackers)
-    #[schema(value_type = HashMap<String, String>)]
-    pub embedded_links: Json<Value>, // {name: link} (trailer, preview, etc.)
+    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
+    pub embedded_links: Value, // {trailers: {name: link, name2: link2}, BehindTheScenes: {...}} (trailer, preview, etc.)
     pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
     pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
     #[schema(value_type = HashMap<String, String>)]
-    pub public_ratings: Option<Json<Value>>, // {service: rating}
+    pub public_ratings: Option<Value>, // {service: rating}
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
 }
@@ -135,8 +135,8 @@ pub struct UserCreatedTitleGroup {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub embedded_links: Json<Value>,
+    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
+    pub embedded_links: Value,
     // pub artists_affiliated: //(multiple categories, multiple in each category) (composer, remixer, actors, developers, etc.)
     // pub entities_affiliated (multiple categories, mutliple in each category) (publisher, record label, franchise, etc.)
     pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
@@ -209,13 +209,13 @@ pub struct TitleGroupHierarchy {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub embedded_links: Json<Value>,
+    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
+    pub embedded_links: Value,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
     #[schema(value_type = HashMap<String, String>)]
-    pub public_ratings: Option<Json<Value>>,
+    pub public_ratings: Option<Value>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     pub edition_groups: Vec<EditionGroupHierarchy>,
@@ -241,13 +241,13 @@ pub struct TitleGroupAndAssociatedData {
     pub country_from: Option<String>,
     pub covers: Vec<String>,
     pub external_links: Vec<String>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub embedded_links: Json<Value>,
+    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
+    pub embedded_links: Value,
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
     #[schema(value_type = HashMap<String, String>)]
-    pub public_ratings: Option<Json<Value>>,
+    pub public_ratings: Option<Value>,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     pub edition_groups: Vec<EditionGroupHierarchy>,
@@ -268,7 +268,7 @@ pub fn create_default_title_group() -> UserCreatedTitleGroup {
         country_from: None,
         covers: vec!["".to_string()],
         external_links: vec!["".to_string()],
-        embedded_links: Json(json!({})),
+        embedded_links: json!({}),
         category: None,
         content_type: ContentType::Book,
         tags: Vec::new(),

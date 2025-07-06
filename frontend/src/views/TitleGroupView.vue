@@ -56,6 +56,7 @@
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
+      <EmbeddedLinks class="embedded-links" v-if="Object.keys(title_group.embedded_links).length > 0" :links="title_group.embedded_links" />
       <ContentContainer class="description" v-if="title_group" :container-title="t('title_group.description')">
         <div class="title-group-description">
           <BBCodeRenderer :content="title_group.description" />
@@ -115,6 +116,7 @@ import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import EditArtistsModal from '@/components/artist/EditArtistsModal.vue'
 import { Dialog } from 'primevue'
+import EmbeddedLinks from '@/components/title_group/EmbeddedLinks.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -219,6 +221,10 @@ watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 }
 
 .torrent-requests {
+  margin-top: 20px;
+}
+
+.embedded-links {
   margin-top: 20px;
 }
 

@@ -26,7 +26,7 @@ async fn get_tmdb_movie_data(client: &Client<ReqwestClient>, id: u64) -> Result<
         .get_movie_details(id, &Default::default())
         .await
         .unwrap();
-    let title_group = UserCreatedTitleGroup {
+    let mut title_group = UserCreatedTitleGroup {
         name: tmdb_movie.inner.original_title.clone(),
         name_aliases: (tmdb_movie.inner.title != tmdb_movie.inner.original_title)
             .then_some(vec![tmdb_movie.inner.original_title])
@@ -52,6 +52,13 @@ async fn get_tmdb_movie_data(client: &Client<ReqwestClient>, id: u64) -> Result<
         content_type: ContentType::Movie,
         ..create_default_title_group()
     };
+
+    if let Some(link) = tmdb_movie
+        .imdb_id
+        .map(|id| format!("https://www.imdb.com/title/{id}"))
+    {
+        title_group.external_links = vec![link];
+    }
 
     let edition_group = UserCreatedEditionGroup {
         release_date: title_group.original_release_date.unwrap_or_default(),
@@ -99,9 +106,8 @@ pub async fn get_tmdb_data(
         _ => return Err(Error::InvalidTMDBUrl),
     };
 
-    // external_db_data.title_group.unwrap().external_links = vec![query.url.clone()];
     if let Some(title_group) = &mut external_db_data.title_group {
-        title_group.external_links = vec![query.url.clone()];
+        title_group.external_links.push(query.url.clone());
     }
 
     Ok(HttpResponse::Ok().json(external_db_data))

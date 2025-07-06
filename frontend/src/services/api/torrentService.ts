@@ -14,6 +14,12 @@ export type TitleGroupAndAssociatedData = components['schemas']['TitleGroupAndAs
 
 export type ContentType = components['schemas']['ContentType']
 
+export type EmbeddedLinks = {
+  [key: string]: {
+    [key: string]: string
+  }
+}
+
 export const getTitleGroup = async (id: number): Promise<TitleGroupAndAssociatedData> => {
   return (await api.get<TitleGroupAndAssociatedData>('/title-group?id=' + id)).data
 }
