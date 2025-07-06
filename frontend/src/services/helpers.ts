@@ -45,7 +45,11 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
     itemRange = ` (${editionGroup.additional_information.first_item} to ${editionGroup.additional_information.last_item})`
   }
 
-  attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
+  if (editionGroup.name) {
+    attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
+  } else {
+    attributes.push(`${dateRange}${itemRange}`)
+  }
   if (editionGroup.additional_information?.format) {
     attributes.push(editionGroup.additional_information.format)
   }

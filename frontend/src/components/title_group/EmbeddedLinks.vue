@@ -1,29 +1,26 @@
 <template>
-  <ContentContainer>
-    <Tabs :value="Object.keys(orderedLinks)[0]" size="small">
-      <TabList>
-        <Tab v-for="(category, categoryName) in orderedLinks" :key="categoryName" :value="categoryName">{{ categoryName }}</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel v-for="(category, categoryName) in orderedLinks" :key="categoryName" :value="categoryName">
-          <Tabs :value="Object.keys(category)[0]" size="small">
-            <TabList>
-              <Tab v-for="(link, linkName) in category" :key="linkName" :value="linkName">{{ linkName }}</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel v-for="(link, linkName) in category" :key="linkName" :value="linkName">
-                <iframe style="width: 100%; aspect-ratio: 16 / 9; border: 0" :src="link" allowfullscreen />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
-  </ContentContainer>
+  <Tabs :value="Object.keys(orderedLinks)[0]" size="small">
+    <TabList>
+      <Tab v-for="(category, categoryName) in orderedLinks" :key="categoryName" :value="categoryName">{{ categoryName }}</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel v-for="(category, categoryName) in orderedLinks" :key="categoryName" :value="categoryName">
+        <Tabs :value="Object.keys(category)[0]" size="small">
+          <TabList>
+            <Tab v-for="(link, linkName) in category" :key="linkName" :value="linkName">{{ linkName }}</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel v-for="(link, linkName) in category" :key="linkName" :value="linkName">
+              <iframe style="width: 100%; aspect-ratio: 16 / 9; border: 0" :src="link" allowfullscreen />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 
 <script setup lang="ts">
-import ContentContainer from '../ContentContainer.vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'

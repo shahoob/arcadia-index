@@ -21,18 +21,18 @@ SET row_security = off;
 -- Data for Name: _sqlx_migrations; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public._sqlx_migrations VALUES (20250312215600, 'initdb', '2025-07-06 09:22:58.844352+00', true, '\xb085cb5c109248871ce602b2fb17291b638eee5a9029cf6b077ed9a0b405a0f4db390393b4665235bd8a8276b368b253', 39597348);
+INSERT INTO public._sqlx_migrations VALUES (20250312215600, 'initdb', '2025-07-06 14:05:57.696561+00', true, '\xdd1bed55a25973b8ab77324f8a0180bfd5e1bf3b6e3d20e575f1e61b535fd44ec173420e3643867745588e13275d71ea', 52411186);
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.users VALUES (1, 'creator', NULL, 'none@domain.com', 'none', '127.0.0.1', '2025-07-06 09:22:58.844352+00', '', 0, 0, 1, 1, 0, 0, '2025-07-06 09:22:58.844352+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{}', 1, 1, false, false, '');
+INSERT INTO public.users VALUES (1, 'creator', NULL, 'none@domain.com', 'none', '127.0.0.1', '2025-07-06 14:05:57.696561+00', '', 0, 0, 1, 1, 0, 0, '2025-07-06 14:05:57.696561+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{}', 1, 1, false, false, '');
 INSERT INTO public.users VALUES (5, 'waterbottle', 'https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg', 'user2@example.com', 'hashedpassword2', '192.168.1.2', '2025-03-30 16:24:57.388152+00', '', 0, 0, 1, 1, 0, 0, '2025-03-30 16:24:57.388152+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', 5493004881313328037, 2566432999990446913, false, false, '''''');
 INSERT INTO public.users VALUES (3, 'coolguy', 'https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg', 'user3@example.com', 'hashedpassword3', '192.168.1.3', '2025-03-30 16:24:57.388152+00', '', 0, 0, 1, 1, 0, 0, '2025-03-30 16:24:57.388152+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', 2274483400846363122, 1270934296711348124, false, false, '''''');
 INSERT INTO public.users VALUES (2, 'picolo', 'https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1', '2025-03-30 16:24:57.388152+00', '', 10000, 0, 1, 1, 0, 0, '2025-06-16 16:11:55.97921+00', 'staff', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000000000, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -197409747985172542, 1837889239438807682, false, false, '''''');
-INSERT INTO public.users VALUES (4, 'test', NULL, 'test@test.tsttt', '$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M', '127.0.0.1', '2025-04-10 19:15:51.036818+00', '', 0, 0, 1, 1, 0, 0, '2025-07-06 11:23:50.976032+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -7167291202215854785, 1526268353104531819, false, false, '''''');
+INSERT INTO public.users VALUES (4, 'test', NULL, 'test@test.tsttt', '$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M', '127.0.0.1', '2025-04-10 19:15:51.036818+00', '', 0, 0, 1, 1, 0, 0, '2025-07-06 14:08:58.780112+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -7167291202215854785, 1526268353104531819, false, false, '''''');
 
 
 --
@@ -170,27 +170,27 @@ INSERT INTO public.edition_groups VALUES (5, 2, 'Sound version', '1942-02-11 00:
 INSERT INTO public.edition_groups VALUES (6, 2, 'Sound version digital restoration', '2012-02-15 00:00:00+00', '2025-03-31 10:43:37.252083+00', '2025-03-31 10:43:37.252083+00', 1, 'High-definition digital restoration of the 1942 sound version (2012).', '', '{""}', '{""}', 'Blu-Ray', '{}');
 INSERT INTO public.edition_groups VALUES (7, 3, 'Original edition', '1862-03-31 00:16:08+00', '2025-03-31 11:03:45.905456+00', '2025-03-31 11:03:45.905456+00', 1, '', '', '{""}', '{""}', 'Physical Book', '{}');
 INSERT INTO public.edition_groups VALUES (8, 3, 'Revised edition', '2010-05-28 00:00:00+00', '2025-03-31 11:08:53.447285+00', '2025-03-31 11:08:53.447285+00', 1, 'Revised edition of the book, including footnotes to explain things about the context of the time.', 'Amazon', '{""}', '{""}', 'Web', '{}');
-INSERT INTO public.edition_groups VALUES (11, 4, 'Original edition', '1940-05-01 00:00:00+00', '2025-03-31 12:04:53.496183+00', '2025-03-31 12:04:53.496183+00', 1, '', '', '{""}', '{""}', 'Physical Book', '{}');
-INSERT INTO public.edition_groups VALUES (12, 5, 'Original edition', '1940-05-01 00:00:00+00', '2025-03-31 12:15:38.583304+00', '2025-03-31 12:15:38.583304+00', 1, '', '', '{""}', '{""}', 'Physical Book', '{}');
-INSERT INTO public.edition_groups VALUES (13, 6, 'Original edition', '2016-12-10 00:00:00+00', '2025-03-31 13:39:26.541847+00', '2025-03-31 13:39:26.541847+00', 1, '', 'casefilepodcast', '{""}', '{""}', 'Web', '{"date_from": "2016-01-09", "last_item": "Case 40", "first_item": "Case 01"}');
-INSERT INTO public.edition_groups VALUES (15, 6, 'Original edition', '2018-12-22 00:00:00+00', '2025-03-31 13:52:36.241175+00', '2025-03-31 13:52:36.241175+00', 1, '', 'casefilepodcast', '{""}', '{""}', 'Web', '{"date_from": "2018-01-13", "last_item": "Case 104", "first_item": "Case 72"}');
-INSERT INTO public.edition_groups VALUES (14, 6, 'Original edition', '2017-12-16 00:00:00+00', '2025-03-31 13:47:36.883244+00', '2025-03-31 13:47:36.883244+00', 1, '', 'casefilepodcast', '{""}', '{""}', 'Web', '{"date_from": "2017-01-07", "last_item": "Case 71", "first_item": "Case 41"}');
 INSERT INTO public.edition_groups VALUES (18, 8, 'Extras', '2004-03-04 00:00:00+00', '2025-03-31 18:49:20.421903+00', '2025-03-31 18:49:20.421903+00', 1, 'Contains deleted scenes and behind the scenes', '', '{""}', '{""}', 'DVD9', '{}');
-INSERT INTO public.edition_groups VALUES (19, 9, 'Original edition', '2004-10-24 00:00:00+00', '2025-04-02 10:38:30.04944+00', '2025-04-02 10:38:30.04944+00', 1, '', 'Amazon', '{""}', '{""}', 'Web', '{}');
-INSERT INTO public.edition_groups VALUES (20, 10, 'Original edition', '1999-03-22 00:00:00+00', '2025-04-19 11:02:10.743205+00', '2025-04-19 11:02:10.743205+00', 1, NULL, NULL, '{}', '{}', NULL, '{}');
 INSERT INTO public.edition_groups VALUES (21, 11, 'Deluxe edition', '1999-03-22 00:00:00+00', '2025-04-19 11:49:10.594347+00', '2025-04-19 11:49:10.594347+00', 1, 'This game wasn''t officially released on linux, this is just some example data', NULL, '{}', '{}', NULL, '{}');
-INSERT INTO public.edition_groups VALUES (22, 12, 'Original edition', '2003-03-25 00:00:00+00', '2025-04-19 14:00:30.080243+00', '2025-04-19 14:00:30.080243+00', 1, NULL, NULL, '{}', '{}', NULL, '{}');
-INSERT INTO public.edition_groups VALUES (23, 13, 'Original edition', '2022-01-01 00:00:00+00', '2025-04-20 18:51:13.549488+00', '2025-04-20 18:51:13.549488+00', 1, NULL, NULL, '{}', '{}', 'Web', '{}');
-INSERT INTO public.edition_groups VALUES (17, 8, 'Original edition', '2004-03-04 00:00:00+00', '2025-03-31 18:39:35.622903+00', '2025-03-31 18:39:35.622903+00', 1, '', 'Amazon', '{""}', '{""}', 'Web', '{}');
-INSERT INTO public.edition_groups VALUES (10, 3, 'Original edition', '2012-02-02 00:00:00+00', '2025-03-31 11:43:42.916292+00', '2025-03-31 11:43:42.916292+00', 1, '', '', '{""}', '{""}', 'CD', '{"format": "audiobook"}');
-INSERT INTO public.edition_groups VALUES (9, 3, 'Original edition', '2011-02-09 00:00:00+00', '2025-03-31 11:41:20.328981+00', '2025-03-31 11:41:20.328981+00', 1, 'Audiobook of the original version', 'Audible', '{""}', '{""}', 'Web', '{"format": "audiobook"}');
+INSERT INTO public.edition_groups VALUES (17, 8, NULL, '2004-03-04 00:00:00+00', '2025-03-31 18:39:35.622903+00', '2025-03-31 18:39:35.622903+00', 1, '', 'Amazon', '{""}', '{""}', 'Web', '{}');
+INSERT INTO public.edition_groups VALUES (9, 3, NULL, '2011-02-09 00:00:00+00', '2025-03-31 11:41:20.328981+00', '2025-03-31 11:41:20.328981+00', 1, 'Audiobook of the original version', 'Audible', '{""}', '{""}', 'Web', '{"format": "audiobook"}');
+INSERT INTO public.edition_groups VALUES (10, 3, NULL, '2012-02-02 00:00:00+00', '2025-03-31 11:43:42.916292+00', '2025-03-31 11:43:42.916292+00', 1, '', '', '{""}', '{""}', 'CD', '{"format": "audiobook"}');
+INSERT INTO public.edition_groups VALUES (11, 4, NULL, '1940-05-01 00:00:00+00', '2025-03-31 12:04:53.496183+00', '2025-03-31 12:04:53.496183+00', 1, '', '', '{""}', '{""}', 'Physical Book', '{}');
+INSERT INTO public.edition_groups VALUES (12, 5, NULL, '1940-05-01 00:00:00+00', '2025-03-31 12:15:38.583304+00', '2025-03-31 12:15:38.583304+00', 1, '', '', '{""}', '{""}', 'Physical Book', '{}');
+INSERT INTO public.edition_groups VALUES (13, 6, NULL, '2016-12-10 00:00:00+00', '2025-03-31 13:39:26.541847+00', '2025-03-31 13:39:26.541847+00', 1, '', 'casefilepodcast', '{""}', '{""}', 'Web', '{"date_from": "2016-01-09", "last_item": "Case 40", "first_item": "Case 01"}');
+INSERT INTO public.edition_groups VALUES (14, 6, NULL, '2017-12-16 00:00:00+00', '2025-03-31 13:47:36.883244+00', '2025-03-31 13:47:36.883244+00', 1, '', 'casefilepodcast', '{""}', '{""}', 'Web', '{"date_from": "2017-01-07", "last_item": "Case 71", "first_item": "Case 41"}');
+INSERT INTO public.edition_groups VALUES (15, 6, NULL, '2018-12-22 00:00:00+00', '2025-03-31 13:52:36.241175+00', '2025-03-31 13:52:36.241175+00', 1, '', 'casefilepodcast', '{""}', '{""}', 'Web', '{"date_from": "2018-01-13", "last_item": "Case 104", "first_item": "Case 72"}');
+INSERT INTO public.edition_groups VALUES (19, 9, NULL, '2004-10-24 00:00:00+00', '2025-04-02 10:38:30.04944+00', '2025-04-02 10:38:30.04944+00', 1, '', 'Amazon', '{""}', '{""}', 'Web', '{}');
+INSERT INTO public.edition_groups VALUES (20, 10, NULL, '1999-03-22 00:00:00+00', '2025-04-19 11:02:10.743205+00', '2025-04-19 11:02:10.743205+00', 1, NULL, NULL, '{}', '{}', NULL, '{}');
+INSERT INTO public.edition_groups VALUES (22, 12, NULL, '2003-03-25 00:00:00+00', '2025-04-19 14:00:30.080243+00', '2025-04-19 14:00:30.080243+00', 1, NULL, NULL, '{}', '{}', NULL, '{}');
+INSERT INTO public.edition_groups VALUES (23, 13, NULL, '2022-01-01 00:00:00+00', '2025-04-20 18:51:13.549488+00', '2025-04-20 18:51:13.549488+00', 1, NULL, NULL, '{}', '{}', 'Web', '{}');
 
 
 --
 -- Data for Name: forum_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_categories VALUES (1, 'Site', '2025-07-06 09:22:58.844352+00', 1);
+INSERT INTO public.forum_categories VALUES (1, 'Site', '2025-07-06 14:05:57.696561+00', 1);
 INSERT INTO public.forum_categories VALUES (3, 'Community', '2025-05-22 08:01:35.753162+00', 1);
 
 
@@ -198,7 +198,7 @@ INSERT INTO public.forum_categories VALUES (3, 'Community', '2025-05-22 08:01:35
 -- Data for Name: forum_sub_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_sub_categories VALUES (1, 1, 'Announcements', '2025-07-06 09:22:58.844352+00', 1, 1, 1, '{}');
+INSERT INTO public.forum_sub_categories VALUES (1, 1, 'Announcements', '2025-07-06 14:05:57.696561+00', 1, 1, 1, '{}');
 INSERT INTO public.forum_sub_categories VALUES (5, 3, 'Lounge', '2025-05-22 08:02:15.125336+00', 1, 1, 1, '{}');
 INSERT INTO public.forum_sub_categories VALUES (7, 3, 'Technology', '2025-05-22 08:05:01.192217+00', 1, 1, 1, '{}');
 
@@ -207,7 +207,7 @@ INSERT INTO public.forum_sub_categories VALUES (7, 3, 'Technology', '2025-05-22 
 -- Data for Name: forum_threads; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_threads VALUES (1, 1, 'Welcome to the site!', '2025-07-06 09:22:58.844352+00', 1, 1, false, false);
+INSERT INTO public.forum_threads VALUES (1, 1, 'Welcome to the site!', '2025-07-06 14:05:57.696561+00', 1, 1, false, false);
 INSERT INTO public.forum_threads VALUES (3, 5, 'Hello everyone', '2025-05-22 08:03:08.400255+00', 1, 1, false, false);
 INSERT INTO public.forum_threads VALUES (5, 7, 'Favorite OS for daily driving', '2025-05-22 08:06:06.724797+00', 1, 1, false, false);
 
@@ -216,7 +216,7 @@ INSERT INTO public.forum_threads VALUES (5, 7, 'Favorite OS for daily driving', 
 -- Data for Name: forum_posts; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_posts VALUES (1, 1, '2025-07-06 09:22:58.844352+00', '2025-07-06 09:22:58.844352+00', 1, 'Welcome!', false);
+INSERT INTO public.forum_posts VALUES (1, 1, '2025-07-06 14:05:57.696561+00', '2025-07-06 14:05:57.696561+00', 1, 'Welcome!', false);
 INSERT INTO public.forum_posts VALUES (3, 3, '2025-05-22 08:03:48.66391+00', '2025-05-22 08:03:48.66391+00', 1, 'Hello there, I just joined!', false);
 INSERT INTO public.forum_posts VALUES (4, 5, '2025-05-22 08:06:36.225458+00', '2025-05-22 08:06:36.225458+00', 2, 'I use arch btw :)', false);
 

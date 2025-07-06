@@ -121,15 +121,18 @@ a {
   }
 }
 
-.p-tabpanels {
-  padding: 0 !important;
-}
 .p-tabs {
-  border-radius: 10px;
+  border-radius: 7px;
   overflow: hidden;
 }
 .p-tab {
   padding: 10px !important;
+}
+.p-tabpanels {
+  padding: 0 !important;
+}
+.p-tabpanel {
+  line-height: 0 !important;
 }
 
 /* @media (min-width: 1024px) {

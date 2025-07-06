@@ -275,7 +275,7 @@ CREATE TYPE source_enum AS ENUM (
 CREATE TABLE edition_groups (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
-    name TEXT NOT NULL,
+    name TEXT,
     release_date TIMESTAMP WITH TIME ZONE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
