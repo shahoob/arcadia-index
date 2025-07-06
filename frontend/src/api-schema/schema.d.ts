@@ -881,7 +881,7 @@ export interface components {
             external_links: string[];
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -904,7 +904,7 @@ export interface components {
             external_links: string[];
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -922,7 +922,7 @@ export interface components {
             distributor?: string | null;
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -937,7 +937,7 @@ export interface components {
             distributor?: string | null;
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -1095,6 +1095,25 @@ export interface components {
         };
         HomePage: {
             recent_announcements: components["schemas"]["ForumPostAndThreadName"][];
+            stats: components["schemas"]["HomeStats"];
+        };
+        HomeStats: {
+            /** Format: int64 */
+            artists: number;
+            /** Format: int64 */
+            enabled_users: number;
+            /** Format: int64 */
+            titles: number;
+            /** Format: int64 */
+            torrents: number;
+            /** Format: int64 */
+            torrents_uploaded_today: number;
+            /** Format: int64 */
+            users_active_this_month: number;
+            /** Format: int64 */
+            users_active_this_week: number;
+            /** Format: int64 */
+            users_active_today: number;
         };
         Invitation: {
             /** Format: date-time */
@@ -1866,7 +1885,7 @@ export interface components {
             description?: string | null;
             distributor?: string | null;
             external_links: string[];
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];

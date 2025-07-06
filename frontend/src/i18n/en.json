@@ -221,6 +221,17 @@
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
     "complete_edition_group_first": "Create or select an edition group first"
   },
+  "statistics": {
+    "statistics": "Statistics",
+    "enabled_users": "Enabled users",
+    "users_active_today": "Users active today",
+    "users_active_this_week": "Users active this week",
+    "users_active_this_month": "Users active this month",
+    "torrents": "Torrents",
+    "torrents_uploaded_today": "Torrents uploaded today",
+    "titles": "Titles",
+    "artists": "Artists"
+  },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",
     "enter_at_least_x_tags": "Enter at least {0} tags",

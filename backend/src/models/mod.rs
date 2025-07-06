@@ -10,6 +10,7 @@ pub mod master_group;
 pub mod notification;
 pub mod peer;
 pub mod series;
+pub mod stats_repository;
 pub mod title_group;
 pub mod title_group_comment;
 pub mod title_group_subscription;
