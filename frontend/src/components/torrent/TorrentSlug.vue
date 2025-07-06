@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import type { TorrentRequest } from '@/services/api/torrentRequestService'
-import type { ContentType, TorrentHierarchyLite } from '@/services/api/torrentService'
+import type { ContentType, EditionGroupInfoLite, TorrentHierarchyLite } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 
@@ -22,6 +22,7 @@ const { t } = useI18n()
 
 const props = defineProps<{
   torrent: TorrentHierarchyLite | TorrentRequest
+  editionGroup?: EditionGroupInfoLite
   contentType: ContentType
 }>()
 
@@ -30,14 +31,20 @@ const computedSlug = computed<string[][]>(() => {
   const features: string[] = []
   const releaseGroup: string[] = []
 
-  if (props.torrent.container && props.contentType !== 'music') {
-    firstPart.push(props.torrent.container)
+  if (props.torrent.video_resolution) {
+    firstPart.push(props.torrent.video_resolution)
+  }
+  if (props.editionGroup?.source) {
+    firstPart.push(props.editionGroup.source)
   }
   if (props.torrent.video_codec) {
     firstPart.push(props.torrent.video_codec)
   }
-  if (props.torrent.video_resolution) {
-    firstPart.push(props.torrent.video_resolution)
+  if (props.editionGroup?.name) {
+    firstPart.push(props.editionGroup.name)
+  }
+  if (props.torrent.container && props.contentType !== 'music') {
+    firstPart.push(props.torrent.container)
   }
   if (props.torrent.audio_codec) {
     if (props.contentType !== 'music') {

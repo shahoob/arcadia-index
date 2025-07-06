@@ -20,7 +20,11 @@
           @click="preview ? null : toggleRow(slotProps.data)"
           class="cursor-pointer"
         >
-          <TorrentSlug :contentType="title_group.content_type" :torrent="slotProps.data" />
+          <TorrentSlug
+            :contentType="title_group.content_type"
+            :torrent="slotProps.data"
+            :editionGroup="sortBy === 'edition' ? undefined : getEditionGroupById(slotProps.data.edition_group_id)"
+          />
         </a>
       </template>
     </Column>
@@ -203,8 +207,11 @@ const toggleRow = (torrent: TorrentHierarchyLite) => {
 const purifyHtml = (html: string) => {
   return DOMPurify.sanitize(html)
 }
+const getEditionGroupById = (editionGroupId: number): EditionGroupInfoLite => {
+  return title_group.edition_groups.find((group: EditionGroupInfoLite) => group.id === editionGroupId) as EditionGroupInfoLite
+}
 const getEditionGroupSlugById = (editionGroupId: number): string => {
-  const editionGroup = title_group.edition_groups.find((group: EditionGroupInfoLite) => group.id === editionGroupId)
+  const editionGroup = getEditionGroupById(editionGroupId)
   return editionGroup ? getEditionGroupSlug(editionGroup) : ''
 }
 
