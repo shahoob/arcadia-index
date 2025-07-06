@@ -8,7 +8,8 @@
     <div class="sidebar">
       <ContentContainer :containerTitle="t('statistics.statistics')" v-if="stats">
         <div v-for="(value, statName) in stats" :key="statName">
-          {{ t(`statistics.${statName}`) }}: {{ value }} <span v-if="statName.includes('users_active')">({{ (value / stats.enabled_users) * 100 }}%)</span>
+          {{ t(`statistics.${statName}`) }}: {{ value }}
+          <span v-if="statName.includes('users_active')">({{ ((value / stats.enabled_users) * 100).toFixed(2) }}%)</span>
         </div>
       </ContentContainer>
     </div>
