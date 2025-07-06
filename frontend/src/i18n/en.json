@@ -221,6 +221,16 @@
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
     "complete_edition_group_first": "Create or select an edition group first"
   },
+  "entity": {
+    "entity": "Entity | Entities",
+    "role": {
+      "producer": "Producer",
+      "developer": "Developer",
+      "designer": "Designer",
+      "label": "Label",
+      "network": "Network"
+    }
+  },
   "statistics": {
     "statistics": "Statistics",
     "enabled_users": "Enabled users",

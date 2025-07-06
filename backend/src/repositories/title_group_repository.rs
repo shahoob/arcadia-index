@@ -162,6 +162,16 @@ pub async fn find_title_group(
                 JOIN artists a ON a.id = aa.artist_id
                 GROUP BY aa.title_group_id
             ),
+            entity_data AS (
+                SELECT
+                    ae.title_group_id,
+                    jsonb_agg(
+                        to_jsonb(ae) || jsonb_build_object('entity', to_jsonb(e))
+                    ) AS affiliated_entities
+                FROM affiliated_entities ae
+                JOIN entities e ON e.id = ae.entity_id
+                GROUP BY ae.title_group_id
+            ),
             comment_data AS (
                 SELECT
                     c.title_group_id,
@@ -204,6 +214,7 @@ pub async fn find_title_group(
                     'series', COALESCE(sd.series, '{}'::jsonb),
                     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
                     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
+                    'affiliated_entities', COALESCE(aed.affiliated_entities, '[]'::jsonb),
                     'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb),
                     'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb),
                     'is_subscribed', COALESCE(sud.is_subscribed, false),
@@ -212,6 +223,7 @@ pub async fn find_title_group(
             FROM title_groups tg
             LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
             LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
+            LEFT JOIN entity_data aed ON aed.title_group_id = tg.id
             LEFT JOIN comment_data cd ON cd.title_group_id = tg.id
             LEFT JOIN series_data sd ON sd.title_group_id = tg.id
             LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id

@@ -747,6 +747,20 @@ export interface components {
             artist_id: number;
             name: string;
         };
+        AffiliatedEntityHierarchy: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            entity: components["schemas"]["Entity"];
+            /** Format: int64 */
+            entity_id: number;
+            /** Format: int64 */
+            id: number;
+            roles: components["schemas"]["EntityRole"][];
+            /** Format: int64 */
+            title_group_id: number;
+        };
         Artist: {
             /** Format: date-time */
             created_at: string;
@@ -942,6 +956,19 @@ export interface components {
             release_date: string;
             source?: null | components["schemas"]["Source"];
         };
+        Entity: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            description: string;
+            /** Format: int64 */
+            id: number;
+            name: string;
+            pictures: string[];
+        };
+        /** @enum {string} */
+        EntityRole: "producer" | "developer" | "designer" | "label" | "network";
         ExternalDBData: {
             edition_group?: null | components["schemas"]["UserCreatedEditionGroup"];
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
@@ -1324,6 +1351,7 @@ export interface components {
         };
         TitleGroupAndAssociatedData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
+            affiliated_entities: components["schemas"]["AffiliatedEntityHierarchy"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;

@@ -534,7 +534,7 @@ CREATE TABLE entities (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    pictures TEXT [],
+    pictures TEXT[] NOT NULL,
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
@@ -544,6 +544,23 @@ CREATE TABLE entities (
     leechers_amount INT NOT NULL DEFAULT 0,
     snatches_amount INT NOT NULL DEFAULT 0,
     FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TYPE entity_role_enum AS ENUM (
+    'producer',
+    'developer',
+    'designer',
+    'label'
+);
+CREATE TABLE affiliated_entities (
+    id BIGSERIAL PRIMARY KEY,
+    title_group_id BIGINT NOT NULL,
+    entity_id BIGINT NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    roles entity_role_enum[] NOT NULL,
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE TYPE collage_category_enum AS ENUM (
     'Personal',

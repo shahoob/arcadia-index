@@ -33,6 +33,12 @@
         {{ t('artist.no_affiliated_artist_registered') }}
       </div>
     </ContentContainer>
+    <ContentContainer :container-title="t('entity.entity', 2)" v-if="title_group.affiliated_entities.length != 0">
+      <!-- <template #action><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template> -->
+      <div class="affiliated-entities">
+        <AffiliatedEntity class="affiliated-entity" v-for="entity in title_group.affiliated_entities" :key="entity.entity_id" :affiliatedEntity="entity" />
+      </div>
+    </ContentContainer>
     <ContentContainer
       :container-title="`${t('master_group.in_same_master_group')} (${title_group.master_group_id})`"
       v-if="title_group.in_same_master_group.length != 0"
@@ -62,6 +68,7 @@ import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
 import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
+import AffiliatedEntity from '../artist/AffiliatedEntity.vue'
 
 const { t } = useI18n()
 

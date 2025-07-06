@@ -11,7 +11,9 @@ use super::{
     series::SeriesLite,
     title_group_comment::TitleGroupCommentHierarchy,
 };
-use crate::models::torrent_request::TorrentRequestHierarchyLite;
+use crate::models::{
+    entity::AffiliatedEntityHierarchy, torrent_request::TorrentRequestHierarchyLite,
+};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "content_type_enum")]
@@ -253,6 +255,7 @@ pub struct TitleGroupAndAssociatedData {
     pub edition_groups: Vec<EditionGroupHierarchy>,
     pub series: SeriesLite,
     pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
+    pub affiliated_entities: Vec<AffiliatedEntityHierarchy>,
     pub title_group_comments: Vec<TitleGroupCommentHierarchy>,
     pub torrent_requests: Vec<TorrentRequestHierarchyLite>,
     pub is_subscribed: bool,
