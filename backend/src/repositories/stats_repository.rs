@@ -14,7 +14,8 @@ pub async fn find_home_stats(pool: &PgPool) -> Result<HomeStats> {
             (SELECT COUNT(*) FROM title_groups)::BIGINT AS "titles!",
             (SELECT COUNT(*) FROM torrents)::BIGINT AS "torrents!",
             (SELECT COUNT(*) FROM torrents WHERE created_at >= NOW() - INTERVAL '1 day')::BIGINT AS "torrents_uploaded_today!",
-            (SELECT COUNT(*) FROM artists)::BIGINT AS "artists!"
+            (SELECT COUNT(*) FROM artists)::BIGINT AS "artists!",
+            (SELECT COUNT(*) FROM entities)::BIGINT AS "entities!"
         "#,
     )
     .fetch_one(pool)

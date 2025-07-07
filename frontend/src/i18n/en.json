@@ -240,7 +240,8 @@
     "torrents": "Torrents",
     "torrents_uploaded_today": "Torrents uploaded today",
     "titles": "Titles",
-    "artists": "Artists"
+    "artists": "Artists",
+    "entities": "Entities"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

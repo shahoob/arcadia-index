@@ -1,6 +1,6 @@
 use crate::{
-    Arcadia, Result, models::stats_repository::find_home_stats,
-    repositories::forum_repository::find_first_thread_posts_in_sub_category,
+    Arcadia, Result, repositories::forum_repository::find_first_thread_posts_in_sub_category,
+    repositories::stats_repository::find_home_stats,
 };
 use actix_web::{HttpResponse, web};
 use chrono::{DateTime, Local};
@@ -32,6 +32,7 @@ pub struct HomeStats {
     pub torrents_uploaded_today: i64,
     pub titles: i64,
     pub artists: i64,
+    pub entities: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
