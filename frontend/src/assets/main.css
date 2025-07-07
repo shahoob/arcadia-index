@@ -6,7 +6,7 @@ body {
 }
 
 #app {
-  max-width: 2100px;
+  max-width: 2200px;
   margin: 0 auto;
   font-weight: normal;
 }
@@ -20,7 +20,7 @@ body {
 }
 
 #view-container {
-  width: 75%;
+  width: 77%;
 }
 
 a:hover {

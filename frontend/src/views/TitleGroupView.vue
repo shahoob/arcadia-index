@@ -142,6 +142,18 @@ const fetchTitleGroup = async () => {
 
   title_group.value = titleGroup
 
+  // add audio_codec to sorting options
+  const audioCodecInSortingOptions = selectableSortingOptions.includes('audio_codec')
+  const contentTypeShouldHaveAudioCodec = ['tv_show', 'movie', 'music'].includes(title_group.value.content_type)
+  if (contentTypeShouldHaveAudioCodec && !audioCodecInSortingOptions) selectableSortingOptions.unshift('audio_codec')
+  else if (!contentTypeShouldHaveAudioCodec && audioCodecInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('audio_codec'), 1)
+
+  // add video_resolution to sorting options
+  const resolutionInSortingOptions = selectableSortingOptions.includes('video_resolution')
+  const contentTypeShouldHaveResolution = ['tv_show', 'movie'].includes(title_group.value.content_type)
+  if (contentTypeShouldHaveResolution && !resolutionInSortingOptions) selectableSortingOptions.unshift('video_resolution')
+  else if (!contentTypeShouldHaveResolution && resolutionInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('resolution'), 1)
+
   /*
     For series, the title group name just holds the season name (i.e. 'Season 1')
     so we want to show the series name itself in the document title as well.
