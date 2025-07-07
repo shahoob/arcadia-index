@@ -2,17 +2,22 @@
 
 ### Developement is going well, but I am currently actively looking for other devs to hop into the project!
 
-<br/>
+</br>
+
+<p align="center">
+  <a href="https://discord.gg/amYWVk7pS3">
+    <img src="https://img.shields.io/badge/Discord-Chat-5865F2?logo=discord&logoColor=white" alt="Join Our Discord">
+  </a>
+  <a href="https://matrix.to/#/%23Arcadia-Solutions%3Amatrix.org?via=matrix.org">
+    <img src="https://img.shields.io/badge/Matrix-Chat-000?logo=matrix&logoColor=fff" alt="Join Our Matrix">
+  </a>
+</p>
+
+</br>
 
 Arcadia is a torrent site and tracker, aiming at providing an **easy to setup** and **configurable**, **highly organized** and **content agnostic** platform.
 
 The backend is built with Rust for speed and safety. The frontend is built with Typescript and VueJS, rendered client-side.
-
-<p align="center">
-  <a href="https://discord.gg/amYWVk7pS3">
-    <img height="35px" src="https://img.shields.io/badge/Discord-Chat-5865F2?logo=discord&logoColor=white" alt="Join Our Discord">
-  </a>
-</p>
 
 For setting up arcadia and/or contributing, have a look at [the docs](https://arcadia-solutions.github.io/arcadia/)!
 
