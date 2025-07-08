@@ -29,7 +29,10 @@ use crate::{
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
         title_group::{TitleGroupAndAssociatedData, TitleGroupHierarchy},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
-        torrent::{Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete, UploadedTorrent},
+        torrent::{
+            EditedTorrent, Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete,
+            UploadedTorrent,
+        },
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{
             TorrentRequest, TorrentRequestFill, TorrentRequestHierarchyLite,
@@ -60,6 +63,7 @@ use crate::{
         crate::handlers::artist_handler::remove_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::upload_torrent,
+        crate::handlers::torrent_handler::edit_torrent,
         crate::handlers::torrent_handler::get_registered_torrents,
         crate::handlers::torrent_handler::get_upload_information,
         crate::handlers::torrent_handler::find_torrents,
@@ -139,6 +143,7 @@ use crate::{
         TorrentSearchResults,
         TitleGroupAndAssociatedData,
         UploadedTorrent,
+        EditedTorrent,
         Torrent,
         TorrentToDelete,
         Profile,

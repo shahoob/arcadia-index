@@ -257,7 +257,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = String)]
     pub release_group: Option<Text<String>>,
     #[schema(value_type = String)]
-    pub description: Option<Text<String>>, // specific to the torrent
+    pub description: Option<Text<String>>,
     #[schema(value_type = bool)]
     pub uploaded_as_anonymous: Text<bool>,
     #[schema(value_type = String)]
@@ -265,26 +265,21 @@ pub struct UploadedTorrent {
     #[schema(value_type = String, format = Binary, content_media_type = "application/octet-stream")]
     pub torrent_file: Bytes,
     #[schema(value_type = String)]
-    pub languages: Text<String>, // (fallback to original language) (english, french, etc.)
+    pub languages: Text<String>,
     #[schema(value_type = String)]
     pub container: Text<String>,
-    // one of them should be given
     #[schema(value_type = i64)]
     pub edition_group_id: Text<i64>,
-    // pub edition_group: Option<UserCreatedEditionGroup>,
-    // ---- audio
     #[schema(value_type = i32)]
-    pub duration: Option<Text<i32>>, // in seconds
+    pub duration: Option<Text<i32>>,
     #[schema(value_type = AudioCodec)]
     pub audio_codec: Option<Text<AudioCodec>>,
     #[schema(value_type = i32)]
-    pub audio_bitrate: Option<Text<i32>>, // in kb/s
+    pub audio_bitrate: Option<Text<i32>>,
     #[schema(value_type = String)]
     pub audio_channels: Option<Text<AudioChannels>>,
     #[schema(value_type = AudioBitrateSampling)]
     pub audio_bitrate_sampling: Option<Text<AudioBitrateSampling>>,
-    // ---- audio
-    // ---- video
     #[schema(value_type = VideoCodec)]
     pub video_codec: Option<Text<VideoCodec>>,
     #[schema(value_type = String)]
@@ -292,7 +287,29 @@ pub struct UploadedTorrent {
     #[schema(value_type = String)]
     pub subtitle_languages: Text<String>,
     #[schema(value_type = String)]
-    pub video_resolution: Option<Text<String>>, // ---- video
+    pub video_resolution: Option<Text<String>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct EditedTorrent {
+    pub id: i64,
+    pub edition_group_id: i64,
+    pub release_name: Option<String>,
+    pub release_group: Option<String>,
+    pub description: Option<String>,
+    pub uploaded_as_anonymous: bool,
+    pub mediainfo: String,
+    pub container: String,
+    pub languages: Vec<Language>,
+    pub duration: Option<i32>,
+    pub audio_codec: Option<AudioCodec>,
+    pub audio_bitrate: Option<i32>,
+    pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
+    pub audio_channels: Option<AudioChannels>,
+    pub video_codec: Option<VideoCodec>,
+    pub features: Option<Vec<Features>>,
+    pub subtitle_languages: Vec<Language>,
+    pub video_resolution: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]

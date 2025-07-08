@@ -164,6 +164,12 @@ pub enum Error {
     #[error("dottorrent file not found")]
     DottorrentFileNotFound,
 
+    #[error("torrent not found")]
+    TorrentNotFound,
+
+    #[error("error while updating torrent: '{0}'")]
+    ErrorWhileUpdatingTorrent(String),
+
     #[error("could not save torrent file in path: '{0}'\n'{1}'")]
     CouldNotSaveTorrentFile(String, String),
 

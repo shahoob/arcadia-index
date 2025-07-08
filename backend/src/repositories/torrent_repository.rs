@@ -2,7 +2,8 @@ use crate::{
     Error, Result,
     models::{
         torrent::{
-            Features, Torrent, TorrentMinimal, TorrentSearch, TorrentToDelete, UploadedTorrent,
+            EditedTorrent, Features, Torrent, TorrentMinimal, TorrentSearch, TorrentToDelete,
+            UploadedTorrent,
         },
         user::User,
     },
@@ -168,6 +169,108 @@ pub async fn create_torrent(
     tx.commit().await?;
 
     Ok(uploaded_torrent)
+}
+
+pub async fn find_torrent(pool: &PgPool, torrent_id: i64) -> Result<Torrent> {
+    let torrent = sqlx::query_as!(
+        Torrent,
+        r#"
+        SELECT
+            id, upload_factor, download_factor, seeders, leechers,
+            completed, snatched, edition_group_id, created_at, updated_at,
+            created_by_id,
+            languages AS "languages!: _",
+            release_name, release_group, description, file_amount_per_type,
+            uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked,
+            container, size, duration,
+            audio_codec AS "audio_codec: _",
+            audio_bitrate,
+            audio_bitrate_sampling AS "audio_bitrate_sampling: _",
+            audio_channels AS "audio_channels: _",
+            video_codec AS "video_codec: _",
+            features AS "features!: _",
+            subtitle_languages AS "subtitle_languages!: _",
+            video_resolution
+        FROM torrents
+        WHERE id = $1
+        "#,
+        torrent_id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|_| Error::TorrentNotFound)?;
+
+    Ok(torrent)
+}
+
+pub async fn update_torrent(
+    pool: &PgPool,
+    edited_torrent: &EditedTorrent,
+    torrent_id: i64,
+) -> Result<Torrent> {
+    let updated_torrent = sqlx::query_as!(
+        Torrent,
+        r#"
+        UPDATE torrents
+        SET
+            release_name = $2,
+            release_group = $3,
+            description = $4,
+            uploaded_as_anonymous = $5,
+            mediainfo = $6,
+            container = $7,
+            duration = $8,
+            audio_codec = $9,
+            audio_bitrate = $10,
+            audio_bitrate_sampling = $11,
+            audio_channels = $12,
+            video_codec = $13,
+            features = $14,
+            subtitle_languages = $15,
+            video_resolution = $16,
+            languages = $17,
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING
+            id, upload_factor, download_factor, seeders, leechers,
+            completed, snatched, edition_group_id, created_at, updated_at,
+            created_by_id,
+            languages AS "languages!: _",
+            release_name, release_group, description, file_amount_per_type,
+            uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked,
+            container, size, duration,
+            audio_codec AS "audio_codec: _",
+            audio_bitrate,
+            audio_bitrate_sampling AS "audio_bitrate_sampling: _",
+            audio_channels AS "audio_channels: _",
+            video_codec AS "video_codec: _",
+            features AS "features!: _",
+            subtitle_languages AS "subtitle_languages!: _",
+            video_resolution
+        "#,
+        torrent_id,
+        edited_torrent.release_name,
+        edited_torrent.release_group,
+        edited_torrent.description,
+        edited_torrent.uploaded_as_anonymous,
+        edited_torrent.mediainfo,
+        edited_torrent.container,
+        edited_torrent.duration,
+        edited_torrent.audio_codec as _,
+        edited_torrent.audio_bitrate,
+        edited_torrent.audio_bitrate_sampling as _,
+        edited_torrent.audio_channels as _,
+        edited_torrent.video_codec as _,
+        edited_torrent.features as _,
+        edited_torrent.subtitle_languages as _,
+        edited_torrent.video_resolution,
+        edited_torrent.languages as _
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|e| Error::ErrorWhileUpdatingTorrent(e.to_string()))?;
+
+    Ok(updated_torrent)
 }
 
 pub struct GetTorrentResult {
