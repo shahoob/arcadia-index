@@ -219,7 +219,8 @@
     "multi_language": "Multi-Language",
     "trumpable": "Trumpable",
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
-    "complete_edition_group_first": "Create or select an edition group first"
+    "complete_edition_group_first": "Create or select an edition group first",
+    "edit_torrent": "Edit torrent"
   },
   "entity": {
     "entity": "Entity | Entities",

@@ -557,7 +557,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["download_dottorrent_file"];
-        put?: never;
+        put: operations["edit_torrent"];
         post: operations["upload_torrent"];
         delete: operations["delete_torrent"];
         options?: never;
@@ -881,6 +881,30 @@ export interface components {
             /** Format: int64 */
             id: number;
         };
+        EditedTorrent: {
+            /** Format: int32 */
+            audio_bitrate?: number | null;
+            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
+            audio_channels?: null | components["schemas"]["AudioChannels"];
+            audio_codec?: null | components["schemas"]["AudioCodec"];
+            container: string;
+            description?: string | null;
+            /** Format: int32 */
+            duration?: number | null;
+            /** Format: int64 */
+            edition_group_id: number;
+            features?: components["schemas"]["Features"][] | null;
+            /** Format: int64 */
+            id: number;
+            languages: components["schemas"]["Language"][];
+            mediainfo: string;
+            release_group?: string | null;
+            release_name?: string | null;
+            subtitle_languages: components["schemas"]["Language"][];
+            uploaded_as_anonymous: boolean;
+            video_codec?: null | components["schemas"]["VideoCodec"];
+            video_resolution?: string | null;
+        };
         EditionGroup: {
             additional_information: {
                 [key: string]: string;
@@ -1129,6 +1153,8 @@ export interface components {
             artists: number;
             /** Format: int64 */
             enabled_users: number;
+            /** Format: int64 */
+            entities: number;
             /** Format: int64 */
             titles: number;
             /** Format: int64 */
@@ -2775,6 +2801,7 @@ export interface operations {
         parameters: {
             query: {
                 name: string;
+                content_type?: null | components["schemas"]["ContentType"];
             };
             header?: never;
             path?: never;
@@ -3017,6 +3044,30 @@ export interface operations {
             };
         };
     };
+    edit_torrent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditedTorrent"];
+            };
+        };
+        responses: {
+            /** @description Successfully edited the torrent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Torrent"];
+                };
+            };
+        };
+    };
     upload_torrent: {
         parameters: {
             query?: never;
@@ -3031,7 +3082,7 @@ export interface operations {
         };
         responses: {
             /** @description Successfully uploaded the torrent */
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

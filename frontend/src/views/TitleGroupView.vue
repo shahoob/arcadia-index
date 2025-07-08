@@ -154,6 +154,12 @@ const fetchTitleGroup = async () => {
   if (contentTypeShouldHaveResolution && !resolutionInSortingOptions) selectableSortingOptions.unshift('video_resolution')
   else if (!contentTypeShouldHaveResolution && resolutionInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('resolution'), 1)
 
+  titleGroupStore.id = title_group.value.id
+  titleGroupStore.original_release_date = title_group.value.original_release_date
+  titleGroupStore.name = title_group.value.name
+  titleGroupStore.edition_groups = title_group.value.edition_groups
+  titleGroupStore.content_type = title_group.value.content_type
+
   /*
     For series, the title group name just holds the season name (i.e. 'Season 1')
     so we want to show the series name itself in the document title as well.
@@ -163,11 +169,6 @@ const fetchTitleGroup = async () => {
 
 const uploadTorrent = () => {
   if (title_group.value) {
-    titleGroupStore.id = title_group.value.id
-    titleGroupStore.original_release_date = title_group.value.original_release_date
-    titleGroupStore.name = title_group.value.name
-    titleGroupStore.edition_groups = title_group.value.edition_groups
-    titleGroupStore.content_type = title_group.value.content_type
     router.push({ path: '/upload' })
   }
 }

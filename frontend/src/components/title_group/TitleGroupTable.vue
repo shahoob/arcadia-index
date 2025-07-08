@@ -39,7 +39,12 @@
         <i v-tooltip.top="t('torrent.download')" class="action pi pi-download" @click="downloadTorrent(slotProps.data, title_group.name)" />
         <i v-tooltip.top="t('general.report')" class="action pi pi-flag" @click="reportTorrent(slotProps.data.id)" />
         <i v-tooltip.top="t('torrent.copy_permalink')" class="action pi pi-link" />
-        <i v-tooltip.top="t('general.edit')" class="action pi pi-pen-to-square" />
+        <i
+          v-if="user.id === slotProps.data.created_by_id || user.class === 'staff'"
+          v-tooltip.top="t('general.edit')"
+          @click="editTorrent(slotProps.data)"
+          class="action pi pi-pen-to-square"
+        />
       </template>
     </Column>
     <Column :header="t('torrent.size')">
@@ -135,7 +140,10 @@
     </template>
   </DataTable>
   <Dialog closeOnEscape modal :header="t('torrent.report_torrent')" v-model:visible="reportTorrentDialogVisible">
-    <ReportTorrentDialog :torrentId="reportingTorrentId" @reported="torrentReported" />
+    <ReportTorrentDialog :torrentId="torrentIdBeingReported" @reported="torrentReported" />
+  </Dialog>
+  <Dialog closeOnEscape modal :header="t('torrent.edit_torrent')" v-model:visible="editTorrentDialogVisible">
+    <CreateOrEditTorrent v-if="torrentBeingEdited !== null" :initialTorrent="torrentBeingEdited" @done="torrentEdited" />
   </Dialog>
 </template>
 
@@ -155,6 +163,7 @@ import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
 import Dialog from 'primevue/dialog'
 import {
   downloadTorrent,
+  type EditedTorrent,
   type EditionGroupHierarchyLite,
   type EditionGroupInfoLite,
   type TitleGroupAndAssociatedData,
@@ -166,6 +175,8 @@ import { bytesToReadable, getEditionGroupSlug, timeAgo } from '@/services/helper
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
+import CreateOrEditTorrent from '../torrent/CreateOrEditTorrent.vue'
+import { useUserStore } from '@/stores/user'
 
 interface Props {
   title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
@@ -177,9 +188,12 @@ const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>(
 const { t } = useI18n()
 
 const reportTorrentDialogVisible = ref(false)
+const editTorrentDialogVisible = ref(false)
+const torrentBeingEdited = ref<EditedTorrent | null>(null)
 const expandedRows = ref<TorrentHierarchyLite[]>([])
-const reportingTorrentId = ref(0)
+const torrentIdBeingReported = ref(0)
 const route = useRoute()
+const user = useUserStore()
 
 const torrentReported = (torrentReport: TorrentReport) => {
   reportTorrentDialogVisible.value = false
@@ -197,8 +211,12 @@ const torrentReported = (torrentReport: TorrentReport) => {
   }
 }
 const reportTorrent = (id: number) => {
-  reportingTorrentId.value = id
+  torrentIdBeingReported.value = id
   reportTorrentDialogVisible.value = true
+}
+const editTorrent = (torrent: EditedTorrent) => {
+  torrentBeingEdited.value = torrent
+  editTorrentDialogVisible.value = true
 }
 const toggleRow = (torrent: TorrentHierarchyLite) => {
   if (!expandedRows.value.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {
@@ -257,6 +275,15 @@ const sortedTorrents = computed(() => {
 
   return flatTorrents
 })
+const torrentEdited = (editedTorrent: EditedTorrent) => {
+  title_group.edition_groups.forEach((eg) => {
+    const index = eg.torrents.findIndex((t) => t.id === editedTorrent.id)
+    if (index !== -1) {
+      eg.torrents[index] = { ...eg.torrents[index], ...editedTorrent }
+    }
+  })
+  editTorrentDialogVisible.value = false
+}
 const groupBy = computed(() => {
   switch (sortBy) {
     case 'edition':

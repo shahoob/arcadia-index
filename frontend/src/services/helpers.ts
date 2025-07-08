@@ -72,7 +72,7 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
 
   return attributes.join(' / ')
 }
-export const getFeatures = (contentType: string, format: string = '', source: Source | null = null): Features[] => {
+export const getFeatures = (contentType: ContentType, format: string = '', source: Source | null = null): Features[] => {
   let features: Features[] = []
   if (source === 'Physical Book') {
     features = features.concat(['OCR'])
@@ -80,7 +80,7 @@ export const getFeatures = (contentType: string, format: string = '', source: So
   if ((contentType == 'book' && format === 'audiobook') || contentType == 'music') {
     features = features.concat(['Cue', 'Booklet'])
   } else if (contentType == 'tv_show' || contentType == 'movie') {
-    features.concat(['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D'])
+    features = features.concat(['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D'])
   }
   return features
 }

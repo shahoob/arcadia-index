@@ -64,6 +64,8 @@ export type UploadedTorrent = components['schemas']['UploadedTorrent']
 
 export type Torrent = components['schemas']['Torrent']
 
+export type EditedTorrent = components['schemas']['EditedTorrent']
+
 export type TorrentHierarchyLite = components['schemas']['TorrentHierarchyLite']
 
 export type TorrentHierarchy = components['schemas']['TorrentHierarchy']
@@ -116,6 +118,10 @@ export type Features = components['schemas']['Features']
 
 export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => {
   return (await api.post<TorrentReport>('/report/torrent', torrentReport)).data
+}
+
+export const editTorrent = async (editedTorrent: EditedTorrent) => {
+  return (await api.put<Torrent>('/torrent', editedTorrent)).data
 }
 
 export type UploadInformation = components['schemas']['UploadInformation']

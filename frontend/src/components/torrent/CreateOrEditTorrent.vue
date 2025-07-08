@@ -173,7 +173,7 @@
         <InputText v-model="torrentForm.audio_bitrate" size="small" name="audio_bitrate" />
         <label for="audio_codec">Audio bitrate (in kb/s)</label>
       </FloatLabel> -->
-        <FormField v-slot="$field" name="torrent_file" :initialValue="torrentForm.torrent_file" class="torrent-file">
+        <FormField v-if="!initialTorrent" v-slot="$field" name="torrent_file" :initialValue="torrentForm.torrent_file">
           <FileUpload
             ref="torrentFile"
             accept=".torrent"
@@ -192,7 +192,7 @@
             {{ $form.torrent_file.error?.message }}
           </Message>
         </FormField>
-        <div class="flex align-items-center">
+        <div class="flex align-items-center upload-as-anonymous">
           <Checkbox v-model="torrentForm.uploaded_as_anonymous" name="anonymous" binary />
           <label for="anonymous" style="margin-left: 5px"> {{ t('torrent.upload_as_anonymous') }}</label>
         </div>
@@ -205,8 +205,8 @@
           size="small"
           class="validate-button"
           :loading="uploadingTorrent"
-          :disabled="editionGroupStore.id === 0"
-          v-tooltip.top="{ disabled: editionGroupStore.id !== 0, value: t('torrent.complete_edition_group_first') }"
+          :disabled="validateButtonDisabled"
+          v-tooltip.top="{ disabled: !validateButtonDisabled, value: t('torrent.complete_edition_group_first') }"
         />
       </div>
     </div>
@@ -214,7 +214,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
@@ -228,17 +228,19 @@ import { FormField, type FormResolverOptions, type FormSubmitEvent } from '@prim
 import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
 import { useEditionGroupStore } from '@/stores/editionGroup'
-import { uploadTorrent, type Torrent, type UploadedTorrent } from '@/services/api/torrentService'
+import { uploadTorrent, editTorrent, type Torrent, type UploadedTorrent, type EditedTorrent } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useI18n } from 'vue-i18n'
 import { getFeatures, getLanguages } from '@/services/helpers'
 import { nextTick } from 'vue'
 import type { VNodeRef } from 'vue'
+import _ from 'lodash'
 
 const formRef = ref<VNodeRef | null>(null)
 const torrentFile = ref({ files: [] as unknown[] })
 const torrentForm = ref({
-  edition_group_id: '',
+  id: 0,
+  edition_group_id: 0,
   release_name: '',
   release_group: '',
   mediainfo: '',
@@ -287,6 +289,9 @@ const editionGroupStore = ref(useEditionGroupStore())
 
 const { t } = useI18n()
 
+const props = defineProps<{
+  initialTorrent?: EditedTorrent
+}>()
 const emit = defineEmits<{
   done: [torrent: Torrent]
 }>()
@@ -351,16 +356,44 @@ const mediainfoUpdated = async () => {
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true
-  torrentForm.value.edition_group_id = editionGroupStore.value.id.toString()
-  uploadTorrent(torrentForm.value)
-    .then((data) => {
-      emit('done', data)
-    })
-    .finally(() => {
-      uploadingTorrent.value = false
-    })
+  if (props.initialTorrent) {
+    torrentForm.value.id = props.initialTorrent.id
+    editTorrent(torrentForm.value as EditedTorrent)
+      .then((data) => {
+        emit('done', data)
+      })
+      .finally(() => {
+        uploadingTorrent.value = false
+      })
+  } else {
+    torrentForm.value.edition_group_id = editionGroupStore.value.id
+    uploadTorrent(torrentForm.value)
+      .then((data) => {
+        emit('done', data)
+      })
+      .finally(() => {
+        uploadingTorrent.value = false
+      })
+  }
 }
-onMounted(() => {})
+const validateButtonDisabled = computed(() => {
+  return editionGroupStore.value.id === 0 && !props.initialTorrent
+})
+onMounted(async () => {
+  if (props.initialTorrent) {
+    Object.assign(torrentForm.value, _.pick(props.initialTorrent, Object.keys(torrentForm.value)))
+    await nextTick()
+    // some field is apparently undefined, the whole form seems to still get populated though
+    // formRef.value?.setValues(torrentForm.value)
+    Object.keys(torrentForm.value).forEach((key) => {
+      try {
+        formRef.value?.setFieldValue(key, torrentForm.value[key as keyof typeof torrentForm.value])
+      } catch {
+        // some fields fail because they are not in the primevueform, but they are in torrentForm
+      }
+    })
+  }
+})
 </script>
 <style scoped>
 #create-torrent {
@@ -385,12 +418,8 @@ onMounted(() => {})
 .select {
   min-width: 200px;
 }
-/* .file-upload {
-  max-width: 300px;
-  margin-bottom: 100px !important;
-} */
-.torrent-file {
-  margin-bottom: 20px;
+.upload-as-anonymous {
+  margin-top: 20px;
 }
 .validate-button {
   margin-top: 20px;
