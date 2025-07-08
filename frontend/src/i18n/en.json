@@ -247,6 +247,7 @@
     "write_more_than_x_chars": "Write more than {0} characters",
     "enter_at_least_x_tags": "Enter at least {0} tags",
     "select_date": "Select a date",
+    "select_content_type": "Select a content type",
     "select_category": "Select a category",
     "select_platform": "Select a platform",
     "select_language": "Select a language",

@@ -15,7 +15,8 @@
         v-model="titleGroupForm.content_type"
         @update:model-value="(content_type) => (titleGroupStore.content_type = content_type)"
         inputId="content_type"
-        :options="selectableContentTypes"
+        name="content_type"
+        :options="getSelectableContentTypes()"
         class="select"
         size="small"
       >
@@ -30,29 +31,9 @@
       </Select>
       <label for="content_type">{{ t('title_group.content_type.content_type') }}</label>
     </FloatLabel>
-    <div class="external-db-inputs-wrapper">
-      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'movie'">
-        <ExternalDBSearchBar inputPlaceholder="TMDB url" database="tmdb" @dataFound="externalDBDataFound" />
-        <!-- or
-            <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/movie" @dataFound="externalDBDataFound" /> -->
-      </div>
-      <!-- <div class="external-db-inputs" v-if="content_type == 'tv_show'">
-            <ExternalDBSearchBar inputPlaceholder="TVDB id" database="tvdb" @dataFound="externalDBDataFound" />
-            or
-            <ExternalDBSearchBar inputPlaceholder="TMDB id" database="tmdb/tv" @dataFound="externalDBDataFound" />
-            or
-            <ExternalDBSearchBar inputPlaceholder="IMDB id" database="imdb/tv" @dataFound="externalDBDataFound" />
-          </div> -->
-      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'music'">
-        <ExternalDBSearchBar inputPlaceholder="Musicbrainz url" database="musicbrainz" @dataFound="externalDBDataFound" />
-        <!-- or -->
-        <!-- <ExternalDBSearchBar inputPlaceholder="Discogs id" database="discogs" @dataFound="externalDBDataFound" /> -->
-      </div>
-      <div class="external-db-inputs" v-if="titleGroupForm.content_type == 'book'">
-        <ExternalDBSearchBar inputPlaceholder="isbn" database="isbn" @dataFound="externalDBDataFound" />
-        <ExternalDBSearchBar inputPlaceholder="Comic-Vine url" database="comic_vine" @dataFound="externalDBDataFound" />
-      </div>
-    </div>
+    <Message v-if="$form.content_type?.invalid" severity="error" size="small" variant="simple">
+      {{ $form.content_type.error?.message }}
+    </Message>
     <div class="name">
       <FloatLabel>
         <InputText size="small" v-model="titleGroupForm.name" name="name" class="name-input" />
@@ -229,30 +210,24 @@ import {
   type TitleGroup,
   type TitleGroupCategory,
   type TitleGroupLite,
-  type UserCreatedEditionGroup,
   type UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
-import { getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
+import { getSelectableContentTypes, getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
 import { watch } from 'vue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { onMounted } from 'vue'
 import type { VNodeRef } from 'vue'
-import ExternalDBSearchBar from './ExternalDBSearchBar.vue'
-import type { ExternalDBData } from '@/services/api/externalDatabasesService'
 import EditAffiliatedArtists from '../artist/EditAffiliatedArtists.vue'
 
 interface Props {
-  initialTitleGroupForm: UserCreatedTitleGroup | null
-  initialTitleGroupName: string
+  initialTitleGroupForm: Partial<UserCreatedTitleGroupForm> | null
 }
-const { initialTitleGroupForm = null, initialTitleGroupName = '' } = defineProps<Props>()
+const { initialTitleGroupForm = null } = defineProps<Props>()
 const titleGroupStore = ref(useTitleGroupStore())
 
 const sendingTitleGroup = ref(false)
 
-const selectableContentTypes: ContentType[] = ['movie', 'video', 'tv_show', 'music', 'podcast', 'software', 'book', 'collection']
-type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
+export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
   content_type: ContentType | null
 }
 const titleGroupForm = ref<UserCreatedTitleGroupForm>({
@@ -303,7 +278,6 @@ const { t } = useI18n()
 
 const emit = defineEmits<{
   done: [titleGroup: TitleGroup | TitleGroupLite]
-  editionGroupDataFound: [editionGroup: UserCreatedEditionGroup]
 }>()
 
 // type FormErrors = {
@@ -314,7 +288,7 @@ const emit = defineEmits<{
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedTitleGroup, { message: string }[]>> = {}
 
-  if (!titleGroupForm.value.content_type) {
+  if (titleGroupForm.value.content_type === null) {
     errors.content_type = [{ message: t('error.select_content_type') }]
     return { errors }
   }
@@ -438,16 +412,8 @@ const removeScreenshot = (index: number) => {
   titleGroupForm.value.screenshots.splice(index, 1)
 }
 
-const externalDBDataFound = (data: ExternalDBData) => {
-  if (data.title_group) {
-    updateTitleGroupForm(data.title_group)
-  }
-  if (data.edition_group) {
-    emit('editionGroupDataFound', data.edition_group)
-  }
-}
-const updateTitleGroupForm = (form: UserCreatedTitleGroup) => {
-  if (form.affiliated_artists.length === 0) {
+const updateTitleGroupForm = (form: Partial<UserCreatedTitleGroupForm>) => {
+  if (form.affiliated_artists && form.affiliated_artists.length === 0) {
     form.affiliated_artists = titleGroupForm.value.affiliated_artists
   }
   titleGroupForm.value = {
@@ -472,22 +438,15 @@ watch(
   },
   { immediate: true },
 )
-onMounted(() => {
-  titleGroupForm.value.name = initialTitleGroupName
-  formRef.value?.setFieldValue('name', initialTitleGroupName)
-})
+// onMounted(() => {
+//   titleGroupForm.value.name = initialTitleGroupName
+//   formRef.value?.setFieldValue('name', initialTitleGroupName)
+// })
 </script>
 <style scoped>
 .description {
   width: 100%;
   height: 10em;
-}
-.external-db-inputs {
-  display: flex;
-  align-items: center;
-  .external-db-input {
-    margin-right: 10px;
-  }
 }
 .name {
   width: 50%;

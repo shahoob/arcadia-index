@@ -90,6 +90,10 @@ export const getLanguages = () => {
 export const getPlatforms = () => {
   return ['Linux', 'MacOS', 'Windows']
 }
+
+export const getSelectableContentTypes = (): ContentType[] => {
+  return ['movie', 'video', 'tv_show', 'music', 'podcast', 'software', 'book', 'collection']
+}
 export const getSources = (contentType: ContentType) => {
   const sources = ['Web']
   switch (contentType) {

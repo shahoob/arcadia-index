@@ -28,8 +28,8 @@ export const getTitleGroupLite = async (id: number): Promise<TitleGroupLite> => 
   return (await api.get<TitleGroupLite>('/title-group/lite?id=' + id)).data
 }
 
-export const searchTitleGroupLite = async (name: string): Promise<TitleGroupHierarchyLite[]> => {
-  return (await api.get<TitleGroupHierarchyLite[]>('/search/title-group/lite?name=' + name)).data
+export const searchTitleGroupLite = async (name: string, contentType: ContentType | null): Promise<TitleGroupHierarchyLite[]> => {
+  return (await api.get<TitleGroupHierarchyLite[]>('/search/title-group/lite?name=' + name + (contentType ? `&content_type=${contentType}` : ''))).data
 }
 
 export type UserCreatedTitleGroup = components['schemas']['UserCreatedTitleGroup']

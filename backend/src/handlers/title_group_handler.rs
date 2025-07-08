@@ -6,7 +6,8 @@ use crate::{
     Arcadia, Result,
     models::{
         title_group::{
-            TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite, UserCreatedTitleGroup,
+            ContentType, TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite,
+            UserCreatedTitleGroup,
         },
         user::User,
     },
@@ -81,7 +82,7 @@ pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None, 1).await?;
+    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None, &None, 1).await?;
 
     Ok(HttpResponse::Ok().json(title_group))
 }
@@ -89,6 +90,7 @@ pub async fn get_title_group_info_lite(
 #[derive(Debug, Deserialize, IntoParams)]
 pub struct SearchTitleGroupLiteQuery {
     name: String,
+    content_type: Option<ContentType>,
 }
 
 #[utoipa::path(
@@ -103,7 +105,9 @@ pub async fn search_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<SearchTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_groups = find_title_group_info_lite(&arc.pool, None, Some(&query.name), 5).await?;
+    let title_groups =
+        find_title_group_info_lite(&arc.pool, None, Some(&query.name), &query.content_type, 5)
+            .await?;
 
     Ok(HttpResponse::Ok().json(title_groups))
 }

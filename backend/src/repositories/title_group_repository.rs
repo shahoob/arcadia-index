@@ -1,7 +1,7 @@
 use crate::{
     Error, Result,
     models::{
-        title_group::{TitleGroup, UserCreatedTitleGroup},
+        title_group::{ContentType, TitleGroup, UserCreatedTitleGroup},
         user::User,
     },
 };
@@ -239,6 +239,7 @@ pub async fn find_title_group_info_lite(
     pool: &PgPool,
     title_group_id: Option<i64>,
     title_group_name: Option<&str>,
+    title_group_content_type: &Option<ContentType>,
     limit: u32,
 ) -> Result<Value> {
     let title_groups = sqlx::query!(
@@ -266,12 +267,14 @@ pub async fn find_title_group_info_lite(
             LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
             WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
                OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
+               AND ($3::content_type_enum IS NULL OR tg.content_type = $3::content_type_enum)
             GROUP BY tg.id
-            LIMIT $3
+            LIMIT $4
         ) AS subquery;
         "#,
         title_group_id,
         title_group_name,
+        title_group_content_type as &Option<ContentType>,
         limit as i32
     )
     .fetch_one(pool)
