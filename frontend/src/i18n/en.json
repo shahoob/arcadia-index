@@ -220,7 +220,8 @@
     "trumpable": "Trumpable",
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
     "complete_edition_group_first": "Create or select an edition group first",
-    "edit_torrent": "Edit torrent"
+    "edit_torrent": "Edit torrent",
+    "latest_uploads": "Latest uploads"
   },
   "entity": {
     "entity": "Entity | Entities",

@@ -245,32 +245,38 @@ pub async fn find_title_group_info_lite(
     let title_groups = sqlx::query!(
         r#"
         SELECT jsonb_agg(data)
-        FROM (
-            SELECT jsonb_build_object(
-                'id', tg.id, 'content_type', tg.content_type, 'name', tg.name, 'platform', tg.platform, 'covers', tg.covers,
-                'original_release_date', tg.original_release_date,
-                'edition_groups', COALESCE(
-                    jsonb_agg(
-                        jsonb_build_object(
-                            'id', eg.id,
-                            'name', eg.name,
-                            'release_date', eg.release_date,
-                            'distributor', eg.distributor,
-                            'source', eg.source,
-                            'additional_information', eg.additional_information
-                        )
-                    ) FILTER (WHERE eg.id IS NOT NULL),
-                    '[]'::jsonb
-                )
-            ) as data
-            FROM title_groups tg
-            LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
-            WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
-               OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
-               AND ($3::content_type_enum IS NULL OR tg.content_type = $3::content_type_enum)
-            GROUP BY tg.id
-            LIMIT $4
-        ) AS subquery;
+            FROM (
+                SELECT jsonb_build_object(
+                    'id', tg.id, 'content_type', tg.content_type, 'name', tg.name, 'platform', tg.platform, 'covers', tg.covers,
+                    'original_release_date', tg.original_release_date,
+                    'edition_groups', COALESCE(
+                        jsonb_agg(
+                            jsonb_build_object(
+                                'id', eg.id,
+                                'name', eg.name,
+                                'release_date', eg.release_date,
+                                'distributor', eg.distributor,
+                                'source', eg.source,
+                                'additional_information', eg.additional_information
+                            )
+                        ) FILTER (WHERE eg.id IS NOT NULL),
+                        '[]'::jsonb
+                    )
+                ) as data
+                FROM title_groups tg
+                LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
+                LEFT JOIN (
+                    SELECT edition_group_id, MAX(created_at) as created_at
+                    FROM torrents
+                    GROUP BY edition_group_id
+                ) AS latest_torrent ON latest_torrent.edition_group_id = eg.id
+                WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
+                    OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
+                    AND ($3::content_type_enum IS NULL OR tg.content_type = $3::content_type_enum)
+                GROUP BY tg.id
+                ORDER BY MAX(latest_torrent.created_at) DESC
+                LIMIT $4
+            ) AS subquery;
         "#,
         title_group_id,
         title_group_name,

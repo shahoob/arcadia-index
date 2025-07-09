@@ -1145,6 +1145,7 @@ export interface components {
             sent_at: string;
         };
         HomePage: {
+            latest_uploads: components["schemas"]["TitleGroupLite"][];
             recent_announcements: components["schemas"]["ForumPostAndThreadName"][];
             stats: components["schemas"]["HomeStats"];
         };

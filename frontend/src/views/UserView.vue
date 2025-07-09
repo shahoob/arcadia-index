@@ -22,8 +22,20 @@
       <ContentContainer v-if="peers" :containerTitle="t('torrent.clients_and_ips')" class="section">
         <PeerTable :peers />
       </ContentContainer>
-      <RelatedTorrents :titleGroups="uploadedTorrents" class="section" :userId="user.id" type="uploads" />
-      <RelatedTorrents :titleGroups="snatchedTorrents" class="section" :userId="user.id" type="snatches" />
+      <LatestTorrents
+        :titleGroups="uploadedTorrents"
+        class="section"
+        :containerTitle="t('user.uploads')"
+        :containerTitleLink="`/torrents?created_by_id=${user.id}`"
+        type="uploads"
+      />
+      <LatestTorrents
+        :titleGroups="snatchedTorrents"
+        class="section"
+        :containerTitle="t('user.snatches')"
+        :containerTitleLink="`/torrents?snatched_by_id=${user.id}`"
+        type="snatches"
+      />
     </div>
     <UserSidebar :user class="sidebar" />
   </div>
@@ -36,7 +48,6 @@
 import { ref, onMounted } from 'vue'
 import { getMe, getUser, type Peer, type PublicUser, type User } from '@/services/api/userService'
 import PeerTable from '@/components/user/PeerTable.vue'
-import RelatedTorrents from '@/components/user/RelatedTorrents.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
 import UserSidebar from '@/components/user/UserSidebar.vue'
@@ -47,6 +58,7 @@ import WarnUserDialog from '@/components/user/WarnUserDialog.vue'
 import { Dialog } from 'primevue'
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 import { watch } from 'vue'
+import LatestTorrents from '@/components/torrent/LatestTorrents.vue'
 
 const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)

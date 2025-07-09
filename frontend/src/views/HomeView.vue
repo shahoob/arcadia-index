@@ -1,6 +1,7 @@
 <template>
   <div id="home-page">
     <div class="main">
+      <LatestTorrents v-if="latestUploads" containerTitleLink="/torrents" :containerTitle="t('torrent.latest_uploads')" :titleGroups="latestUploads" />
       <div class="announcements">
         <AnnouncementComponent v-for="announcement in recentAnnouncements" :key="announcement.id" :announcement class="announcement" />
       </div>
@@ -23,16 +24,20 @@ import { ref } from 'vue'
 import AnnouncementComponent from '@/components/forum/AnnouncementComponent.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { useI18n } from 'vue-i18n'
+import type { TitleGroupLite } from '@/services/api/torrentService'
+import LatestTorrents from '@/components/torrent/LatestTorrents.vue'
 
 const { t } = useI18n()
 
 const recentAnnouncements = ref<ForumPostAndThreadName[]>()
 const stats = ref<HomeStats>()
+const latestUploads = ref<TitleGroupLite[]>()
 
 const fetchHome = async () => {
   getHome().then((data) => {
     recentAnnouncements.value = data.recent_announcements
     stats.value = data.stats
+    latestUploads.value = data.latest_uploads
   })
 }
 
@@ -53,6 +58,7 @@ onMounted(() => {
   width: 22%;
 }
 .announcement {
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 </style>
