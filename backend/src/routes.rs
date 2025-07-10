@@ -38,7 +38,7 @@ use crate::handlers::{
     torrent_request_handler::{add_torrent_request, fill_torrent_request},
     torrent_request_vote_handler::add_torrent_request_vote,
     user_application_handler::add_user_application,
-    user_handler::{get_me, get_user, warn_user},
+    user_handler::{edit_user, get_me, get_user, warn_user},
     wiki_handler::{add_wiki_article, get_wiki_article},
 };
 
@@ -52,6 +52,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/refresh-token", web::post().to(refresh_token))
             .route("/home", web::get().to(get_home))
             .route("/user", web::get().to(get_user))
+            .route("/user", web::put().to(edit_user))
             .route("/user/warn", web::post().to(warn_user))
             .route("/me", web::get().to(get_me))
             .route("/invitation", web::post().to(send_invitation))

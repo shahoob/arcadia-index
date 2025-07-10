@@ -125,6 +125,13 @@ pub struct RefreshToken {
     pub refresh_token: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct EditedUser {
+    pub avatar: Option<String>,
+    pub email: String,
+    pub description: String,
+}
+
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct PublicUser {
     pub id: i64,

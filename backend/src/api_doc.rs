@@ -40,8 +40,8 @@ use crate::{
         },
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{
-            Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken, Register, User,
-            UserCreatedUserWarning, UserWarning,
+            EditedUser, Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken,
+            Register, User, UserCreatedUserWarning, UserWarning,
         },
         user_application::UserCreatedUserApplication,
         wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
@@ -86,6 +86,7 @@ use crate::{
         crate::handlers::torrent_request_handler::fill_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
+        crate::handlers::user_handler::edit_user,
         crate::handlers::user_handler::warn_user,
         crate::handlers::user_handler::get_me,
         crate::handlers::artist_handler::get_artists_lite,
@@ -175,7 +176,8 @@ use crate::{
         UserCreatedUserApplication,
         ExternalDBData,
         HomePage,
-        UploadInformation
+        UploadInformation,
+        EditedUser
     ),)
 )]
 pub struct ApiDoc;

@@ -1,6 +1,6 @@
 use crate::{
     Error, Result,
-    models::user::{PublicUser, UserCreatedUserWarning, UserWarning},
+    models::user::{EditedUser, PublicUser, UserCreatedUserWarning, UserWarning},
 };
 use sqlx::PgPool;
 
@@ -58,6 +58,24 @@ pub async fn update_last_seen(pool: &PgPool, id: i64) -> Result<()> {
             WHERE id = $1
         "#,
         id
+    )
+    .execute(pool)
+    .await?;
+
+    Ok(())
+}
+
+pub async fn update_user(pool: &PgPool, user_id: i64, edited_user: &EditedUser) -> Result<()> {
+    let _ = sqlx::query!(
+        r#"
+            UPDATE users
+            SET avatar = $2, description = $3, email = $4
+            WHERE id = $1
+        "#,
+        user_id,
+        edited_user.avatar,
+        edited_user.description,
+        edited_user.email
     )
     .execute(pool)
     .await?;
