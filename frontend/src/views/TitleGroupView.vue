@@ -44,7 +44,7 @@
           <label for="sort_by">{{ t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :title_group="title_group" :sortBy :preview="false" />
+      <TitleGroupTable :showEditBtn="true" :title_group="title_group" :sortBy :preview="false" />
       <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="title_group.screenshots.length !== 0">
         <CustomGalleria :images="title_group.screenshots" />
       </ContentContainer>
@@ -56,6 +56,7 @@
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
+      <EmbeddedLinks class="embedded-links" v-if="Object.keys(title_group.embedded_links).length > 0" :links="title_group.embedded_links" />
       <ContentContainer class="description" v-if="title_group" :container-title="t('title_group.description')">
         <div class="title-group-description">
           <BBCodeRenderer :content="title_group.description" />
@@ -67,6 +68,7 @@
           </div>
         </div>
       </ContentContainer>
+      <TitleGroupRatings v-if="title_group.public_ratings.length > 0" :publicRatings="title_group.public_ratings" class="ratings" />
       <TitleGroupComments :comments="title_group.title_group_comments" @newComment="newComment" />
     </div>
     <div class="sidebar" v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')">
@@ -104,6 +106,7 @@ import TitleGroupFullHeader from '@/components/title_group/TitleGroupFullHeader.
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import TitleGroupRatings from '@/components/title_group/TitleGroupRatings.vue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import CustomGalleria from '@/components/CustomGalleria.vue'
@@ -115,6 +118,7 @@ import type { TitleGroupCommentHierarchy } from '@/services/api/commentService'
 import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import EditArtistsModal from '@/components/artist/EditArtistsModal.vue'
 import { Dialog } from 'primevue'
+import EmbeddedLinks from '@/components/title_group/EmbeddedLinks.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -140,6 +144,24 @@ const fetchTitleGroup = async () => {
 
   title_group.value = titleGroup
 
+  // add audio_codec to sorting options
+  const audioCodecInSortingOptions = selectableSortingOptions.includes('audio_codec')
+  const contentTypeShouldHaveAudioCodec = ['tv_show', 'movie', 'music'].includes(title_group.value.content_type)
+  if (contentTypeShouldHaveAudioCodec && !audioCodecInSortingOptions) selectableSortingOptions.unshift('audio_codec')
+  else if (!contentTypeShouldHaveAudioCodec && audioCodecInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('audio_codec'), 1)
+
+  // add video_resolution to sorting options
+  const resolutionInSortingOptions = selectableSortingOptions.includes('video_resolution')
+  const contentTypeShouldHaveResolution = ['tv_show', 'movie'].includes(title_group.value.content_type)
+  if (contentTypeShouldHaveResolution && !resolutionInSortingOptions) selectableSortingOptions.unshift('video_resolution')
+  else if (!contentTypeShouldHaveResolution && resolutionInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('resolution'), 1)
+
+  titleGroupStore.id = title_group.value.id
+  titleGroupStore.original_release_date = title_group.value.original_release_date
+  titleGroupStore.name = title_group.value.name
+  titleGroupStore.edition_groups = title_group.value.edition_groups
+  titleGroupStore.content_type = title_group.value.content_type
+
   /*
     For series, the title group name just holds the season name (i.e. 'Season 1')
     so we want to show the series name itself in the document title as well.
@@ -149,11 +171,6 @@ const fetchTitleGroup = async () => {
 
 const uploadTorrent = () => {
   if (title_group.value) {
-    titleGroupStore.id = title_group.value.id
-    titleGroupStore.original_release_date = title_group.value.original_release_date
-    titleGroupStore.name = title_group.value.name
-    titleGroupStore.edition_groups = title_group.value.edition_groups
-    titleGroupStore.content_type = title_group.value.content_type
     router.push({ path: '/upload' })
   }
 }
@@ -167,7 +184,7 @@ const toggleSubscribtion = async () => {
       await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
     }
     title_group.value.is_subscribed = !title_group.value.is_subscribed
-    showToast('Success', t(`title_group.${title_group.value.is_subscribed ? 'subscription_successfull' : 'unsubscription_successfull'}`), 'success', 3000)
+    showToast('Success', t(`title_group.${title_group.value.is_subscribed ? 'subscription_successful' : 'unsubscription_successful'}`), 'success', 3000)
     togglingSubscription.value = false
   }
 }
@@ -185,7 +202,6 @@ const affiliatedArtistsEdited = (newAffiliatedArtists: AffiliatedArtistHierarchy
     })
     title_group.value.affiliated_artists = title_group.value.affiliated_artists.concat(newAffiliatedArtists)
   }
-  console.log(title_group.value?.affiliated_artists)
   editAffiliatedArtistsDialogVisible.value = false
 }
 
@@ -196,50 +212,46 @@ watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 .main.with-sidebar {
   width: 75%;
 }
-
 .sidebar {
   width: 25%;
 }
-
 .actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
 }
-
 .actions i {
   margin: 0px 0.5em;
   color: white;
   cursor: pointer;
 }
-
 .screenshots {
   margin-top: 20px;
 }
-
 .torrent-requests {
   margin-top: 20px;
 }
-
+.embedded-links {
+  margin-top: 20px;
+}
 .description {
   margin-top: 20px;
 }
-
 .title-group-description {
   margin-top: 10px;
   margin-bottom: 25px;
 }
-
 .edition-description {
   margin-top: 15px;
 }
-
 .edition-description .edition-group-slug {
   color: var(--color-primary);
   margin-bottom: 5px;
 }
-
+.ratings {
+  margin-top: 20px;
+}
 .comments {
   margin-top: 20px;
 }

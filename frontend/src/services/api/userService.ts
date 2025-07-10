@@ -36,3 +36,9 @@ export type UserWarning = components['schemas']['UserWarning']
 export const warnUser = async (warning: UserCreatedUserWarning): Promise<UserWarning> => {
   return (await api.post<UserWarning>('/user/warn', warning)).data
 }
+
+export type EditedUser = components['schemas']['EditedUser']
+
+export const editUser = async (editedUser: EditedUser) => {
+  return (await api.put('/user', editedUser)).data
+}

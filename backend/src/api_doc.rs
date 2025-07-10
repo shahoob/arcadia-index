@@ -27,9 +27,12 @@ use crate::{
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
-        title_group::{TitleGroupAndAssociatedData, TitleGroupHierarchy},
+        title_group::{PublicRating, TitleGroupAndAssociatedData, TitleGroupHierarchy},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
-        torrent::{Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete, UploadedTorrent},
+        torrent::{
+            EditedTorrent, Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete,
+            UploadedTorrent,
+        },
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{
             TorrentRequest, TorrentRequestFill, TorrentRequestHierarchyLite,
@@ -37,8 +40,8 @@ use crate::{
         },
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{
-            Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken, Register, User,
-            UserCreatedUserWarning, UserWarning,
+            EditedUser, Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken,
+            Register, User, UserCreatedUserWarning, UserWarning,
         },
         user_application::UserCreatedUserApplication,
         wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
@@ -60,6 +63,8 @@ use crate::{
         crate::handlers::artist_handler::remove_affiliated_artists,
         crate::handlers::torrent_handler::download_dottorrent_file,
         crate::handlers::torrent_handler::upload_torrent,
+        crate::handlers::torrent_handler::edit_torrent,
+        crate::handlers::torrent_handler::get_registered_torrents,
         crate::handlers::torrent_handler::get_upload_information,
         crate::handlers::torrent_handler::find_torrents,
         crate::handlers::torrent_handler::get_top_torrents,
@@ -81,6 +86,7 @@ use crate::{
         crate::handlers::torrent_request_handler::fill_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
+        crate::handlers::user_handler::edit_user,
         crate::handlers::user_handler::warn_user,
         crate::handlers::user_handler::get_me,
         crate::handlers::artist_handler::get_artists_lite,
@@ -138,6 +144,7 @@ use crate::{
         TorrentSearchResults,
         TitleGroupAndAssociatedData,
         UploadedTorrent,
+        EditedTorrent,
         Torrent,
         TorrentToDelete,
         Profile,
@@ -169,7 +176,9 @@ use crate::{
         UserCreatedUserApplication,
         ExternalDBData,
         HomePage,
-        UploadInformation
+        UploadInformation,
+        EditedUser,
+        PublicRating
     ),)
 )]
 pub struct ApiDoc;

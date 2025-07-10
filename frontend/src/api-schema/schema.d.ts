@@ -14,7 +14,7 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["add_affiliated_artists"];
-        delete?: never;
+        delete: operations["remove_affiliated_artists"];
         options?: never;
         head?: never;
         patch?: never;
@@ -110,6 +110,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["add_edition_group"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external_db/comic_vine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["get_comic_vine_data"];
         delete?: never;
         options?: never;
         head?: never;
@@ -356,6 +372,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/registered-torrents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_registered_torrents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/report/torrent": {
         parameters: {
             query?: never;
@@ -525,7 +557,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["download_dottorrent_file"];
-        put?: never;
+        put: operations["edit_torrent"];
         post: operations["upload_torrent"];
         delete: operations["delete_torrent"];
         options?: never;
@@ -621,7 +653,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["get_user"];
-        put?: never;
+        put: operations["edit_user"];
         post?: never;
         delete?: never;
         options?: never;
@@ -715,6 +747,20 @@ export interface components {
             artist_id: number;
             name: string;
         };
+        AffiliatedEntityHierarchy: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            entity: components["schemas"]["Entity"];
+            /** Format: int64 */
+            entity_id: number;
+            /** Format: int64 */
+            id: number;
+            roles: components["schemas"]["EntityRole"][];
+            /** Format: int64 */
+            title_group_id: number;
+        };
         Artist: {
             /** Format: date-time */
             created_at: string;
@@ -749,7 +795,7 @@ export interface components {
             pictures: string[];
         };
         /** @enum {string} */
-        ArtistRole: "main" | "producer" | "guest" | "composer" | "conductor" | "dj_compiler" | "remixer" | "arranger" | "director" | "cinematographer" | "actor" | "author";
+        ArtistRole: "main" | "guest" | "producer" | "director" | "cinematographer" | "actor" | "writer" | "composer" | "remixer" | "conductor" | "dj_compiler" | "arranger" | "host" | "author" | "illustrator" | "editor" | "developer" | "designer";
         /** @enum {string} */
         AudioBitrateSampling: "64" | "128" | "192" | "256" | "320" | "APS (VBR)" | "V2 (VBR)" | "V1 (VBR)" | "APX (VBR)" | "V0 (VBR)" | "Lossless" | "24bit Lossless" | "DSD64" | "DSD128" | "DSD256" | "DSD512" | "Other";
         /** @enum {string} */
@@ -835,6 +881,35 @@ export interface components {
             /** Format: int64 */
             id: number;
         };
+        EditedTorrent: {
+            /** Format: int32 */
+            audio_bitrate?: number | null;
+            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
+            audio_channels?: null | components["schemas"]["AudioChannels"];
+            audio_codec?: null | components["schemas"]["AudioCodec"];
+            container: string;
+            description?: string | null;
+            /** Format: int32 */
+            duration?: number | null;
+            /** Format: int64 */
+            edition_group_id: number;
+            features?: components["schemas"]["Features"][] | null;
+            /** Format: int64 */
+            id: number;
+            languages: components["schemas"]["Language"][];
+            mediainfo: string;
+            release_group?: string | null;
+            release_name?: string | null;
+            subtitle_languages: components["schemas"]["Language"][];
+            uploaded_as_anonymous: boolean;
+            video_codec?: null | components["schemas"]["VideoCodec"];
+            video_resolution?: string | null;
+        };
+        EditedUser: {
+            avatar?: string | null;
+            description: string;
+            email: string;
+        };
         EditionGroup: {
             additional_information: {
                 [key: string]: string;
@@ -849,7 +924,7 @@ export interface components {
             external_links: string[];
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -872,7 +947,7 @@ export interface components {
             external_links: string[];
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -890,7 +965,7 @@ export interface components {
             distributor?: string | null;
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -905,11 +980,26 @@ export interface components {
             distributor?: string | null;
             /** Format: int64 */
             id: number;
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
         };
+        Entity: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            description: string;
+            /** Format: int64 */
+            id: number;
+            name: string;
+            pictures: string[];
+        };
+        /** @enum {string} */
+        EntityRole: "producer" | "developer" | "designer" | "label" | "network";
+        /** @enum {string} */
+        ExternalDB: "tmdb";
         ExternalDBData: {
             edition_group?: null | components["schemas"]["UserCreatedEditionGroup"];
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
@@ -1062,7 +1152,29 @@ export interface components {
             sent_at: string;
         };
         HomePage: {
+            latest_uploads: components["schemas"]["TitleGroupLite"][];
             recent_announcements: components["schemas"]["ForumPostAndThreadName"][];
+            stats: components["schemas"]["HomeStats"];
+        };
+        HomeStats: {
+            /** Format: int64 */
+            artists: number;
+            /** Format: int64 */
+            enabled_users: number;
+            /** Format: int64 */
+            entities: number;
+            /** Format: int64 */
+            titles: number;
+            /** Format: int64 */
+            torrents: number;
+            /** Format: int64 */
+            torrents_uploaded_today: number;
+            /** Format: int64 */
+            users_active_this_month: number;
+            /** Format: int64 */
+            users_active_this_week: number;
+            /** Format: int64 */
+            users_active_today: number;
         };
         Invitation: {
             /** Format: date-time */
@@ -1133,6 +1245,13 @@ export interface components {
         PublicProfile: {
             last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             user: components["schemas"]["PublicUser"];
+        };
+        PublicRating: {
+            /** Format: double */
+            rating: number;
+            service: components["schemas"]["ExternalDB"];
+            /** Format: int64 */
+            votes: number;
         };
         PublicUser: {
             /** Format: int64 */
@@ -1245,7 +1364,9 @@ export interface components {
             created_by_id: number;
             description: string;
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -1258,9 +1379,7 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: {
-                [key: string]: string;
-            };
+            public_ratings: components["schemas"]["PublicRating"][];
             screenshots: string[];
             /** Format: int64 */
             series_id?: number | null;
@@ -1271,6 +1390,7 @@ export interface components {
         };
         TitleGroupAndAssociatedData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
+            affiliated_entities: components["schemas"]["AffiliatedEntityHierarchy"][];
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
             country_from?: string | null;
@@ -1282,7 +1402,9 @@ export interface components {
             description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -1297,9 +1419,7 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: {
-                [key: string]: string;
-            };
+            public_ratings: components["schemas"]["PublicRating"][];
             screenshots: string[];
             series: components["schemas"]["SeriesLite"];
             /** Format: int64 */
@@ -1360,7 +1480,9 @@ export interface components {
             description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -1373,9 +1495,7 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: {
-                [key: string]: string;
-            };
+            public_ratings: components["schemas"]["PublicRating"][];
             screenshots: string[];
             /** Format: int64 */
             series_id?: number | null;
@@ -1494,7 +1614,6 @@ export interface components {
             /** Format: int64 */
             leechers: number;
             mediainfo: string;
-            peer_status?: null | components["schemas"]["TorrentStatus"];
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
@@ -1542,7 +1661,6 @@ export interface components {
             languages: components["schemas"]["Language"][];
             /** Format: int64 */
             leechers: number;
-            peer_status?: null | components["schemas"]["TorrentStatus"];
             release_group?: string | null;
             release_name?: string | null;
             reports: components["schemas"]["TorrentReport"][];
@@ -1559,6 +1677,13 @@ export interface components {
             upload_factor: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
+        };
+        TorrentMinimal: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            info_hash?: string | null;
         };
         TorrentReport: {
             description: string;
@@ -1688,8 +1813,6 @@ export interface components {
             snatched_by_id?: number | null;
             staff_checked?: boolean | null;
         };
-        /** @enum {string} */
-        TorrentStatus: "seeding" | "leeching" | "snatched";
         TorrentToDelete: {
             displayed_reason?: string | null;
             /** Format: int64 */
@@ -1825,7 +1948,7 @@ export interface components {
             description?: string | null;
             distributor?: string | null;
             external_links: string[];
-            name: string;
+            name?: string | null;
             /** Format: date-time */
             release_date: string;
             source?: null | components["schemas"]["Source"];
@@ -1870,7 +1993,9 @@ export interface components {
             covers: string[];
             description: string;
             embedded_links: {
-                [key: string]: string;
+                [key: string]: {
+                    [key: string]: string;
+                };
             };
             external_links: string[];
             /** Format: int64 */
@@ -2033,6 +2158,24 @@ export interface operations {
             };
         };
     };
+    remove_affiliated_artists: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully removed the artist affiliations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     get_artist_publications: {
         parameters: {
             query: {
@@ -2190,6 +2333,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EditionGroup"];
+                };
+            };
+        };
+    };
+    get_comic_vine_data: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalDBData"];
                 };
             };
         };
@@ -2552,6 +2716,26 @@ export interface operations {
             };
         };
     };
+    get_registered_torrents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All registered torrents */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TorrentMinimal"][];
+                };
+            };
+        };
+    };
     add_torrent_report: {
         parameters: {
             query?: never;
@@ -2626,6 +2810,7 @@ export interface operations {
         parameters: {
             query: {
                 name: string;
+                content_type?: null | components["schemas"]["ContentType"];
             };
             header?: never;
             path?: never;
@@ -2868,6 +3053,30 @@ export interface operations {
             };
         };
     };
+    edit_torrent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditedTorrent"];
+            };
+        };
+        responses: {
+            /** @description Successfully edited the torrent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Torrent"];
+                };
+            };
+        };
+    };
     upload_torrent: {
         parameters: {
             query?: never;
@@ -2882,7 +3091,7 @@ export interface operations {
         };
         responses: {
             /** @description Successfully uploaded the torrent */
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3046,6 +3255,28 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PublicProfile"];
                 };
+            };
+        };
+    };
+    edit_user: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditedUser"];
+            };
+        };
+        responses: {
+            /** @description Successfully edited the user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

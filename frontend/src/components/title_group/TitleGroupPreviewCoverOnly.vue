@@ -6,10 +6,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
+import type { TitleGroupLite } from '@/services/api/torrentService'
 
 defineProps<{
-  titleGroup: TitleGroupHierarchyLite
+  titleGroup: TitleGroupLite
 }>()
 </script>
 

@@ -15,9 +15,9 @@
           <InputText size="small" v-model="editionGroupForm.name" name="name" />
           <label for="name">{{ t('general.name') }}</label>
         </FloatLabel>
-        <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
+        <!-- <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
           {{ $form.name.error?.message }}
-        </Message>
+        </Message> -->
       </div>
       <div>
         <FloatLabel>
@@ -177,15 +177,15 @@ const release_date = computed({
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UserCreatedEditionGroup, { message: string }[]>> = {}
 
-  if (values.name.length < 5) {
-    errors.name = [{ message: t('error.write_more_than_x_chars', [5]) }]
-  }
+  // if (values.name.length < 5) {
+  //   errors.name = [{ message: t('error.write_more_than_x_chars', [5]) }]
+  // }
   // if (values.distributor.length < 2) {
   //   errors.distributor = [{ message: 'Write more than 2 characters' }]
   // }
-  // if (values.source == '') {
-  //   errors.source = [{ message: 'Select a source' }]
-  // }
+  if (values.source === null) {
+    errors.source = [{ message: 'Select a source' }]
+  }
   if (values.release_date === '') {
     errors.release_date = [{ message: t('error.select_date') }]
   }

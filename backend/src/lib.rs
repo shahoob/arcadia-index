@@ -164,6 +164,12 @@ pub enum Error {
     #[error("dottorrent file not found")]
     DottorrentFileNotFound,
 
+    #[error("torrent not found")]
+    TorrentNotFound,
+
+    #[error("error while updating torrent: '{0}'")]
+    ErrorWhileUpdatingTorrent(String),
+
     #[error("could not save torrent file in path: '{0}'\n'{1}'")]
     CouldNotSaveTorrentFile(String, String),
 
@@ -287,7 +293,7 @@ impl actix_web::ResponseError for Error {
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {
-        log::error!("The request generated this error: {}", self);
+        log::error!("The request generated this error: {self}");
         actix_web::HttpResponse::build(self.status_code()).json(serde_json::json!({
             "error": format!("{self}"),
         }))

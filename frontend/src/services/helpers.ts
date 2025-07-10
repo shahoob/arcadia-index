@@ -45,7 +45,11 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
     itemRange = ` (${editionGroup.additional_information.first_item} to ${editionGroup.additional_information.last_item})`
   }
 
-  attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
+  if (editionGroup.name) {
+    attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
+  } else {
+    attributes.push(`${dateRange}${itemRange}`)
+  }
   if (editionGroup.additional_information?.format) {
     attributes.push(editionGroup.additional_information.format)
   }
@@ -68,7 +72,7 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
 
   return attributes.join(' / ')
 }
-export const getFeatures = (contentType: string, format: string = '', source: Source | null = null): Features[] => {
+export const getFeatures = (contentType: ContentType, format: string = '', source: Source | null = null): Features[] => {
   let features: Features[] = []
   if (source === 'Physical Book') {
     features = features.concat(['OCR'])
@@ -76,7 +80,7 @@ export const getFeatures = (contentType: string, format: string = '', source: So
   if ((contentType == 'book' && format === 'audiobook') || contentType == 'music') {
     features = features.concat(['Cue', 'Booklet'])
   } else if (contentType == 'tv_show' || contentType == 'movie') {
-    features.concat(['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D'])
+    features = features.concat(['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D'])
   }
   return features
 }
@@ -85,6 +89,10 @@ export const getLanguages = () => {
 }
 export const getPlatforms = () => {
   return ['Linux', 'MacOS', 'Windows']
+}
+
+export const getSelectableContentTypes = (): ContentType[] => {
+  return ['movie', 'video', 'tv_show', 'music', 'podcast', 'software', 'book', 'collection']
 }
 export const getSources = (contentType: ContentType) => {
   const sources = ['Web']

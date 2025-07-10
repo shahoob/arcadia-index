@@ -6,7 +6,7 @@ body {
 }
 
 #app {
-  max-width: 2100px;
+  max-width: 2200px;
   margin: 0 auto;
   font-weight: normal;
 }
@@ -20,7 +20,7 @@ body {
 }
 
 #view-container {
-  width: 75%;
+  width: 77%;
 }
 
 a:hover {
@@ -119,6 +119,20 @@ a {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
   }
+}
+
+.p-tabs {
+  border-radius: 7px;
+  overflow: hidden;
+}
+.p-tab {
+  padding: 10px !important;
+}
+.p-tabpanels {
+  padding: 0 !important;
+}
+.p-tabpanel {
+  line-height: 0 !important;
 }
 
 /* @media (min-width: 1024px) {

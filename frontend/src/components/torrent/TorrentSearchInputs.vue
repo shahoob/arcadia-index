@@ -50,11 +50,6 @@
       </div>
     </div>
   </ContentContainer>
-  <div class="pagination">
-    <Button :disabled="searchForm.page < 2" @click="searchForm.page-- && emit('search', searchForm)" label="<" size="small" />
-    {{ t('general.page') }} {{ searchForm.page }}
-    <Button @click="searchForm.page++ && emit('search', searchForm)" label=">" size="small" />
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -99,10 +94,18 @@ const staffOptionChoices = ref([
 const searchForm = ref<TorrentSearch>({
   title_group: { name: '', include_empty_groups: false },
   torrent: {},
-  page: 2,
+  page: 1,
   page_size: 4,
   sort_by: 'torrent_created_at',
   order: 'desc',
+})
+const changePage = (to: 'previous' | 'next') => {
+  searchForm.value.page = to === 'previous' ? searchForm.value.page - 1 : searchForm.value.page + 1
+  emit('search', searchForm.value)
+}
+defineExpose({
+  searchForm,
+  changePage,
 })
 
 onMounted(async () => {

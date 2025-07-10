@@ -1,6 +1,14 @@
 <template>
   <div v-if="search_results">
-    <TorrentSearchInputs class="torrent-search-inputs" @search="search" :loading :initialForm :showStaffOptions="userStore.class === 'staff'" />
+    <TorrentSearchInputs
+      ref="searchInputsRef"
+      class="torrent-search-inputs"
+      @search="search"
+      :loading
+      :initialForm
+      :showStaffOptions="userStore.class === 'staff'"
+    />
+    <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
     <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
       <div class="title-groups">
         <TitleGroupPreviewCoverOnly v-for="title_group in search_results.title_groups" :key="title_group.id" :titleGroup="title_group" />
@@ -9,6 +17,7 @@
     <div v-if="title_group_preview_mode == 'table'">
       <TitleGroupPreviewTable v-for="title_group in search_results.title_groups" :key="title_group.id" :title_group="title_group" class="preview-table" />
     </div>
+    <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
   </div>
 </template>
 
@@ -16,15 +25,19 @@
 import { ref, onMounted } from 'vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
+import ResultsPagination from '@/components/ResultsPagination.vue'
 import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import { searchTorrentsLite, type TorrentSearch, type TorrentSearchResults } from '@/services/api/torrentService'
 import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 import { useUserStore } from '@/stores/user'
+import type { VNodeRef } from 'vue'
 
 const route = useRoute()
 const userStore = useUserStore()
+
+const searchInputsRef = ref<VNodeRef | null>(null)
 
 const search_results = ref<TorrentSearchResults>()
 const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table

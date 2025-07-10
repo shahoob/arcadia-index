@@ -40,3 +40,63 @@ At runtime, Arcadia's backend will source environment variables to influence it'
 ### Frontend
 
 At build time, the frontend will be hardcoded with the site's API location sourced from an enviroment variable. A documented sample file is made available, so a quick way to get started is to use it by running `cp .env.example .env`.
+
+## Building and Running
+
+### Backend
+
+```bash
+# Build the backend
+cargo build
+
+# Run the backend binary
+./target/debug/arcadia
+
+# For optimized builds
+cargo build --release
+./target/release/arcadia
+```
+
+### Frontend
+
+```bash
+# Install dependencies
+npm install
+
+# Build and run development server
+npm run dev
+
+# For production build
+npm run build
+```
+
+## Development Workflow
+
+### Backend Development
+
+```bash
+# For development with auto-rebuild on changes
+cargo run
+
+# Build and test
+cargo build
+cargo test
+
+# Code quality checks
+cargo clippy
+cargo fmt
+```
+
+### Frontend Development
+
+```bash
+# Development server with hot reload
+npm run dev
+
+# Run tests
+npm run test:unit
+
+# Lint and format
+npm run lint
+npm run format
+```

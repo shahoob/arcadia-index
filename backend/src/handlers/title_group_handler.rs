@@ -1,12 +1,15 @@
 use actix_web::{HttpResponse, web};
+use futures::future::join_all;
 use serde::Deserialize;
 use utoipa::IntoParams;
 
 use crate::{
     Arcadia, Result,
+    handlers::scrapers::tmdb::get_tmdb_rating,
     models::{
         title_group::{
-            TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite, UserCreatedTitleGroup,
+            ContentType, PublicRating, TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite,
+            UserCreatedTitleGroup,
         },
         user::User,
     },
@@ -30,7 +33,19 @@ pub async fn add_title_group(
     arc: web::Data<Arcadia>,
     current_user: User,
 ) -> Result<HttpResponse> {
-    let created_title_group = create_title_group(&arc.pool, &form, &current_user).await?;
+    let rating_futures: Vec<_> = form
+        .external_links
+        .iter()
+        .filter(|link| link.contains("https://www.themoviedb.org/"))
+        .map(|link| get_tmdb_rating(link, arc.tmdb_api_key.clone().unwrap()))
+        .collect();
+    let ratings: Vec<PublicRating> = join_all(rating_futures)
+        .await
+        .into_iter()
+        .filter_map(Result::ok)
+        .collect();
+
+    let created_title_group = create_title_group(&arc.pool, &form, &ratings, &current_user).await?;
 
     if !form.affiliated_artists.is_empty() {
         for artist in &mut form.affiliated_artists {
@@ -81,7 +96,7 @@ pub async fn get_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<GetTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None, 1).await?;
+    let title_group = find_title_group_info_lite(&arc.pool, Some(query.id), None, &None, 1).await?;
 
     Ok(HttpResponse::Ok().json(title_group))
 }
@@ -89,6 +104,7 @@ pub async fn get_title_group_info_lite(
 #[derive(Debug, Deserialize, IntoParams)]
 pub struct SearchTitleGroupLiteQuery {
     name: String,
+    content_type: Option<ContentType>,
 }
 
 #[utoipa::path(
@@ -103,7 +119,9 @@ pub async fn search_title_group_info_lite(
     arc: web::Data<Arcadia>,
     query: web::Query<SearchTitleGroupLiteQuery>,
 ) -> Result<HttpResponse> {
-    let title_groups = find_title_group_info_lite(&arc.pool, None, Some(&query.name), 5).await?;
+    let title_groups =
+        find_title_group_info_lite(&arc.pool, None, Some(&query.name), &query.content_type, 5)
+            .await?;
 
     Ok(HttpResponse::Ok().json(title_groups))
 }

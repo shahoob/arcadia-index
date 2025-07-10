@@ -14,6 +14,14 @@ export type TitleGroupAndAssociatedData = components['schemas']['TitleGroupAndAs
 
 export type ContentType = components['schemas']['ContentType']
 
+export type PublicRating = components['schemas']['PublicRating']
+
+export type EmbeddedLinks = {
+  [key: string]: {
+    [key: string]: string
+  }
+}
+
 export const getTitleGroup = async (id: number): Promise<TitleGroupAndAssociatedData> => {
   return (await api.get<TitleGroupAndAssociatedData>('/title-group?id=' + id)).data
 }
@@ -22,8 +30,8 @@ export const getTitleGroupLite = async (id: number): Promise<TitleGroupLite> => 
   return (await api.get<TitleGroupLite>('/title-group/lite?id=' + id)).data
 }
 
-export const searchTitleGroupLite = async (name: string): Promise<TitleGroupHierarchyLite[]> => {
-  return (await api.get<TitleGroupHierarchyLite[]>('/search/title-group/lite?name=' + name)).data
+export const searchTitleGroupLite = async (name: string, contentType: ContentType | null): Promise<TitleGroupHierarchyLite[]> => {
+  return (await api.get<TitleGroupHierarchyLite[]>('/search/title-group/lite?name=' + name + (contentType ? `&content_type=${contentType}` : ''))).data
 }
 
 export type UserCreatedTitleGroup = components['schemas']['UserCreatedTitleGroup']
@@ -57,6 +65,8 @@ export const createEditionGroup = async (editionGroup: UserCreatedEditionGroup) 
 export type UploadedTorrent = components['schemas']['UploadedTorrent']
 
 export type Torrent = components['schemas']['Torrent']
+
+export type EditedTorrent = components['schemas']['EditedTorrent']
 
 export type TorrentHierarchyLite = components['schemas']['TorrentHierarchyLite']
 
@@ -110,6 +120,10 @@ export type Features = components['schemas']['Features']
 
 export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => {
   return (await api.post<TorrentReport>('/report/torrent', torrentReport)).data
+}
+
+export const editTorrent = async (editedTorrent: EditedTorrent) => {
+  return (await api.put<Torrent>('/torrent', editedTorrent)).data
 }
 
 export type UploadInformation = components['schemas']['UploadInformation']

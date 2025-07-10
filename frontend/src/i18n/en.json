@@ -47,7 +47,8 @@
     "create_new_one": "Create a new one",
     "remove": "Remove",
     "view": "View",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "validate": "Validate"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -100,6 +101,9 @@
     "password": "Password",
     "password_verify": "Verify password",
     "email": "E-mail",
+    "avatar_url": "Avatar url",
+    "edit_profile": "Edit profile",
+    "profile_edited_success": "Profile edited successfuly",
     "register": "Register",
     "login": "Login",
     "apply": "Apply",
@@ -131,7 +135,7 @@
   "conversation": {
     "start_conversation": "Start a conversation with {0}",
     "subject": "Subject",
-    "correspondant": "Correspondant",
+    "correspondent": "Correspondent",
     "message": "Message | Messages",
     "conversation": "Conversation | Conversations",
     "last_message": "Last message"
@@ -159,10 +163,12 @@
     "title": "Title",
     "platform": "Platform",
     "original_release_date": "Original release date",
-    "subscription_successfull": "Subscription successfull",
-    "unsubscription_successfull": "Unsubscription successfull",
+    "subscription_successful": "Subscription successful",
+    "unsubscription_successful": "Unsubscription successful",
     "edit_affiliated_artists": "Edit affiliated artists",
     "update_artists": "Update artists",
+    "rating": "Rating | Ratings",
+    "vote": "Vote | Votes",
     "content_type": {
       "content_type": "Content type",
       "music": "Music",
@@ -216,15 +222,42 @@
     "uploaded_by": "Uploaded by",
     "staff_checked": "Checked by staff",
     "snatched_at": "Snatched at",
-    "multi_language": "Multi-Langauge",
+    "multi_language": "Multi-Language",
     "trumpable": "Trumpable",
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
-    "complete_edition_group_first": "Create or select an edition group first"
+    "complete_edition_group_first": "Create or select an edition group first",
+    "edit_torrent": "Edit torrent",
+    "latest_uploads": "Latest uploads",
+    "torrent_edited_success": "Torrent edited successfuly",
+    "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly"
+  },
+  "entity": {
+    "entity": "Entity | Entities",
+    "role": {
+      "producer": "Producer",
+      "developer": "Developer",
+      "designer": "Designer",
+      "label": "Label",
+      "network": "Network"
+    }
+  },
+  "statistics": {
+    "statistics": "Statistics",
+    "enabled_users": "Enabled users",
+    "users_active_today": "Users active today",
+    "users_active_this_week": "Users active this week",
+    "users_active_this_month": "Users active this month",
+    "torrents": "Torrents",
+    "torrents_uploaded_today": "Torrents uploaded today",
+    "titles": "Titles",
+    "artists": "Artists",
+    "entities": "Entities"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",
     "enter_at_least_x_tags": "Enter at least {0} tags",
     "select_date": "Select a date",
+    "select_content_type": "Select a content type",
     "select_category": "Select a category",
     "select_platform": "Select a platform",
     "select_language": "Select a language",
@@ -236,7 +269,7 @@
     "select_at_least_x_language": "Select at least {0} language(s)",
     "select_torrent_file": "Select a torrent file",
     "invalid_url": "Invalid url",
-    "artist_must_have_at_lease_one_role": "Artist must have at least 1 role",
+    "artist_must_have_at_least_one_role": "Artist must have at least 1 role",
     "invalid_name": "Invalid name"
   },
   "footer": {

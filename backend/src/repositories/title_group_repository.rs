@@ -1,11 +1,11 @@
 use crate::{
     Error, Result,
     models::{
-        title_group::{TitleGroup, UserCreatedTitleGroup},
+        title_group::{ContentType, PublicRating, TitleGroup, UserCreatedTitleGroup},
         user::User,
     },
 };
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlx::PgPool;
 
 fn sanitize_title_group_tags(tags: Vec<String>) -> Vec<String> {
@@ -23,11 +23,12 @@ fn sanitize_title_group_tags(tags: Vec<String>) -> Vec<String> {
 pub async fn create_title_group(
     pool: &PgPool,
     title_group_form: &UserCreatedTitleGroup,
+    public_ratings: &Vec<PublicRating>,
     current_user: &User,
 ) -> Result<TitleGroup> {
     let create_title_group_query = r#"
-        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline,platform,screenshots)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::title_group_category_enum, $12::content_type_enum, $13, $14, $15, $16, $17)
+        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline,platform,screenshots,public_ratings)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::title_group_category_enum, $12::content_type_enum, $13, $14, $15, $16, $17, $18)
         RETURNING *;
     "#;
 
@@ -49,6 +50,7 @@ pub async fn create_title_group(
         .bind(&title_group_form.tagline)
         .bind(&title_group_form.platform)
         .bind(&title_group_form.screenshots)
+        .bind(json!(public_ratings))
         // .bind(&title_group_form.public_ratings)
         .fetch_one(pool)
         .await
@@ -162,6 +164,16 @@ pub async fn find_title_group(
                 JOIN artists a ON a.id = aa.artist_id
                 GROUP BY aa.title_group_id
             ),
+            entity_data AS (
+                SELECT
+                    ae.title_group_id,
+                    jsonb_agg(
+                        to_jsonb(ae) || jsonb_build_object('entity', to_jsonb(e))
+                    ) AS affiliated_entities
+                FROM affiliated_entities ae
+                JOIN entities e ON e.id = ae.entity_id
+                GROUP BY ae.title_group_id
+            ),
             comment_data AS (
                 SELECT
                     c.title_group_id,
@@ -204,6 +216,7 @@ pub async fn find_title_group(
                     'series', COALESCE(sd.series, '{}'::jsonb),
                     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
                     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),
+                    'affiliated_entities', COALESCE(aed.affiliated_entities, '[]'::jsonb),
                     'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb),
                     'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb),
                     'is_subscribed', COALESCE(sud.is_subscribed, false),
@@ -212,6 +225,7 @@ pub async fn find_title_group(
             FROM title_groups tg
             LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
             LEFT JOIN artist_data ad ON ad.title_group_id = tg.id
+            LEFT JOIN entity_data aed ON aed.title_group_id = tg.id
             LEFT JOIN comment_data cd ON cd.title_group_id = tg.id
             LEFT JOIN series_data sd ON sd.title_group_id = tg.id
             LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
@@ -227,39 +241,48 @@ pub async fn find_title_group_info_lite(
     pool: &PgPool,
     title_group_id: Option<i64>,
     title_group_name: Option<&str>,
+    title_group_content_type: &Option<ContentType>,
     limit: u32,
 ) -> Result<Value> {
     let title_groups = sqlx::query!(
         r#"
         SELECT jsonb_agg(data)
-        FROM (
-            SELECT jsonb_build_object(
-                'id', tg.id, 'content_type', tg.content_type, 'name', tg.name, 'platform', tg.platform, 'covers', tg.covers,
-                'original_release_date', tg.original_release_date,
-                'edition_groups', COALESCE(
-                    jsonb_agg(
-                        jsonb_build_object(
-                            'id', eg.id,
-                            'name', eg.name,
-                            'release_date', eg.release_date,
-                            'distributor', eg.distributor,
-                            'source', eg.source,
-                            'additional_information', eg.additional_information
-                        )
-                    ) FILTER (WHERE eg.id IS NOT NULL),
-                    '[]'::jsonb
-                )
-            ) as data
-            FROM title_groups tg
-            LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
-            WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
-               OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
-            GROUP BY tg.id
-            LIMIT $3
-        ) AS subquery;
+            FROM (
+                SELECT jsonb_build_object(
+                    'id', tg.id, 'content_type', tg.content_type, 'name', tg.name, 'platform', tg.platform, 'covers', tg.covers,
+                    'original_release_date', tg.original_release_date,
+                    'edition_groups', COALESCE(
+                        jsonb_agg(
+                            jsonb_build_object(
+                                'id', eg.id,
+                                'name', eg.name,
+                                'release_date', eg.release_date,
+                                'distributor', eg.distributor,
+                                'source', eg.source,
+                                'additional_information', eg.additional_information
+                            )
+                        ) FILTER (WHERE eg.id IS NOT NULL),
+                        '[]'::jsonb
+                    )
+                ) as data
+                FROM title_groups tg
+                LEFT JOIN edition_groups eg ON eg.title_group_id = tg.id
+                LEFT JOIN (
+                    SELECT edition_group_id, MAX(created_at) as created_at
+                    FROM torrents
+                    GROUP BY edition_group_id
+                ) AS latest_torrent ON latest_torrent.edition_group_id = eg.id
+                WHERE ($1::BIGINT IS NOT NULL AND tg.id = $1)
+                    OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
+                    AND ($3::content_type_enum IS NULL OR tg.content_type = $3::content_type_enum)
+                GROUP BY tg.id
+                ORDER BY MAX(latest_torrent.created_at) DESC
+                LIMIT $4
+            ) AS subquery;
         "#,
         title_group_id,
         title_group_name,
+        title_group_content_type as &Option<ContentType>,
         limit as i32
     )
     .fetch_one(pool)

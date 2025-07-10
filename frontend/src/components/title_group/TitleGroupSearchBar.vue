@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { AutoComplete, type AutoCompleteOptionSelectEvent } from 'primevue'
-import { searchTitleGroupLite, type TitleGroupLite } from '@/services/api/torrentService'
+import { searchTitleGroupLite, type ContentType, type TitleGroupLite } from '@/services/api/torrentService'
 import TitleGroupSlimHeader from './TitleGroupSlimHeader.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -30,6 +30,7 @@ const props = defineProps<{
   clearInputOnSelect: boolean
   modelValue: string
   createOption: boolean
+  contentType: ContentType | null
 }>()
 
 const emit = defineEmits<{
@@ -74,7 +75,7 @@ const onInput = () => {
 
 const search = () => {
   if (name.value !== '') {
-    searchTitleGroupLite(name.value).then((titleGroups) => {
+    searchTitleGroupLite(name.value, props.contentType).then((titleGroups) => {
       foundTitleGroups.value = titleGroups
       if (props.createOption) {
         foundTitleGroups.value?.push(t('general.create_new_one'))

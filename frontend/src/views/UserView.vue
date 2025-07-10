@@ -11,8 +11,11 @@
           <RouterLink :to="`/conversation/new?receiverId=${user.id}&username=${user.username}`" class="no-color" v-if="userStore.id !== user.id">
             <i v-tooltip.top="t('user.message_user', [user.username])" class="pi pi-envelope" />
           </RouterLink>
-          <template v-if="userStore.class === 'staff'">
+          <template v-if="userStore.class === 'staff' && userStore.id !== user.id">
             <i v-tooltip.top="t('user.warn')" class="cursor-pointer pi pi-exclamation-triangle" @click="warnUserDialogVisible = true" />
+          </template>
+          <template v-if="userStore.id === user.id">
+            <i v-tooltip.top="t('general.edit')" class="cursor-pointer pi pi-pen-to-square" @click="editUserDialogVisible = true" />
           </template>
         </div>
       </div>
@@ -22,21 +25,35 @@
       <ContentContainer v-if="peers" :containerTitle="t('torrent.clients_and_ips')" class="section">
         <PeerTable :peers />
       </ContentContainer>
-      <RelatedTorrents :titleGroups="uploadedTorrents" class="section" :userId="user.id" type="uploads" />
-      <RelatedTorrents :titleGroups="snatchedTorrents" class="section" :userId="user.id" type="snatches" />
+      <LatestTorrents
+        :titleGroups="uploadedTorrents"
+        class="section"
+        :containerTitle="t('user.uploads')"
+        :containerTitleLink="`/torrents?created_by_id=${user.id}`"
+        type="uploads"
+      />
+      <LatestTorrents
+        :titleGroups="snatchedTorrents"
+        class="section"
+        :containerTitle="t('user.snatches')"
+        :containerTitleLink="`/torrents?snatched_by_id=${user.id}`"
+        type="snatches"
+      />
     </div>
     <UserSidebar :user class="sidebar" />
   </div>
   <Dialog closeOnEscape modal :header="t('user.warn_user')" v-model:visible="warnUserDialogVisible">
     <WarnUserDialog @warned="warnUserDialogVisible = false" />
   </Dialog>
+  <Dialog closeOnEscape modal :header="t('user.edit_profile')" v-model:visible="editUserDialogVisible">
+    <EditUserDialog @done="userEdited" :initialUser="user as EditedUser" v-if="user" />
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getMe, getUser, type Peer, type PublicUser, type User } from '@/services/api/userService'
+import { getMe, getUser, type EditedUser, type Peer, type PublicUser, type User } from '@/services/api/userService'
 import PeerTable from '@/components/user/PeerTable.vue'
-import RelatedTorrents from '@/components/user/RelatedTorrents.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
 import UserSidebar from '@/components/user/UserSidebar.vue'
@@ -47,6 +64,8 @@ import WarnUserDialog from '@/components/user/WarnUserDialog.vue'
 import { Dialog } from 'primevue'
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
 import { watch } from 'vue'
+import LatestTorrents from '@/components/torrent/LatestTorrents.vue'
+import EditUserDialog from '@/components/user/EditUserDialog.vue'
 
 const peers = ref<Peer[] | null>(null)
 const user = ref<User | PublicUser | null>(null)
@@ -59,6 +78,12 @@ const route = useRoute()
 const { t } = useI18n()
 
 const warnUserDialogVisible = ref(false)
+const editUserDialogVisible = ref(false)
+
+const userEdited = (userEdited: EditedUser) => {
+  user.value = { ...user.value, ...userEdited } as User
+  editUserDialogVisible.value = false
+}
 
 const fetchUser = async () => {
   if (parseInt(route.params.id.toString()) == userStore.id) {

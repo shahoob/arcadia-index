@@ -61,7 +61,7 @@ pub enum Source {
 pub struct EditionGroup {
     pub id: i64,
     pub title_group_id: i64,
-    pub name: String, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
+    pub name: Option<String>, // edition name, not title name, (also, for Collections, includes the optional subscription level/tier)
     #[schema(value_type = String, format = DateTime)]
     pub release_date: DateTime<Utc>, // public release, (also, for Collections, date of the last (chronologically) item included)
     #[schema(value_type = String, format = DateTime)]
@@ -84,7 +84,7 @@ pub struct EditionGroup {
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedEditionGroup {
-    pub name: String,
+    pub name: Option<String>,
     #[schema(value_type = String, format = DateTime)]
     pub release_date: DateTime<Utc>,
     pub description: Option<String>,
@@ -101,7 +101,7 @@ pub struct UserCreatedEditionGroup {
 pub struct EditionGroupHierarchyLite {
     pub id: i64,
     pub title_group_id: i64,
-    pub name: String,
+    pub name: Option<String>,
     #[schema(value_type = String, format = DateTime)]
     pub release_date: DateTime<Utc>,
     pub distributor: Option<String>,
@@ -116,7 +116,7 @@ pub struct EditionGroupHierarchyLite {
 pub struct EditionGroupHierarchy {
     pub id: i64,
     pub title_group_id: i64,
-    pub name: String,
+    pub name: Option<String>,
     #[schema(value_type = String, format = DateTime)]
     pub release_date: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
@@ -137,7 +137,7 @@ pub struct EditionGroupHierarchy {
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct EditionGroupInfoLite {
     pub id: i64,
-    pub name: String,
+    pub name: Option<String>,
     #[schema(value_type = String, format = DateTime)]
     pub release_date: DateTime<Utc>,
     pub distributor: Option<String>,
@@ -148,7 +148,7 @@ pub struct EditionGroupInfoLite {
 
 pub fn create_default_edition_group() -> UserCreatedEditionGroup {
     UserCreatedEditionGroup {
-        name: "".to_string(),
+        name: None,
         release_date: Utc::now(),
         description: None,
         distributor: None,

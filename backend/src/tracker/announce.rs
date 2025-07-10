@@ -412,8 +412,7 @@ mod tests {
 
         assert!(
             matches!(err, Error::InvalidPort(_)),
-            "err is not invalid port: {:?}",
-            err
+            "err is not invalid port: {err:?}"
         );
     }
 
@@ -427,8 +426,7 @@ mod tests {
 
         assert!(
             matches!(err, Error::InvalidUploaded(_)),
-            "err is not invalid uploaded: {:?}",
-            err
+            "err is not invalid uploaded: {err:?}"
         );
     }
 
@@ -442,8 +440,7 @@ mod tests {
 
         assert!(
             matches!(err, Error::InvalidDownloaded(_)),
-            "err is not invalid downloaded: {:?}",
-            err
+            "err is not invalid downloaded: {err:?}"
         );
     }
 
@@ -457,8 +454,7 @@ mod tests {
 
         assert!(
             matches!(err, Error::InvalidLeft(_)),
-            "err is not invalid left: {:?}",
-            err
+            "err is not invalid left: {err:?}"
         );
     }
 
@@ -472,8 +468,7 @@ mod tests {
 
         assert!(
             matches!(err, Error::InvalidEvent(_)),
-            "err is not invalid event: {:?}",
-            err
+            "err is not invalid event: {err:?}"
         );
     }
 
@@ -487,8 +482,7 @@ mod tests {
 
         assert!(
             matches!(err, Error::InvalidNumWant(_)),
-            "err is not invalid numwant: {:?}",
-            err
+            "err is not invalid numwant: {err:?}"
         );
     }
 }

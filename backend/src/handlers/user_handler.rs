@@ -5,13 +5,15 @@ use crate::{
             TorrentSearch, TorrentSearchOrder, TorrentSearchSortField, TorrentSearchTitleGroup,
             TorrentSearchTorrent,
         },
-        user::{Profile, PublicProfile, User, UserCreatedUserWarning, UserWarning},
+        user::{EditedUser, Profile, PublicProfile, User, UserCreatedUserWarning, UserWarning},
     },
     repositories::{
         conversation_repository::find_unread_conversations_amount,
         peer_repository,
         torrent_repository::search_torrents,
-        user_repository::{create_user_warning, find_user_profile, find_user_warnings},
+        user_repository::{
+            create_user_warning, find_user_profile, find_user_warnings, update_user,
+        },
     },
 };
 use actix_web::{HttpResponse, web};
@@ -138,4 +140,21 @@ pub async fn warn_user(
     let user_warning = create_user_warning(&arc.pool, current_user.id, &form).await?;
 
     Ok(HttpResponse::Created().json(user_warning))
+}
+
+#[utoipa::path(
+    put,
+    path = "/api/user",
+    responses(
+        (status = 200, description = "Successfully edited the user"),
+    )
+)]
+pub async fn edit_user(
+    form: web::Json<EditedUser>,
+    current_user: User,
+    arc: web::Data<Arcadia>,
+) -> Result<HttpResponse> {
+    update_user(&arc.pool, current_user.id, &form).await?;
+
+    Ok(HttpResponse::Ok().json(json!({"status": "success"})))
 }

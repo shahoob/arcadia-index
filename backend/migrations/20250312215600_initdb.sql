@@ -201,7 +201,7 @@ CREATE TABLE title_groups (
     embedded_links JSONB NOT NULL,
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
-    public_ratings JSONB,
+    public_ratings JSONB NOT NULL,
     screenshots TEXT[] NOT NULL,
     series_id BIGINT,
     FOREIGN KEY (master_group_id) REFERENCES master_groups(id) ON DELETE
@@ -275,7 +275,7 @@ CREATE TYPE source_enum AS ENUM (
 CREATE TABLE edition_groups (
     id BIGSERIAL PRIMARY KEY,
     title_group_id BIGINT NOT NULL,
-    name TEXT NOT NULL,
+    name TEXT,
     release_date TIMESTAMP WITH TIME ZONE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -534,7 +534,7 @@ CREATE TABLE entities (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    pictures TEXT [],
+    pictures TEXT[] NOT NULL,
     created_by_id BIGINT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     title_groups_amount INT NOT NULL DEFAULT 0,
@@ -544,6 +544,23 @@ CREATE TABLE entities (
     leechers_amount INT NOT NULL DEFAULT 0,
     snatches_amount INT NOT NULL DEFAULT 0,
     FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TYPE entity_role_enum AS ENUM (
+    'producer',
+    'developer',
+    'designer',
+    'label'
+);
+CREATE TABLE affiliated_entities (
+    id BIGSERIAL PRIMARY KEY,
+    title_group_id BIGINT NOT NULL,
+    entity_id BIGINT NOT NULL,
+    created_by_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    roles entity_role_enum[] NOT NULL,
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE TYPE collage_category_enum AS ENUM (
     'Personal',
@@ -731,13 +748,7 @@ SELECT
     CASE
         WHEN EXISTS (SELECT 1 FROM torrent_reports WHERE reported_torrent_id = t.id) THEN json_agg(row_to_json(tr))
         ELSE '[]'::json
-    END AS reports,
-    CASE
-        WHEN p.status = 'seeding' THEN 'seeding'
-        WHEN p.status = 'leeching' THEN 'leeching'
-        WHEN ta.snatched_at IS NOT NULL AND p.status IS NULL THEN 'snatched'
-        ELSE NULL
-    END AS peer_status
+    END AS reports
 FROM
     torrents t
 LEFT JOIN
@@ -746,10 +757,8 @@ LEFT JOIN
     torrent_reports tr ON t.id = tr.reported_torrent_id
 LEFT JOIN
     peers p ON t.id = p.torrent_id
-LEFT JOIN
-    torrent_activities ta ON t.id = ta.torrent_id AND p.status IS NULL
 GROUP BY
-    t.id, u.id, u.username, p.status, ta.snatched_at
+    t.id, u.id, u.username
 ORDER BY
     t.id;
 
@@ -820,7 +829,7 @@ ORDER BY
                             'audio_bitrate_sampling', ft.audio_bitrate_sampling, 'audio_channels', ft.audio_channels,
                             'video_codec', ft.video_codec, 'features', ft.features,
                             'subtitle_languages', ft.subtitle_languages, 'video_resolution', ft.video_resolution,
-                            'reports', ft.reports, 'snatched_at', ft.snatched_at, 'peer_status', ft.peer_status,
+                            'reports', ft.reports, 'snatched_at', ft.snatched_at, -- 'peer_status', ft.peer_status,
                             -- Handle anonymity: show creator info only if requesting user is the uploader or if not anonymous
                             'created_by_id', CASE
                                 WHEN ft.uploaded_as_anonymous AND (p_requesting_user_id IS NULL OR ft.created_by_id != p_requesting_user_id) THEN NULL
