@@ -14,8 +14,11 @@ export default class MediainfoConverter {
     const subtitlesLanguages = this.extractSubtitleLanguages(info) // ['Chinese Simplified']
     const features = this.extractFeatures(info)
     const releaseGroup = this.extractReleaseGroup(info['general']['complete name'])
+    const releaseName = this.extractReleaseName(info['general']['complete name'])
+    const sanitizedMediainfo = this.sanitizeMediainfo(info['originalMediainfo'])
     // const audioOption = this.extractAudioOption(info)
     return {
+      sanitizedMediainfo,
       // source,
       video_codec: videoCodec,
       // processing,
@@ -23,10 +26,20 @@ export default class MediainfoConverter {
       container,
       subtitle_languages: subtitlesLanguages,
       features,
-      release_name: info['general']['complete name'],
+      release_name: releaseName,
       release_group: releaseGroup,
       // audioOption,
     }
+  }
+
+  sanitizeMediainfo(mediaInfo: string): string {
+    return mediaInfo.replace(/^(Complete name\s*:\s*)(.*(?:[/\\]))?([^/\\]*)$/m, (match, p1, p2, p3) => p1 + p3)
+  }
+
+  extractReleaseName(path: string): string {
+    const filename = path.substring(Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1)
+    const lastDotIndex = filename.lastIndexOf('.')
+    return lastDotIndex === -1 ? filename : filename.substring(0, lastDotIndex)
   }
 
   extractReleaseGroup(releaseName: string) {

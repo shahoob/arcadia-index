@@ -4,6 +4,7 @@ import { splitIntoLines, splitIntoSections } from '../utils.js'
 const debug = Debug('mediainfo')
 
 export interface ParseResult {
+  originalMediainfo: string
   general: Record<string, string>
   video: Record<string, string>[]
   audio: Record<string, string>[]
@@ -17,6 +18,7 @@ export interface ParseResult {
 export default class MediainfoParser {
   parse(text: string) {
     const result: ParseResult = {
+      originalMediainfo: text,
       general: {},
       video: [],
       audio: [],

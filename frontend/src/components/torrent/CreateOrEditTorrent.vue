@@ -351,9 +351,18 @@ const onFileSelect = (event: FileUploadSelectEvent) => {
 }
 const mediainfoUpdated = async () => {
   const mediainfoExtractedInfo = getFileInfo(torrentForm.value.mediainfo)
-  Object.assign(torrentForm.value, mediainfoExtractedInfo)
-  await nextTick()
-  formRef.value?.setValues(mediainfoExtractedInfo)
+  if (mediainfoExtractedInfo) {
+    torrentForm.value.mediainfo = mediainfoExtractedInfo.sanitizedMediainfo
+    await nextTick()
+    formRef.value?.setFieldValue('mediainfo', mediainfoExtractedInfo.sanitizedMediainfo)
+    Object.assign(torrentForm.value, mediainfoExtractedInfo)
+    await nextTick()
+    try {
+      // some fields fail because they are not in the primevueform, but they are in torrentForm
+      formRef.value?.setValues(mediainfoExtractedInfo)
+    } catch {}
+    showToast('', t('torrent.autofilled_mediainfo'), 'success', 4000, true, 'tr')
+  }
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true

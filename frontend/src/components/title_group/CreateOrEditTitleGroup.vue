@@ -424,7 +424,7 @@ const updateTitleGroupForm = (form: Partial<UserCreatedTitleGroupForm>) => {
     tagsString.value = titleGroupForm.value.tags.join(',')
   }
   try {
-    // some field is apparently undefined, the whole form seems to still get populated though
+    // some fields fail because they are not in the primevueform, but they are in titleGroupForm
     formRef.value?.setValues(titleGroupForm.value)
   } catch {}
 }

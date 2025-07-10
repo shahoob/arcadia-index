@@ -226,7 +226,8 @@
     "complete_edition_group_first": "Create or select an edition group first",
     "edit_torrent": "Edit torrent",
     "latest_uploads": "Latest uploads",
-    "torrent_edited_success": "Torrent edited successfuly"
+    "torrent_edited_success": "Torrent edited successfuly",
+    "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly"
   },
   "entity": {
     "entity": "Entity | Entities",
