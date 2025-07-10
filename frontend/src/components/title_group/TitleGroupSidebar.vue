@@ -23,7 +23,7 @@
       </div>
     </ContentContainer>
     <ContentContainer :container-title="t('artist.artist', 2)">
-      <template #action><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template>
+      <template #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template>
       <template v-if="title_group.affiliated_artists.length != 0">
         <div class="affiliated-artists">
           <AffiliatedArtist class="affiliated-artist" v-for="artist in title_group.affiliated_artists" :key="artist.artist_id" :affiliated_artist="artist" />
@@ -34,7 +34,7 @@
       </div>
     </ContentContainer>
     <ContentContainer :container-title="t('entity.entity', 2)" v-if="title_group.affiliated_entities.length != 0">
-      <!-- <template #action><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template> -->
+      <!-- <template #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template> -->
       <div class="affiliated-entities">
         <AffiliatedEntity class="affiliated-entity" v-for="entity in title_group.affiliated_entities" :key="entity.entity_id" :affiliatedEntity="entity" />
       </div>

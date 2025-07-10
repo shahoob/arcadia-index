@@ -5,7 +5,7 @@
         <div class="container-title" v-if="containerTitle">{{ containerTitle }}</div>
       </RouterLink>
       <div v-else-if="containerTitle" class="container-title">{{ containerTitle }}</div>
-      <slot name="action"></slot>
+      <slot name="top-right"></slot>
     </div>
     <slot></slot>
   </div>
