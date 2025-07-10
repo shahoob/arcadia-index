@@ -62,10 +62,12 @@ import { watch } from 'vue'
 import Button from 'primevue/button'
 import { useI18n } from 'vue-i18n'
 import BBCodeRenderer from '../community/BBCodeRenderer.vue'
+import { onMounted } from 'vue'
 
 const props = defineProps<{
   label: string
-  emptyInput: boolean
+  emptyInput?: boolean
+  initialValue?: string
 }>()
 
 const emit = defineEmits<{
@@ -82,6 +84,10 @@ const insertBoilerplate = (boilerplate: string) => {
   content.value = content.value + boilerplate
   emit('valueChange', content.value)
 }
+
+onMounted(() => {
+  content.value = props.initialValue ?? content.value
+})
 
 watch(
   () => props.emptyInput,

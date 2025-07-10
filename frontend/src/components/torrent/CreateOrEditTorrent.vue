@@ -235,6 +235,7 @@ import { getFeatures, getLanguages } from '@/services/helpers'
 import { nextTick } from 'vue'
 import type { VNodeRef } from 'vue'
 import _ from 'lodash'
+import { showToast } from '@/main'
 
 const formRef = ref<VNodeRef | null>(null)
 const torrentFile = ref({ files: [] as unknown[] })
@@ -360,6 +361,7 @@ const sendTorrent = () => {
     torrentForm.value.id = props.initialTorrent.id
     editTorrent(torrentForm.value as EditedTorrent)
       .then((data) => {
+        showToast('', t('torrent.torrent_edited_success'), 'success', 3000, true, 'tr')
         emit('done', data)
       })
       .finally(() => {

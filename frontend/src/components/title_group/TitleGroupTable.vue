@@ -40,7 +40,7 @@
         <i v-tooltip.top="t('general.report')" class="action pi pi-flag" @click="reportTorrent(slotProps.data.id)" />
         <i v-tooltip.top="t('torrent.copy_permalink')" class="action pi pi-link" />
         <i
-          v-if="user.id === slotProps.data.created_by_id || user.class === 'staff'"
+          v-if="showEditBtn && (user.id === slotProps.data.created_by_id || user.class === 'staff')"
           v-tooltip.top="t('general.edit')"
           @click="editTorrent(slotProps.data)"
           class="action pi pi-pen-to-square"
@@ -182,6 +182,7 @@ interface Props {
   title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
   preview: boolean
   sortBy?: string
+  showEditBtn?: boolean
 }
 const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
 

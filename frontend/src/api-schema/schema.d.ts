@@ -653,7 +653,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["get_user"];
-        put?: never;
+        put: operations["edit_user"];
         post?: never;
         delete?: never;
         options?: never;
@@ -904,6 +904,11 @@ export interface components {
             uploaded_as_anonymous: boolean;
             video_codec?: null | components["schemas"]["VideoCodec"];
             video_resolution?: string | null;
+        };
+        EditedUser: {
+            avatar?: string | null;
+            description: string;
+            email: string;
         };
         EditionGroup: {
             additional_information: {
@@ -3247,6 +3252,28 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PublicProfile"];
                 };
+            };
+        };
+    };
+    edit_user: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditedUser"];
+            };
+        };
+        responses: {
+            /** @description Successfully edited the user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

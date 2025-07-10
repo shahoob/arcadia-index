@@ -47,7 +47,8 @@
     "create_new_one": "Create a new one",
     "remove": "Remove",
     "view": "View",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "validate": "Validate"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -100,6 +101,9 @@
     "password": "Password",
     "password_verify": "Verify password",
     "email": "E-mail",
+    "avatar_url": "Avatar url",
+    "edit_profile": "Edit profile",
+    "profile_edited_success": "Profile edited successfuly",
     "register": "Register",
     "login": "Login",
     "apply": "Apply",
@@ -221,7 +225,8 @@
     "mediainfo_autofill": "Mediainfo (will autofill the fields below when possible)",
     "complete_edition_group_first": "Create or select an edition group first",
     "edit_torrent": "Edit torrent",
-    "latest_uploads": "Latest uploads"
+    "latest_uploads": "Latest uploads",
+    "torrent_edited_success": "Torrent edited successfuly"
   },
   "entity": {
     "entity": "Entity | Entities",
