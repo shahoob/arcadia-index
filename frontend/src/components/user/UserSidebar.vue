@@ -1,6 +1,6 @@
 <template>
   <div id="user-sidebar">
-    <Image :src="user.avatar ?? '/default_user_avatar.svg'" :alt="user.username + '\'s avatar'" preview>
+    <Image :src="user.avatar ?? '/default_user_avatar.jpg'" :alt="user.username + '\'s avatar'" preview>
       <template #previewicon>
         <i class="pi pi-search"></i>
       </template>
