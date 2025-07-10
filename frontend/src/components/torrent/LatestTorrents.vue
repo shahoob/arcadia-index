@@ -28,9 +28,10 @@ const props = defineProps<{
 <style>
 .last-uploads {
   display: flex;
+  justify-content: space-around;
   overflow-y: scroll;
   .title-group {
-    margin-right: 10px;
+    margin: 0 5px;
   }
 }
 </style>

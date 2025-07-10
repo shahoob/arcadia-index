@@ -21,18 +21,18 @@ SET row_security = off;
 -- Data for Name: _sqlx_migrations; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public._sqlx_migrations VALUES (20250312215600, 'initdb', '2025-07-06 19:43:16.333958+00', true, '\xf7a3e3751e1bfc9c0ec76efadc94ccd9e116a6ae5a75602c61c8b4d245475d309a3587fb41df1992ef94dcd75fe818a0', 50127340);
+INSERT INTO public._sqlx_migrations VALUES (20250312215600, 'initdb', '2025-07-10 16:59:54.976287+00', true, '\x3a6b9af1d945a89f6eae8e5beb68c69a37d36f94dc1e15d29dc7ba043bfee5c07b82fe8b3464d3aab264abf20f6fafb3', 38789401);
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.users VALUES (1, 'creator', NULL, 'none@domain.com', 'none', '127.0.0.1', '2025-07-06 19:43:16.333958+00', '', 0, 0, 1, 1, 0, 0, '2025-07-06 19:43:16.333958+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{}', 1, 1, false, false, '');
+INSERT INTO public.users VALUES (1, 'creator', NULL, 'none@domain.com', 'none', '127.0.0.1', '2025-07-10 16:59:54.976287+00', '', 0, 0, 1, 1, 0, 0, '2025-07-10 16:59:54.976287+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{}', 1, 1, false, false, '');
 INSERT INTO public.users VALUES (5, 'waterbottle', 'https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg', 'user2@example.com', 'hashedpassword2', '192.168.1.2', '2025-03-30 16:24:57.388152+00', '', 0, 0, 1, 1, 0, 0, '2025-03-30 16:24:57.388152+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', 5493004881313328037, 2566432999990446913, false, false, '''''');
 INSERT INTO public.users VALUES (3, 'coolguy', 'https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg', 'user3@example.com', 'hashedpassword3', '192.168.1.3', '2025-03-30 16:24:57.388152+00', '', 0, 0, 1, 1, 0, 0, '2025-03-30 16:24:57.388152+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', 2274483400846363122, 1270934296711348124, false, false, '''''');
 INSERT INTO public.users VALUES (2, 'picolo', 'https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1', '2025-03-30 16:24:57.388152+00', '', 10000, 0, 1, 1, 0, 0, '2025-06-16 16:11:55.97921+00', 'staff', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000000000, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -197409747985172542, 1837889239438807682, false, false, '''''');
-INSERT INTO public.users VALUES (4, 'test', NULL, 'test@test.tsttt', '$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M', '127.0.0.1', '2025-04-10 19:15:51.036818+00', '', 0, 0, 1, 1, 0, 0, '2025-07-06 20:16:18.74924+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -7167291202215854785, 1526268353104531819, false, false, '''''');
+INSERT INTO public.users VALUES (4, 'test', NULL, 'test@test.tsttt', '$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M', '127.0.0.1', '2025-04-10 19:15:51.036818+00', '', 0, 0, 1, 1, 0, 0, '2025-07-10 17:01:06.025907+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -7167291202215854785, 1526268353104531819, false, false, '''''');
 
 
 --
@@ -95,7 +95,7 @@ The player also has the option of building their own roller coaster designs as w
 INSERT INTO public.title_groups VALUES (13, 1, ' Rollercoaster Tycoon (Original Game Soundtrack)', '{}', '2025-04-20 18:50:39.453999+00', '2025-04-20 18:50:39.453999+00', 1, 'Tracklist
 01. Title Theme (From \u201cRollercoaster Tycoon 1\u201d) (02:07)
 02. Title Theme (From \u201cRollercoaster Tycoon 2\u201d) (01:43)', NULL, '', '2022-01-01 00:00:00+00', NULL, '{video.game,soundtrack}', 'UK', '{https://m.media-amazon.com/images/I/61WavFxog8L._UXNaN_FMjpg_QL85_.jpg}', '{https://en.wikipedia.org/wiki/RollerCoaster_Tycoon_(video_game)}', '{}', 'Soundtrack', 'music', NULL, '{}', NULL);
-INSERT INTO public.title_groups VALUES (2, NULL, 'The Gold Rush', '{""}', '2025-03-31 10:22:23.744818+00', '2025-03-31 10:22:23.744818+00', 1, 'A gold prospector in Alaska struggles to survive the elements and win the heart of a dance hall girl.', NULL, 'English', '1925-08-15 00:00:00+00', NULL, '{adventure,comedy,drama}', 'USA', '{https://image.tmdb.org/t/p/w1280/eQRFo1qwRREYwj47Yoe1PisgOle.jpg}', '{"https://www.themoviedb.org/movie/962-the-gold-rush\",\"https://www.imdb.com/title/tt0015864/"}', '{"Clips": {"Charlie Chaplin Eating His Shoe": "https://www.youtube.com/embed/u65lvwfTPtM"}, "Trailers": {"Official trailer": "https://www.youtube.com/embed/kDlEvaKBkhU", "100th Anniversary 4K Restoration Trailer": "https://www.youtube.com/embed/N9-VZlxIIAs"}}', 'FeatureFilm', 'movie', NULL, '{}', NULL);
+INSERT INTO public.title_groups VALUES (2, NULL, 'The Gold Rush', '{""}', '2025-03-31 10:22:23.744818+00', '2025-03-31 10:22:23.744818+00', 1, 'A gold prospector in Alaska struggles to survive the elements and win the heart of a dance hall girl.', NULL, 'English', '1925-08-15 00:00:00+00', NULL, '{adventure,comedy,drama}', 'USA', '{https://image.tmdb.org/t/p/w1280/eQRFo1qwRREYwj47Yoe1PisgOle.jpg}', '{https://www.themoviedb.org/movie/962-the-gold-rush,https://www.imdb.com/title/tt0015864/}', '{"Clips": {"Charlie Chaplin Eating His Shoe": "https://www.youtube.com/embed/u65lvwfTPtM"}, "Trailers": {"Official trailer": "https://www.youtube.com/embed/kDlEvaKBkhU", "100th Anniversary 4K Restoration Trailer": "https://www.youtube.com/embed/N9-VZlxIIAs"}}', 'FeatureFilm', 'movie', NULL, '{}', NULL);
 
 
 --
@@ -118,8 +118,6 @@ INSERT INTO public.entities VALUES (3, 'MTV', 'MTV (Originally an initialism of 
 -- Data for Name: affiliated_entities; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.affiliated_entities VALUES (3, 8, 3, 1, '2025-07-06 19:47:31.266197+00', '{network}');
-INSERT INTO public.affiliated_entities VALUES (4, 9, 3, 1, '2025-07-06 19:47:31.266197+00', '{network}');
 
 
 --
@@ -199,7 +197,7 @@ INSERT INTO public.edition_groups VALUES (23, 13, NULL, '2022-01-01 00:00:00+00'
 -- Data for Name: forum_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_categories VALUES (1, 'Site', '2025-07-06 19:43:16.333958+00', 1);
+INSERT INTO public.forum_categories VALUES (1, 'Site', '2025-07-10 16:59:54.976287+00', 1);
 INSERT INTO public.forum_categories VALUES (3, 'Community', '2025-05-22 08:01:35.753162+00', 1);
 
 
@@ -207,7 +205,7 @@ INSERT INTO public.forum_categories VALUES (3, 'Community', '2025-05-22 08:01:35
 -- Data for Name: forum_sub_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_sub_categories VALUES (1, 1, 'Announcements', '2025-07-06 19:43:16.333958+00', 1, 1, 1, '{}');
+INSERT INTO public.forum_sub_categories VALUES (1, 1, 'Announcements', '2025-07-10 16:59:54.976287+00', 1, 1, 1, '{}');
 INSERT INTO public.forum_sub_categories VALUES (5, 3, 'Lounge', '2025-05-22 08:02:15.125336+00', 1, 1, 1, '{}');
 INSERT INTO public.forum_sub_categories VALUES (7, 3, 'Technology', '2025-05-22 08:05:01.192217+00', 1, 1, 1, '{}');
 
@@ -216,7 +214,7 @@ INSERT INTO public.forum_sub_categories VALUES (7, 3, 'Technology', '2025-05-22 
 -- Data for Name: forum_threads; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_threads VALUES (1, 1, 'Welcome to the site!', '2025-07-06 19:43:16.333958+00', 1, 1, false, false);
+INSERT INTO public.forum_threads VALUES (1, 1, 'Welcome to the site!', '2025-07-10 16:59:54.976287+00', 1, 1, false, false);
 INSERT INTO public.forum_threads VALUES (3, 5, 'Hello everyone', '2025-05-22 08:03:08.400255+00', 1, 1, false, false);
 INSERT INTO public.forum_threads VALUES (5, 7, 'Favorite OS for daily driving', '2025-05-22 08:06:06.724797+00', 1, 1, false, false);
 
@@ -225,7 +223,7 @@ INSERT INTO public.forum_threads VALUES (5, 7, 'Favorite OS for daily driving', 
 -- Data for Name: forum_posts; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_posts VALUES (1, 1, '2025-07-06 19:43:16.333958+00', '2025-07-06 19:43:16.333958+00', 1, 'Welcome!', false);
+INSERT INTO public.forum_posts VALUES (1, 1, '2025-07-10 16:59:54.976287+00', '2025-07-10 16:59:54.976287+00', 1, 'Welcome!', false);
 INSERT INTO public.forum_posts VALUES (3, 3, '2025-05-22 08:03:48.66391+00', '2025-05-22 08:03:48.66391+00', 1, 'Hello there, I just joined!', false);
 INSERT INTO public.forum_posts VALUES (4, 5, '2025-05-22 08:06:36.225458+00', '2025-05-22 08:06:36.225458+00', 2, 'I use arch btw :)', false);
 
