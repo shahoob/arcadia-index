@@ -167,6 +167,8 @@
     "unsubscription_successful": "Unsubscription successful",
     "edit_affiliated_artists": "Edit affiliated artists",
     "update_artists": "Update artists",
+    "rating": "Rating | Ratings",
+    "vote": "Vote | Votes",
     "content_type": {
       "content_type": "Content type",
       "music": "Music",

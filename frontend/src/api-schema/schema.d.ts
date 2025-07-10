@@ -998,6 +998,8 @@ export interface components {
         };
         /** @enum {string} */
         EntityRole: "producer" | "developer" | "designer" | "label" | "network";
+        /** @enum {string} */
+        ExternalDB: "tmdb";
         ExternalDBData: {
             edition_group?: null | components["schemas"]["UserCreatedEditionGroup"];
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
@@ -1244,6 +1246,13 @@ export interface components {
             last_five_uploaded_torrents: components["schemas"]["TitleGroupHierarchyLite"][];
             user: components["schemas"]["PublicUser"];
         };
+        PublicRating: {
+            /** Format: double */
+            rating: number;
+            service: components["schemas"]["ExternalDB"];
+            /** Format: int64 */
+            votes: number;
+        };
         PublicUser: {
             /** Format: int64 */
             artist_comments: number;
@@ -1370,9 +1379,7 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: {
-                [key: string]: string;
-            };
+            public_ratings: components["schemas"]["PublicRating"][];
             screenshots: string[];
             /** Format: int64 */
             series_id?: number | null;
@@ -1412,9 +1419,7 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: {
-                [key: string]: string;
-            };
+            public_ratings: components["schemas"]["PublicRating"][];
             screenshots: string[];
             series: components["schemas"]["SeriesLite"];
             /** Format: int64 */
@@ -1490,9 +1495,7 @@ export interface components {
             /** Format: date-time */
             original_release_date: string;
             platform?: null | components["schemas"]["Platform"];
-            public_ratings: {
-                [key: string]: string;
-            };
+            public_ratings: components["schemas"]["PublicRating"][];
             screenshots: string[];
             /** Format: int64 */
             series_id?: number | null;

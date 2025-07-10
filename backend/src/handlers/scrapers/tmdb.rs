@@ -11,7 +11,10 @@ use crate::{
     handlers::scrapers::ExternalDBData,
     models::{
         edition_group::{UserCreatedEditionGroup, create_default_edition_group},
-        title_group::{ContentType, UserCreatedTitleGroup, create_default_title_group},
+        title_group::{
+            ContentType, ExternalDB, PublicRating, UserCreatedTitleGroup,
+            create_default_title_group,
+        },
     },
     services::common_service::naive_date_to_utc_midnight,
 };
@@ -85,17 +88,7 @@ pub async fn get_tmdb_data(
     if arc.tmdb_api_key.is_none() {
         return Err(Error::TMDBDataFetchingNotAvailable);
     }
-    let re = Regex::new(r"themoviedb\.org/(movie|tv)/(\d+)(?:-|$)").unwrap();
-    let captures = re.captures(&query.url).unwrap();
-
-    let media_type_str = captures.get(1).unwrap().as_str();
-    let media_type = match media_type_str {
-        "movie" => ContentType::Movie,
-        "tv" => ContentType::TVShow,
-        _ => return Err(Error::InvalidTMDBUrl),
-    };
-    let id_str = captures.get(2).unwrap().as_str();
-    let id = id_str.parse::<u64>().ok().unwrap();
+    let (media_type, id) = extract_media_type_and_id(&query.url).unwrap();
 
     let client = Client::<ReqwestClient>::new(arc.tmdb_api_key.clone().unwrap());
 
@@ -111,4 +104,54 @@ pub async fn get_tmdb_data(
     }
 
     Ok(HttpResponse::Ok().json(external_db_data))
+}
+
+pub async fn get_tmdb_rating(tmdb_url: &str, tmdb_api_key: String) -> Result<PublicRating> {
+    let (media_type, id) = extract_media_type_and_id(tmdb_url).unwrap();
+
+    let client = Client::<ReqwestClient>::new(tmdb_api_key);
+
+    let rating = match media_type {
+        ContentType::Movie => {
+            let tmdb_movie = client
+                .get_movie_details(id, &Default::default())
+                .await
+                .unwrap();
+            PublicRating {
+                service: ExternalDB::Tmdb,
+                rating: tmdb_movie.inner.vote_average,
+                votes: tmdb_movie.inner.vote_count as i64,
+            }
+        }
+        ContentType::TVShow => {
+            let tmdb_tv_show = client
+                .get_tvshow_details(id, &Default::default())
+                .await
+                .unwrap();
+            PublicRating {
+                service: ExternalDB::Tmdb,
+                rating: tmdb_tv_show.inner.vote_average,
+                votes: tmdb_tv_show.inner.vote_count as i64,
+            }
+        }
+        _ => return Err(Error::InvalidTMDBUrl),
+    };
+
+    Ok(rating)
+}
+
+fn extract_media_type_and_id(tmdb_url: &str) -> Result<(ContentType, u64)> {
+    let re = Regex::new(r"themoviedb\.org/(movie|tv)/(\d+)(?:-|$)").unwrap();
+    let captures = re.captures(tmdb_url).unwrap();
+
+    let media_type_str = captures.get(1).unwrap().as_str();
+    let media_type = match media_type_str {
+        "movie" => ContentType::Movie,
+        "tv" => ContentType::TVShow,
+        _ => return Err(Error::InvalidTMDBUrl),
+    };
+    let id_str = captures.get(2).unwrap().as_str();
+    let id = id_str.parse::<u64>().ok().unwrap();
+
+    Ok((media_type, id))
 }

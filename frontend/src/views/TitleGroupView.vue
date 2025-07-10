@@ -68,6 +68,7 @@
           </div>
         </div>
       </ContentContainer>
+      <TitleGroupRatings v-if="title_group.public_ratings.length > 0" :publicRatings="title_group.public_ratings" class="ratings" />
       <TitleGroupComments :comments="title_group.title_group_comments" @newComment="newComment" />
     </div>
     <div class="sidebar" v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')">
@@ -105,6 +106,7 @@ import TitleGroupFullHeader from '@/components/title_group/TitleGroupFullHeader.
 import TitleGroupSlimHeader from '@/components/title_group/TitleGroupSlimHeader.vue'
 import { subscribeToItem, unsubscribeToItem } from '@/services/api/generalService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
+import TitleGroupRatings from '@/components/title_group/TitleGroupRatings.vue'
 import FloatLabel from 'primevue/floatlabel'
 import Select from 'primevue/select'
 import CustomGalleria from '@/components/CustomGalleria.vue'
@@ -200,7 +202,6 @@ const affiliatedArtistsEdited = (newAffiliatedArtists: AffiliatedArtistHierarchy
     })
     title_group.value.affiliated_artists = title_group.value.affiliated_artists.concat(newAffiliatedArtists)
   }
-  console.log(title_group.value?.affiliated_artists)
   editAffiliatedArtistsDialogVisible.value = false
 }
 
@@ -211,54 +212,46 @@ watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 .main.with-sidebar {
   width: 75%;
 }
-
 .sidebar {
   width: 25%;
 }
-
 .actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
 }
-
 .actions i {
   margin: 0px 0.5em;
   color: white;
   cursor: pointer;
 }
-
 .screenshots {
   margin-top: 20px;
 }
-
 .torrent-requests {
   margin-top: 20px;
 }
-
 .embedded-links {
   margin-top: 20px;
 }
-
 .description {
   margin-top: 20px;
 }
-
 .title-group-description {
   margin-top: 10px;
   margin-bottom: 25px;
 }
-
 .edition-description {
   margin-top: 15px;
 }
-
 .edition-description .edition-group-slug {
   color: var(--color-primary);
   margin-bottom: 5px;
 }
-
+.ratings {
+  margin-top: 20px;
+}
 .comments {
   margin-top: 20px;
 }

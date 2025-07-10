@@ -14,6 +14,8 @@ export type TitleGroupAndAssociatedData = components['schemas']['TitleGroupAndAs
 
 export type ContentType = components['schemas']['ContentType']
 
+export type PublicRating = components['schemas']['PublicRating']
+
 export type EmbeddedLinks = {
   [key: string]: {
     [key: string]: string

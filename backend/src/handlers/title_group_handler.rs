@@ -1,12 +1,14 @@
 use actix_web::{HttpResponse, web};
+use futures::future::join_all;
 use serde::Deserialize;
 use utoipa::IntoParams;
 
 use crate::{
     Arcadia, Result,
+    handlers::scrapers::tmdb::get_tmdb_rating,
     models::{
         title_group::{
-            ContentType, TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite,
+            ContentType, PublicRating, TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite,
             UserCreatedTitleGroup,
         },
         user::User,
@@ -31,7 +33,19 @@ pub async fn add_title_group(
     arc: web::Data<Arcadia>,
     current_user: User,
 ) -> Result<HttpResponse> {
-    let created_title_group = create_title_group(&arc.pool, &form, &current_user).await?;
+    let rating_futures: Vec<_> = form
+        .external_links
+        .iter()
+        .filter(|link| link.contains("https://www.themoviedb.org/"))
+        .map(|link| get_tmdb_rating(link, arc.tmdb_api_key.clone().unwrap()))
+        .collect();
+    let ratings: Vec<PublicRating> = join_all(rating_futures)
+        .await
+        .into_iter()
+        .filter_map(Result::ok)
+        .collect();
+
+    let created_title_group = create_title_group(&arc.pool, &form, &ratings, &current_user).await?;
 
     if !form.affiliated_artists.is_empty() {
         for artist in &mut form.affiliated_artists {

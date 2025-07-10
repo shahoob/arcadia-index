@@ -201,7 +201,7 @@ CREATE TABLE title_groups (
     embedded_links JSONB NOT NULL,
     category title_group_category_enum,
     content_type content_type_enum NOT NULL,
-    public_ratings JSONB,
+    public_ratings JSONB NOT NULL,
     screenshots TEXT[] NOT NULL,
     series_id BIGINT,
     FOREIGN KEY (master_group_id) REFERENCES master_groups(id) ON DELETE

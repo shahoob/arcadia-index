@@ -1,11 +1,11 @@
 use crate::{
     Error, Result,
     models::{
-        title_group::{ContentType, TitleGroup, UserCreatedTitleGroup},
+        title_group::{ContentType, PublicRating, TitleGroup, UserCreatedTitleGroup},
         user::User,
     },
 };
-use serde_json::Value;
+use serde_json::{Value, json};
 use sqlx::PgPool;
 
 fn sanitize_title_group_tags(tags: Vec<String>) -> Vec<String> {
@@ -23,11 +23,12 @@ fn sanitize_title_group_tags(tags: Vec<String>) -> Vec<String> {
 pub async fn create_title_group(
     pool: &PgPool,
     title_group_form: &UserCreatedTitleGroup,
+    public_ratings: &Vec<PublicRating>,
     current_user: &User,
 ) -> Result<TitleGroup> {
     let create_title_group_query = r#"
-        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline,platform,screenshots)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::title_group_category_enum, $12::content_type_enum, $13, $14, $15, $16, $17)
+        INSERT INTO title_groups (master_group_id,name,name_aliases,created_by_id,description,original_language,country_from,covers,external_links,embedded_links,category,content_type,original_release_date,tags,tagline,platform,screenshots,public_ratings)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::title_group_category_enum, $12::content_type_enum, $13, $14, $15, $16, $17, $18)
         RETURNING *;
     "#;
 
@@ -49,6 +50,7 @@ pub async fn create_title_group(
         .bind(&title_group_form.tagline)
         .bind(&title_group_form.platform)
         .bind(&title_group_form.screenshots)
+        .bind(json!(public_ratings))
         // .bind(&title_group_form.public_ratings)
         .fetch_one(pool)
         .await

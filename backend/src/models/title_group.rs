@@ -89,6 +89,20 @@ pub enum TitleGroupCategory {
     Other,
 }
 
+#[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
+pub enum ExternalDB {
+    #[sqlx(rename = "tmdb")]
+    #[serde(rename = "tmdb")]
+    Tmdb,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct PublicRating {
+    pub service: ExternalDB,
+    pub rating: f64,
+    pub votes: i64,
+}
+
 // Every attribute is specific to the title,
 // no specific information should be entered about the editions or the torrents
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -116,8 +130,8 @@ pub struct TitleGroup {
     pub category: Option<TitleGroupCategory>, // ((movie: feature film, short film), (music: ep, album, compilation))
     pub content_type: ContentType,            // movies, tv shows, books, games, etc
     pub tags: Vec<String>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub public_ratings: Option<Value>, // {service: rating}
+    #[schema(value_type = Vec<PublicRating>)]
+    pub public_ratings: Value, // {service: rating}
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
 }
@@ -216,8 +230,8 @@ pub struct TitleGroupHierarchy {
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub public_ratings: Option<Value>,
+    #[schema(value_type = Vec<PublicRating>)]
+    pub public_ratings: Value,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     pub edition_groups: Vec<EditionGroupHierarchy>,
@@ -248,8 +262,8 @@ pub struct TitleGroupAndAssociatedData {
     pub category: Option<TitleGroupCategory>,
     pub content_type: ContentType,
     pub tags: Vec<String>,
-    #[schema(value_type = HashMap<String, String>)]
-    pub public_ratings: Option<Value>,
+    #[schema(value_type = Vec<PublicRating>)]
+    pub public_ratings: Value,
     pub series_id: Option<i64>,
     pub screenshots: Vec<String>,
     pub edition_groups: Vec<EditionGroupHierarchy>,

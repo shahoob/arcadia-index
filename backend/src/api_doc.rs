@@ -27,7 +27,7 @@ use crate::{
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
-        title_group::{TitleGroupAndAssociatedData, TitleGroupHierarchy},
+        title_group::{PublicRating, TitleGroupAndAssociatedData, TitleGroupHierarchy},
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::{
             EditedTorrent, Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete,
@@ -177,7 +177,8 @@ use crate::{
         ExternalDBData,
         HomePage,
         UploadInformation,
-        EditedUser
+        EditedUser,
+        PublicRating
     ),)
 )]
 pub struct ApiDoc;
