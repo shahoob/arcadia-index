@@ -60,7 +60,7 @@ pub async fn get_home(arc: web::Data<Arcadia>) -> Result<HttpResponse> {
     let latest_uploads_in_title_groups =
         find_title_group_info_lite(&arc.pool, None, Some(""), &None, 5).await?;
 
-    Ok(HttpResponse::Created().json(json!( {
+    Ok(HttpResponse::Created().json(json!({
         "recent_announcements":recent_announcements,
         "stats": stats,
         "latest_uploads": latest_uploads_in_title_groups,
