@@ -2,7 +2,7 @@
   <ContentContainer class="comment-container">
     <div :class="{ comment: true, 'reverse-user-position': reverseUserPosition }">
       <div class="user">
-        <img class="avatar" :src="comment.created_by.avatar ?? '/default_user_avatar.png'" :alt="comment.created_by.username + '\'s avatar'" />
+        <img class="avatar" :src="comment.created_by.avatar ?? '/default_user_avatar.jpg'" :alt="comment.created_by.username + '\'s avatar'" />
         <RouterLink :to="`/user/${comment.created_by.id}`">
           <span class="username">
             {{ comment.created_by.username }}
