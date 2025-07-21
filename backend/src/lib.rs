@@ -50,11 +50,20 @@ pub enum Error {
     #[error("database error: {0}")]
     GenericDatabaseError(#[from] sqlx::Error),
 
+    #[error("{0}")]
+    BadRequest(String),
+
     #[error("account banned")]
     AccountBanned,
 
     #[error("could not create user application")]
     CouldNotCreateUserApplication(#[source] sqlx::Error),
+
+    #[error("could not get user applications")]
+    CouldNotGetUserApplications(#[source] sqlx::Error),
+
+    #[error("could not update user application")]
+    CouldNotUpdateUserApplication(#[source] sqlx::Error),
 
     #[error("could not create artist")]
     CouldNotCreateArtist(#[source] sqlx::Error),
@@ -258,7 +267,8 @@ impl actix_web::ResponseError for Error {
 
         match self {
             // 400 Bad Request
-            Error::UsernameAlreadyExists
+            Error::BadRequest(_)
+            | Error::UsernameAlreadyExists
             | Error::InvitationKeyInvalid
             | Error::InvitationKeyRequired
             | Error::InvitationKeyAlreadyUsed
