@@ -1,7 +1,14 @@
 <template>
   <template v-if="action === 'select'">
     <FloatLabel class="input">
-      <Select v-model="titleGroupForm.content_type" inputId="content_type" :options="getSelectableContentTypes()" class="select" size="small">
+      <Select
+        v-model="titleGroupForm.content_type"
+        @update:model-value="(content_type) => (titleGroupStore.content_type = content_type)"
+        inputId="content_type"
+        :options="getSelectableContentTypes()"
+        class="select"
+        size="small"
+      >
         <template #option="slotProps">
           <span>{{ t(`title_group.content_type.${slotProps.option}`) }}</span>
         </template>
