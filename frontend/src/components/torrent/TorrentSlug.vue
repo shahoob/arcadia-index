@@ -32,7 +32,11 @@ const computedSlug = computed<string[][]>(() => {
   const releaseGroup: string[] = []
 
   if (props.torrent.video_resolution) {
-    firstPart.push(props.torrent.video_resolution)
+    if (props.torrent.video_resolution === 'Other' && 'video_resolution_other_x' in props.torrent && 'video_resolution_other_y' in props.torrent) {
+      firstPart.push(`${props.torrent.video_resolution_other_x as string}x${props.torrent.video_resolution_other_y as string}`)
+    } else {
+      firstPart.push(props.torrent.video_resolution)
+    }
   }
   if (props.editionGroup?.source) {
     firstPart.push(props.editionGroup.source)
