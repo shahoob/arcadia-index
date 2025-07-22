@@ -45,10 +45,9 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
     itemRange = ` (${editionGroup.additional_information.first_item} to ${editionGroup.additional_information.last_item})`
   }
 
+  attributes.push(`${dateRange}${itemRange}`)
   if (editionGroup.name) {
-    attributes.push(`${dateRange}${itemRange} - ${editionGroup.name}`)
-  } else {
-    attributes.push(`${dateRange}${itemRange}`)
+    attributes.push(editionGroup.name)
   }
   if (editionGroup.additional_information?.format) {
     attributes.push(editionGroup.additional_information.format)
@@ -70,7 +69,9 @@ export const getEditionGroupSlug = (editionGroup: EditionGroupInfoLite): string 
     attributes.push(editionGroup.distributor)
   }
 
-  return attributes.join(' / ')
+  const first = attributes[0]
+  const rest = attributes.slice(1).join(' / ')
+  return `${first} - ${rest}`
 }
 export const getFeatures = (contentType: ContentType, format: string = '', source: Source | null = null): Features[] => {
   let features: Features[] = []
