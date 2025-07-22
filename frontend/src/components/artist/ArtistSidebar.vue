@@ -1,6 +1,6 @@
 <template>
   <div class="artist-sidebar">
-    <Image class="artist-pictures" v-if="artist.pictures?.length" :src="artist.pictures[0]" preview>
+    <Image class="artist-pictures" :src="artist.pictures[0] ?? '/default_artist_picture.svg'" :preview="artist.pictures.length !== 0" preview>
       <template #previewicon>
         <i class="pi pi-search"></i>
       </template>
