@@ -276,7 +276,7 @@ pub async fn find_title_group_info_lite(
                     OR ($2::TEXT IS NOT NULL AND (tg.name ILIKE '%' || $2 || '%' OR $2 = ANY(tg.name_aliases)))
                     AND ($3::content_type_enum IS NULL OR tg.content_type = $3::content_type_enum)
                 GROUP BY tg.id
-                ORDER BY MAX(latest_torrent.created_at) DESC
+                ORDER BY MAX(latest_torrent.created_at) DESC NULLS LAST
                 LIMIT $4
             ) AS subquery;
         "#,
