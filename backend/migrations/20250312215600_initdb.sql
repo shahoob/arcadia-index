@@ -508,22 +508,6 @@ CREATE TABLE title_group_subscriptions (
     FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL,
     UNIQUE (title_group_id, subscriber_id)
 );
-CREATE TYPE notification_item_enum AS ENUM (
-    'TitleGroup',
-    'Artist',
-    'Collage'
-);
-CREATE TABLE notifications (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    receiver BIGINT NOT NULL,
-    title TEXT NOT NULL,
-    message TEXT NOT NULL,
-    notification_type notification_item_enum NOT NULL,
-    item_id BIGINT,
-    read_status BOOLEAN NOT NULL DEFAULT FALSE,
-    FOREIGN KEY (receiver) REFERENCES users(id) ON DELETE CASCADE
-);
 CREATE TYPE peer_status_enum AS ENUM('seeding', 'leeching');
 CREATE TABLE peers (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -727,6 +711,32 @@ CREATE TABLE conversation_messages (
 
     FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TYPE notification_reason_enum AS ENUM (
+    'TorrentUploadedInSubscribedTitleGroup',
+    'SeedingTorrentDeleted',
+    'TitleGroupAddedForSubscribedArtist',
+    'ThreadAddedInSubscribedForumSubCategory',
+    'TitleGroupAddedInSubscribedCollage'
+);
+CREATE TABLE notifications (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    receiver_id BIGINT NOT NULL,
+    reason notification_reason_enum NOT NULL,
+    message TEXT,
+    read_status BOOLEAN NOT NULL DEFAULT FALSE,
+    title_group_id BIGINT,
+    torrent_id BIGINT,
+    artist_id BIGINT,
+    -- collage_id BIGINT,
+    forum_thread_id BIGINT,
+    FOREIGN KEY (receiver_id) REFERENCES users(id),
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
+    -- FOREIGN KEY (collage_id) REFERENCES collages(id) ON DELETE CASCADE,
+    FOREIGN KEY (forum_thread_id) REFERENCES forum_threads(id) ON DELETE CASCADE
 );
 
 -- Views

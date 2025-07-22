@@ -1,15 +1,25 @@
-use crate::{Error, Result};
+use crate::{Error, Result, models::notification::NotificationReason};
 use sqlx::{Postgres, Transaction};
+
+pub struct NotificationItemsIds {
+    pub title_group_id: Option<i64>,
+    pub torrent_id: Option<i64>,
+    #[allow(dead_code)]
+    pub artist_id: Option<i64>,
+    #[allow(dead_code)]
+    pub collage_id: Option<i64>,
+    #[allow(dead_code)]
+    pub forum_thread_id: Option<i64>,
+}
 
 pub async fn notify_users(
     tx: &mut Transaction<'_, Postgres>,
-    event: &str,
-    item_id: &i64,
-    title: &str,
-    message: &str,
+    reason: &NotificationReason,
+    message: Option<&String>,
+    notification_items_ids: NotificationItemsIds,
 ) -> Result<()> {
-    match event {
-        "torrent_uploaded" => {
+    match reason {
+        NotificationReason::TorrentUploadedInSubscribedTitleGroup => {
             sqlx::query!(
                 r#"
                     WITH subscribers_ids AS (
@@ -17,50 +27,47 @@ pub async fn notify_users(
                         FROM title_group_subscriptions
                         WHERE title_group_id = $1
                     )
-                    INSERT INTO notifications (receiver, title, message, notification_type, item_id)
+                    INSERT INTO notifications (receiver_id, reason, torrent_id, title_group_id)
                     SELECT
                         user_id,
+                        'TorrentUploadedInSubscribedTitleGroup'::notification_reason_enum,
                         $2,
-                        $3,
-                        'TitleGroup'::notification_item_enum,
                         $1
                     FROM subscribers_ids
                 "#,
-                item_id,
-                title,
-                message
+                notification_items_ids.title_group_id,
+                notification_items_ids.torrent_id
             )
             .execute(&mut **tx)
             .await
             .map_err(Error::CouldNotCreateNotification)?;
         }
-        "torrent_deleted" => {
+        NotificationReason::SeedingTorrentDeleted => {
             sqlx::query!(
-                        r#"
-                            WITH seeders_ids AS (
-                                SELECT user_id
-                                FROM torrent_activities
-                                WHERE torrent_id = $1
-                            )
-                            INSERT INTO notifications (receiver, title, message, notification_type, item_id)
-                            SELECT
-                                user_id,
-                                $2,
-                                $3,
-                                'TitleGroup'::notification_item_enum,
-                                $1
-                            FROM seeders_ids
-                        "#,
-                        item_id,
-                        title,
-                        message
+                r#"
+                    WITH seeders_ids AS (
+                        SELECT user_id
+                        FROM torrent_activities
+                        WHERE torrent_id = $1
                     )
-                    .execute(&mut **tx)
-                    .await
-                    .map_err(Error::CouldNotCreateNotification)?;
+                    INSERT INTO notifications (receiver_id, reason, message, title_group_id)
+                    SELECT
+                        user_id,
+                        'SeedingTorrentDeleted'::notification_reason_enum,
+                        $2,
+                        $3
+                    FROM seeders_ids
+                "#,
+                notification_items_ids.torrent_id,
+                message,
+                notification_items_ids.title_group_id
+            )
+            .execute(&mut **tx)
+            .await
+            .map_err(Error::CouldNotCreateNotification)?;
         }
         _ => {
-            return Err(Error::UnsupportedNotification(event.into()));
+            return Err(Error::UnsupportedNotification);
         }
     }
 

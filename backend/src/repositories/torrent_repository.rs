@@ -1,12 +1,14 @@
 use crate::{
     Error, Result,
     models::{
+        notification::NotificationReason,
         torrent::{
             EditedTorrent, Features, Torrent, TorrentMinimal, TorrentSearch, TorrentToDelete,
             UploadedTorrent,
         },
         user::User,
     },
+    repositories::notification_repository::NotificationItemsIds,
     services::torrent_service::get_announce_url,
 };
 
@@ -20,6 +22,7 @@ use super::notification_repository::notify_users;
 #[derive(sqlx::FromRow)]
 struct TitleGroupInfoLite {
     id: i64,
+    #[allow(dead_code)]
     name: String,
 }
 
@@ -160,13 +163,15 @@ pub async fn create_torrent(
 
     let _ = notify_users(
         &mut tx,
-        "torrent_uploaded",
-        &title_group_info.id,
-        "New torrent uploaded subscribed title group",
-        &format!(
-            "New torrent uploaded in title group \"{}\"",
-            title_group_info.name
-        ),
+        &NotificationReason::TorrentUploadedInSubscribedTitleGroup,
+        None,
+        NotificationItemsIds {
+            title_group_id: Some(title_group_info.id),
+            torrent_id: Some(uploaded_torrent.id),
+            artist_id: None,
+            collage_id: None,
+            forum_thread_id: None,
+        },
     )
     .await;
 
@@ -435,10 +440,15 @@ pub async fn remove_torrent(
 
     notify_users(
         &mut tx,
-        "torrent_deleted",
-        &0,
-        "Torrent deleted",
-        torrent_to_delete.displayed_reason.as_ref().unwrap(),
+        &NotificationReason::SeedingTorrentDeleted,
+        Some(torrent_to_delete.displayed_reason.as_ref().unwrap()),
+        NotificationItemsIds {
+            title_group_id: None,
+            torrent_id: Some(torrent_to_delete.id),
+            artist_id: None,
+            collage_id: None,
+            forum_thread_id: None,
+        },
     )
     .await?;
 

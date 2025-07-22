@@ -155,8 +155,8 @@ pub enum Error {
     #[error("invalid or expired refresh token")]
     InvalidOrExpiredRefreshToken,
 
-    #[error("unsupported notification type '{0}'")]
-    UnsupportedNotification(String),
+    #[error("unsupported notification reason")]
+    UnsupportedNotification,
 
     #[error("unsupported subscription type '{0}'")]
     UnsupportedSubscription(String),
