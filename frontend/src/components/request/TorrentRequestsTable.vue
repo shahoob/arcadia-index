@@ -2,7 +2,7 @@
   <DataTable :value="torrentRequests" size="small">
     <Column header="Requirements">
       <template #body="slotProps">
-        <TorrentSlug :torrent="slotProps.data" :contentType />
+        <TorrentRequestSlug :torrentRequest="slotProps.data" :contentType :isRequest="true" />
       </template>
     </Column>
     <Column field="edition_name" header="Edition"></Column>
@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { Column, DataTable } from 'primevue'
 import type { TorrentRequestHierarchyLite } from '@/services/api/torrentRequestService'
-import TorrentSlug from '../torrent/TorrentSlug.vue'
+import TorrentRequestSlug from './TorrentRequestSlug.vue'
 import type { ContentType } from '@/services/api/torrentService'
 import { bytesToReadable } from '@/services/helpers'
 

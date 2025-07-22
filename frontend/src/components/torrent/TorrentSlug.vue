@@ -13,7 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { TorrentRequest } from '@/services/api/torrentRequestService'
 import type { ContentType, EditionGroupInfoLite, TorrentHierarchyLite } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
@@ -21,7 +20,7 @@ import { computed } from 'vue'
 const { t } = useI18n()
 
 const props = defineProps<{
-  torrent: TorrentHierarchyLite | TorrentRequest
+  torrent: TorrentHierarchyLite
   editionGroup?: EditionGroupInfoLite
   contentType: ContentType
 }>()
@@ -33,7 +32,7 @@ const computedSlug = computed<string[][]>(() => {
 
   if (props.torrent.video_resolution) {
     if (props.torrent.video_resolution === 'Other' && 'video_resolution_other_x' in props.torrent && 'video_resolution_other_y' in props.torrent) {
-      firstPart.push(`${props.torrent.video_resolution_other_x as string}x${props.torrent.video_resolution_other_y as string}`)
+      firstPart.push(`${props.torrent.video_resolution_other_x as number}x${props.torrent.video_resolution_other_y as number}`)
     } else {
       firstPart.push(props.torrent.video_resolution)
     }
@@ -51,11 +50,7 @@ const computedSlug = computed<string[][]>(() => {
     firstPart.push(props.torrent.container)
   }
   if (props.torrent.audio_codec) {
-    if (props.contentType !== 'music') {
-      firstPart.push(props.torrent.audio_codec)
-    } else {
-      firstPart.push(props.torrent.audio_codec)
-    }
+    firstPart.push(props.torrent.audio_codec)
   }
   if (props.torrent.audio_channels) {
     firstPart.push(props.torrent.audio_channels)

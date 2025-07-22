@@ -668,9 +668,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["get_user_applications"];
         put?: never;
         post: operations["add_user_application"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user-application/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_user_application_status"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -761,6 +777,14 @@ export interface components {
             /** Format: int64 */
             title_group_id: number;
         };
+        ApplicationQuery: {
+            checked?: boolean | null;
+            /** Format: int64 */
+            limit?: number | null;
+            /** Format: int64 */
+            offset?: number | null;
+            status?: string | null;
+        };
         Artist: {
             /** Format: date-time */
             created_at: string;
@@ -804,9 +828,6 @@ export interface components {
         AudioCodec: "mp2" | "mp3" | "aac" | "ac3" | "dts" | "flac" | "pcm" | "true-hd" | "opus" | "dsd";
         /** @enum {string} */
         ContentType: "movie" | "video" | "tv_show" | "music" | "podcast" | "software" | "book" | "collection";
-        /** @enum {string} */
-        VideoResolution: "Other" | "480p" | "480i" | "576p" | "576i" | "720p" | "1080p" | "1080i" | "1440p" | "2160p" | "4320p";
-
         Conversation: {
             /** Format: date-time */
             created_at: string;
@@ -906,7 +927,11 @@ export interface components {
             subtitle_languages: components["schemas"]["Language"][];
             uploaded_as_anonymous: boolean;
             video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_resolution?: null | components["schemas"]["VideoResolution"];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         EditedUser: {
             avatar?: string | null;
@@ -1581,7 +1606,11 @@ export interface components {
             upload_factor: number;
             uploaded_as_anonymous: boolean;
             video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_resolution?: null | components["schemas"]["VideoResolution"];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         TorrentHierarchy: {
             /** Format: int32 */
@@ -1636,7 +1665,11 @@ export interface components {
             uploaded_as_anonymous: boolean;
             uploader: components["schemas"]["UserLite"];
             video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_resolution?: null | components["schemas"]["VideoResolution"];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         TorrentHierarchyLite: {
             /** Format: int32 */
@@ -1679,7 +1712,11 @@ export interface components {
             /** Format: double */
             upload_factor: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_resolution?: null | components["schemas"]["VideoResolution"];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         TorrentMinimal: {
             /** Format: date-time */
@@ -1700,17 +1737,17 @@ export interface components {
             reported_torrent_id: number;
         };
         TorrentRequest: {
-            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
-            audio_channels?: string | null;
-            audio_codec?: null | components["schemas"]["AudioCodec"];
-            container: string;
+            audio_bitrate_sampling: components["schemas"]["AudioBitrateSampling"][];
+            audio_channels: components["schemas"]["AudioChannels"][];
+            audio_codec: components["schemas"]["AudioCodec"][];
+            container: string[];
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
             created_by_id: number;
             description?: string | null;
             edition_name?: string | null;
-            features?: components["schemas"]["Features"][] | null;
+            features: components["schemas"]["Features"][];
             /** Format: date-time */
             filled_at: string;
             /** Format: int64 */
@@ -1721,13 +1758,18 @@ export interface components {
             id: number;
             languages: components["schemas"]["Language"][];
             release_group?: string | null;
+            source: components["schemas"]["Source"][];
             subtitle_languages: components["schemas"]["Language"][];
             /** Format: int64 */
             title_group_id: number;
             /** Format: date-time */
             updated_at: string;
-            video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_codec: components["schemas"]["VideoCodec"][];
+            video_resolution: components["schemas"]["VideoResolution"][];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         TorrentRequestBounties: {
             /** Format: int64 */
@@ -1771,7 +1813,11 @@ export interface components {
             /** Format: int32 */
             user_votes_amount: number;
             video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_resolution?: null | components["schemas"]["VideoResolution"];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         TorrentRequestVote: {
             /** Format: int64 */
@@ -1822,6 +1868,11 @@ export interface components {
             id: number;
             reason: string;
         };
+        UpdateApplicationStatusRequest: {
+            /** Format: int64 */
+            invitation_id?: number | null;
+            status: components["schemas"]["UserApplicationStatus"];
+        };
         UploadInformation: {
             announce_url: string;
         };
@@ -1848,8 +1899,10 @@ export interface components {
             uploaded_as_anonymous: boolean;
             video_codec: components["schemas"]["VideoCodec"];
             video_resolution: components["schemas"]["VideoResolution"];
-            video_resolution_other_x?: number;
-            video_resolution_other_y?: number;
+            /** Format: int32 */
+            video_resolution_other_x: number;
+            /** Format: int32 */
+            video_resolution_other_y: number;
         };
         User: {
             /** Format: int64 */
@@ -1921,6 +1974,21 @@ export interface components {
             username: string;
             warned: boolean;
         };
+        UserApplication: {
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+            email: string;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            invitation_id?: number | null;
+            referral: string;
+            staff_note: string;
+            status: components["schemas"]["UserApplicationStatus"];
+        };
+        /** @enum {string} */
+        UserApplicationStatus: "Pending" | "Accepted" | "Rejected";
         UserCreatedAffiliatedArtist: {
             /** Format: int64 */
             artist_id: number;
@@ -2032,21 +2100,26 @@ export interface components {
             reported_torrent_id: number;
         };
         UserCreatedTorrentRequest: {
-            audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
-            audio_channels?: string | null;
-            audio_codec?: null | components["schemas"]["AudioCodec"];
-            container: string;
+            audio_bitrate_sampling: components["schemas"]["AudioBitrateSampling"][];
+            audio_channels: components["schemas"]["AudioChannels"][];
+            audio_codec: components["schemas"]["AudioCodec"][];
+            container: string[];
             description?: string | null;
             edition_name?: string | null;
-            features?: components["schemas"]["Features"][] | null;
+            features: components["schemas"]["Features"][];
             initial_vote: components["schemas"]["UserCreatedTorrentRequestVote"];
             languages: components["schemas"]["Language"][];
             release_group?: string | null;
+            source: components["schemas"]["Source"][];
             subtitle_languages: components["schemas"]["Language"][];
             /** Format: int64 */
             title_group_id: number;
-            video_codec?: null | components["schemas"]["VideoCodec"];
-            video_resolution?: components["schemas"]["VideoResolution"] | null;
+            video_codec: components["schemas"]["VideoCodec"][];
+            video_resolution: components["schemas"]["VideoResolution"][];
+            /** Format: int32 */
+            video_resolution_other_x?: number | null;
+            /** Format: int32 */
+            video_resolution_other_y?: number | null;
         };
         UserCreatedTorrentRequestVote: {
             /** Format: int64 */
@@ -2104,6 +2177,8 @@ export interface components {
         };
         /** @enum {string} */
         VideoCodec: "mpeg1" | "mpeg2" | "Xvid" | "divX" | "h264" | "h265" | "vc-1" | "vp9" | "BD50" | "UHD100";
+        /** @enum {string} */
+        VideoResolution: "Other" | "480p" | "480i" | "576i" | "576p" | "720p" | "1080p" | "1080i" | "1440p" | "2160p" | "4320p";
         WikiArticle: {
             body: string;
             /** Format: date-time */
@@ -3285,6 +3360,49 @@ export interface operations {
             };
         };
     };
+    get_user_applications: {
+        parameters: {
+            query?: {
+                /** @description Maximum number of applications to return (default: 50) */
+                limit?: number;
+                /** @description Number of applications to skip (default: 0) */
+                offset?: number;
+                /** @description Filter by application status: 'pending', 'accepted', or 'rejected' */
+                status?: string;
+                /** @description Filter by checked status: true for checked (accepted/rejected), false for unchecked (pending) */
+                checked?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved user applications */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserApplication"][];
+                };
+            };
+            /** @description Bad Request - Invalid status parameter */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden - Only staff members can view user applications */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     add_user_application: {
         parameters: {
             query?: never;
@@ -3298,8 +3416,51 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Successfully sent the application */
+            /** @description Successfully created user application */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserApplication"];
+                };
+            };
+        };
+    };
+    update_user_application_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description User application ID */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateApplicationStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description Successfully updated user application status */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserApplication"];
+                };
+            };
+            /** @description Forbidden - Only staff members can update user applications */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User application not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
