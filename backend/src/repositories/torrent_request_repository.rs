@@ -6,6 +6,7 @@ use crate::{
     },
     repositories::torrent_request_vote_repository::create_torrent_request_vote,
 };
+use serde_json::Value;
 use sqlx::{PgPool, query_as, query_scalar};
 
 pub async fn create_torrent_request(
@@ -180,4 +181,46 @@ pub async fn fill_torrent_request(
     tx.commit().await?;
 
     Ok(())
+}
+
+pub async fn search_torrent_requests(
+    pool: &PgPool,
+    title_group_name: Option<&str>,
+    tags: Option<&[String]>,
+    page: i64,
+    page_size: i64,
+) -> Result<Value> {
+    let offset = (page - 1).max(0) * page_size;
+    let rows: Option<Value> = sqlx::query_scalar!(
+        r#"
+        SELECT json_agg(data) as data FROM (
+            SELECT json_build_object(
+                'torrent_request', tr,
+                'title_group', json_build_object(
+                    'id', tg.id,
+                    'name', tg.name,
+                    'content_type', tg.content_type,
+                    'original_release_date', tg.original_release_date,
+                    'covers', tg.covers,
+                    'edition_groups', '[]',
+                    'platform', tg.platform
+                )
+            ) as data
+            FROM torrent_requests tr
+            JOIN title_groups tg ON tr.title_group_id = tg.id
+            WHERE ($1::TEXT IS NULL OR tg.name ILIKE $1 OR $1 = ANY(tg.name_aliases))
+            AND ($2::VARCHAR[] IS NULL OR tg.tags && $2::VARCHAR[])
+            ORDER BY tr.created_at DESC
+            LIMIT $3 OFFSET $4
+        ) sub
+    "#,
+        title_group_name,
+        tags,
+        page_size,
+        offset
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotSearchForTorrentRequests)?;
+    Ok(rows.unwrap())
 }

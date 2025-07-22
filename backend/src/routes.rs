@@ -41,6 +41,7 @@ use crate::handlers::{
     user_handler::{edit_user, get_me, get_user, warn_user},
     wiki_handler::{add_wiki_article, get_wiki_article},
 };
+use crate::handlers::torrent_request_handler::search_torrent_requests;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(handle_announce).service(
@@ -108,6 +109,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 "/torrent-request/vote",
                 web::post().to(add_torrent_request_vote),
             )
+            .route("/search/torrent-request", web::get().to(search_torrent_requests))
             .route("/subscription", web::post().to(add_subscription))
             .route("/subscription", web::delete().to(remove_subscription))
             .route("/gift", web::post().to(send_gift))

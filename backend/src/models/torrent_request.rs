@@ -6,6 +6,7 @@ use utoipa::ToSchema;
 use crate::models::{
     edition_group::Source, torrent::AudioChannels,
     torrent_request_vote::UserCreatedTorrentRequestVote, user::UserLite,
+    title_group::TitleGroupLite,
 };
 
 use super::torrent::{
@@ -107,6 +108,12 @@ pub struct TorrentRequestHierarchyLite {
     pub video_resolution: Option<VideoResolution>, // ---- video
     pub video_resolution_other_x: Option<i32>,
     pub video_resolution_other_y: Option<i32>,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct TorrentRequestWithTitleGroupLite {
+    pub torrent_request: TorrentRequest,
+    pub title_group: TitleGroupLite,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]

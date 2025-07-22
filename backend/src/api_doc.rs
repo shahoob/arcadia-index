@@ -46,6 +46,8 @@ use crate::{
         },
         user_application::{UserApplication, UserApplicationStatus, UserCreatedUserApplication},
         wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
+        torrent_request::TorrentRequestWithTitleGroupLite,
+        title_group::TitleGroupLite,
     },
 };
 
@@ -110,6 +112,7 @@ use crate::{
         crate::handlers::scrapers::musicbrainz::get_musicbrainz_data,
         crate::handlers::scrapers::tmdb::get_tmdb_data,
         crate::handlers::scrapers::comic_vine::get_comic_vine_data,
+        crate::handlers::torrent_request_handler::search_torrent_requests,
     ),
     components(schemas(
         Register,
@@ -185,7 +188,9 @@ use crate::{
         HomePage,
         UploadInformation,
         EditedUser,
-        PublicRating
+        PublicRating,
+        TorrentRequestWithTitleGroupLite,
+        TitleGroupLite,
     ),)
 )]
 pub struct ApiDoc;

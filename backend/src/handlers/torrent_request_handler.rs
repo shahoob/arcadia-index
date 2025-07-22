@@ -3,11 +3,16 @@ use crate::{
     models::{
         torrent_request::{TorrentRequest, TorrentRequestFill, UserCreatedTorrentRequest},
         user::User,
+        torrent_request::TorrentRequestWithTitleGroupLite,
     },
     repositories::torrent_request_repository::{self, create_torrent_request},
 };
 use actix_web::{HttpResponse, web};
 use serde_json::json;
+
+use serde::Deserialize;
+use utoipa::IntoParams;
+use utoipa::ToSchema;
 
 #[utoipa::path(
     post,
@@ -48,4 +53,42 @@ pub async fn fill_torrent_request(
     .await?;
 
     Ok(HttpResponse::Ok().json(json!({"result": "succes"})))
+}
+
+#[derive(Deserialize, IntoParams, ToSchema)]
+pub struct SearchTorrentRequestsQuery {
+    pub title_group_name: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub page: Option<i64>,
+    pub page_size: Option<i64>,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/search/torrent-request",
+    params(
+        ("title_group_name" = Option<String>, Query, description = "Name of the title group to search for"),
+        ("tags" = Option<Vec<String>>, Query, description = "Tags to filter title groups by"),
+        ("page" = Option<i64>, Query, description = "Page number (default 1)"),
+        ("page_size" = Option<i64>, Query, description = "Results per page (default 50)"),
+    ),
+    responses(
+        (status = 200, description = "List of torrent requests with associated title groups", body = [TorrentRequestWithTitleGroupLite]),
+    )
+)]
+pub async fn search_torrent_requests(
+    arc: web::Data<Arcadia>,
+    query: web::Query<SearchTorrentRequestsQuery>,
+) -> Result<HttpResponse> {
+    let page = query.page.unwrap_or(1);
+    let page_size = query.page_size.unwrap_or(50);
+    let results = torrent_request_repository::search_torrent_requests(
+        &arc.pool,
+        query.title_group_name.as_deref(),
+        query.tags.as_deref(),
+        page,
+        page_size,
+    )
+    .await?;
+    Ok(HttpResponse::Ok().json(results))
 }

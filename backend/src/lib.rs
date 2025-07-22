@@ -107,6 +107,9 @@ pub enum Error {
     #[error("could not create torrent request")]
     CouldNotCreateTorrentRequest(#[source] sqlx::Error),
 
+    #[error("could not search for torrent requests")]
+    CouldNotSearchForTorrentRequests(#[source] sqlx::Error),
+
     #[error("this torrent isn't in the title group of the request")]
     TorrentTitleGroupNotMatchingRequestedOne,
 
