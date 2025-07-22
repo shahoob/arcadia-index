@@ -84,6 +84,34 @@
               {{ $form.video_resolution.error?.message }}
             </Message>
           </div>
+          <template v-if="torrentForm.video_resolution == 'Other'">
+            <div>
+              <FloatLabel>
+                <InputText
+                  v-model="torrentForm.video_resolution_other_x"
+                  inputId="video_resolution_other_x"
+                  name="video_resolution_other_x"
+                  type="number"
+                  size="small"
+                  class="res-input"
+                />
+                <label for="video_resolution_other_x" class="res-label-text">Resolution X</label>
+              </FloatLabel>
+            </div>
+            <div>
+              <FloatLabel class="res-pick">
+                <InputText
+                  v-model="torrentForm.video_resolution_other_y"
+                  inputId="video_resolution_other_y"
+                  name="video_resolution_other_y"
+                  size="small"
+                  type="number"
+                  class="res-input"
+                />
+                <label for="video_resolution_other_y" class="res-label-text">Resolution Y</label>
+              </FloatLabel>
+            </div>
+          </template>
           <div>
             <FloatLabel
               v-if="
@@ -250,6 +278,8 @@ const torrentForm = ref({
   container: '',
   video_codec: null,
   video_resolution: null,
+  video_resolution_other_x: null,
+  video_resolution_other_y: null,
   duration: null,
   audio_codec: null,
   audio_bitrate: null,
@@ -262,7 +292,7 @@ const torrentForm = ref({
 })
 // TODO : move all the selectable* arrays to an helper function
 const selectableVideoCodecs = ['mpeg1', 'mpeg2', 'divX', 'DivX', 'h264', 'h265', 'vc-1', 'vp9', 'BD50', 'UHD100']
-const selectableVideoResolutions = ['2160p', '1440p', '1080p', '720p', 'SD']
+const selectableVideoResolutions = ['Other', '480p', '480i', '576p', '576i', '720p', '1080p', '1080i', '1440p', '2160p', '4320p']
 const selectableAudioCodecs = ['aac', 'opus', 'mp3', 'mp2', 'aac', 'ac3', 'dts', 'flac', 'pcm', 'true-hd', 'dsd']
 const selectableAudioBitrateSamplings = [
   '64',
@@ -329,6 +359,14 @@ const resolver = ({ values }: FormResolverOptions) => {
   }
   if (!torrentForm.value.torrent_file) {
     errors.torrent_file = [{ message: t('error.select_torrent_file') }]
+  }
+  if (values.video_resolution === 'Other') {
+    if (!values.video_resolution_other_x || isNaN(Number(values.video_resolution_other_x))) {
+      errors.video_resolution_other_x = [{ message: 'Invalid resolution X' }]
+    }
+    if (!values.video_resolution_other_y || isNaN(Number(values.video_resolution_other_y))) {
+      errors.video_resolution_other_y = [{ message: 'Invalid resolution Y' }]
+    }
   }
 
   return {
@@ -429,6 +467,15 @@ onMounted(async () => {
 .select {
   min-width: 200px;
 }
+
+.res-label-text {
+  font-size: small;
+}
+
+.res-input {
+  width: 100px;
+}
+
 .upload-as-anonymous {
   margin-top: 20px;
 }

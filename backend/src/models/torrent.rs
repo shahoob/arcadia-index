@@ -161,6 +161,42 @@ pub enum Language {
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "video_resolution_enum")]
+pub enum VideoResolution {
+    Other,
+    #[sqlx(rename="480p")]
+    #[serde(rename = "480p")]
+    P480,
+    #[sqlx(rename="480i")]
+    #[serde(rename = "480i")]
+    I480,
+    #[sqlx(rename="576i")]
+    #[serde(rename = "576i")]
+    I576,
+    #[sqlx(rename="576p")]
+    #[serde(rename = "576p")]
+    P576,
+    #[sqlx(rename="720p")]
+    #[serde(rename = "720p")]
+    P720,
+    #[sqlx(rename="1080p")]
+    #[serde(rename = "1080p")]
+    P1080,
+    #[sqlx(rename="1080i")]
+    #[serde(rename = "1080i")]
+    I1080,
+    #[sqlx(rename="1440p")]
+    #[serde(rename = "1440p")]
+    P1440,
+    #[sqlx(rename="2160p")]
+    #[serde(rename = "2160p")]
+    P2160,
+    #[sqlx(rename="4320p")]
+    #[serde(rename = "4320p")]
+    P4320,
+}
+
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "features_enum")]
 pub enum Features {
     #[sqlx(rename = "HDR")]
@@ -247,7 +283,9 @@ pub struct Torrent {
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Option<String>, // ---- video
+    pub video_resolution: Option<VideoResolution>, // ---- video
+    pub video_resolution_other_x: Option<i32>,
+    pub video_resolution_other_y: Option<i32>,
 }
 
 #[derive(Debug, MultipartForm, FromRow, ToSchema)]
@@ -286,8 +324,12 @@ pub struct UploadedTorrent {
     pub features: Text<String>,
     #[schema(value_type = String)]
     pub subtitle_languages: Text<String>,
-    #[schema(value_type = String)]
-    pub video_resolution: Option<Text<String>>,
+    #[schema(value_type = VideoResolution)]
+    pub video_resolution: Option<Text<VideoResolution>>,
+    #[schema(value_type = i32)]
+    pub video_resolution_other_x: Option<Text<i32>>,
+    #[schema(value_type = i32)]
+    pub video_resolution_other_y: Option<Text<i32>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
@@ -309,7 +351,9 @@ pub struct EditedTorrent {
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Option<String>,
+    pub video_resolution: Option<VideoResolution>,
+    pub video_resolution_other_x: Option<i32>,
+    pub video_resolution_other_y: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
@@ -391,7 +435,9 @@ pub struct TorrentHierarchyLite {
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Option<String>,
+    pub video_resolution: Option<VideoResolution>,
+    pub video_resolution_other_x: Option<i32>,
+    pub video_resolution_other_y: Option<i32>,
     pub reports: Vec<TorrentReport>,
     // pub peer_status: Option<TorrentStatus>,
 }
@@ -444,7 +490,9 @@ pub struct TorrentHierarchy {
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Option<String>,
+    pub video_resolution: Option<VideoResolution>,
+    pub video_resolution_other_x: Option<i32>,
+    pub video_resolution_other_y: Option<i32>,
     pub uploader: UserLite,
     pub reports: Vec<TorrentReport>,
     // pub peer_status: Option<TorrentStatus>,

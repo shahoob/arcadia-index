@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT\n            id, upload_factor, download_factor, seeders, leechers,\n            completed, snatched, edition_group_id, created_at, updated_at,\n            created_by_id,\n            languages AS \"languages!: _\",\n            release_name, release_group, description, file_amount_per_type,\n            uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked,\n            container, size, duration,\n            audio_codec AS \"audio_codec: _\",\n            audio_bitrate,\n            audio_bitrate_sampling AS \"audio_bitrate_sampling: _\",\n            audio_channels AS \"audio_channels: _\",\n            video_codec AS \"video_codec: _\",\n            features AS \"features!: _\",\n            subtitle_languages AS \"subtitle_languages!: _\",\n            video_resolution\n        FROM torrents\n        WHERE id = $1\n        ",
+  "query": "\n        UPDATE torrents\n        SET\n            release_name = $2,\n            release_group = $3,\n            description = $4,\n            uploaded_as_anonymous = $5,\n            mediainfo = $6,\n            container = $7,\n            duration = $8,\n            audio_codec = $9,\n            audio_bitrate = $10,\n            audio_bitrate_sampling = $11,\n            audio_channels = $12,\n            video_codec = $13,\n            features = $14,\n            subtitle_languages = $15,\n            video_resolution = $16,\n            video_resolution_other_x = $17,\n            video_resolution_other_y = $18,\n            languages = $19,\n            updated_at = NOW()\n        WHERE id = $1\n        RETURNING\n            id, upload_factor, download_factor, seeders, leechers,\n            completed, snatched, edition_group_id, created_at, updated_at,\n            created_by_id,\n            languages AS \"languages!: _\",\n            release_name, release_group, description, file_amount_per_type,\n            uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked,\n            container, size, duration,\n            audio_codec AS \"audio_codec: _\",\n            audio_bitrate,\n            audio_bitrate_sampling AS \"audio_bitrate_sampling: _\",\n            audio_channels AS \"audio_channels: _\",\n            video_codec AS \"video_codec: _\",\n            features AS \"features!: _\",\n            subtitle_languages AS \"subtitle_languages!: _\",\n            video_resolution AS \"video_resolution!: _\",\n            video_resolution_other_x,\n            video_resolution_other_y\n        ",
   "describe": {
     "columns": [
       {
@@ -302,13 +302,221 @@
       },
       {
         "ordinal": 31,
-        "name": "video_resolution",
-        "type_info": "Varchar"
+        "name": "video_resolution!: _",
+        "type_info": {
+          "Custom": {
+            "name": "video_resolution_enum",
+            "kind": {
+              "Enum": [
+                "Other",
+                "480p",
+                "480i",
+                "576p",
+                "576i",
+                "720p",
+                "1080p",
+                "1080i",
+                "1440p",
+                "2160p",
+                "4320p"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 32,
+        "name": "video_resolution_other_x",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 33,
+        "name": "video_resolution_other_y",
+        "type_info": "Int4"
       }
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Int8",
+        "Text",
+        "Varchar",
+        "Text",
+        "Bool",
+        "Text",
+        "Varchar",
+        "Int4",
+        {
+          "Custom": {
+            "name": "audio_codec_enum",
+            "kind": {
+              "Enum": [
+                "mp2",
+                "mp3",
+                "aac",
+                "ac3",
+                "dts",
+                "flac",
+                "pcm",
+                "true-hd",
+                "opus",
+                "dsd"
+              ]
+            }
+          }
+        },
+        "Int4",
+        {
+          "Custom": {
+            "name": "audio_bitrate_sampling_enum",
+            "kind": {
+              "Enum": [
+                "64",
+                "128",
+                "192",
+                "256",
+                "320",
+                "APS (VBR)",
+                "V2 (VBR)",
+                "V1 (VBR)",
+                "APX (VBR)",
+                "V0 (VBR)",
+                "Lossless",
+                "24bit Lossless",
+                "DSD64",
+                "DSD128",
+                "DSD256",
+                "DSD512",
+                "other"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "audio_channels_enum",
+            "kind": {
+              "Enum": [
+                "1.0",
+                "2.0",
+                "2.1",
+                "5.0",
+                "5.1",
+                "7.1"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "video_codec_enum",
+            "kind": {
+              "Enum": [
+                "mpeg1",
+                "mpeg2",
+                "Xvid",
+                "divX",
+                "h264",
+                "h265",
+                "vc-1",
+                "vp9",
+                "BD50",
+                "UHD100"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "features_enum[]",
+            "kind": {
+              "Array": {
+                "Custom": {
+                  "name": "features_enum",
+                  "kind": {
+                    "Enum": [
+                      "HDR",
+                      "HDR 10",
+                      "HDR 10+",
+                      "DV",
+                      "Commentary",
+                      "Remux",
+                      "3D",
+                      "Booklet",
+                      "Cue",
+                      "OCR"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "language_enum[]",
+            "kind": {
+              "Array": {
+                "Custom": {
+                  "name": "language_enum",
+                  "kind": {
+                    "Enum": [
+                      "English",
+                      "French",
+                      "German",
+                      "Italian",
+                      "Spanish",
+                      "Swedish"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "video_resolution_enum",
+            "kind": {
+              "Enum": [
+                "Other",
+                "480p",
+                "480i",
+                "576p",
+                "576i",
+                "720p",
+                "1080p",
+                "1080i",
+                "1440p",
+                "2160p",
+                "4320p"
+              ]
+            }
+          }
+        },
+        "Int4",
+        "Int4",
+        {
+          "Custom": {
+            "name": "language_enum[]",
+            "kind": {
+              "Array": {
+                "Custom": {
+                  "name": "language_enum",
+                  "kind": {
+                    "Enum": [
+                      "English",
+                      "French",
+                      "German",
+                      "Italian",
+                      "Spanish",
+                      "Swedish"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "nullable": [
@@ -343,8 +551,10 @@
       true,
       false,
       false,
+      true,
+      true,
       true
     ]
   },
-  "hash": "d9a46af56c97b6d0531d5fadf2fc68a41ff25cb81b3c5e9e689a30731012ac96"
+  "hash": "2100b1d6645c489db932951efaf0429c980bd983d3050c5884a8a2782e448071"
 }
