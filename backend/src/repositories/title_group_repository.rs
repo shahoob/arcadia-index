@@ -197,7 +197,7 @@ pub async fn find_title_group(
                     id,
                     EXISTS(
                         SELECT 1
-                        FROM title_group_subscriptions tgs
+                        FROM subscriptions tgs
                         WHERE tgs.title_group_id = tg.id
                         AND tgs.subscriber_id = $1
                     ) AS is_subscribed

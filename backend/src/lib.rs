@@ -92,8 +92,8 @@ pub enum Error {
     #[error("could not create notification")]
     CouldNotCreateNotification(#[source] sqlx::Error),
 
-    #[error("could not create title group subscription")]
-    CouldNotCreateTitleGroupSubscription(#[source] sqlx::Error),
+    #[error("could not create subscription")]
+    CouldNotCreateSubscription(#[source] sqlx::Error),
 
     #[error("could not create title group subscription")]
     CouldNotCreateTitleGroupComment(#[source] sqlx::Error),

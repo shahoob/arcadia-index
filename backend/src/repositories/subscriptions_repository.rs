@@ -1,54 +1,44 @@
-use crate::{Error, Result, models::user::User};
+use crate::{Error, Result};
 use sqlx::PgPool;
 
 pub async fn create_subscription(
     pool: &PgPool,
-    item_id: &i64,
-    item: &str,
-    current_user: &User,
+    item_id: i64,
+    item: &str, // TODO: should only be one of the existing columns of the table
+    current_user_id: i64,
 ) -> Result<()> {
-    match item {
-        "title_group" => {
-            sqlx::query!(
-                r#"
-                    INSERT INTO title_group_subscriptions (title_group_id, subscriber_id)
-                    VALUES ($1, $2)
-                "#,
-                item_id,
-                current_user.id
-            )
-            .execute(pool)
-            .await
-            .map_err(Error::CouldNotCreateTitleGroupSubscription)?;
+    sqlx::query(&format!(
+        "
+            INSERT INTO subscriptions ({item}_id, subscriber_id)
+            VALUES ($1, $2)
+        "
+    ))
+    .bind(item_id)
+    .bind(current_user_id)
+    .execute(pool)
+    .await
+    .map_err(Error::CouldNotCreateSubscription)?;
 
-            Ok(())
-        }
-        _ => Err(Error::UnsupportedSubscription(item.into())),
-    }
+    Ok(())
 }
 
 pub async fn delete_subscription(
     pool: &PgPool,
-    item_id: &i64,
+    item_id: i64,
     item: &str,
-    current_user: &User,
+    current_user_id: i64,
 ) -> Result<()> {
-    match item {
-        "title_group" => {
-            let _ = sqlx::query!(
-                r#"
-                    DELETE FROM title_group_subscriptions
-                    WHERE title_group_id = $1 AND subscriber_id = $2;
-                "#,
-                item_id,
-                current_user.id
-            )
-            .execute(pool)
-            .await?;
+    let _ = sqlx::query(&format!(
+        "
+            DELETE FROM subscriptions
+            WHERE {item}_id = $1 AND subscriber_id = $2;
+        "
+    ))
+    .bind(item_id)
+    .bind(current_user_id)
+    .execute(pool)
+    .await?;
 
-            // TODO: check result.rows_affected()
-            Ok(())
-        }
-        _ => Err(Error::UnsupportedSubscription(item.into())),
-    }
+    // TODO: check result.rows_affected()
+    Ok(())
 }

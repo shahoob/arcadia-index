@@ -24,7 +24,7 @@ pub async fn notify_users(
                 r#"
                     WITH subscribers_ids AS (
                         SELECT subscriber_id AS user_id
-                        FROM title_group_subscriptions
+                        FROM subscriptions
                         WHERE title_group_id = $1
                     )
                     INSERT INTO notifications (receiver_id, reason, torrent_id, title_group_id)

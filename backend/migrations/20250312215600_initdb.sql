@@ -499,15 +499,7 @@ CREATE TABLE torrent_reports (
     FOREIGN KEY (reported_by_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (reported_torrent_id) REFERENCES torrents(id) ON DELETE CASCADE
 );
-CREATE TABLE title_group_subscriptions (
-    id BIGSERIAL PRIMARY KEY,
-    title_group_id BIGINT NOT NULL,
-    subscribed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    subscriber_id BIGINT NOT NULL,
-    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
-    FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL,
-    UNIQUE (title_group_id, subscriber_id)
-);
+
 CREATE TYPE peer_status_enum AS ENUM('seeding', 'leeching');
 CREATE TABLE peers (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -718,6 +710,21 @@ CREATE TYPE notification_reason_enum AS ENUM (
     'TitleGroupAddedForSubscribedArtist',
     'ThreadAddedInSubscribedForumSubCategory',
     'TitleGroupAddedInSubscribedCollage'
+);
+CREATE TABLE subscriptions (
+    id BIGSERIAL PRIMARY KEY,
+    title_group_id BIGINT,
+    artist_id BIGINT,
+    forum_thread_id BIGINT,
+    forum_sub_category_id BIGINT,
+    subscribed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    subscriber_id BIGINT NOT NULL,
+    FOREIGN KEY (title_group_id) REFERENCES title_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
+    FOREIGN KEY (forum_thread_id) REFERENCES forum_threads(id) ON DELETE CASCADE,
+    FOREIGN KEY (forum_sub_category_id) REFERENCES forum_sub_categories(id) ON DELETE CASCADE,
+    FOREIGN KEY (subscriber_id) REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE (title_group_id, subscriber_id)
 );
 CREATE TABLE notifications (
     id BIGSERIAL PRIMARY KEY,

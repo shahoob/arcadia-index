@@ -26,7 +26,7 @@ pub async fn add_subscription(
     arc: web::Data<Arcadia>,
     current_user: User,
 ) -> Result<HttpResponse> {
-    create_subscription(&arc.pool, &query.item_id, &query.item, &current_user).await?;
+    create_subscription(&arc.pool, query.item_id, &query.item, current_user.id).await?;
 
     Ok(HttpResponse::Created().json(serde_json::json!({"result": "success"})))
 }
@@ -46,7 +46,7 @@ pub async fn remove_subscription(
     arc: web::Data<Arcadia>,
     current_user: User,
 ) -> Result<HttpResponse> {
-    delete_subscription(&arc.pool, &query.item_id, &query.item, &current_user).await?;
+    delete_subscription(&arc.pool, query.item_id, &query.item, current_user.id).await?;
 
     Ok(HttpResponse::Ok().json(serde_json::json!({"result": "success"})))
 }
