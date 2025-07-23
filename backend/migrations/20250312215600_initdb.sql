@@ -399,7 +399,7 @@ CREATE TABLE torrents (
     uploaded_as_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
     file_list JSONB NOT NULL,
     -- maybe change the size to the max length of a file name in a torrent
-    mediainfo TEXT NOT NULL,
+    mediainfo TEXT,
     trumpable TEXT,
     staff_checked BOOLEAN NOT NULL DEFAULT FALSE,
     container VARCHAR(8) NOT NULL,

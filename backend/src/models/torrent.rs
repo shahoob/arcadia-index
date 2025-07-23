@@ -164,34 +164,34 @@ pub enum Language {
 #[sqlx(type_name = "video_resolution_enum")]
 pub enum VideoResolution {
     Other,
-    #[sqlx(rename="480p")]
+    #[sqlx(rename = "480p")]
     #[serde(rename = "480p")]
     P480,
-    #[sqlx(rename="480i")]
+    #[sqlx(rename = "480i")]
     #[serde(rename = "480i")]
     I480,
-    #[sqlx(rename="576i")]
+    #[sqlx(rename = "576i")]
     #[serde(rename = "576i")]
     I576,
-    #[sqlx(rename="576p")]
+    #[sqlx(rename = "576p")]
     #[serde(rename = "576p")]
     P576,
-    #[sqlx(rename="720p")]
+    #[sqlx(rename = "720p")]
     #[serde(rename = "720p")]
     P720,
-    #[sqlx(rename="1080p")]
+    #[sqlx(rename = "1080p")]
     #[serde(rename = "1080p")]
     P1080,
-    #[sqlx(rename="1080i")]
+    #[sqlx(rename = "1080i")]
     #[serde(rename = "1080i")]
     I1080,
-    #[sqlx(rename="1440p")]
+    #[sqlx(rename = "1440p")]
     #[serde(rename = "1440p")]
     P1440,
-    #[sqlx(rename="2160p")]
+    #[sqlx(rename = "2160p")]
     #[serde(rename = "2160p")]
     P2160,
-    #[sqlx(rename="4320p")]
+    #[sqlx(rename = "4320p")]
     #[serde(rename = "4320p")]
     P4320,
 }
@@ -266,7 +266,7 @@ pub struct Torrent {
     pub uploaded_as_anonymous: bool,
     #[schema(value_type = HashMap<String, String>)]
     pub file_list: Json<Value>,
-    pub mediainfo: String,
+    pub mediainfo: Option<String>,
     pub trumpable: Option<String>, // description of why it is trumpable
     pub staff_checked: bool,
     pub languages: Vec<Language>, // (fallback to original language) (english, french, etc.)
@@ -299,7 +299,7 @@ pub struct UploadedTorrent {
     #[schema(value_type = bool)]
     pub uploaded_as_anonymous: Text<bool>,
     #[schema(value_type = String)]
-    pub mediainfo: Text<String>,
+    pub mediainfo: Option<Text<String>>,
     #[schema(value_type = String, format = Binary, content_media_type = "application/octet-stream")]
     pub torrent_file: Bytes,
     #[schema(value_type = String)]
@@ -340,7 +340,7 @@ pub struct EditedTorrent {
     pub release_group: Option<String>,
     pub description: Option<String>,
     pub uploaded_as_anonymous: bool,
-    pub mediainfo: String,
+    pub mediainfo: Option<String>,
     pub container: String,
     pub languages: Vec<Language>,
     pub duration: Option<i32>,
@@ -476,7 +476,7 @@ pub struct TorrentHierarchy {
     pub uploaded_as_anonymous: bool,
     #[schema(value_type = HashMap<String, String>)]
     pub file_list: Json<Value>,
-    pub mediainfo: String,
+    pub mediainfo: Option<String>,
     pub trumpable: Option<String>,
     pub staff_checked: bool,
     pub languages: Vec<Language>,

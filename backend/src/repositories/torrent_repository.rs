@@ -102,7 +102,14 @@ pub async fn create_torrent(
         .bind(&file_amount_per_type)
         .bind(torrent_form.uploaded_as_anonymous.0)
         .bind(&file_list)
-        .bind(&*torrent_form.mediainfo.0)
+        // set mediainfo to None if empty
+        .bind(torrent_form.mediainfo.as_deref().and_then(|s| {
+            if s.trim().is_empty() {
+                None
+            } else {
+                Some(s.trim().to_string())
+            }
+        }))
         .bind(&trumpable)
         .bind(false)
         .bind(size)

@@ -1,15 +1,13 @@
 <template>
-  <template v-for="(part, partIndex) in computedSlug" :key="partIndex">
+  <template v-for="(part, key, partIndex) in computedSlug" :key="key">
     <template v-if="part.length > 0">
-      <span v-for="(item, itemIndex) in part" :key="itemIndex">
-        <span class="slash" v-if="itemIndex > 0 || (partIndex > 0 && computedSlug[partIndex].length > 0)"> / </span>
-        <span :class="{ bold: partIndex === 1 }">{{ item }}</span>
+      <span class="slash" v-if="partIndex > 0"> / </span>
+      <span v-for="(item, itemIndex) in part" :key="`${key}-${itemIndex}`">
+        <span class="slash" v-if="itemIndex > 0"> / </span>
+        <span :class="{ bold: key === 'features', warning: key === 'warnings' }">{{ item }}</span>
       </span>
     </template>
   </template>
-  <!-- <span v-if="'peer_status' in torrent && torrent.peer_status !== null">
-    <span class="slash"> / </span> <span :class="torrent.peer_status">{{ torrent.peer_status }}</span>
-  </span> -->
 </template>
 
 <script lang="ts" setup>
@@ -25,10 +23,11 @@ const props = defineProps<{
   contentType: ContentType
 }>()
 
-const computedSlug = computed<string[][]>(() => {
+const computedSlug = computed(() => {
   const firstPart: string[] = []
   const features: string[] = []
   const releaseGroup: string[] = []
+  const warnings: string[] = []
 
   if (props.torrent.video_resolution) {
     if (props.torrent.video_resolution === 'Other' && 'video_resolution_other_x' in props.torrent && 'video_resolution_other_y' in props.torrent) {
@@ -67,9 +66,6 @@ const computedSlug = computed<string[][]>(() => {
   if ('trumpable' in props.torrent && props.torrent.trumpable !== '') {
     firstPart.push(t('torrent.trumpable'))
   }
-  if ('reports' in props.torrent && props.torrent.reports.length !== 0) {
-    firstPart.push(t('general.reported'))
-  }
 
   if (props.torrent.features) {
     props.torrent.features.forEach((feature) => features.push(feature))
@@ -79,9 +75,15 @@ const computedSlug = computed<string[][]>(() => {
     releaseGroup.push(props.torrent.release_group)
   }
 
-  return [firstPart, features, releaseGroup]
+  if ('reports' in props.torrent && props.torrent.reports.length !== 0) {
+    warnings.push(t('general.reported'))
+  }
+
+  // The order of these properties in the returned object will dictate their order in the rendered slug.
+  return { firstPart, features, releaseGroup, warnings }
 })
 </script>
+
 <style scoped>
 .slash {
   font-weight: 300;
@@ -94,5 +96,8 @@ const computedSlug = computed<string[][]>(() => {
 }
 .snatched {
   color: white;
+}
+.warning {
+  color: orange;
 }
 </style>

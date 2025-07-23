@@ -103,7 +103,7 @@
             <BBCodeRenderer :content="slotProps.data.description" />
           </AccordionContent>
         </AccordionPanel>
-        <AccordionPanel value="1">
+        <AccordionPanel value="1" v-if="slotProps.data.mediainfo !== null">
           <AccordionHeader>Mediainfo</AccordionHeader>
           <AccordionContent>
             <pre class="mediainfo">{{ purifyHtml(slotProps.data.mediainfo) }}</pre>
