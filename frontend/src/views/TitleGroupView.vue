@@ -256,3 +256,16 @@ watch(() => route.params.id, fetchTitleGroup, { immediate: true })
   margin-top: 20px;
 }
 </style>
+<style>
+#title-group-view {
+  .p-tabpanel {
+    line-height: 0 !important;
+  }
+  .p-tab {
+    padding: 10px !important;
+  }
+  .p-tabpanels {
+    padding: 0 !important;
+  }
+}
+</style>

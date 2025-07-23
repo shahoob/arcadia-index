@@ -1,6 +1,7 @@
 use actix_web::web;
 use actix_web_httpauth::middleware::HttpAuthentication;
 
+use crate::handlers::torrent_request_handler::search_torrent_requests;
 use crate::handlers::{
     announce_handler::handle_announce,
     artist_handler::{
@@ -37,11 +38,12 @@ use crate::handlers::{
     torrent_report_handler::add_torrent_report,
     torrent_request_handler::{add_torrent_request, fill_torrent_request},
     torrent_request_vote_handler::add_torrent_request_vote,
-    user_application_handler::{add_user_application, get_user_applications, update_user_application_status},
+    user_application_handler::{
+        add_user_application, get_user_applications, update_user_application_status,
+    },
     user_handler::{edit_user, get_me, get_user, warn_user},
     wiki_handler::{add_wiki_article, get_wiki_article},
 };
-use crate::handlers::torrent_request_handler::search_torrent_requests;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(handle_announce).service(
@@ -49,9 +51,12 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .wrap(HttpAuthentication::with_fn(validate_bearer_auth))
             .route("/register", web::post().to(register))
             .route("/login", web::post().to(login))
-            .route("/user-application", web::post().to(add_user_application))
+            .route("/apply", web::post().to(add_user_application))
             .route("/user-application", web::get().to(get_user_applications))
-            .route("/user-application/{id}/status", web::put().to(update_user_application_status))
+            .route(
+                "/user-application",
+                web::put().to(update_user_application_status),
+            )
             .route("/refresh-token", web::post().to(refresh_token))
             .route("/home", web::get().to(get_home))
             .route("/user", web::get().to(get_user))
@@ -109,7 +114,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
                 "/torrent-request/vote",
                 web::post().to(add_torrent_request_vote),
             )
-            .route("/search/torrent-request", web::get().to(search_torrent_requests))
+            .route(
+                "/search/torrent-request",
+                web::get().to(search_torrent_requests),
+            )
             .route("/subscription", web::post().to(add_subscription))
             .route("/subscription", web::delete().to(remove_subscription))
             .route("/gift", web::post().to(send_gift))

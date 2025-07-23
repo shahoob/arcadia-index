@@ -36,15 +36,6 @@ use super::title_group::TitleGroupHierarchyLite;
 
 // causes errors
 // https://github.com/launchbadge/sqlx/issues/3869
-// User class constants
-pub const STAFF_CLASS: &str = "staff";
-
-#[allow(dead_code)]
-pub const NEWBIE_CLASS: &str = "newbie";
-
-// Valid user classes for validation
-#[allow(dead_code)]
-pub const VALID_USER_CLASSES: &[&str] = &[STAFF_CLASS, NEWBIE_CLASS];
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct User {
@@ -90,19 +81,6 @@ pub struct User {
     pub staff_note: String,
     pub passkey_upper: i64,
     pub passkey_lower: i64,
-}
-
-impl User {
-    /// Check if the user is a staff member
-    pub fn is_staff(&self) -> bool {
-        self.class == STAFF_CLASS
-    }
-    
-    /// Check if the user is a newbie
-    #[allow(dead_code)]
-    pub fn is_newbie(&self) -> bool {
-        self.class == NEWBIE_CLASS
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]

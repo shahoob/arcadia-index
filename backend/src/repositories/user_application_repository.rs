@@ -2,16 +2,10 @@ use sqlx::PgPool;
 
 use crate::{
     Error, Result,
-    models::user_application::{UserApplication, UserCreatedUserApplication, UserApplicationStatus},
+    models::user_application::{
+        UserApplication, UserApplicationStatus, UserCreatedUserApplication,
+    },
 };
-
-#[derive(Debug)]
-pub enum ApplicationFilter {
-    All,
-    Checked,    // accepted or rejected
-    Unchecked,  // pending
-    Status(UserApplicationStatus),
-}
 
 pub async fn create_user_application(
     pool: &PgPool,
@@ -22,7 +16,7 @@ pub async fn create_user_application(
         r#"
             INSERT INTO user_applications (body, referral, email, staff_note, status, invitation_id)
             VALUES ($1, $2, $3, '', 'pending', NULL)
-            RETURNING id, created_at, body, email, referral, staff_note, 
+            RETURNING id, created_at, body, email, referral, staff_note,
                       status as "status: UserApplicationStatus", invitation_id
         "#,
         application.body,
@@ -38,43 +32,25 @@ pub async fn create_user_application(
 
 pub async fn find_user_applications(
     pool: &PgPool,
-    limit: Option<i64>,
-    offset: Option<i64>,
-    filter: ApplicationFilter,
+    limit: i64,
+    page: i64,
+    status: Option<UserApplicationStatus>,
 ) -> Result<Vec<UserApplication>> {
-    let limit = limit.unwrap_or(50); // Default limit of 50
-    let offset = offset.unwrap_or(0); // Default offset of 0
-    
-    // Build WHERE clause and parameters based on filter
-    let (where_clause, _params): (String, Vec<&str>) = match filter {
-        ApplicationFilter::All => (String::new(), vec![]),
-        ApplicationFilter::Checked => ("WHERE status IN ('accepted', 'rejected')".to_string(), vec![]),
-        ApplicationFilter::Unchecked => ("WHERE status = 'pending'".to_string(), vec![]),
-        ApplicationFilter::Status(status) => {
-            let status_str = match status {
-                UserApplicationStatus::Pending => "pending",
-                UserApplicationStatus::Accepted => "accepted",
-                UserApplicationStatus::Rejected => "rejected",
-            };
-            (format!("WHERE status = '{status_str}'"), vec![])
-        }
-    };
-    
-    // Construct the full query
     let query = format!(
         r#"
-            SELECT id, created_at, body, email, referral, staff_note,     
-                   status as "status: UserApplicationStatus", invitation_id
-            FROM user_applications
-            {where_clause}
+            SELECT id, created_at, body, email, referral, staff_note,
+                   status::user_application_status_enum as status, invitation_id
+            FROM user_applications ua
+            WHERE $1 IS NULL OR ua.status = $1::user_application_status_enum
             ORDER BY created_at DESC
-            LIMIT {limit} OFFSET {offset}
+            LIMIT {limit} OFFSET $3
         "#
     );
-    
+
     let applications = sqlx::query_as::<_, UserApplication>(&query)
+        .bind(status)
         .bind(limit)
-        .bind(offset)
+        .bind((page - 1) * limit)
         .fetch_all(pool)
         .await
         .map_err(Error::CouldNotGetUserApplications)?;
@@ -88,28 +64,21 @@ pub async fn update_user_application_status(
     status: UserApplicationStatus,
     invitation_id: Option<i64>,
 ) -> Result<UserApplication> {
-    let status_str = match status {
-        UserApplicationStatus::Pending => "pending",
-        UserApplicationStatus::Accepted => "accepted",
-        UserApplicationStatus::Rejected => "rejected",
-    };
-    
-    let query = format!(
+    let application = sqlx::query_as::<_, UserApplication>(
         r#"
             UPDATE user_applications
-            SET status = '{status_str}', invitation_id = $2
+            SET status = $3::user_application_status_enum, invitation_id = $2
             WHERE id = $1
             RETURNING id, created_at, body, email, referral, staff_note,
-                      status as "status: UserApplicationStatus", invitation_id
-        "#
-    );
-    
-    let application = sqlx::query_as::<_, UserApplication>(&query)
-        .bind(application_id)
-        .bind(invitation_id)
-        .fetch_one(pool)
-        .await
-        .map_err(Error::CouldNotUpdateUserApplication)?;
+                      status::user_application_status_enum as status, invitation_id
+        "#,
+    )
+    .bind(application_id)
+    .bind(invitation_id)
+    .bind(status)
+    .fetch_one(pool)
+    .await
+    .map_err(Error::CouldNotUpdateUserApplication)?;
 
     Ok(application)
 }

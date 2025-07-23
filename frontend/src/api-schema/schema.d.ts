@@ -20,6 +20,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["add_user_application"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/artist": {
         parameters: {
             query?: never;
@@ -453,6 +469,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/search/torrent-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["search_torrent_requests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/search/torrent/lite": {
         parameters: {
             query?: never;
@@ -669,22 +701,6 @@ export interface paths {
             cookie?: never;
         };
         get: operations["get_user_applications"];
-        put?: never;
-        post: operations["add_user_application"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/user-application/{id}/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
         put: operations["update_user_application_status"];
         post?: never;
         delete?: never;
@@ -776,14 +792,6 @@ export interface components {
             roles: components["schemas"]["EntityRole"][];
             /** Format: int64 */
             title_group_id: number;
-        };
-        ApplicationQuery: {
-            checked?: boolean | null;
-            /** Format: int64 */
-            limit?: number | null;
-            /** Format: int64 */
-            offset?: number | null;
-            status?: string | null;
         };
         Artist: {
             /** Format: date-time */
@@ -1163,6 +1171,13 @@ export interface components {
             /** Format: int64 */
             amount: number;
             period: string;
+        };
+        GetUserApplicationsQuery: {
+            /** Format: int64 */
+            limit?: number | null;
+            /** Format: int64 */
+            page?: number | null;
+            status?: null | components["schemas"]["UserApplicationStatus"];
         };
         Gift: {
             /** Format: int64 */
@@ -1833,6 +1848,10 @@ export interface components {
             /** Format: int64 */
             torrent_request_id: number;
         };
+        TorrentRequestWithTitleGroupLite: {
+            title_group: components["schemas"]["TitleGroupLite"];
+            torrent_request: components["schemas"]["TorrentRequest"];
+        };
         TorrentSearch: {
             order: components["schemas"]["TorrentSearchOrder"];
             /** Format: int64 */
@@ -1868,10 +1887,12 @@ export interface components {
             id: number;
             reason: string;
         };
-        UpdateApplicationStatusRequest: {
+        UpdateUserApplication: {
             /** Format: int64 */
             invitation_id?: number | null;
             status: components["schemas"]["UserApplicationStatus"];
+            /** Format: int64 */
+            user_application_id: number;
         };
         UploadInformation: {
             announce_url: string;
@@ -1988,7 +2009,7 @@ export interface components {
             status: components["schemas"]["UserApplicationStatus"];
         };
         /** @enum {string} */
-        UserApplicationStatus: "Pending" | "Accepted" | "Rejected";
+        UserApplicationStatus: "pending" | "accepted" | "rejected";
         UserCreatedAffiliatedArtist: {
             /** Format: int64 */
             artist_id: number;
@@ -2253,6 +2274,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    add_user_application: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedUserApplication"];
+            };
+        };
+        responses: {
+            /** @description Successfully created user application */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserApplication"];
+                };
             };
         };
     };
@@ -2909,6 +2954,35 @@ export interface operations {
             };
         };
     };
+    search_torrent_requests: {
+        parameters: {
+            query?: {
+                /** @description Name of the title group to search for */
+                title_group_name?: string;
+                /** @description Tags to filter title groups by */
+                tags?: string[];
+                /** @description Page number (default 1) */
+                page?: number;
+                /** @description Results per page (default 50) */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of torrent requests with associated title groups */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TorrentRequestWithTitleGroupLite"][];
+                };
+            };
+        };
+    };
     find_torrents: {
         parameters: {
             query?: never;
@@ -3365,8 +3439,8 @@ export interface operations {
             query?: {
                 /** @description Maximum number of applications to return (default: 50) */
                 limit?: number;
-                /** @description Number of applications to skip (default: 0) */
-                offset?: number;
+                /** @description Page (default: 1) */
+                page?: number;
                 /** @description Filter by application status: 'pending', 'accepted', or 'rejected' */
                 status?: string;
                 /** @description Filter by checked status: true for checked (accepted/rejected), false for unchecked (pending) */
@@ -3403,7 +3477,7 @@ export interface operations {
             };
         };
     };
-    add_user_application: {
+    update_user_application_status: {
         parameters: {
             query?: never;
             header?: never;
@@ -3412,34 +3486,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserCreatedUserApplication"];
-            };
-        };
-        responses: {
-            /** @description Successfully created user application */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserApplication"];
-                };
-            };
-        };
-    };
-    update_user_application_status: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description User application ID */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateApplicationStatusRequest"];
+                "application/json": components["schemas"]["UpdateUserApplication"];
             };
         };
         responses: {

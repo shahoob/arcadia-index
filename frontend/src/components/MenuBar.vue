@@ -9,6 +9,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from 'primevue'
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 const menuItems = ref([
   { label: 'Torrents', route: '/torrents' },
@@ -20,6 +24,12 @@ const menuItems = ref([
   { label: 'Rules', route: '/wiki/article/1' },
   { label: 'Wiki', route: '/wiki/article/1' },
 ])
+
+onMounted(() => {
+  if (userStore.class === 'staff') {
+    menuItems.value.push({ label: 'Staff Dashboard', route: '/staff-dashboard' })
+  }
+})
 </script>
 
 <style scoped>

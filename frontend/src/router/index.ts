@@ -147,6 +147,11 @@ const router = createRouter({
       name: 'Conversations',
       component: () => import('../views/conversation/ConversationsView.vue'),
     },
+    {
+      path: '/staff-dashboard',
+      name: 'StaffDashboard',
+      component: () => import('../views/StaffDashboard.vue'),
+    },
   ],
 })
 

@@ -1,23 +1,22 @@
-use actix_web::{web, HttpResponse};
-use serde::{Deserialize, Serialize};
 use crate::{
+    Arcadia, Error, Result,
     handlers::User,
-    repositories::user_application_repository::{self, ApplicationFilter},
     models::user_application::UserApplicationStatus,
-    Arcadia, Result, Error,
+    repositories::user_application_repository::{self},
 };
+use actix_web::{HttpResponse, web};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, utoipa::ToSchema)]
-pub struct ApplicationQuery {
+pub struct GetUserApplicationsQuery {
     pub limit: Option<i64>,
-    pub offset: Option<i64>,
-    pub status: Option<String>,
-    pub checked: Option<bool>,
+    pub page: Option<i64>,
+    pub status: Option<UserApplicationStatus>,
 }
 
 #[utoipa::path(
     post,
-    path = "/api/user-application",
+    path = "/api/apply",
     responses(
         (status = 201, description = "Successfully created user application", body = crate::models::user_application::UserApplication)
     )
@@ -26,11 +25,9 @@ pub async fn add_user_application(
     data: web::Data<Arcadia>,
     application: web::Json<crate::models::user_application::UserCreatedUserApplication>,
 ) -> Result<HttpResponse> {
-    let created_application = user_application_repository::create_user_application(
-        &data.pool,
-        &application.into_inner(),
-    )
-    .await?;
+    let created_application =
+        user_application_repository::create_user_application(&data.pool, &application.into_inner())
+            .await?;
 
     Ok(HttpResponse::Created().json(created_application))
 }
@@ -40,7 +37,7 @@ pub async fn add_user_application(
     path = "/api/user-application",
     params(
         ("limit" = Option<i64>, Query, description = "Maximum number of applications to return (default: 50)"),
-        ("offset" = Option<i64>, Query, description = "Number of applications to skip (default: 0)"),
+        ("page" = Option<i64>, Query, description = "Page (default: 1)"),
         ("status" = Option<String>, Query, description = "Filter by application status: 'pending', 'accepted', or 'rejected'"),
         ("checked" = Option<bool>, Query, description = "Filter by checked status: true for checked (accepted/rejected), false for unchecked (pending)")
     ),
@@ -53,54 +50,35 @@ pub async fn add_user_application(
 pub async fn get_user_applications(
     data: web::Data<Arcadia>,
     user: User,
-    query: web::Query<ApplicationQuery>,
+    query: web::Query<GetUserApplicationsQuery>,
 ) -> Result<HttpResponse> {
     // Check if user is staff
-    if !user.is_staff() {
+    if user.class != "staff" {
         return Err(Error::InsufficientPrivileges);
     }
 
-    // Determine the filter based on query parameters
-    let filter = if let Some(status_str) = &query.status {
-        match status_str.to_lowercase().as_str() {
-            "pending" => ApplicationFilter::Status(UserApplicationStatus::Pending),
-            "accepted" => ApplicationFilter::Status(UserApplicationStatus::Accepted),
-            "rejected" => ApplicationFilter::Status(UserApplicationStatus::Rejected),
-            _ => return Err(Error::BadRequest("Invalid status parameter. Must be 'pending', 'accepted', or 'rejected'".to_string())),
-        }
-    } else if let Some(checked) = query.checked {
-        if checked {
-            ApplicationFilter::Checked
-        } else {
-            ApplicationFilter::Unchecked
-        }
-    } else {
-        ApplicationFilter::All
-    };
-
     let applications = user_application_repository::find_user_applications(
         &data.pool,
-        query.limit,
-        query.offset,
-        filter,
-    ).await?;
+        query.limit.unwrap_or(50),
+        query.page.unwrap_or(1),
+        query.status.clone(),
+    )
+    .await?;
 
     Ok(HttpResponse::Ok().json(applications))
 }
 
 #[derive(Deserialize, Serialize, utoipa::ToSchema)]
-pub struct UpdateApplicationStatusRequest {
+pub struct UpdateUserApplication {
     pub status: UserApplicationStatus,
+    pub user_application_id: i64,
     pub invitation_id: Option<i64>,
 }
 
 #[utoipa::path(
     put,
-    path = "/api/user-application/{id}/status",
-    params(
-        ("id" = i64, Path, description = "User application ID")
-    ),
-    request_body = UpdateApplicationStatusRequest,
+    path = "/api/user-application",
+    request_body = UpdateUserApplication,
     responses(
         (status = 200, description = "Successfully updated user application status", body = crate::models::user_application::UserApplication),
         (status = 403, description = "Forbidden - Only staff members can update user applications"),
@@ -110,23 +88,20 @@ pub struct UpdateApplicationStatusRequest {
 pub async fn update_user_application_status(
     data: web::Data<Arcadia>,
     user: User,
-    path: web::Path<i64>,
-    request: web::Json<UpdateApplicationStatusRequest>,
+    form: web::Json<UpdateUserApplication>,
 ) -> Result<HttpResponse> {
     // Check if user is staff
-    if !user.is_staff() {
+    if user.class != "staff" {
         return Err(Error::InsufficientPrivileges);
     }
 
-    let application_id = path.into_inner();
-    let request = request.into_inner();
-
     let updated_application = user_application_repository::update_user_application_status(
         &data.pool,
-        application_id,
-        request.status,
-        request.invitation_id,
-    ).await?;
+        form.user_application_id,
+        form.status.clone(),
+        form.invitation_id,
+    )
+    .await?;
 
     Ok(HttpResponse::Ok().json(updated_application))
 }

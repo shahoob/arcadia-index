@@ -162,7 +162,7 @@ pub async fn validate_bearer_auth(
     // These routes are explicitly not authenticated.
     if matches!(
         req.path(),
-        "/api/login" | "/api/register" | "/api/refresh-token" | "/api/user-application"
+        "/api/login" | "/api/register" | "/api/refresh-token" | "/api/apply"
     ) {
         return Ok(req);
     }

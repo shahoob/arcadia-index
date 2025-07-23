@@ -1,13 +1,17 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
+use strum::Display;
 use utoipa::ToSchema;
 
-#[derive(Debug, Serialize, Deserialize, sqlx::Type, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, Display, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "user_application_status_enum", rename_all = "lowercase")]
 pub enum UserApplicationStatus {
+    #[serde(rename = "pending")]
     Pending,
+    #[serde(rename = "accepted")]
     Accepted,
+    #[serde(rename = "rejected")]
     Rejected,
 }
 

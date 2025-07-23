@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO user_applications (body, referral, email, staff_note, status, invitation_id)\n            VALUES ($1, $2, $3, '', 'pending', NULL)\n            RETURNING id, created_at, body, email, referral, staff_note, \n                      status as \"status: UserApplicationStatus\", invitation_id\n        ",
+  "query": "\n            INSERT INTO user_applications (body, referral, email, staff_note, status, invitation_id)\n            VALUES ($1, $2, $3, '', 'pending', NULL)\n            RETURNING id, created_at, body, email, referral, staff_note,\n                      status as \"status: UserApplicationStatus\", invitation_id\n        ",
   "describe": {
     "columns": [
       {
@@ -73,5 +73,5 @@
       true
     ]
   },
-  "hash": "0dda5b4405558943bda949ca29e84ad8f32b0b9d90e2c2290d315a6241f913ba"
+  "hash": "21ebdd643000fecd89a9627c19b489d776f0d2509355c2369a69a6d3e2e9f7b2"
 }

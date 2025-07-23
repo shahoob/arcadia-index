@@ -7,7 +7,7 @@ use crate::{
         home_handler::HomePage,
         scrapers::ExternalDBData,
         torrent_handler::{DownloadTorrentQuery, GetTopTorrentsQuery, UploadInformation},
-        user_application_handler::{ApplicationQuery, UpdateApplicationStatusRequest},
+        user_application_handler::{GetUserApplicationsQuery, UpdateUserApplication},
     },
     models::{
         artist::{
@@ -28,7 +28,9 @@ use crate::{
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
-        title_group::{PublicRating, TitleGroupAndAssociatedData, TitleGroupHierarchy},
+        title_group::{
+            PublicRating, TitleGroupAndAssociatedData, TitleGroupHierarchy, TitleGroupLite,
+        },
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::{
             EditedTorrent, Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete,
@@ -37,7 +39,7 @@ use crate::{
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{
             TorrentRequest, TorrentRequestFill, TorrentRequestHierarchyLite,
-            UserCreatedTorrentRequest,
+            TorrentRequestWithTitleGroupLite, UserCreatedTorrentRequest,
         },
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{
@@ -46,8 +48,6 @@ use crate::{
         },
         user_application::{UserApplication, UserApplicationStatus, UserCreatedUserApplication},
         wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
-        torrent_request::TorrentRequestWithTitleGroupLite,
-        title_group::TitleGroupLite,
     },
 };
 
@@ -182,8 +182,8 @@ use crate::{
         UserApplication,
         UserApplicationStatus,
         UserCreatedUserApplication,
-        ApplicationQuery,
-        UpdateApplicationStatusRequest,
+        GetUserApplicationsQuery,
+        UpdateUserApplication,
         ExternalDBData,
         HomePage,
         UploadInformation,
