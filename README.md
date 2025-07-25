@@ -1,4 +1,7 @@
-# Arcadia
+<h1 align="center">
+  <img alt="Arcadia's logo" src="./media/arcadia_logo.png" width="120px"/><br/>
+  Arcadia
+</h1>
 
 ### Developement is going well, but I am currently actively looking for other devs to hop into the project!
 
