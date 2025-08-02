@@ -46,7 +46,7 @@ const initialForm = ref<TorrentSearch>({
   title_group: { name: '', include_empty_groups: false },
   torrent: {},
   page: 1,
-  page_size: 5,
+  page_size: 20,
   sort_by: 'torrent_created_at',
   order: 'desc',
 })
