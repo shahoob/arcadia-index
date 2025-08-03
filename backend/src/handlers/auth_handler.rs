@@ -5,7 +5,7 @@ use crate::{
         user::{Claims, Login, LoginResponse, RefreshToken, Register, User},
     },
     repositories::{
-        auth_repository::{create_user, find_user_with_password},
+        auth_repository::{create_user, find_user_id_with_api_key, find_user_with_password},
         invitation_repository::does_unexpired_invitation_exist,
     },
     services::email_service::EmailService,
@@ -155,7 +155,7 @@ pub async fn login(arc: web::Data<Arcadia>, user_login: web::Json<Login>) -> Res
     })))
 }
 
-pub async fn validate_bearer_auth(
+pub async fn authenticate_user(
     req: ServiceRequest,
     bearer: Option<BearerAuth>,
 ) -> std::result::Result<ServiceRequest, (actix_web::Error, ServiceRequest)> {
@@ -167,13 +167,25 @@ pub async fn validate_bearer_auth(
         return Ok(req);
     }
 
-    let Some(bearer) = bearer else {
-        return Err((
-            actix_web::error::ErrorUnauthorized("authentication error, missing jwt token"),
+    if let Some(bearer) = bearer {
+        validate_bearer_auth(req, bearer).await
+    } else if let Some(api_key) = req.headers().get("api_key") {
+        let api_key = api_key.to_str().expect("api_key malformed").to_owned();
+        validate_api_key(req, &api_key).await
+    } else {
+        Err((
+            actix_web::error::ErrorUnauthorized(
+                "authentication error, missing jwt token or API key",
+            ),
             req,
-        ));
-    };
+        ))
+    }
+}
 
+pub async fn validate_bearer_auth(
+    req: ServiceRequest,
+    bearer: BearerAuth,
+) -> std::result::Result<ServiceRequest, (actix_web::Error, ServiceRequest)> {
     let Some(arc) = req.app_data::<web::Data<Arcadia>>() else {
         return Err((
             actix_web::error::ErrorUnauthorized("authentication error"),
@@ -208,9 +220,31 @@ pub async fn validate_bearer_auth(
         return Err((actix_web::error::ErrorUnauthorized("account banned"), req));
     }
 
-    // TODO: only do this if the call comes from the website (with origin set to the site's url)
-    // if the user uses the api for scripting, it shouldn't bee counted as "seen"
     let _ = crate::repositories::user_repository::update_last_seen(&arc.pool, user_id).await;
+
+    req.extensions_mut()
+        .insert(crate::handlers::UserId(user_id));
+
+    Ok(req)
+}
+
+pub async fn validate_api_key(
+    req: ServiceRequest,
+    api_key: &str,
+) -> std::result::Result<ServiceRequest, (actix_web::Error, ServiceRequest)> {
+    let Some(arc) = req.app_data::<web::Data<Arcadia>>() else {
+        return Err((
+            actix_web::error::ErrorUnauthorized("authentication error"),
+            req,
+        ));
+    };
+
+    let user_id = match find_user_id_with_api_key(&arc.pool, api_key).await {
+        Ok(id) => id,
+        Err(e) => {
+            return Err((actix_web::error::ErrorUnauthorized(e.to_string()), req));
+        }
+    };
 
     req.extensions_mut()
         .insert(crate::handlers::UserId(user_id));

@@ -48,6 +48,13 @@ CREATE TABLE users (
 );
 INSERT INTO users (username, email, password_hash, registered_from_ip, settings, passkey_upper, passkey_lower)
 VALUES ('creator', 'none@domain.com', 'none', '127.0.0.1', '{}'::jsonb, '1', '1');
+CREATE TABLE api_keys (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    name VARCHAR(30) NOT NULL,
+    value VARCHAR(40) NOT NULL UNIQUE,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE
+);
 CREATE TABLE invitations (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

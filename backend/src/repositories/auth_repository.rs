@@ -19,7 +19,7 @@ pub async fn does_username_exist(pool: &PgPool, username: &str) -> Result<bool> 
     )
     .fetch_one(pool)
     .await?;
-    
+
     Ok(result.exists.unwrap_or(false))
 }
 
@@ -100,6 +100,23 @@ pub async fn find_user_with_password(pool: &PgPool, login: &Login) -> Result<Use
         .map_err(|_| Error::WrongUsernameOrPassword)?;
 
     Ok(user)
+}
+
+pub async fn find_user_id_with_api_key(pool: &PgPool, api_key: &str) -> Result<i64> {
+    let user_id = sqlx::query_scalar!(
+        r#"
+        SELECT u.id
+        FROM users u
+        JOIN api_keys ak ON u.id = ak.user_id
+        WHERE ak.value = $1 AND u.banned = FALSE;
+        "#,
+        api_key
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|_| Error::InvalidAPIKeyOrBanned)?;
+
+    Ok(user_id)
 }
 
 pub async fn find_user_with_id(pool: &PgPool, id: i64) -> Result<User> {

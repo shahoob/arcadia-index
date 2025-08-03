@@ -155,6 +155,9 @@ pub enum Error {
     #[error("wrong username or password")]
     WrongUsernameOrPassword,
 
+    #[error("invalid API key or banned")]
+    InvalidAPIKeyOrBanned,
+
     #[error("invalid or expired refresh token")]
     InvalidOrExpiredRefreshToken,
 
