@@ -1,7 +1,9 @@
 use crate::{
     Error, Result,
     models::{
-        title_group::{ContentType, PublicRating, TitleGroup, UserCreatedTitleGroup},
+        title_group::{
+            ContentType, EditedTitleGroup, PublicRating, TitleGroup, UserCreatedTitleGroup,
+        },
         user::User,
     },
 };
@@ -59,7 +61,7 @@ pub async fn create_title_group(
     Ok(created_title_group)
 }
 
-pub async fn find_title_group(
+pub async fn find_title_group_hierarchy(
     pool: &PgPool,
     title_group_id: i64,
     current_user: &User,
@@ -291,4 +293,90 @@ pub async fn find_title_group_info_lite(
     Ok(title_groups
         .jsonb_agg
         .unwrap_or_else(|| serde_json::Value::Array(vec![])))
+}
+
+pub async fn find_title_group(pool: &PgPool, title_group_id: i64) -> Result<TitleGroup> {
+    let title_group = sqlx::query_as!(
+        TitleGroup,
+        r#"
+        SELECT
+            id, master_group_id, name, name_aliases AS "name_aliases!: _",
+            created_at, updated_at, created_by_id, description,
+            platform AS "platform: _", original_language, original_release_date,
+            tagline, tags AS "tags!: _", country_from, covers AS "covers!: _",
+            external_links AS "external_links!: _", embedded_links,
+            category AS "category: _", content_type AS "content_type: _",
+            public_ratings, screenshots AS "screenshots!: _", series_id
+        FROM title_groups
+        WHERE id = $1
+        "#,
+        title_group_id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|_| Error::TitleGroupNotFound)?;
+
+    Ok(title_group)
+}
+
+pub async fn update_title_group(
+    pool: &PgPool,
+    edited_title_group: &EditedTitleGroup,
+    title_group_id: i64,
+) -> Result<TitleGroup> {
+    let updated_title_group = sqlx::query_as!(
+        TitleGroup,
+        r#"
+        UPDATE title_groups
+        SET
+            master_group_id = $2,
+            name = $3,
+            name_aliases = $4,
+            description = $5,
+            platform = $6,
+            original_language = $7,
+            original_release_date = $8,
+            tagline = $9,
+            country_from = $10,
+            covers = $11,
+            external_links = $12,
+            embedded_links = $13,
+            category = $14,
+            content_type = $15,
+            tags = $16,
+            screenshots = $17,
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING
+            id, master_group_id, name, name_aliases AS "name_aliases!: _",
+            created_at, updated_at, created_by_id, description,
+            platform AS "platform: _", original_language, original_release_date,
+            tagline, tags AS "tags!: _", country_from, covers AS "covers!: _",
+            external_links AS "external_links!: _", embedded_links,
+            category AS "category: _", content_type AS "content_type: _",
+            public_ratings, screenshots AS "screenshots!: _", series_id
+        "#,
+        title_group_id,
+        edited_title_group.master_group_id,
+        edited_title_group.name,
+        edited_title_group.name_aliases as _,
+        edited_title_group.description,
+        edited_title_group.platform as _,
+        edited_title_group.original_language,
+        edited_title_group.original_release_date,
+        edited_title_group.tagline,
+        edited_title_group.country_from,
+        edited_title_group.covers as _,
+        edited_title_group.external_links as _,
+        edited_title_group.embedded_links,
+        edited_title_group.category as _,
+        edited_title_group.content_type as _,
+        edited_title_group.tags as _,
+        edited_title_group.screenshots as _
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|e| Error::ErrorWhileUpdatingTitleGroup(e.to_string()))?;
+
+    Ok(updated_title_group)
 }

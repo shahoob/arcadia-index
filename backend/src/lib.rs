@@ -182,6 +182,12 @@ pub enum Error {
     #[error("torrent not found")]
     TorrentNotFound,
 
+    #[error("title group not found")]
+    TitleGroupNotFound,
+
+    #[error("error while updating title_group: '{0}'")]
+    ErrorWhileUpdatingTitleGroup(String),
+
     #[error("error while updating torrent: '{0}'")]
     ErrorWhileUpdatingTorrent(String),
 

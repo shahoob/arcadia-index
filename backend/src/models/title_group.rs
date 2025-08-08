@@ -276,6 +276,29 @@ pub struct TitleGroupAndAssociatedData {
     pub in_same_master_group: Vec<TitleGroupLite>,
 }
 
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct EditedTitleGroup {
+    pub id: i64,
+    pub master_group_id: Option<i64>,
+    pub name: String,
+    pub name_aliases: Vec<String>,
+    pub description: String,
+    pub platform: Option<Platform>,
+    pub original_language: Option<String>,
+    #[schema(value_type = String, format = DateTime)]
+    pub original_release_date: DateTime<Utc>,
+    pub tagline: Option<String>,
+    pub country_from: Option<String>,
+    pub covers: Vec<String>,
+    pub external_links: Vec<String>,
+    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
+    pub embedded_links: Value,
+    pub category: Option<TitleGroupCategory>,
+    pub content_type: ContentType,
+    pub tags: Vec<String>,
+    pub screenshots: Vec<String>,
+}
+
 pub fn create_default_title_group() -> UserCreatedTitleGroup {
     UserCreatedTitleGroup {
         name: String::from(""),

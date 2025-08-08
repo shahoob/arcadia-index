@@ -4,19 +4,20 @@ use serde::Deserialize;
 use utoipa::IntoParams;
 
 use crate::{
-    Arcadia, Result,
+    Arcadia, Error, Result,
     handlers::scrapers::tmdb::get_tmdb_rating,
     models::{
         title_group::{
-            ContentType, PublicRating, TitleGroup, TitleGroupAndAssociatedData, TitleGroupLite,
-            UserCreatedTitleGroup,
+            ContentType, EditedTitleGroup, PublicRating, TitleGroup, TitleGroupAndAssociatedData,
+            TitleGroupLite, UserCreatedTitleGroup,
         },
         user::User,
     },
     repositories::{
         artist_repository::create_artists_affiliation,
         title_group_repository::{
-            create_title_group, find_title_group, find_title_group_info_lite,
+            create_title_group, find_title_group, find_title_group_hierarchy,
+            find_title_group_info_lite, update_title_group,
         },
     },
 };
@@ -59,6 +60,28 @@ pub async fn add_title_group(
     Ok(HttpResponse::Created().json(created_title_group))
 }
 
+#[utoipa::path(
+    put,
+    path = "/api/title-group",
+    responses(
+        (status = 200, description = "Successfully edited the title group", body=TitleGroup),
+    )
+)]
+pub async fn edit_title_group(
+    form: web::Json<EditedTitleGroup>,
+    arc: web::Data<Arcadia>,
+    current_user: User,
+) -> Result<HttpResponse> {
+    let title_group = find_title_group(&arc.pool, form.id).await?;
+
+    if title_group.created_by_id == current_user.id || current_user.class == "staff" {
+        let updated_title_group = update_title_group(&arc.pool, &form, title_group.id).await?;
+        Ok(HttpResponse::Ok().json(updated_title_group))
+    } else {
+        Err(Error::InsufficientPrivileges)
+    }
+}
+
 #[derive(Debug, Deserialize, IntoParams)]
 pub struct GetTitleGroupQuery {
     id: i64,
@@ -77,7 +100,7 @@ pub async fn get_title_group(
     query: web::Query<GetTitleGroupQuery>,
     current_user: User,
 ) -> Result<HttpResponse> {
-    let title_group = find_title_group(&arc.pool, query.id, &current_user).await?;
+    let title_group = find_title_group_hierarchy(&arc.pool, query.id, &current_user).await?;
 
     Ok(HttpResponse::Ok().json(title_group))
 }

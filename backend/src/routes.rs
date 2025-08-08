@@ -2,6 +2,7 @@ use actix_web::web;
 use actix_web_httpauth::middleware::HttpAuthentication;
 
 use crate::handlers::auth_handler::authenticate_user;
+use crate::handlers::title_group_handler::edit_title_group;
 use crate::handlers::torrent_request_handler::search_torrent_requests;
 use crate::handlers::user_handler::get_registered_users;
 use crate::handlers::{
@@ -69,6 +70,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/master-group", web::post().to(add_master_group))
             .route("/title-group", web::post().to(add_title_group))
             .route("/title-group", web::get().to(get_title_group))
+            .route("/title-group", web::put().to(edit_title_group))
             .route(
                 "/title-group/lite",
                 web::get().to(get_title_group_info_lite),
