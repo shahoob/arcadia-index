@@ -404,6 +404,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/registered-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_registered_users"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/report/torrent": {
         parameters: {
             query?: never;
@@ -541,7 +557,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["get_title_group"];
-        put?: never;
+        put: operations["edit_title_group"];
         post: operations["add_title_group"];
         delete?: never;
         options?: never;
@@ -912,6 +928,32 @@ export interface components {
         DownloadTorrentQuery: {
             /** Format: int64 */
             id: number;
+        };
+        EditedTitleGroup: {
+            category?: null | components["schemas"]["TitleGroupCategory"];
+            content_type: components["schemas"]["ContentType"];
+            country_from?: string | null;
+            covers: string[];
+            description: string;
+            embedded_links: {
+                [key: string]: {
+                    [key: string]: string;
+                };
+            };
+            external_links: string[];
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            master_group_id?: number | null;
+            name: string;
+            name_aliases: string[];
+            original_language?: string | null;
+            /** Format: date-time */
+            original_release_date: string;
+            platform?: null | components["schemas"]["Platform"];
+            screenshots: string[];
+            tagline?: string | null;
+            tags: string[];
         };
         EditedTorrent: {
             /** Format: int32 */
@@ -2182,6 +2224,14 @@ export interface components {
             username: string;
             warned: boolean;
         };
+        UserMinimal: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            passkey_lower: number;
+            /** Format: int64 */
+            passkey_upper: number;
+        };
         UserWarning: {
             ban: boolean;
             /** Format: date-time */
@@ -2861,6 +2911,26 @@ export interface operations {
             };
         };
     };
+    get_registered_users: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All registered users */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserMinimal"][];
+                };
+            };
+        };
+    };
     add_torrent_report: {
         parameters: {
             query?: never;
@@ -3113,6 +3183,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TitleGroupAndAssociatedData"];
+                };
+            };
+        };
+    };
+    edit_title_group: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditedTitleGroup"];
+            };
+        };
+        responses: {
+            /** @description Successfully edited the title group */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TitleGroup"];
                 };
             };
         };

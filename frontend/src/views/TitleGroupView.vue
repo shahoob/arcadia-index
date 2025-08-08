@@ -28,7 +28,12 @@
           <i v-tooltip.top="t('general.bookmark')" class="pi pi-bookmark" />
         </div>
         <div>
-          <i v-tooltip.top="t('general.edit')" class="pi pi-pen-to-square" />
+          <i
+            v-if="title_group.created_by_id === userStore.id || userStore.class === 'staff'"
+            v-tooltip.top="t('general.edit')"
+            class="pi pi-pen-to-square"
+            @click="editTitleGroupDialogVisible = true"
+          />
           <i @click="uploadTorrent" v-tooltip.top="t('torrent.upload_torrent')" class="pi pi-upload" />
           <i v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
         </div>
@@ -85,6 +90,9 @@
         @done="affiliatedArtistsEdited"
       />
     </Dialog>
+    <Dialog closeOnEscape modal :header="t('title_group.edit_title_group')" v-model:visible="editTitleGroupDialogVisible">
+      <CreateOrEditTitleGroup class="edit-title-group" v-if="title_group" :initialTitleGroup="title_group" editMode @done="titleGroupEdited" />
+    </Dialog>
   </div>
 </template>
 
@@ -95,7 +103,7 @@ import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import TitleGroupComments from '@/components/title_group/TitleGroupComments.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
-import { getTitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import { getTitleGroup, type TitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 import TitleGroupTable from '@/components/title_group/TitleGroupTable.vue'
 import TorrentRequestsTable from '@/components/request/TorrentRequestsTable.vue'
 import Accordion from 'primevue/accordion'
@@ -119,6 +127,7 @@ import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import EditArtistsModal from '@/components/artist/EditArtistsModal.vue'
 import { Dialog } from 'primevue'
 import EmbeddedLinks from '@/components/title_group/EmbeddedLinks.vue'
+import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -127,6 +136,7 @@ const { t } = useI18n()
 const editAffiliatedArtistsDialogVisible = ref(false)
 const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()
+const editTitleGroupDialogVisible = ref(false)
 
 const selectableSortingOptions = ['edition', 'size', 'seeders', 'completed', 'created_at']
 
@@ -205,6 +215,13 @@ const affiliatedArtistsEdited = (newAffiliatedArtists: AffiliatedArtistHierarchy
   editAffiliatedArtistsDialogVisible.value = false
 }
 
+const titleGroupEdited = (updatedTitleGroup: TitleGroup) => {
+  if (title_group.value) {
+    title_group.value = { ...title_group.value, ...updatedTitleGroup }
+  }
+  editTitleGroupDialogVisible.value = false
+}
+
 watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 </script>
 
@@ -254,6 +271,9 @@ watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 }
 .comments {
   margin-top: 20px;
+}
+.edit-title-group {
+  width: 60vw;
 }
 </style>
 <style>

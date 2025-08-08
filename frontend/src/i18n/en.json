@@ -172,6 +172,8 @@
     "update_artists": "Update artists",
     "rating": "Rating | Ratings",
     "vote": "Vote | Votes",
+    "edit_title_group": "Edit title group",
+    "title_group_edited_success": "Successfuly edited the title group",
     "content_type": {
       "content_type": "Content type",
       "music": "Music",

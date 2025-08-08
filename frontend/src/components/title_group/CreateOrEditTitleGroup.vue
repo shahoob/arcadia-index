@@ -146,7 +146,7 @@
           {{ $form.original_release_date.error?.message }}
         </Message>
       </div>
-      <div>
+      <div v-if="!props.editMode">
         <label>{{ t('artist.artist', 2) }}</label>
         <EditAffiliatedArtists
           ref="editAffiliatedArtistsRef"
@@ -206,23 +206,27 @@ import Message from 'primevue/message'
 import { InputNumber } from 'primevue'
 import {
   createTitleGroup,
+  editTitleGroup,
   type ContentType,
+  type EditedTitleGroup,
   type TitleGroup,
   type TitleGroupCategory,
-  type TitleGroupLite,
   type UserCreatedTitleGroup,
 } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 import { getSelectableContentTypes, getLanguages, getPlatforms, isValidUrl } from '@/services/helpers'
-import { watch } from 'vue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import type { VNodeRef } from 'vue'
 import EditAffiliatedArtists from '../artist/EditAffiliatedArtists.vue'
+import { onMounted } from 'vue'
+import { nextTick } from 'vue'
+import _ from 'lodash'
+import { showToast } from '@/main'
 
-interface Props {
-  initialTitleGroupForm: Partial<UserCreatedTitleGroupForm> | null
-}
-const { initialTitleGroupForm = null } = defineProps<Props>()
+const props = defineProps<{
+  initialTitleGroup?: EditedTitleGroup
+  editMode?: boolean
+}>()
 const titleGroupStore = ref(useTitleGroupStore())
 
 const sendingTitleGroup = ref(false)
@@ -230,8 +234,11 @@ const sendingTitleGroup = ref(false)
 export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
   content_type: ContentType | null
 }
-const titleGroupForm = ref<UserCreatedTitleGroupForm>({
+const titleGroupForm = ref({
+  id: 0,
   name: '',
+  name_aliases: [],
+  tagline: null,
   description: '',
   original_language: '',
   original_release_date: '',
@@ -240,13 +247,12 @@ const titleGroupForm = ref<UserCreatedTitleGroupForm>({
   external_links: [''],
   category: null,
   country_from: '',
-  name_aliases: [],
   affiliated_artists: [],
-  tags: [],
+  tags: [] as string[],
   master_group_id: null,
   platform: null,
   embedded_links: {},
-  content_type: null,
+  content_type: null as ContentType | null,
 })
 const formRef = ref<VNodeRef | null>(null)
 const editAffiliatedArtistsRef = ref<VNodeRef | null>(null)
@@ -277,7 +283,7 @@ const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
 const { t } = useI18n()
 
 const emit = defineEmits<{
-  done: [titleGroup: TitleGroup | TitleGroupLite]
+  done: [titleGroup: TitleGroup]
 }>()
 
 // type FormErrors = {
@@ -374,23 +380,34 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   sendingTitleGroup.value = true
   titleGroupForm.value.tags = tagsString.value.trim().split(',')
   titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter((screenshot) => screenshot.trim() !== '')
-
-  try {
-    // create artists that need to be created
-    await editAffiliatedArtistsRef.value.createInexistingArtists()
-  } catch {
-    sendingTitleGroup.value = false
-    return
-  }
-  titleGroupForm.value.affiliated_artists = editAffiliatedArtistsRef.value.affiliated_artists
-  const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm.value))
-  createTitleGroup(formattedTitleGroupForm)
-    .then((data) => {
-      emit('done', data)
-    })
-    .finally(() => {
+  if (props.editMode && props.initialTitleGroup) {
+    titleGroupForm.value.id = props.initialTitleGroup.id
+    editTitleGroup(titleGroupForm.value as EditedTitleGroup)
+      .then((data) => {
+        showToast('', t('title_group.title_group_edited_success'), 'success', 3000, true, 'tr')
+        emit('done', data)
+      })
+      .finally(() => {
+        sendingTitleGroup.value = false
+      })
+  } else {
+    try {
+      // create artists that need to be created
+      await editAffiliatedArtistsRef.value.createInexistingArtists()
+    } catch {
       sendingTitleGroup.value = false
-    })
+      return
+    }
+    titleGroupForm.value.affiliated_artists = editAffiliatedArtistsRef.value.affiliated_artists
+    const formattedTitleGroupForm = JSON.parse(JSON.stringify(titleGroupForm.value))
+    createTitleGroup(formattedTitleGroupForm)
+      .then((data) => {
+        emit('done', data)
+      })
+      .finally(() => {
+        sendingTitleGroup.value = false
+      })
+  }
 }
 
 const addLink = () => {
@@ -412,36 +429,48 @@ const removeScreenshot = (index: number) => {
   titleGroupForm.value.screenshots.splice(index, 1)
 }
 
-const updateTitleGroupForm = (form: Partial<UserCreatedTitleGroupForm>) => {
-  if (form.affiliated_artists && form.affiliated_artists.length === 0) {
-    form.affiliated_artists = titleGroupForm.value.affiliated_artists
-  }
-  titleGroupForm.value = {
-    ...titleGroupForm.value,
-    ...form,
-  }
-  if (titleGroupForm.value.tags.length > 0) {
-    tagsString.value = titleGroupForm.value.tags.join(',')
-  }
-  try {
-    // some fields fail because they are not in the primevueform, but they are in titleGroupForm
-    formRef.value?.setValues(titleGroupForm.value)
-  } catch {}
-}
+// const updateTitleGroupForm = (form: Partial<UserCreatedTitleGroupForm>) => {
+//   if (form.affiliated_artists && form.affiliated_artists.length === 0) {
+//     form.affiliated_artists = titleGroupForm.value.affiliated_artists
+//   }
+//   titleGroupForm.value = {
+//     ...titleGroupForm.value,
+//     ...form,
+//   }
+//   if (titleGroupForm.value.tags.length > 0) {
+//     tagsString.value = titleGroupForm.value.tags.join(',')
+//   }
+//   try {
+//     // some fields fail because they are not in the primevueform, but they are in titleGroupForm
+//     formRef.value?.setValues(titleGroupForm.value)
+//   } catch {}
+// }
 
-watch(
-  () => initialTitleGroupForm,
-  (newValue) => {
-    if (newValue !== null) {
-      updateTitleGroupForm(newValue)
+onMounted(async () => {
+  if (props.initialTitleGroup) {
+    Object.assign(titleGroupForm.value, _.pick(props.initialTitleGroup, Object.keys(titleGroupForm.value)))
+    if (titleGroupForm.value.tags.length > 0) {
+      tagsString.value = titleGroupForm.value.tags.join(',')
     }
-  },
-  { immediate: true },
-)
-// onMounted(() => {
-//   titleGroupForm.value.name = initialTitleGroupName
-//   formRef.value?.setFieldValue('name', initialTitleGroupName)
-// })
+    await nextTick()
+    Object.keys(titleGroupForm.value).forEach((key) => {
+      try {
+        formRef.value?.setFieldValue(key, titleGroupForm.value[key as keyof typeof titleGroupForm.value])
+      } catch {
+        // some fields fail because they are not in the primevueform, but they are in titleGroupForm
+      }
+    })
+  }
+})
+// watch(
+//   () => props.initialTitleGroup,
+//   (newValue) => {
+//     if (newValue !== null) {
+//       updateTitleGroupForm(newValue)
+//     }
+//   },
+//   { immediate: true },
+// )
 </script>
 <style scoped>
 .description {

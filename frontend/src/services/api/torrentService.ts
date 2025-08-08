@@ -4,6 +4,8 @@ import type { TitleGroupHierarchyLite } from './artistService.ts'
 
 export type TitleGroup = components['schemas']['TitleGroup']
 
+export type EditedTitleGroup = components['schemas']['EditedTitleGroup']
+
 export type TitleGroupHierarchy = components['schemas']['TitleGroupHierarchy']
 
 export type TitleGroupCategory = components['schemas']['TitleGroupCategory']
@@ -38,6 +40,10 @@ export type UserCreatedTitleGroup = components['schemas']['UserCreatedTitleGroup
 
 export const createTitleGroup = async (titleGroup: UserCreatedTitleGroup) => {
   return (await api.post<TitleGroup>('/title-group', titleGroup)).data
+}
+
+export const editTitleGroup = async (title_group: EditedTitleGroup): Promise<TitleGroup> => {
+  return (await api.put<TitleGroup>('/title-group', title_group)).data
 }
 
 export type UserCreatedEditionGroup = components['schemas']['UserCreatedEditionGroup']
