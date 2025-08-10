@@ -24,7 +24,8 @@
           <TorrentSlug
             :contentType="title_group.content_type"
             :torrent="slotProps.data"
-            :editionGroup="sortBy === 'edition' ? undefined : getEditionGroupById(slotProps.data.edition_group_id)"
+            :editionGroup="getEditionGroupById(slotProps.data.edition_group_id)"
+            :sortedBy="sortBy"
           />
         </a>
       </template>

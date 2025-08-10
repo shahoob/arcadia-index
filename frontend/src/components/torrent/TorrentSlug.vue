@@ -19,8 +19,9 @@ const { t } = useI18n()
 
 const props = defineProps<{
   torrent: TorrentHierarchyLite
-  editionGroup?: EditionGroupInfoLite
+  editionGroup: EditionGroupInfoLite
   contentType: ContentType
+  sortedBy: string
 }>()
 
 const computedSlug = computed(() => {
@@ -29,26 +30,26 @@ const computedSlug = computed(() => {
   const releaseGroup: string[] = []
   const warnings: string[] = []
 
-  if (props.torrent.video_resolution) {
+  if (props.torrent.video_resolution && props.sortedBy !== 'video_resolution') {
     if (props.torrent.video_resolution === 'Other' && 'video_resolution_other_x' in props.torrent && 'video_resolution_other_y' in props.torrent) {
       firstPart.push(`${props.torrent.video_resolution_other_x as number}x${props.torrent.video_resolution_other_y as number}`)
     } else {
       firstPart.push(props.torrent.video_resolution)
     }
   }
-  if (props.editionGroup?.source) {
+  if (props.editionGroup?.source && props.sortedBy !== 'edition') {
     firstPart.push(props.editionGroup.source)
   }
   if (props.torrent.video_codec) {
     firstPart.push(props.torrent.video_codec)
   }
-  if (props.editionGroup?.name) {
+  if (props.editionGroup?.name && props.sortedBy !== 'edition') {
     firstPart.push(props.editionGroup.name)
   }
   if (props.torrent.container && props.contentType !== 'music') {
     firstPart.push(props.torrent.container)
   }
-  if (props.torrent.audio_codec) {
+  if (props.torrent.audio_codec && props.sortedBy !== 'audio_codec') {
     firstPart.push(props.torrent.audio_codec)
   }
   if (props.torrent.audio_channels) {
