@@ -967,6 +967,7 @@ export interface components {
             duration?: number | null;
             /** Format: int64 */
             edition_group_id: number;
+            extras: components["schemas"]["Extras"][];
             features?: components["schemas"]["Features"][] | null;
             /** Format: int64 */
             id: number;
@@ -1083,7 +1084,9 @@ export interface components {
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
         };
         /** @enum {string} */
-        Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "OCR" | "Booklet" | "Cue";
+        Extras: "booklet" | "manual" | "behind_the_scenes" | "deleted_scenes" | "featurette" | "trailer" | "other";
+        /** @enum {string} */
+        Features: "HDR" | "HDR 10" | "HDR 10+" | "DV" | "Commentary" | "Remux" | "3D" | "OCR" | "Cue";
         ForumCategoryHierarchy: {
             /** Format: int32 */
             id: number;
@@ -1637,6 +1640,7 @@ export interface components {
             duration?: number | null;
             /** Format: int64 */
             edition_group_id: number;
+            extras: components["schemas"]["Extras"][];
             features?: components["schemas"]["Features"][] | null;
             file_amount_per_type: {
                 [key: string]: string;
@@ -1694,6 +1698,7 @@ export interface components {
             duration?: number | null;
             /** Format: int64 */
             edition_group_id: number;
+            extras: components["schemas"]["Extras"][];
             features?: components["schemas"]["Features"][] | null;
             file_amount_per_type: {
                 [key: string]: string;
@@ -1749,6 +1754,7 @@ export interface components {
             duration?: number | null;
             /** Format: int64 */
             edition_group_id: number;
+            extras: components["schemas"]["Extras"][];
             features?: components["schemas"]["Features"][] | null;
             file_amount_per_type: {
                 [key: string]: string;
@@ -1953,6 +1959,7 @@ export interface components {
             duration: number;
             /** Format: int64 */
             edition_group_id: number;
+            extras: string;
             features: string;
             languages: string;
             mediainfo: string;

@@ -34,7 +34,7 @@ use crate::{
         },
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::{
-            EditedTorrent, Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete,
+            EditedTorrent, Extras, Torrent, TorrentSearch, TorrentSearchResults, TorrentToDelete,
             UploadedTorrent,
         },
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
@@ -194,7 +194,8 @@ use crate::{
         PublicRating,
         TorrentRequestWithTitleGroupLite,
         TitleGroupLite,
-        EditedTitleGroup
+        EditedTitleGroup,
+        Extras
     ),)
 )]
 pub struct ApiDoc;

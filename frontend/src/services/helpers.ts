@@ -1,4 +1,4 @@
-import type { ContentType, EditionGroupInfoLite, Features, Source } from './api/torrentService'
+import type { ContentType, EditionGroupInfoLite, Extras, Features, Source } from './api/torrentService'
 
 export const timeAgo = (date: string) => {
   const diff = (Date.now() - new Date(date).getTime()) / 1000
@@ -79,7 +79,7 @@ export const getFeatures = (contentType: ContentType, format: string = '', sourc
     features = features.concat(['OCR'])
   }
   if ((contentType == 'book' && format === 'audiobook') || contentType == 'music') {
-    features = features.concat(['Cue', 'Booklet'])
+    features = features.concat(['Cue'])
   } else if (contentType == 'tv_show' || contentType == 'movie') {
     features = features.concat(['HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D'])
   }
@@ -138,6 +138,29 @@ export const getSources = (contentType: ContentType) => {
   }
   sources.push('Mixed')
   return sources
+}
+export const getSelectableExtras = (contentType: ContentType) => {
+  const extras: Extras[] = []
+  switch (contentType) {
+    case 'book': {
+      extras.push('booklet')
+      break
+    }
+    case 'music': {
+      extras.push('booklet')
+      break
+    }
+    case 'movie': {
+      extras.push('behind_the_scenes', 'deleted_scenes', 'featurette', 'trailer')
+      break
+    }
+    case 'tv_show': {
+      extras.push('behind_the_scenes', 'deleted_scenes', 'trailer')
+      break
+    }
+  }
+  extras.push('other')
+  return extras
 }
 export const getArtistRoles = (contentType: ContentType) => {
   const commonRoles = ['main', 'guest']

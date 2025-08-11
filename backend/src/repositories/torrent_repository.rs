@@ -39,14 +39,14 @@ pub async fn create_torrent(
             file_amount_per_type, uploaded_as_anonymous, file_list, mediainfo, trumpable,
             staff_checked, size, duration, audio_codec, audio_bitrate, audio_bitrate_sampling,
             audio_channels, video_codec, features, subtitle_languages, video_resolution,
-            video_resolution_other_x, video_resolution_other_y, container, languages, info_hash, info_dict
+            video_resolution_other_x, video_resolution_other_y, container, languages, info_hash, info_dict, extras
         ) VALUES (
             $1, $2, $3, $4, $5, $6, $7,
             $8, $9, $10, $11, $12, $13,
             $14::audio_codec_enum, $15, $16::audio_bitrate_sampling_enum,
             $17::audio_channels_enum, $18::video_codec_enum, $19::features_enum[],
             $20::language_enum[], $21::video_resolution_enum, $22, $23, $24,
-            $25::language_enum[], $26::bytea, $27::bytea
+            $25::language_enum[], $26::bytea, $27::bytea, $28::extras_enum[]
         )
         RETURNING *
     "#;
@@ -151,6 +151,14 @@ pub async fn create_torrent(
         )
         .bind(info_hash.as_ref())
         .bind(info.to_bytes())
+        .bind(
+            torrent_form
+                .extras
+                .split(',')
+                .filter(|f| !f.is_empty())
+                .map(|f| f.trim())
+                .collect::<Vec<&str>>(),
+        )
         .fetch_one(&mut *tx)
         .await
         .map_err(Error::CouldNotCreateTorrent)?;
@@ -195,6 +203,7 @@ pub async fn find_torrent(pool: &PgPool, torrent_id: i64) -> Result<Torrent> {
             id, upload_factor, download_factor, seeders, leechers,
             completed, snatched, edition_group_id, created_at, updated_at,
             created_by_id,
+            extras AS "extras!: _",
             languages AS "languages!: _",
             release_name, release_group, description, file_amount_per_type,
             uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked,
@@ -249,12 +258,14 @@ pub async fn update_torrent(
             video_resolution_other_x = $17,
             video_resolution_other_y = $18,
             languages = $19,
+            extras = $20,
             updated_at = NOW()
         WHERE id = $1
         RETURNING
             id, upload_factor, download_factor, seeders, leechers,
             completed, snatched, edition_group_id, created_at, updated_at,
             created_by_id,
+            extras AS "extras!: _",
             languages AS "languages!: _",
             release_name, release_group, description, file_amount_per_type,
             uploaded_as_anonymous, file_list, mediainfo, trumpable, staff_checked,
@@ -288,7 +299,8 @@ pub async fn update_torrent(
         edited_torrent.video_resolution as _,
         edited_torrent.video_resolution_other_x,
         edited_torrent.video_resolution_other_y,
-        edited_torrent.languages as _
+        edited_torrent.languages as _,
+        edited_torrent.extras as _
     )
     .fetch_one(pool)
     .await

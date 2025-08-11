@@ -241,7 +241,18 @@
     "latest_uploads": "Latest uploads",
     "torrent_edited_success": "Torrent edited successfuly",
     "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly",
-    "delete_torrent": "Delete torrent"
+    "delete_torrent": "Delete torrent",
+    "extras": {
+      "extras": "Extras",
+      "booklet": "Booklet",
+      "manual": "Manual",
+      "behind_the_scenes": "Behind the scenes",
+      "deleted_scenes": "Deleted scenes",
+      "featurette": "Featurette",
+      "trailer": "Trailer",
+      "other": "Other"
+    },
+    "extras_hint": "This torrent doesn't contain the \"main\" content, but extra media that goes with it"
   },
   "entity": {
     "entity": "Entity | Entities",
@@ -288,6 +299,7 @@
     "select_bitrate": "Select a bitrate",
     "select_at_least_x_language": "Select at least {0} language(s)",
     "select_torrent_file": "Select a torrent file",
+    "select_extras": "Select the type(s) of extras",
     "invalid_url": "Invalid url",
     "artist_must_have_at_least_one_role": "Artist must have at least 1 role",
     "invalid_name": "Invalid name"

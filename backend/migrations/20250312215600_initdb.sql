@@ -380,7 +380,8 @@ CREATE TYPE language_enum AS ENUM(
    'Spanish',
    'Swedish'
 );
-CREATE TYPE features_enum AS ENUM('HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D', 'Booklet', 'Cue', 'OCR');
+CREATE TYPE features_enum AS ENUM('HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary', 'Remux', '3D', 'Cue', 'OCR');
+CREATE TYPE extras_enum AS ENUM('booklet', 'manual', 'behind_the_scenes', 'deleted_scenes', 'featurette', 'trailer', 'other');
 CREATE TABLE torrents (
     id BIGSERIAL PRIMARY KEY,
     upload_factor FLOAT NOT NULL DEFAULT 1.0,
@@ -428,6 +429,8 @@ CREATE TABLE torrents (
     video_resolution video_resolution_enum,
     video_resolution_other_x INT,
     video_resolution_other_y INT,
+
+    extras extras_enum[] DEFAULT ARRAY[]::extras_enum[],
 
     FOREIGN KEY (edition_group_id) REFERENCES edition_groups(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE SET NULL,
@@ -777,6 +780,7 @@ SELECT
         ELSE json_build_object('id', u.id, 'username', u.username)
     END AS display_created_by,
     t.info_hash,
+    t.extras,
     t.languages,
     t.release_name,
     t.release_group,
@@ -875,7 +879,7 @@ ORDER BY
                         jsonb_strip_nulls(jsonb_build_object(
                             'id', ft.id, 'upload_factor', ft.upload_factor, 'download_factor', ft.download_factor,
                             'seeders', ft.seeders, 'leechers', ft.leechers, 'completed', ft.completed,
-                            'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at,
+                            'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at, 'extras', ft.extras,
                             'release_name', ft.release_name, 'release_group', ft.release_group,
                             'file_amount_per_type', ft.file_amount_per_type, 'trumpable', ft.trumpable,
                             'staff_checked', ft.staff_checked, 'languages', ft.languages,

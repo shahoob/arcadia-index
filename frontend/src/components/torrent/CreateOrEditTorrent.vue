@@ -20,6 +20,41 @@
         </Message>
       </div>
       <div>
+        <div class="line extras">
+          <div class="checkbox">
+            <Checkbox v-model="isExtras" binary inputId="is_extras" name="is_extras" />
+            <label for="is_extras">
+              {{ t('torrent.extras.extras') }} <i style="font-size: 0.8em" v-tooltip.top="t('torrent.extras_hint')" class="action pi pi-question-circle" />
+            </label>
+          </div>
+          <div v-if="isExtras">
+            <FloatLabel>
+              <MultiSelect
+                v-model="torrentForm.extras"
+                inputId="extras"
+                :options="getSelectableExtras(titleGroupStore.content_type)"
+                class="select"
+                size="small"
+                display="chip"
+                filter
+                name="extras"
+              >
+                <template #option="slotProps">
+                  {{ t(`torrent.extras.${slotProps.option}`) }}
+                </template>
+                <template #chip="{ value }">
+                  <Chip removable @remove="removeExtrasValue(value)">
+                    {{ t(`torrent.extras.${value}`) }}
+                  </Chip>
+                </template>
+                <label for="extras">{{ t('torrent.extras.extras') }}</label>
+              </MultiSelect>
+            </FloatLabel>
+            <Message v-if="$form.extras?.invalid" severity="error" size="small" variant="simple">
+              {{ $form.extras.error?.message }}
+            </Message>
+          </div>
+        </div>
         <div class="line">
           <div class="release-name">
             <FloatLabel>
@@ -255,8 +290,9 @@ import Message from 'primevue/message'
 import { FormField, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
+import { getSelectableExtras } from '@/services/helpers'
 import { useEditionGroupStore } from '@/stores/editionGroup'
-import { uploadTorrent, editTorrent, type Torrent, type UploadedTorrent, type EditedTorrent } from '@/services/api/torrentService'
+import { uploadTorrent, editTorrent, type Torrent, type UploadedTorrent, type EditedTorrent, type Extras } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useI18n } from 'vue-i18n'
 import { getFeatures, getLanguages } from '@/services/helpers'
@@ -264,11 +300,13 @@ import { nextTick } from 'vue'
 import type { VNodeRef } from 'vue'
 import _ from 'lodash'
 import { showToast } from '@/main'
+import { Chip } from 'primevue'
 
 const formRef = ref<VNodeRef | null>(null)
 const torrentFile = ref({ files: [] as unknown[] })
 const torrentForm = ref({
   id: 0,
+  extras: [],
   edition_group_id: 0,
   release_name: '',
   release_group: '',
@@ -290,6 +328,7 @@ const torrentForm = ref({
   torrent_file: '',
   uploaded_as_anonymous: false,
 })
+const isExtras = ref(false)
 // TODO : move all the selectable* arrays to an helper function
 const selectableVideoCodecs = ['mpeg1', 'mpeg2', 'divX', 'DivX', 'h264', 'h265', 'vc-1', 'vp9', 'BD50', 'UHD100']
 const selectableVideoResolutions = ['Other', '480p', '480i', '576p', '576i', '720p', '1080p', '1080i', '1440p', '2160p', '4320p']
@@ -329,7 +368,9 @@ const emit = defineEmits<{
 
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Partial<Record<keyof UploadedTorrent, { message: string }[]>> = {}
-
+  if (isExtras.value && values.extras.length === 0) {
+    errors.extras = [{ message: t('error.select_extras') }]
+  }
   // if (values.release_name.length < 5) {
   //   errors.release_name = [{ message: t('error.write_more_than_x_chars', [5]) }]
   // }
@@ -342,16 +383,16 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.container == '') {
     errors.container = [{ message: t('error.select_container') }]
   }
-  if (['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_codec) {
+  if (!isExtras.value && ['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_codec) {
     errors.video_codec = [{ message: t('error.select_codec') }]
   }
-  if (['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_resolution) {
+  if (!isExtras.value && ['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_resolution) {
     errors.video_resolution = [{ message: t('error.select_resolution') }]
   }
-  if (['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_codec) {
+  if (!isExtras.value && ['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_codec) {
     errors.audio_codec = [{ message: t('error.select_codec') }]
   }
-  if (['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_bitrate_sampling) {
+  if (!isExtras.value && ['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_bitrate_sampling) {
     errors.audio_bitrate_sampling = [{ message: t('error.select_bitrate') }]
   }
   if (titleGroupStore.value.content_type !== 'music' && values.languages && values.languages.length === 0) {
@@ -360,7 +401,7 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (!torrentForm.value.torrent_file) {
     errors.torrent_file = [{ message: t('error.select_torrent_file') }]
   }
-  if (values.video_resolution === 'Other') {
+  if (!isExtras.value && values.video_resolution === 'Other') {
     if (!values.video_resolution_other_x || isNaN(Number(values.video_resolution_other_x))) {
       errors.video_resolution_other_x = [{ message: 'Invalid resolution X' }]
     }
@@ -404,6 +445,9 @@ const mediainfoUpdated = async () => {
 }
 const sendTorrent = () => {
   uploadingTorrent.value = true
+  if (!isExtras.value) {
+    torrentForm.value.extras = []
+  }
   if (props.initialTorrent) {
     torrentForm.value.id = props.initialTorrent.id
     editTorrent(torrentForm.value as EditedTorrent)
@@ -428,9 +472,19 @@ const sendTorrent = () => {
 const validateButtonDisabled = computed(() => {
   return editionGroupStore.value.id === 0 && !props.initialTorrent
 })
+const removeExtrasValue = (item: Extras) => {
+  const index = torrentForm.value.extras.indexOf(item)
+
+  if (index !== -1) {
+    torrentForm.value.extras.splice(index, 1)
+  }
+}
 onMounted(async () => {
   if (props.initialTorrent) {
     Object.assign(torrentForm.value, _.pick(props.initialTorrent, Object.keys(torrentForm.value)))
+    if (props.initialTorrent.extras.length > 0) {
+      isExtras.value = true
+    }
     await nextTick()
     // some field is apparently undefined, the whole form seems to still get populated though
     // formRef.value?.setValues(torrentForm.value)
@@ -466,6 +520,22 @@ onMounted(async () => {
 }
 .select {
   min-width: 200px;
+}
+.extras {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  .checkbox {
+    display: flex;
+    align-items: center;
+    .p-checkbox {
+      margin-right: 4px;
+    }
+  }
+  .p-floatlabel {
+    margin-top: 0;
+    margin-left: 10px;
+  }
 }
 
 .res-label-text {

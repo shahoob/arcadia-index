@@ -1,4 +1,13 @@
 <template>
+  <span class="bold" v-if="torrent.extras.length > 0">
+    {{ t('torrent.extras.extras') }}
+    (<span v-for="(item, itemIndex) in torrent.extras" :key="itemIndex">
+      <span v-if="itemIndex > 0">, </span>
+      <span class="bold">{{ t(`torrent.extras.${item}`) }}</span> </span
+    >)
+    <span class="slash"> / </span>
+  </span>
+
   <template v-for="(part, key, partIndex) in computedSlug" :key="key">
     <template v-if="part.length > 0">
       <span class="slash" v-if="partIndex > 0"> / </span>
@@ -46,7 +55,7 @@ const computedSlug = computed(() => {
   if (props.editionGroup?.name && props.sortedBy !== 'edition') {
     firstPart.push(props.editionGroup.name)
   }
-  if (props.torrent.container && props.contentType !== 'music') {
+  if (props.torrent.container && (props.contentType !== 'music' || props.torrent.extras.length > 0)) {
     firstPart.push(props.torrent.container)
   }
   if (props.torrent.audio_codec && props.sortedBy !== 'audio_codec') {

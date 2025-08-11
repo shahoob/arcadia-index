@@ -124,6 +124,8 @@ export type TorrentReport = components['schemas']['TorrentReport']
 
 export type Features = components['schemas']['Features']
 
+export type Extras = components['schemas']['Extras']
+
 export const reportTorrent = async (torrentReport: UserCreatedTorrentReport) => {
   return (await api.post<TorrentReport>('/report/torrent', torrentReport)).data
 }

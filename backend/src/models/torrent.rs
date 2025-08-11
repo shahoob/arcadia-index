@@ -219,8 +219,24 @@ pub enum Features {
     #[sqlx(rename = "OCR")]
     #[serde(rename = "OCR")]
     Ocr,
-    Booklet,
     Cue,
+}
+
+#[derive(Debug, Deserialize, Serialize, sqlx::Type, ToSchema)]
+#[sqlx(type_name = "extras_enum", rename_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
+pub enum Extras {
+    Booklet,
+    Manual,
+    #[sqlx(rename = "behind_the_scenes")]
+    #[serde(rename = "behind_the_scenes")]
+    BehindTheScenes,
+    #[sqlx(rename = "deleted_scenes")]
+    #[serde(rename = "deleted_scenes")]
+    DeletedScenes,
+    Featurette,
+    Trailer,
+    Other,
 }
 
 // TODO: this should not be necessary with annontations, but there is somehow an error
@@ -236,7 +252,6 @@ impl FromStr for Features {
             "Commentary" => Ok(Features::Commentary),
             "Remux" => Ok(Features::Remux),
             "3D" => Ok(Features::ThreeD),
-            "Booklet" => Ok(Features::Booklet),
             "Cue" => Ok(Features::Cue),
             _ => Err(()),
         }
@@ -258,6 +273,7 @@ pub struct Torrent {
     #[schema(value_type = String, format = DateTime)]
     pub updated_at: DateTime<Local>,
     pub created_by_id: i64,
+    pub extras: Vec<Extras>,
     pub release_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>, // specific to the torrent
@@ -290,6 +306,8 @@ pub struct Torrent {
 
 #[derive(Debug, MultipartForm, FromRow, ToSchema)]
 pub struct UploadedTorrent {
+    #[schema(value_type = String)]
+    pub extras: Text<String>,
     #[schema(value_type = String)]
     pub release_name: Text<String>,
     #[schema(value_type = String)]
@@ -336,6 +354,7 @@ pub struct UploadedTorrent {
 pub struct EditedTorrent {
     pub id: i64,
     pub edition_group_id: i64,
+    pub extras: Vec<Extras>,
     pub release_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,
@@ -418,6 +437,7 @@ pub struct TorrentHierarchyLite {
     pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
+    pub extras: Vec<Extras>,
     pub release_name: Option<String>,
     pub release_group: Option<String>,
     #[schema(value_type = HashMap<String, String>)]
@@ -468,6 +488,7 @@ pub struct TorrentHierarchy {
     pub updated_at: DateTime<Local>,
     pub created_by_id: Option<i64>,
     pub created_by: Option<UserLite>,
+    pub extras: Vec<Extras>,
     pub release_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,
