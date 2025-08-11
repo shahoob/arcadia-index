@@ -41,7 +41,13 @@
         <i v-tooltip.top="t('general.report')" class="action pi pi-flag" @click="reportTorrent(slotProps.data.id)" />
         <i v-tooltip.top="t('torrent.copy_permalink')" class="action pi pi-link" />
         <i
-          v-if="showEditBtn && (user.id === slotProps.data.created_by_id || user.class === 'staff')"
+          v-tooltip.top="t('general.delete')"
+          class="action pi pi-trash"
+          v-if="showActionBtns && (user.id === slotProps.data.created_by_id || user.class === 'staff')"
+          @click="deleteTorrent(slotProps.data.id)"
+        />
+        <i
+          v-if="showActionBtns && (user.id === slotProps.data.created_by_id || user.class === 'staff')"
           v-tooltip.top="t('general.edit')"
           @click="editTorrent(slotProps.data)"
           class="action pi pi-pen-to-square"
@@ -143,6 +149,9 @@
   <Dialog closeOnEscape modal :header="t('torrent.report_torrent')" v-model:visible="reportTorrentDialogVisible">
     <ReportTorrentDialog :torrentId="torrentIdBeingReported" @reported="torrentReported" />
   </Dialog>
+  <Dialog closeOnEscape modal :header="t('torrent.delete_torrent')" v-model:visible="deleteTorrentDialogVisible">
+    <DeleteTorrentDialog :torrentId="torrentIdBeingDeleted" @deleted="torrentDeleted" />
+  </Dialog>
   <Dialog closeOnEscape modal :header="t('torrent.edit_torrent')" v-model:visible="editTorrentDialogVisible">
     <CreateOrEditTorrent v-if="torrentBeingEdited !== null" :initialTorrent="torrentBeingEdited" @done="torrentEdited" />
   </Dialog>
@@ -161,6 +170,7 @@ import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
 import AccordionContent from 'primevue/accordioncontent'
 import ReportTorrentDialog from '../torrent/ReportTorrentDialog.vue'
+import DeleteTorrentDialog from '../torrent/DeleteTorrentDialog.vue'
 import Dialog from 'primevue/dialog'
 import {
   downloadTorrent,
@@ -183,17 +193,19 @@ interface Props {
   title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
   preview: boolean
   sortBy?: string
-  showEditBtn?: boolean
+  showActionBtns?: boolean
 }
 const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
 
 const { t } = useI18n()
 
 const reportTorrentDialogVisible = ref(false)
+const deleteTorrentDialogVisible = ref(false)
 const editTorrentDialogVisible = ref(false)
 const torrentBeingEdited = ref<EditedTorrent | null>(null)
 const expandedRows = ref<TorrentHierarchyLite[]>([])
 const torrentIdBeingReported = ref(0)
+const torrentIdBeingDeleted = ref(0)
 const route = useRoute()
 const user = useUserStore()
 
@@ -212,6 +224,12 @@ const torrentReported = (torrentReport: TorrentReport) => {
     console.error('torrent to report not found !')
   }
 }
+const torrentDeleted = () => {
+  title_group.edition_groups.forEach((edition_group) => {
+    edition_group.torrents = edition_group.torrents.filter((torrent) => torrent.id !== torrentIdBeingDeleted.value)
+  })
+  deleteTorrentDialogVisible.value = false
+}
 const reportTorrent = (id: number) => {
   torrentIdBeingReported.value = id
   reportTorrentDialogVisible.value = true
@@ -219,6 +237,10 @@ const reportTorrent = (id: number) => {
 const editTorrent = (torrent: EditedTorrent) => {
   torrentBeingEdited.value = torrent
   editTorrentDialogVisible.value = true
+}
+const deleteTorrent = (torrentId: number) => {
+  torrentIdBeingDeleted.value = torrentId
+  deleteTorrentDialogVisible.value = true
 }
 const toggleRow = (torrent: TorrentHierarchyLite) => {
   if (!expandedRows.value.some((expandedTorrent) => expandedTorrent.id === torrent.id)) {

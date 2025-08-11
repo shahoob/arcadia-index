@@ -49,7 +49,7 @@
           <label for="sort_by">{{ t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :showEditBtn="true" :title_group="title_group" :sortBy :preview="false" />
+      <TitleGroupTable :showActionBtns="true" :title_group="title_group" :sortBy :preview="false" />
       <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="title_group.screenshots.length !== 0">
         <CustomGalleria :images="title_group.screenshots" />
       </ContentContainer>

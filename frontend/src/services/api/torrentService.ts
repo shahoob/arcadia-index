@@ -137,3 +137,9 @@ export type UploadInformation = components['schemas']['UploadInformation']
 export const getUploadInformation = async () => {
   return (await api.get<UploadInformation>('/upload')).data
 }
+
+export type TorrentToDelete = components['schemas']['TorrentToDelete']
+
+export const deleteTorrent = async (form: TorrentToDelete) => {
+  return (await api.delete('/torrent', { data: form })).data
+}

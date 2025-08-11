@@ -9,6 +9,7 @@
     "sort_by": "Sort by",
     "order_by": "Order by",
     "submit": "Submit",
+    "delete": "Delete",
     "description": "Description",
     "release_date": "Release date",
     "cover": "Cover | Covers",
@@ -239,7 +240,8 @@
     "edit_torrent": "Edit torrent",
     "latest_uploads": "Latest uploads",
     "torrent_edited_success": "Torrent edited successfuly",
-    "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly"
+    "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly",
+    "delete_torrent": "Delete torrent"
   },
   "entity": {
     "entity": "Entity | Entities",
