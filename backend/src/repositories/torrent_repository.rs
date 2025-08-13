@@ -387,6 +387,8 @@ pub async fn search_torrents(
 
     let (name, external_link) = if looks_like_url(input) {
         (None, Some(input.to_string()))
+    } else if input.trim().is_empty() {
+        (None, None)
     } else {
         (Some(input.to_string()), None)
     };
