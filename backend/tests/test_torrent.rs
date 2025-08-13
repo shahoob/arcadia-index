@@ -216,7 +216,6 @@ async fn test_find_torrents_by_name(pool: PgPool) {
     let groups = results.title_groups.unwrap_or_default();
     assert!(
         groups.iter().any(|g| g.id == 1 && g.name == new_name),
-        "expected results to include title_group id=1 with name '{}'",
-        new_name
+        "expected results to include title_group id=1 with name '{new_name}'",
     );
 }

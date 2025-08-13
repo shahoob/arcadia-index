@@ -4,9 +4,8 @@ use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
 use crate::models::{
-    edition_group::Source, torrent::AudioChannels,
+    edition_group::Source, title_group::TitleGroupLite, torrent::AudioChannels,
     torrent_request_vote::UserCreatedTorrentRequestVote, user::UserLite,
-    title_group::TitleGroupLite,
 };
 
 use super::torrent::{

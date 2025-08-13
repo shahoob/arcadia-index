@@ -1,9 +1,9 @@
 use crate::{
     Arcadia, Result,
     models::{
+        torrent_request::TorrentRequestWithTitleGroupLite,
         torrent_request::{TorrentRequest, TorrentRequestFill, UserCreatedTorrentRequest},
         user::User,
-        torrent_request::TorrentRequestWithTitleGroupLite,
     },
     repositories::torrent_request_repository::{self, create_torrent_request},
 };
