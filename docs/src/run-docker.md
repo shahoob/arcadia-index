@@ -74,7 +74,7 @@ Or when running attached (without `-d`), press <kbd>W</kbd> to enable watch mode
 
 ### Adding Test Data
 
-You can optionally add "fake" data to the database for development:
+You can optionally add "fake" data (fixtures) to the database for development:
 
 ```bash
 docker exec -i arcadia_db psql -U arcadia -d arcadia < backend/migrations/fixtures/fixtures.sql
@@ -84,7 +84,7 @@ The default test user is `picolo` with password `test`.
 
 ### Exporting Test Data
 
-To create additional test data and export it:
+If you added some new test data and wish to include it in your commit, you can export it like so:
 
 ```bash
 docker exec -i arcadia_db pg_dump -U arcadia -d arcadia --data-only --inserts > backend/migrations/fixtures/fixtures.sql
