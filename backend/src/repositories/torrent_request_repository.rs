@@ -17,19 +17,20 @@ pub async fn create_torrent_request(
     //TODO: make those requests transactional
     let create_torrent_request_query = r#"
         INSERT INTO torrent_requests
-        (edition_group_id, created_by_id,
+        (title_group_id, created_by_id, edition_name,
         release_group, description, languages, container, audio_codec,
         audio_channels, video_codec, features, subtitle_languages, video_resolution,
         audio_bitrate_sampling, source)
-        VALUES ($1, $2, $3, $4, $5::language_enum[], $6, $7::audio_codec_enum[], $8::audio_channels_enum[], $9::video_codec_enum[],
-        $10::features_enum[], $11::language_enum[], $12::video_resolution_enum[], $13::audio_bitrate_sampling_enum[],
-        $14::source_enum[])
+        VALUES ($1, $2, $3, $4, $5, $6::language_enum[], $7, $8::audio_codec_enum[], $9::audio_channels_enum[],
+        $10::video_codec_enum[], $11::features_enum[], $12::language_enum[], $13::video_resolution_enum[],
+        $14::audio_bitrate_sampling_enum[], $15::source_enum[])
         RETURNING *;
     "#;
 
     let created_torrent_request = sqlx::query_as::<_, TorrentRequest>(create_torrent_request_query)
-        .bind(torrent_request.edition_group_id)
+        .bind(torrent_request.title_group_id)
         .bind(current_user.id)
+        .bind(&torrent_request.edition_name)
         .bind(&torrent_request.release_group)
         .bind(&torrent_request.description)
         .bind(&torrent_request.languages)
@@ -59,12 +60,13 @@ pub async fn fill_torrent_request(
     torrent_request_id: i64,
     current_user_id: i64,
 ) -> Result<()> {
-    let is_torrent_in_requested_edition_group = sqlx::query_scalar!(
+    let is_torrent_in_requested_title_group = sqlx::query_scalar!(
         r#"
         SELECT EXISTS (
             SELECT 1
             FROM torrents t
-            JOIN torrent_requests r ON t.edition_group_id = r.edition_group_id
+            JOIN edition_groups eg ON t.edition_group_id = eg.id
+            JOIN torrent_requests r ON eg.title_group_id = r.title_group_id
             WHERE t.id = $1
               AND r.id = $2
         )
@@ -75,8 +77,8 @@ pub async fn fill_torrent_request(
     .fetch_one(pool)
     .await?;
 
-    if !is_torrent_in_requested_edition_group.unwrap() {
-        return Err(Error::TorrentEditionGroupNotMatchingRequestedOne);
+    if !is_torrent_in_requested_title_group.unwrap() {
+        return Err(Error::TorrentTitleGroupNotMatchingRequestedOne);
     }
 
     let is_torrent_request_filled = sqlx::query_scalar!(
@@ -194,14 +196,6 @@ pub async fn search_torrent_requests(
         SELECT json_agg(data) as data FROM (
             SELECT json_build_object(
                 'torrent_request', tr,
-                'edition_group', json_build_object(
-                    'id', eg.id,
-                    'name', eg.name,
-                    'release_date', eg.release_date,
-                    'distributor', eg.distributor,
-                    'source', eg.source,
-                    'additional_information', eg.additional_information
-                ),
                 'title_group', json_build_object(
                     'id', tg.id,
                     'name', tg.name,
@@ -213,8 +207,7 @@ pub async fn search_torrent_requests(
                 )
             ) as data
             FROM torrent_requests tr
-            JOIN edition_groups eg ON tr.edition_group_id = eg.id
-            JOIN title_groups tg ON eg.title_group_id = tg.id
+            JOIN title_groups tg ON tr.title_group_id = tg.id
             WHERE ($1::TEXT IS NULL OR tg.name ILIKE $1 OR $1 = ANY(tg.name_aliases))
             AND ($2::VARCHAR[] IS NULL OR tg.tags && $2::VARCHAR[])
             ORDER BY tr.created_at DESC
