@@ -17,6 +17,7 @@ use serde_json::{Value, json};
 use sqlx::PgPool;
 use std::str::FromStr;
 
+use super::super::services::torrent_service::looks_like_url;
 use super::notification_repository::notify_users;
 
 #[derive(sqlx::FromRow)]
@@ -382,17 +383,25 @@ pub async fn search_torrents(
     torrent_search: &TorrentSearch,
     requesting_user_id: Option<i64>,
 ) -> Result<Value> {
+    let input = torrent_search.title_group.name.trim();
+
+    let (name, external_link) = if looks_like_url(input) {
+        (None, Some(input.to_string()))
+    } else {
+        (Some(input.to_string()), None)
+    };
+
     let search_results = sqlx::query!(
         r#"
         WITH title_group_data AS (
             SELECT
                 tgl.title_group_data AS lite_title_group
-            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) tgl
+            FROM get_title_groups_and_edition_group_and_torrents_lite($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) tgl
         )
         SELECT jsonb_agg(lite_title_group) AS title_groups
         FROM title_group_data;
         "#,
-        torrent_search.title_group.name,
+        name,
         torrent_search.torrent.staff_checked,
         torrent_search.torrent.reported,
         torrent_search.title_group.include_empty_groups,
@@ -403,6 +412,7 @@ pub async fn search_torrents(
         torrent_search.torrent.created_by_id,
         torrent_search.torrent.snatched_by_id,
         requesting_user_id,
+        external_link
     )
     .fetch_one(pool)
     .await
