@@ -138,6 +138,7 @@ const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()
 const editTitleGroupDialogVisible = ref(false)
 
+// TODO: add by extras
 const selectableSortingOptions = ['edition', 'size', 'seeders', 'completed', 'created_at']
 
 const title_group = ref<TitleGroupAndAssociatedData>()

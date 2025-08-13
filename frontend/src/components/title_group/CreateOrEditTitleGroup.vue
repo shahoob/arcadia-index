@@ -134,6 +134,7 @@
       <div class="original-release-date">
         <label for="original_release_date" class="block">{{ t('title_group.original_release_date') }}</label>
         <DatePicker
+          :manual-input="false"
           v-model="original_release_date"
           showIcon
           iconDisplay="input"
