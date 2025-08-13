@@ -4,9 +4,10 @@ use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
 use crate::models::{
-    edition_group::Source, torrent::AudioChannels,
-    torrent_request_vote::UserCreatedTorrentRequestVote, user::UserLite,
-    title_group::TitleGroupLite,
+    edition_group::{EditionGroupInfoLite, Source},
+    torrent::AudioChannels,
+    torrent_request_vote::UserCreatedTorrentRequestVote,
+    user::UserLite,
 };
 
 use super::torrent::{
@@ -16,7 +17,7 @@ use super::torrent::{
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentRequest {
     pub id: i64,
-    pub title_group_id: i64,
+    pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
@@ -26,7 +27,6 @@ pub struct TorrentRequest {
     pub filled_by_torrent_id: Option<i64>,
     #[schema(value_type = String, format = DateTime)]
     pub filled_at: Option<DateTime<Utc>>,
-    pub edition_name: Option<String>,
     pub source: Vec<Source>,
     pub release_group: Option<String>,
     pub description: Option<String>,
@@ -48,8 +48,7 @@ pub struct TorrentRequest {
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedTorrentRequest {
-    pub title_group_id: i64,
-    pub edition_name: Option<String>,
+    pub edition_group_id: i64,
     pub release_group: Option<String>,
     pub description: Option<String>,
     pub languages: Vec<Language>,
@@ -70,16 +69,16 @@ pub struct UserCreatedTorrentRequest {
     pub video_resolution_other_y: Option<i32>,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct TorrentRequestBounties {
     bonus_points: i64,
     upload: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct TorrentRequestHierarchyLite {
     pub id: i64,
-    pub title_group_id: i64,
+    pub edition_group_id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Utc>,
     #[schema(value_type = String, format = DateTime)]
@@ -89,13 +88,13 @@ pub struct TorrentRequestHierarchyLite {
     pub filled_by_torrent_id: Option<i64>,
     #[schema(value_type = String, format = DateTime)]
     pub filled_at: Option<DateTime<Utc>>,
-    pub edition_name: Option<String>,
     pub release_group: Option<String>,
     pub description: Option<String>,
     pub languages: Vec<Language>,
     pub container: String,
     pub bounties: TorrentRequestBounties,
     pub user_votes_amount: i32,
+    pub edition_group: EditionGroupInfoLite,
     // ---- audio
     pub audio_codec: Option<AudioCodec>,
     pub audio_channels: Option<String>,
@@ -111,12 +110,6 @@ pub struct TorrentRequestHierarchyLite {
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct TorrentRequestWithTitleGroupLite {
-    pub torrent_request: TorrentRequest,
-    pub title_group: TitleGroupLite,
-}
-
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentRequestFill {
     pub torrent_request_id: i64,
     pub torrent_id: i64,
