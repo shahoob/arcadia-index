@@ -30,8 +30,7 @@ use crate::{
         master_group::{MasterGroup, UserCreatedMasterGroup},
         series::{Series, SeriesAndTitleGroupHierarchyLite, SeriesLite, UserCreatedSeries},
         title_group::{
-            EditedTitleGroup, PublicRating, TitleGroupAndAssociatedData, TitleGroupHierarchy,
-            TitleGroupLite,
+            EditedTitleGroup, PublicRating, TitleGroupAndAssociatedData, TitleGroupLite,
         },
         title_group_comment::{TitleGroupComment, UserCreatedTitleGroupComment},
         torrent::{
@@ -40,8 +39,9 @@ use crate::{
         },
         torrent_report::{TorrentReport, UserCreatedTorrentReport},
         torrent_request::{
-            TorrentRequest, TorrentRequestFill, TorrentRequestHierarchyLite,
-            TorrentRequestWithTitleGroupLite, UserCreatedTorrentRequest,
+            TorrentRequest, TorrentRequestAndAssociatedData, TorrentRequestFill,
+            TorrentRequestHierarchyLite, TorrentRequestWithTitleGroupLite,
+            UserCreatedTorrentRequest,
         },
         torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
         user::{
@@ -92,6 +92,7 @@ use crate::{
         crate::handlers::title_group_handler::get_title_group_info_lite,
         crate::handlers::title_group_handler::search_title_group_info_lite,
         crate::handlers::torrent_request_handler::add_torrent_request,
+        crate::handlers::torrent_request_handler::get_torrent_request,
         crate::handlers::torrent_request_handler::fill_torrent_request,
         crate::handlers::torrent_request_vote_handler::add_torrent_request_vote,
         crate::handlers::user_handler::get_user,
@@ -150,7 +151,6 @@ use crate::{
         ArtistLite,
         SeriesAndTitleGroupHierarchyLite,
         ArtistAndTitleGroupsLite,
-        TitleGroupHierarchy,
         TorrentSearchResults,
         TitleGroupAndAssociatedData,
         UploadedTorrent,
@@ -194,6 +194,7 @@ use crate::{
         EditedUser,
         PublicRating,
         TorrentRequestWithTitleGroupLite,
+        TorrentRequestAndAssociatedData,
         TitleGroupLite,
         EditedTitleGroup,
         Extras,

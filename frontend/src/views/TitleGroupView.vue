@@ -1,7 +1,7 @@
 <template>
   <!-- TODO: use skeletons while the data is loading -->
   <div
-    v-if="title_group"
+    v-if="titleGroupAndAssociatedData"
     id="title-group-view"
     :class="{
       'sidebar-right': userStore.settings.site_appearance.item_detail_layout == 'sidebar_right',
@@ -14,22 +14,27 @@
         'with-sidebar': userStore.settings.site_appearance.item_detail_layout.includes('sidebar'),
       }"
     >
-      <TitleGroupFullHeader :title_group v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
-      <TitleGroupSlimHeader v-else :titleGroup="title_group" :series="title_group.series" class="slim-header title" />
+      <TitleGroupFullHeader :title_group="titleGroupAndAssociatedData" v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
+      <TitleGroupSlimHeader
+        v-else
+        :titleGroup="titleGroupAndAssociatedData.title_group"
+        :series="titleGroupAndAssociatedData.series"
+        class="slim-header title"
+      />
       <div class="actions">
         <div>
           <i v-if="togglingSubscription" class="pi pi-hourglass" />
           <i
             v-else
-            v-tooltip.top="t(`general.${title_group.is_subscribed ? 'un' : ''}subscribe`)"
+            v-tooltip.top="t(`general.${titleGroupAndAssociatedData.is_subscribed ? 'un' : ''}subscribe`)"
             @click="toggleSubscribtion"
-            :class="`pi pi-bell${title_group.is_subscribed ? '-slash' : ''}`"
+            :class="`pi pi-bell${titleGroupAndAssociatedData.is_subscribed ? '-slash' : ''}`"
           />
           <i v-tooltip.top="t('general.bookmark')" class="pi pi-bookmark" />
         </div>
         <div>
           <i
-            v-if="title_group.created_by_id === userStore.id || userStore.class === 'staff'"
+            v-if="titleGroupAndAssociatedData.title_group.created_by_id === userStore.id || userStore.class === 'staff'"
             v-tooltip.top="t('general.edit')"
             class="pi pi-pen-to-square"
             @click="editTitleGroupDialogVisible = true"
@@ -49,49 +54,81 @@
           <label for="sort_by">{{ t('general.sort_by') }}</label>
         </FloatLabel>
       </div>
-      <TitleGroupTable :showActionBtns="true" :title_group="title_group" :sortBy :preview="false" />
-      <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="title_group.screenshots.length !== 0">
-        <CustomGalleria :images="title_group.screenshots" />
+      <TitleGroupTable
+        :showActionBtns="true"
+        :title_group="titleGroupAndAssociatedData.title_group"
+        :editionGroups="titleGroupAndAssociatedData.edition_groups"
+        :sortBy
+        :preview="false"
+      />
+      <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="titleGroupAndAssociatedData.title_group.screenshots.length !== 0">
+        <CustomGalleria :images="titleGroupAndAssociatedData.title_group.screenshots" />
       </ContentContainer>
-      <Accordion v-if="title_group.torrent_requests.length != 0" value="0" class="torrent-requests dense-accordion">
+      <Accordion v-if="titleGroupAndAssociatedData.torrent_requests.length != 0" value="0" class="torrent-requests dense-accordion">
         <AccordionPanel value="0">
-          <AccordionHeader> {{ t('torrent.requests') }} ({{ title_group.torrent_requests.length }}) </AccordionHeader>
+          <AccordionHeader> {{ t('torrent.requests') }} ({{ titleGroupAndAssociatedData.torrent_requests.length }}) </AccordionHeader>
           <AccordionContent>
-            <TorrentRequestsTable :torrentRequests="title_group.torrent_requests" :contentType="title_group.content_type" />
+            <TorrentRequestsTable
+              :torrentRequests="titleGroupAndAssociatedData.torrent_requests"
+              :contentType="titleGroupAndAssociatedData.title_group.content_type"
+            />
           </AccordionContent>
         </AccordionPanel>
       </Accordion>
-      <EmbeddedLinks class="embedded-links" v-if="Object.keys(title_group.embedded_links).length > 0" :links="title_group.embedded_links" />
-      <ContentContainer class="description" v-if="title_group" :container-title="t('title_group.description')">
+      <EmbeddedLinks
+        class="embedded-links"
+        v-if="Object.keys(titleGroupAndAssociatedData.title_group.embedded_links).length > 0"
+        :links="titleGroupAndAssociatedData.title_group.embedded_links"
+      />
+      <ContentContainer class="description" v-if="titleGroupAndAssociatedData" :container-title="t('title_group.description')">
         <div class="title-group-description">
-          <BBCodeRenderer :content="title_group.description" />
+          <BBCodeRenderer :content="titleGroupAndAssociatedData.title_group.description" />
         </div>
-        <div v-for="edition_group in title_group.edition_groups" :key="edition_group.id">
+        <div v-for="edition_group in titleGroupAndAssociatedData.edition_groups" :key="edition_group.id">
           <div v-if="edition_group.description" class="edition-description">
             <div class="edition-group-slug">{{ getEditionGroupSlug(edition_group) }}</div>
             <BBCodeRenderer :content="edition_group.description" />
           </div>
         </div>
       </ContentContainer>
-      <TitleGroupRatings v-if="title_group.public_ratings.length > 0" :publicRatings="title_group.public_ratings" class="ratings" />
-      <TitleGroupComments :comments="title_group.title_group_comments" @newComment="newComment" />
+      <TitleGroupRatings
+        v-if="titleGroupAndAssociatedData.title_group.public_ratings.length > 0"
+        :publicRatings="titleGroupAndAssociatedData.title_group.public_ratings"
+        class="ratings"
+      />
+      <TitleGroupComments :comments="titleGroupAndAssociatedData.title_group_comments" @newComment="newComment" />
     </div>
     <div class="sidebar" v-if="userStore.settings.site_appearance.item_detail_layout.includes('sidebar')">
-      <TitleGroupSidebar :title_group @edit-affiliated-artists-clicked="editAffiliatedArtistsDialogVisible = true" />
+      <TitleGroupSidebar
+        :title_group="titleGroupAndAssociatedData.title_group"
+        :inSameMasterGroup="titleGroupAndAssociatedData.in_same_master_group"
+        :affiliatedArtists="titleGroupAndAssociatedData.affiliated_artists"
+        :affiliatedEntities="titleGroupAndAssociatedData.affiliated_entities"
+        :series="titleGroupAndAssociatedData.series"
+        @edit-affiliated-artists-clicked="editAffiliatedArtistsDialogVisible = true"
+      />
     </div>
     <Dialog modal :header="t('title_group.edit_affiliated_artists')" v-model:visible="editAffiliatedArtistsDialogVisible">
       <EditArtistsModal
         :artists-affiliations="
-          title_group.affiliated_artists.length === 0 ? [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }] : title_group.affiliated_artists
+          titleGroupAndAssociatedData.affiliated_artists.length === 0
+            ? [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }]
+            : titleGroupAndAssociatedData.affiliated_artists
         "
-        :content-type="title_group.content_type"
-        :title-group-id="title_group.id"
+        :content-type="titleGroupAndAssociatedData.title_group.content_type"
+        :title-group-id="titleGroupAndAssociatedData.title_group.id"
         @cancelled="editAffiliatedArtistsDialogVisible = false"
         @done="affiliatedArtistsEdited"
       />
     </Dialog>
     <Dialog closeOnEscape modal :header="t('title_group.edit_title_group')" v-model:visible="editTitleGroupDialogVisible">
-      <CreateOrEditTitleGroup class="edit-title-group" v-if="title_group" :initialTitleGroup="title_group" editMode @done="titleGroupEdited" />
+      <CreateOrEditTitleGroup
+        class="edit-title-group"
+        v-if="titleGroupAndAssociatedData"
+        :initialTitleGroup="titleGroupAndAssociatedData.title_group"
+        editMode
+        @done="titleGroupEdited"
+      />
     </Dialog>
   </div>
 </template>
@@ -141,7 +178,7 @@ const editTitleGroupDialogVisible = ref(false)
 // TODO: add by extras
 const selectableSortingOptions = ['edition', 'size', 'seeders', 'completed', 'created_at']
 
-const title_group = ref<TitleGroupAndAssociatedData>()
+const titleGroupAndAssociatedData = ref<TitleGroupAndAssociatedData>()
 const sortBy = ref('edition')
 const togglingSubscription = ref(false)
 const siteName = import.meta.env.VITE_SITE_NAME
@@ -151,35 +188,35 @@ onMounted(async () => {
 })
 
 const fetchTitleGroup = async () => {
-  const titleGroup = await getTitleGroup(parseInt(route.params.id.toString()))
-
-  title_group.value = titleGroup
+  titleGroupAndAssociatedData.value = await getTitleGroup(parseInt(route.params.id.toString()))
 
   // add audio_codec to sorting options
   const audioCodecInSortingOptions = selectableSortingOptions.includes('audio_codec')
-  const contentTypeShouldHaveAudioCodec = ['tv_show', 'movie', 'music'].includes(title_group.value.content_type)
+  const contentTypeShouldHaveAudioCodec = ['tv_show', 'movie', 'music'].includes(titleGroupAndAssociatedData.value.title_group.content_type)
   if (contentTypeShouldHaveAudioCodec && !audioCodecInSortingOptions) selectableSortingOptions.unshift('audio_codec')
   else if (!contentTypeShouldHaveAudioCodec && audioCodecInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('audio_codec'), 1)
 
   // add video_resolution to sorting options
   const resolutionInSortingOptions = selectableSortingOptions.includes('video_resolution')
-  const contentTypeShouldHaveResolution = ['tv_show', 'movie'].includes(title_group.value.content_type)
+  const contentTypeShouldHaveResolution = ['tv_show', 'movie'].includes(titleGroupAndAssociatedData.value.title_group.content_type)
   if (contentTypeShouldHaveResolution && !resolutionInSortingOptions) selectableSortingOptions.unshift('video_resolution')
   else if (!contentTypeShouldHaveResolution && resolutionInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('resolution'), 1)
   /*
     For series, the title group name just holds the season name (i.e. 'Season 1')
     so we want to show the series name itself in the document title as well.
   */
-  document.title = titleGroup.series.name ? `${titleGroup.name} (${titleGroup.series.name}) - ${siteName}` : `${titleGroup.name} - ${siteName}`
+  document.title = titleGroupAndAssociatedData.value.series.name
+    ? `${titleGroupAndAssociatedData.value.title_group.name} (${titleGroupAndAssociatedData.value.series.name}) - ${siteName}`
+    : `${titleGroupAndAssociatedData.value.title_group.name} - ${siteName}`
 }
 
 const populateTitleGroupStore = () => {
-  if (title_group.value) {
-    titleGroupStore.id = title_group.value.id
-    titleGroupStore.original_release_date = title_group.value.original_release_date
-    titleGroupStore.name = title_group.value.name
-    titleGroupStore.edition_groups = title_group.value.edition_groups
-    titleGroupStore.content_type = title_group.value.content_type
+  if (titleGroupAndAssociatedData.value) {
+    titleGroupStore.id = titleGroupAndAssociatedData.value.title_group.id
+    titleGroupStore.original_release_date = titleGroupAndAssociatedData.value.title_group.original_release_date
+    titleGroupStore.name = titleGroupAndAssociatedData.value.title_group.name
+    titleGroupStore.edition_groups = titleGroupAndAssociatedData.value.edition_groups
+    titleGroupStore.content_type = titleGroupAndAssociatedData.value.title_group.content_type
   }
 }
 
@@ -194,38 +231,43 @@ const requestTorrent = () => {
 }
 
 const toggleSubscribtion = async () => {
-  if (title_group.value) {
+  if (titleGroupAndAssociatedData.value) {
     togglingSubscription.value = true
-    if (title_group.value.is_subscribed) {
+    if (titleGroupAndAssociatedData.value.is_subscribed) {
       await unsubscribeToItem(parseInt(route.params.id.toString()), 'title_group')
     } else {
       await subscribeToItem(parseInt(route.params.id.toString()), 'title_group')
     }
-    title_group.value.is_subscribed = !title_group.value.is_subscribed
-    showToast('Success', t(`title_group.${title_group.value.is_subscribed ? 'subscription_successful' : 'unsubscription_successful'}`), 'success', 3000)
+    titleGroupAndAssociatedData.value.is_subscribed = !titleGroupAndAssociatedData.value.is_subscribed
+    showToast(
+      'Success',
+      t(`title_group.${titleGroupAndAssociatedData.value.is_subscribed ? 'subscription_successful' : 'unsubscription_successful'}`),
+      'success',
+      3000,
+    )
     togglingSubscription.value = false
   }
 }
 
 const newComment = (comment: TitleGroupCommentHierarchy) => {
-  title_group.value?.title_group_comments.push(comment)
+  titleGroupAndAssociatedData.value?.title_group_comments.push(comment)
 }
 
 const affiliatedArtistsEdited = (newAffiliatedArtists: AffiliatedArtistHierarchy[], removedAffiliatedArtistsIds: number[]) => {
-  if (title_group.value) {
-    title_group.value.affiliated_artists = title_group.value.affiliated_artists.filter((aa: AffiliatedArtistHierarchy) => {
+  if (titleGroupAndAssociatedData.value) {
+    titleGroupAndAssociatedData.value.affiliated_artists = titleGroupAndAssociatedData.value.affiliated_artists.filter((aa: AffiliatedArtistHierarchy) => {
       // removedAffiliatedArtistsIds.indexOf(aa.id) === -1
       // return aa
       return !removedAffiliatedArtistsIds.includes(aa.id)
     })
-    title_group.value.affiliated_artists = title_group.value.affiliated_artists.concat(newAffiliatedArtists)
+    titleGroupAndAssociatedData.value.affiliated_artists = titleGroupAndAssociatedData.value.affiliated_artists.concat(newAffiliatedArtists)
   }
   editAffiliatedArtistsDialogVisible.value = false
 }
 
 const titleGroupEdited = (updatedTitleGroup: TitleGroup) => {
-  if (title_group.value) {
-    title_group.value = { ...title_group.value, ...updatedTitleGroup }
+  if (titleGroupAndAssociatedData.value) {
+    titleGroupAndAssociatedData.value = { ...titleGroupAndAssociatedData.value, ...updatedTitleGroup }
   }
   editTitleGroupDialogVisible.value = false
 }

@@ -6,8 +6,6 @@ export type TitleGroup = components['schemas']['TitleGroup']
 
 export type EditedTitleGroup = components['schemas']['EditedTitleGroup']
 
-export type TitleGroupHierarchy = components['schemas']['TitleGroupHierarchy']
-
 export type TitleGroupCategory = components['schemas']['TitleGroupCategory']
 
 export type TitleGroupLite = components['schemas']['TitleGroupLite']

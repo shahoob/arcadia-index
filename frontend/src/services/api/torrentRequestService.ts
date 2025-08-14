@@ -7,12 +7,18 @@ export type TorrentRequestHierarchyLite = components['schemas']['TorrentRequestH
 
 export type TorrentRequestWithTitleGroupLite = components['schemas']['TorrentRequestWithTitleGroupLite']
 
+export type TorrentRequestAndAssociatedData = components['schemas']['TorrentRequestAndAssociatedData']
+
 export type SearchTorrentRequestsQuery = components['schemas']['SearchTorrentRequestsQuery']
 
 export type UserCreatedTorrentRequest = components['schemas']['UserCreatedTorrentRequest']
 
 export const searchTorrentRequests = async (form: SearchTorrentRequestsQuery): Promise<TorrentRequestWithTitleGroupLite[]> => {
   return (await api.get<TorrentRequestWithTitleGroupLite[]>('/search/torrent-request', { params: form })).data
+}
+
+export const getTorrentRequest = async (id: number): Promise<TorrentRequestAndAssociatedData> => {
+  return (await api.get<TorrentRequestAndAssociatedData>('/torrent-request', { params: { id } })).data
 }
 
 export const createTorrentRequest = async (torrentRequest: UserCreatedTorrentRequest): Promise<TorrentRequest> => {

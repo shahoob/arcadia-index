@@ -214,7 +214,8 @@ pub async fn find_title_group_hierarchy(
                 GROUP BY tg_main.master_group_id
             )
             SELECT
-                to_jsonb(tg) || jsonb_build_object(
+                jsonb_build_object(
+                    'title_group', to_jsonb(tg),
                     'series', COALESCE(sd.series, '{}'::jsonb),
                     'edition_groups', COALESCE(ed.edition_groups, '[]'::jsonb),
                     'affiliated_artists', COALESCE(ad.affiliated_artists, '[]'::jsonb),

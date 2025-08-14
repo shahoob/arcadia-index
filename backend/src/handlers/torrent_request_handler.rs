@@ -1,11 +1,13 @@
 use crate::{
     Arcadia, Result,
     models::{
-        torrent_request::TorrentRequestWithTitleGroupLite,
         torrent_request::{TorrentRequest, TorrentRequestFill, UserCreatedTorrentRequest},
+        torrent_request::{TorrentRequestAndAssociatedData, TorrentRequestWithTitleGroupLite},
         user::User,
     },
-    repositories::torrent_request_repository::{self, create_torrent_request},
+    repositories::torrent_request_repository::{
+        self, create_torrent_request, find_torrent_request_hierarchy,
+    },
 };
 use actix_web::{HttpResponse, web};
 use serde_json::json;
@@ -91,4 +93,27 @@ pub async fn search_torrent_requests(
     )
     .await?;
     Ok(HttpResponse::Ok().json(results))
+}
+
+#[derive(Debug, Deserialize, IntoParams)]
+pub struct GetTorrentRequestQuery {
+    id: i64,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/torrent-request",
+    params(GetTorrentRequestQuery),
+    responses(
+        (status = 200, description = "Successfully got the torrent request with associated data", body=TorrentRequestAndAssociatedData),
+    )
+)]
+pub async fn get_torrent_request(
+    arc: web::Data<Arcadia>,
+    query: web::Query<GetTorrentRequestQuery>,
+    _current_user: User,
+) -> Result<HttpResponse> {
+    let torrent_request = find_torrent_request_hierarchy(&arc.pool, query.id).await?;
+
+    Ok(HttpResponse::Ok().json(torrent_request))
 }

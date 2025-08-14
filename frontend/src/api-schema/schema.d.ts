@@ -620,7 +620,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["get_torrent_request"];
         put?: never;
         post: operations["add_torrent_request"];
         delete?: never;
@@ -1491,45 +1491,13 @@ export interface components {
         TitleGroupAndAssociatedData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             affiliated_entities: components["schemas"]["AffiliatedEntityHierarchy"][];
-            category?: null | components["schemas"]["TitleGroupCategory"];
-            content_type: components["schemas"]["ContentType"];
-            country_from?: string | null;
-            covers: string[];
-            /** Format: date-time */
-            created_at: string;
-            /** Format: int64 */
-            created_by_id: number;
-            description: string;
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
-            embedded_links: {
-                [key: string]: {
-                    [key: string]: string;
-                };
-            };
-            external_links: string[];
-            /** Format: int64 */
-            id: number;
             in_same_master_group: components["schemas"]["TitleGroupLite"][];
             is_subscribed: boolean;
-            /** Format: int64 */
-            master_group_id?: number | null;
-            name: string;
-            name_aliases: string[];
-            original_language?: string | null;
-            /** Format: date-time */
-            original_release_date: string;
-            platform?: null | components["schemas"]["Platform"];
-            public_ratings: components["schemas"]["PublicRating"][];
-            screenshots: string[];
             series: components["schemas"]["SeriesLite"];
-            /** Format: int64 */
-            series_id?: number | null;
-            tagline?: string | null;
-            tags: string[];
+            title_group: components["schemas"]["TitleGroup"];
             title_group_comments: components["schemas"]["TitleGroupCommentHierarchy"][];
             torrent_requests: components["schemas"]["TorrentRequestHierarchyLite"][];
-            /** Format: date-time */
-            updated_at: string;
         };
         /** @enum {string} */
         TitleGroupCategory: "Ep" | "Album" | "Single" | "Soundtrack" | "Anthology" | "Compilation" | "Remix" | "Bootleg" | "Mixtape" | "ConcertRecording" | "DjMix" | "FeatureFilm" | "ShortFilm" | "Game" | "Program" | "Illustrated" | "Periodical" | "Book" | "Article" | "Manual" | "Other";
@@ -1565,42 +1533,6 @@ export interface components {
             refers_to_torrent_id?: number | null;
             /** Format: int64 */
             title_group_id: number;
-            /** Format: date-time */
-            updated_at: string;
-        };
-        TitleGroupHierarchy: {
-            category?: null | components["schemas"]["TitleGroupCategory"];
-            content_type: components["schemas"]["ContentType"];
-            country_from?: string | null;
-            covers: string[];
-            /** Format: date-time */
-            created_at: string;
-            /** Format: int64 */
-            created_by_id: number;
-            description: string;
-            edition_groups: components["schemas"]["EditionGroupHierarchy"][];
-            embedded_links: {
-                [key: string]: {
-                    [key: string]: string;
-                };
-            };
-            external_links: string[];
-            /** Format: int64 */
-            id: number;
-            /** Format: int64 */
-            master_group_id?: number | null;
-            name: string;
-            name_aliases: string[];
-            original_language?: string | null;
-            /** Format: date-time */
-            original_release_date: string;
-            platform?: null | components["schemas"]["Platform"];
-            public_ratings: components["schemas"]["PublicRating"][];
-            screenshots: string[];
-            /** Format: int64 */
-            series_id?: number | null;
-            tagline?: string | null;
-            tags: string[];
             /** Format: date-time */
             updated_at: string;
         };
@@ -1845,6 +1777,13 @@ export interface components {
             video_resolution_other_x?: number | null;
             /** Format: int32 */
             video_resolution_other_y?: number | null;
+        };
+        TorrentRequestAndAssociatedData: {
+            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
+            series: components["schemas"]["SeriesLite"];
+            title_group: components["schemas"]["TitleGroupLite"];
+            torrent_request: components["schemas"]["TorrentRequest"];
+            votes: components["schemas"]["TorrentRequestVote"][];
         };
         TorrentRequestBounties: {
             /** Format: int64 */
@@ -3388,6 +3327,28 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    get_torrent_request: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully got the torrent request with associated data */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TorrentRequestAndAssociatedData"];
+                };
             };
         };
     };

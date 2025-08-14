@@ -175,9 +175,10 @@ import Dialog from 'primevue/dialog'
 import {
   downloadTorrent,
   type EditedTorrent,
+  type EditionGroupHierarchy,
   type EditionGroupHierarchyLite,
   type EditionGroupInfoLite,
-  type TitleGroupAndAssociatedData,
+  type TitleGroup,
   type TorrentHierarchyLite,
   type TorrentReport,
 } from '@/services/api/torrentService'
@@ -190,12 +191,13 @@ import CreateOrEditTorrent from '../torrent/CreateOrEditTorrent.vue'
 import { useUserStore } from '@/stores/user'
 
 interface Props {
-  title_group: TitleGroupAndAssociatedData | TitleGroupHierarchyLite
+  title_group: TitleGroup | TitleGroupHierarchyLite
+  editionGroups: EditionGroupHierarchyLite[] | EditionGroupHierarchy[]
   preview: boolean
   sortBy?: string
   showActionBtns?: boolean
 }
-const { title_group, preview = false, sortBy = 'edition' } = defineProps<Props>()
+const { title_group, editionGroups, preview = false, sortBy = 'edition' } = defineProps<Props>()
 
 const { t } = useI18n()
 
@@ -211,7 +213,7 @@ const user = useUserStore()
 
 const torrentReported = (torrentReport: TorrentReport) => {
   reportTorrentDialogVisible.value = false
-  const reportedTorrent = title_group.edition_groups
+  const reportedTorrent = editionGroups
     .flatMap((edition_group) => edition_group.torrents)
     .find((torrent: TorrentHierarchyLite) => torrent.id == torrentReport.reported_torrent_id)
   if (reportedTorrent) {
@@ -225,7 +227,7 @@ const torrentReported = (torrentReport: TorrentReport) => {
   }
 }
 const torrentDeleted = () => {
-  title_group.edition_groups.forEach((edition_group) => {
+  editionGroups.forEach((edition_group) => {
     edition_group.torrents = edition_group.torrents.filter((torrent) => torrent.id !== torrentIdBeingDeleted.value)
   })
   deleteTorrentDialogVisible.value = false
@@ -253,7 +255,7 @@ const purifyHtml = (html: string) => {
   return DOMPurify.sanitize(html)
 }
 const getEditionGroupById = (editionGroupId: number): EditionGroupInfoLite => {
-  return title_group.edition_groups.find((group: EditionGroupInfoLite) => group.id === editionGroupId) as EditionGroupInfoLite
+  return editionGroups.find((group: EditionGroupInfoLite) => group.id === editionGroupId) as EditionGroupInfoLite
 }
 const getEditionGroupSlugById = (editionGroupId: number): string => {
   const editionGroup = getEditionGroupById(editionGroupId)
@@ -264,7 +266,7 @@ onMounted(() => {
   const torrentIdParam = route.query.torrentId?.toString()
   if (torrentIdParam) {
     const torrentId = parseInt(torrentIdParam)
-    const matchingTorrent = title_group.edition_groups.flatMap((edition_group) => edition_group.torrents).find((torrent) => torrent.id === torrentId)
+    const matchingTorrent = editionGroups.flatMap((edition_group) => edition_group.torrents).find((torrent) => torrent.id === torrentId)
 
     if (matchingTorrent) {
       toggleRow(matchingTorrent)
@@ -272,7 +274,7 @@ onMounted(() => {
   }
 })
 const sortedTorrents = computed(() => {
-  const flatTorrents = title_group.edition_groups.flatMap((edition_group: EditionGroupHierarchyLite) => edition_group.torrents)
+  const flatTorrents = editionGroups.flatMap((edition_group: EditionGroupHierarchyLite) => edition_group.torrents)
 
   switch (sortBy) {
     case 'video_resolution': {
@@ -300,7 +302,7 @@ const sortedTorrents = computed(() => {
   return flatTorrents
 })
 const torrentEdited = (editedTorrent: EditedTorrent) => {
-  title_group.edition_groups.forEach((eg) => {
+  editionGroups.forEach((eg) => {
     const index = eg.torrents.findIndex((t) => t.id === editedTorrent.id)
     if (index !== -1) {
       eg.torrents[index] = { ...eg.torrents[index], ...editedTorrent }

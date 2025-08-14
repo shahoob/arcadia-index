@@ -4,9 +4,13 @@ use sqlx::prelude::FromRow;
 use utoipa::ToSchema;
 
 use crate::models::{
-    artist::AffiliatedArtistHierarchy, edition_group::Source, series::SeriesLite,
-    title_group::TitleGroupLite, torrent::AudioChannels,
-    torrent_request_vote::UserCreatedTorrentRequestVote, user::UserLite,
+    artist::AffiliatedArtistHierarchy,
+    edition_group::Source,
+    series::SeriesLite,
+    title_group::TitleGroupLite,
+    torrent::AudioChannels,
+    torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
+    user::UserLite,
 };
 
 use super::torrent::{
@@ -56,16 +60,13 @@ pub struct UserCreatedTorrentRequest {
     pub container: Vec<String>,
     pub source: Vec<Source>,
     pub initial_vote: UserCreatedTorrentRequestVote,
-    // ---- audio
     pub audio_codec: Vec<AudioCodec>,
     pub audio_channels: Vec<AudioChannels>,
     pub audio_bitrate_sampling: Vec<AudioBitrateSampling>,
-    // ---- audio
-    // ---- video
     pub video_codec: Vec<VideoCodec>,
     pub features: Vec<Features>,
     pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Vec<VideoResolution>, // ---- video
+    pub video_resolution: Vec<VideoResolution>,
     pub video_resolution_other_x: Option<i32>,
     pub video_resolution_other_y: Option<i32>,
 }
@@ -94,18 +95,14 @@ pub struct TorrentRequestHierarchyLite {
     pub description: Option<String>,
     pub languages: Vec<Language>,
     pub container: String,
-    pub bounties: TorrentRequestBounties,
     pub user_votes_amount: i32,
-    // ---- audio
     pub audio_codec: Option<AudioCodec>,
     pub audio_channels: Option<String>,
     pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
-    // ---- audio
-    // ---- video
     pub video_codec: Option<VideoCodec>,
     pub features: Option<Vec<Features>>,
     pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Option<VideoResolution>, // ---- video
+    pub video_resolution: Option<VideoResolution>,
     pub video_resolution_other_x: Option<i32>,
     pub video_resolution_other_y: Option<i32>,
 }
@@ -124,4 +121,13 @@ pub struct TorrentRequestWithTitleGroupLite {
 pub struct TorrentRequestFill {
     pub torrent_request_id: i64,
     pub torrent_id: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct TorrentRequestAndAssociatedData {
+    pub torrent_request: TorrentRequest,
+    pub title_group: TitleGroupLite,
+    pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
+    pub series: SeriesLite,
+    pub votes: Vec<TorrentRequestVote>,
 }

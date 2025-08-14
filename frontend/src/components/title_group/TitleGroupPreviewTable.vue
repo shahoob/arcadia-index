@@ -14,7 +14,7 @@
           <RouterLink :to="`/title-group/${title_group.id}`">{{ title_group.name }}</RouterLink>
           <span class="year">({{ title_group.original_release_date.substring(0, 4) }})</span>
         </div>
-        <TitleGroupTable :title_group="title_group" :preview="true" />
+        <TitleGroupTable :title_group="title_group" :editionGroups="title_group.edition_groups" :preview="true" />
       </div>
     </div>
   </ContentContainer>

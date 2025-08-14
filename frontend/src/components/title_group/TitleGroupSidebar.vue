@@ -24,32 +24,29 @@
     </ContentContainer>
     <ContentContainer :container-title="t('artist.artist', 2)">
       <template #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template>
-      <template v-if="title_group.affiliated_artists.length != 0">
+      <template v-if="affiliatedArtists.length != 0">
         <div class="affiliated-artists">
-          <AffiliatedArtist class="affiliated-artist" v-for="artist in title_group.affiliated_artists" :key="artist.artist_id" :affiliated_artist="artist" />
+          <AffiliatedArtist class="affiliated-artist" v-for="artist in affiliatedArtists" :key="artist.artist_id" :affiliated_artist="artist" />
         </div>
       </template>
       <div class="wrapper-center" v-else>
         {{ t('artist.no_affiliated_artist_registered') }}
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="t('entity.entity', 2)" v-if="title_group.affiliated_entities.length != 0">
+    <ContentContainer :container-title="t('entity.entity', 2)" v-if="affiliatedEntities.length != 0">
       <!-- <template #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template> -->
       <div class="affiliated-entities">
-        <AffiliatedEntity class="affiliated-entity" v-for="entity in title_group.affiliated_entities" :key="entity.entity_id" :affiliatedEntity="entity" />
+        <AffiliatedEntity class="affiliated-entity" v-for="entity in affiliatedEntities" :key="entity.entity_id" :affiliatedEntity="entity" />
       </div>
     </ContentContainer>
-    <ContentContainer
-      :container-title="`${t('master_group.in_same_master_group')} (${title_group.master_group_id})`"
-      v-if="title_group.in_same_master_group.length != 0"
-    >
+    <ContentContainer :container-title="`${t('master_group.in_same_master_group')} (${title_group.master_group_id})`" v-if="inSameMasterGroup.length != 0">
       <div class="flex justify-content-center links">
-        <MasterGroupLink v-for="tg in title_group.in_same_master_group" :key="tg.id" :title_group="tg" />
+        <MasterGroupLink v-for="tg in inSameMasterGroup" :key="tg.id" :title_group="tg" />
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="t('general.series')" v-if="title_group.series.id">
-      <RouterLink :to="`/series/${title_group.series.id}`">
-        {{ title_group.series.name }}
+    <ContentContainer :container-title="t('general.series')" v-if="series.id">
+      <RouterLink :to="`/series/${series.id}`">
+        {{ series.name }}
       </RouterLink>
     </ContentContainer>
     <ContentContainer :container-title="t('general.tags')">
@@ -66,9 +63,12 @@ import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
 import ContentContainer from '../ContentContainer.vue'
-import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import type { TitleGroup, TitleGroupLite } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 import AffiliatedEntity from '../artist/AffiliatedEntity.vue'
+import type { SeriesLite } from '@/services/api/seriesService'
+import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
+import type { AffiliatedEntityHierarchy } from '@/services/api/entityService'
 
 const { t } = useI18n()
 
@@ -77,7 +77,11 @@ const emit = defineEmits<{
 }>()
 
 defineProps<{
-  title_group: TitleGroupAndAssociatedData
+  title_group: TitleGroup
+  inSameMasterGroup: TitleGroupLite[]
+  series: SeriesLite
+  affiliatedArtists: AffiliatedArtistHierarchy[]
+  affiliatedEntities: AffiliatedEntityHierarchy[]
 }>()
 </script>
 <style scoped>

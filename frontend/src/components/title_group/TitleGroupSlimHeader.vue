@@ -19,10 +19,10 @@
 </template>
 <script setup lang="ts">
 import type { SeriesLite } from '@/services/api/seriesService'
-import type { TitleGroupAndAssociatedData, TitleGroupLite } from '@/services/api/torrentService'
+import type { TitleGroup, TitleGroupLite } from '@/services/api/torrentService'
 
 defineProps<{
-  titleGroup: TitleGroupAndAssociatedData | TitleGroupLite
+  titleGroup: TitleGroup | TitleGroupLite
   series?: SeriesLite
   // affiliatedArtists?: AffiliatedArtistHierarchy
   nameLink?: string

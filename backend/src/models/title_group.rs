@@ -180,8 +180,6 @@ pub struct TitleGroupHierarchyLite {
     pub tags: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: DateTime<Utc>,
-    // #[schema(value_type = HashMap<String, String>)]
-    // pub affiliated_artists: Vec<Json<Value>>,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
     pub affiliated_artists: Vec<AffiliatedArtistLite>,
 }
@@ -206,66 +204,8 @@ pub struct TitleGroupInfoLite {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
-pub struct TitleGroupHierarchy {
-    pub id: i64,
-    pub master_group_id: Option<i64>,
-    pub name: String,
-    pub name_aliases: Vec<String>,
-    #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Utc>,
-    #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Utc>,
-    pub created_by_id: i64,
-    pub description: String,
-    pub platform: Option<Platform>,
-    pub original_language: Option<String>,
-    #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Utc>,
-    pub tagline: Option<String>,
-    pub country_from: Option<String>,
-    pub covers: Vec<String>,
-    pub external_links: Vec<String>,
-    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
-    pub embedded_links: Value,
-    pub category: Option<TitleGroupCategory>,
-    pub content_type: ContentType,
-    pub tags: Vec<String>,
-    #[schema(value_type = Vec<PublicRating>)]
-    pub public_ratings: Value,
-    pub series_id: Option<i64>,
-    pub screenshots: Vec<String>,
-    pub edition_groups: Vec<EditionGroupHierarchy>,
-}
-
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TitleGroupAndAssociatedData {
-    pub id: i64,
-    pub master_group_id: Option<i64>,
-    pub name: String,
-    pub name_aliases: Vec<String>,
-    #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Utc>,
-    #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Utc>,
-    pub created_by_id: i64,
-    pub description: String,
-    pub platform: Option<Platform>,
-    pub original_language: Option<String>,
-    #[schema(value_type = String, format = DateTime)]
-    pub original_release_date: DateTime<Utc>,
-    pub tagline: Option<String>,
-    pub country_from: Option<String>,
-    pub covers: Vec<String>,
-    pub external_links: Vec<String>,
-    #[schema(value_type = HashMap<String, HashMap<String, String>>)]
-    pub embedded_links: Value,
-    pub category: Option<TitleGroupCategory>,
-    pub content_type: ContentType,
-    pub tags: Vec<String>,
-    #[schema(value_type = Vec<PublicRating>)]
-    pub public_ratings: Value,
-    pub series_id: Option<i64>,
-    pub screenshots: Vec<String>,
+    pub title_group: TitleGroup,
     pub edition_groups: Vec<EditionGroupHierarchy>,
     pub series: SeriesLite,
     pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
