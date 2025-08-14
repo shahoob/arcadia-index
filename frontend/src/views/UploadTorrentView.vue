@@ -10,7 +10,7 @@
         <AccordionHeader>
           <div style="display: flex">
             {{ t('title_group.title') }}
-            <div v-if="titleGroupStore.id !== 0" style="display: flex">:<TitleGroupSlimHeader style="margin-left: 5px" :title_group="titleGroupStore" /></div>
+            <div v-if="titleGroupStore.id !== 0" style="display: flex">:<TitleGroupSlimHeader style="margin-left: 5px" :titleGroup="titleGroupStore" /></div>
           </div>
         </AccordionHeader>
         <AccordionContent>

@@ -50,6 +50,11 @@ const router = createRouter({
       component: () => import('../views/TorrentSearchView.vue'),
     },
     {
+      path: '/torrent-requests',
+      name: 'Torrent requests',
+      component: () => import('../views/TorrentRequestSearchView.vue'),
+    },
+    {
       path: '/series/:id',
       name: 'Series',
       meta: {

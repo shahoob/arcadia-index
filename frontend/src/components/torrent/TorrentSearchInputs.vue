@@ -137,11 +137,4 @@ onMounted(async () => {
 .staff-options {
   display: flex;
 }
-.pagination {
-  text-align: center;
-  margin: 10px 0;
-  .p-button {
-    margin: 0 10px;
-  }
-}
 </style>

@@ -1,24 +1,31 @@
 <template>
   <div>
-    <span v-if="'series' in title_group && title_group.series?.id">
-      <RouterLink class="prefix" :to="`/series/${title_group.series.id}`">{{ title_group.series.name }} </RouterLink>
+    <span v-if="series && series?.id">
+      <RouterLink class="prefix" :to="`/series/${series.id}`">{{ series.name }} </RouterLink>
       -
     </span>
-    <span v-if="title_group.platform">
-      <RouterLink class="prefix" :to="`/platform?name=${title_group.platform}`">
-        {{ title_group.platform }}
+    <span v-if="titleGroup.platform">
+      <RouterLink class="prefix" :to="`/platform?name=${titleGroup.platform}`">
+        {{ titleGroup.platform }}
       </RouterLink>
       -
     </span>
-    <span class="title-group-name">{{ title_group.name }}</span>
-    <span class="year">({{ title_group.original_release_date.substring(0, 4) }})</span>
+    <RouterLink class="title-group-name" v-if="nameLink" :to="nameLink">
+      {{ titleGroup.name }}
+    </RouterLink>
+    <span class="title-group-name" v-else>{{ titleGroup.name }}</span>
+    <span class="year">({{ titleGroup.original_release_date.substring(0, 4) }})</span>
   </div>
 </template>
 <script setup lang="ts">
+import type { SeriesLite } from '@/services/api/seriesService'
 import type { TitleGroupAndAssociatedData, TitleGroupLite } from '@/services/api/torrentService'
 
 defineProps<{
-  title_group: TitleGroupAndAssociatedData | TitleGroupLite
+  titleGroup: TitleGroupAndAssociatedData | TitleGroupLite
+  series?: SeriesLite
+  // affiliatedArtists?: AffiliatedArtistHierarchy
+  nameLink?: string
 }>()
 </script>
 <style scoped>

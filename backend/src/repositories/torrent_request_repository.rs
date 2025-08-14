@@ -193,7 +193,7 @@ pub async fn search_torrent_requests(
     let offset = (page - 1).max(0) * page_size;
     let rows: Option<Value> = sqlx::query_scalar!(
         r#"
-        SELECT json_agg(data) as data FROM (
+        SELECT COALESCE(json_agg(data), '[]'::json) as data FROM (
             SELECT json_build_object(
                 'torrent_request', tr,
                 'title_group', json_build_object(
@@ -204,11 +204,63 @@ pub async fn search_torrent_requests(
                     'covers', tg.covers,
                     'edition_groups', '[]',
                     'platform', tg.platform
-                )
+                ),
+                'bounties', json_build_object(
+                    'upload', (
+                        SELECT COALESCE(SUM(trv.bounty_upload), 0)
+                        FROM torrent_request_votes trv
+                        WHERE trv.torrent_request_id = tr.id
+                    ),
+                    'bonus_points', (
+                        SELECT COALESCE(SUM(trv.bounty_bonus_points), 0)
+                        FROM torrent_request_votes trv
+                        WHERE trv.torrent_request_id = tr.id
+                    )
+                ),
+                'user_votes_amount', (
+                    SELECT COALESCE(COUNT(DISTINCT trv2.created_by_id), 0)
+                    FROM torrent_request_votes trv2
+                    WHERE trv2.torrent_request_id = tr.id
+                ),
+                'affiliated_artists', COALESCE((
+                    SELECT json_agg(
+                        json_build_object(
+                            'id', aa.id,
+                            'title_group_id', aa.title_group_id,
+                            'artist_id', aa.artist_id,
+                            'roles', aa.roles,
+                            'nickname', aa.nickname,
+                            'created_at', aa.created_at,
+                            'created_by_id', aa.created_by_id,
+                            'artist', json_build_object(
+                                'id', a.id,
+                                'name', a.name,
+                                'created_at', a.created_at,
+                                'created_by_id', a.created_by_id,
+                                'description', a.description,
+                                'pictures', a.pictures,
+                                'title_groups_amount', a.title_groups_amount,
+                                'edition_groups_amount', a.edition_groups_amount,
+                                'torrents_amount', a.torrents_amount,
+                                'seeders_amount', a.seeders_amount,
+                                'leechers_amount', a.leechers_amount,
+                                'snatches_amount', a.snatches_amount
+                            )
+                        )
+                    )
+                    FROM affiliated_artists aa
+                    JOIN artists a ON a.id = aa.artist_id
+                    WHERE aa.title_group_id = tg.id
+                ), '[]'::json),
+                'series', COALESCE((
+                    SELECT json_build_object('id', s.id, 'name', s.name)
+                    FROM series s
+                    WHERE s.id = tg.series_id
+                ), '{}'::json)
             ) as data
             FROM torrent_requests tr
             JOIN title_groups tg ON tr.title_group_id = tg.id
-            WHERE ($1::TEXT IS NULL OR tg.name ILIKE $1 OR $1 = ANY(tg.name_aliases))
+            WHERE ($1::TEXT IS NULL OR tg.name ILIKE '%' || $1 || '%' OR $1 = ANY(tg.name_aliases))
             AND ($2::VARCHAR[] IS NULL OR tg.tags && $2::VARCHAR[])
             ORDER BY tr.created_at DESC
             LIMIT $3 OFFSET $4

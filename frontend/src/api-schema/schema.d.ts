@@ -1413,6 +1413,14 @@ export interface components {
         RegisterQuery: {
             invitation_key?: string | null;
         };
+        SearchTorrentRequestsQuery: {
+            /** Format: int64 */
+            page?: number | null;
+            /** Format: int64 */
+            page_size?: number | null;
+            tags?: string[] | null;
+            title_group_name?: string | null;
+        };
         SentInvitation: {
             message: string;
             receiver_email: string;
@@ -1901,8 +1909,13 @@ export interface components {
             torrent_request_id: number;
         };
         TorrentRequestWithTitleGroupLite: {
+            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
+            bounties: components["schemas"]["TorrentRequestBounties"];
+            series: components["schemas"]["SeriesLite"];
             title_group: components["schemas"]["TitleGroupLite"];
             torrent_request: components["schemas"]["TorrentRequest"];
+            /** Format: int32 */
+            user_votes_amount: number;
         };
         TorrentSearch: {
             order: components["schemas"]["TorrentSearchOrder"];

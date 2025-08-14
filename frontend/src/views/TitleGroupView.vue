@@ -15,7 +15,7 @@
       }"
     >
       <TitleGroupFullHeader :title_group v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
-      <TitleGroupSlimHeader v-else :title_group class="slim-header title" />
+      <TitleGroupSlimHeader v-else :titleGroup="title_group" :series="title_group.series" class="slim-header title" />
       <div class="actions">
         <div>
           <i v-if="togglingSubscription" class="pi pi-hourglass" />
@@ -105,7 +105,7 @@ import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
 import { getTitleGroup, type TitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 import TitleGroupTable from '@/components/title_group/TitleGroupTable.vue'
-import TorrentRequestsTable from '@/components/request/TorrentRequestsTable.vue'
+import TorrentRequestsTable from '@/components/torrent_request/TorrentRequestsTable.vue'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'

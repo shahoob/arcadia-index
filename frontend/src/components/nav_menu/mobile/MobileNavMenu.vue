@@ -20,7 +20,7 @@
       :model="[
         { label: 'Torrents', url: '/torrents' },
         { label: 'Collages', url: '' },
-        { label: 'Requests', url: '' },
+        { label: 'Requests', url: '/torrent-requests' },
         { label: 'Forum', url: '/forum' },
         { label: 'IRC', url: '' },
         { label: 'Top', url: '' },

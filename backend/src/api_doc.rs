@@ -7,6 +7,7 @@ use crate::{
         home_handler::HomePage,
         scrapers::ExternalDBData,
         torrent_handler::{DownloadTorrentQuery, GetTopTorrentsQuery, UploadInformation},
+        torrent_request_handler::SearchTorrentRequestsQuery,
         user_application_handler::{GetUserApplicationsQuery, UpdateUserApplication},
     },
     models::{
@@ -27,7 +28,7 @@ use crate::{
         gift::{Gift, UserCreatedGift},
         invitation::{Invitation, SentInvitation},
         master_group::{MasterGroup, UserCreatedMasterGroup},
-        series::{Series, SeriesAndTitleGroupHierarchyLite, UserCreatedSeries},
+        series::{Series, SeriesAndTitleGroupHierarchyLite, SeriesLite, UserCreatedSeries},
         title_group::{
             EditedTitleGroup, PublicRating, TitleGroupAndAssociatedData, TitleGroupHierarchy,
             TitleGroupLite,
@@ -195,7 +196,9 @@ use crate::{
         TorrentRequestWithTitleGroupLite,
         TitleGroupLite,
         EditedTitleGroup,
-        Extras
+        Extras,
+        SearchTorrentRequestsQuery,
+        SeriesLite
     ),)
 )]
 pub struct ApiDoc;

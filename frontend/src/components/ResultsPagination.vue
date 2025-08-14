@@ -19,3 +19,12 @@ const emit = defineEmits<{
   changePage: ['previous' | 'next']
 }>()
 </script>
+<style scoped>
+.pagination {
+  text-align: center;
+  margin: 10px 0;
+  .p-button {
+    margin: 0 10px;
+  }
+}
+</style>
