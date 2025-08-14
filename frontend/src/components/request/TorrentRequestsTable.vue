@@ -1,11 +1,15 @@
 <template>
   <DataTable :value="torrentRequests" size="small">
-    <Column header="Requirements">
+    <Column header="File">
       <template #body="slotProps">
-        <TorrentRequestSlug :torrentRequest="slotProps.data" :contentType :isRequest="true" />
+        <TorrentRequestFileSlug :torrentRequest="slotProps.data" :contentType />
       </template>
     </Column>
-    <Column field="edition_name" header="Edition"></Column>
+    <Column header="Edition">
+      <template #body="slotProps">
+        <TorrentRequestEditionSlug :torrentRequest="slotProps.data" :contentType />
+      </template>
+    </Column>
     <Column header="Bounty">
       <template #body="slotProps"> {{ bytesToReadable(slotProps.data.bounties.upload) }} + {{ slotProps.data.bounties.bonus_points }} bp </template>
     </Column>
@@ -18,7 +22,8 @@
 <script setup lang="ts">
 import { Column, DataTable } from 'primevue'
 import type { TorrentRequestHierarchyLite } from '@/services/api/torrentRequestService'
-import TorrentRequestSlug from './TorrentRequestSlug.vue'
+import TorrentRequestFileSlug from './TorrentRequestFileSlug.vue'
+import TorrentRequestEditionSlug from './TorrentRequestEditionSlug.vue'
 import type { ContentType } from '@/services/api/torrentService'
 import { bytesToReadable } from '@/services/helpers'
 

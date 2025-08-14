@@ -48,9 +48,9 @@ const computedSlug = computed<string[][]>(() => {
       firstPart.push(t('torrent.any_video_resolution'))
     }
   }
-  addIfPresent(firstPart, props.torrentRequest.source, true, 'source')
+  // addIfPresent(firstPart, props.torrentRequest.source, true, 'source')
   addIfPresent(firstPart, props.torrentRequest.video_codec, true, 'video_codec')
-  addIfPresent(firstPart, props.torrentRequest.edition_name, false, 'edition')
+  // addIfPresent(firstPart, props.torrentRequest.edition_name, false, 'edition')
   if (props.contentType !== 'music') {
     addIfPresent(firstPart, props.torrentRequest.container, false, 'container')
   }

@@ -193,7 +193,8 @@
     "catalogue_number": "Catalogue number",
     "source": "Source",
     "format": "Format",
-    "complete_title_group_first": "Create or select a title group first"
+    "complete_title_group_first": "Create or select a title group first",
+    "any_source": "Any source"
   },
   "torrent": {
     "size": "Size",
