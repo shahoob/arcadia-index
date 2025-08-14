@@ -96,7 +96,14 @@
           </div>
           <div>
             <FloatLabel v-if="['movie', 'podcast', 'video', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
-              <Select v-model="torrentForm.video_codec" inputId="video_codec" :options="selectableVideoCodecs" class="select" size="small" name="video_codec" />
+              <Select
+                v-model="torrentForm.video_codec"
+                inputId="video_codec"
+                :options="getSelectableVideoCodecs()"
+                class="select"
+                size="small"
+                name="video_codec"
+              />
               <label for="video_codec">{{ t('torrent.video_codec') }}</label>
             </FloatLabel>
             <Message v-if="$form.video_codec?.invalid" severity="error" size="small" variant="simple">
@@ -108,7 +115,7 @@
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
-                :options="selectableVideoResolutions"
+                :options="getSelectableVideoResolutions()"
                 class="select"
                 size="small"
                 name="video_resolution"
@@ -154,7 +161,14 @@
                 editionGroupStore.additional_information.format === 'audiobook'
               "
             >
-              <Select v-model="torrentForm.audio_codec" inputId="audio_codec" :options="selectableAudioCodecs" class="select" size="small" name="audio_codec" />
+              <Select
+                v-model="torrentForm.audio_codec"
+                inputId="audio_codec"
+                :options="getSelectableAudioCodecs()"
+                class="select"
+                size="small"
+                name="audio_codec"
+              />
               <label for="audio_codec">{{ t('torrent.audio_codec') }}</label>
             </FloatLabel>
             <Message v-if="$form.audio_codec?.invalid" severity="error" size="small" variant="simple">
@@ -171,7 +185,7 @@
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
                 inputId="audio_coded"
-                :options="selectableAudioBitrateSamplings"
+                :options="getSelectableAudioBitrateSamplings()"
                 class="select"
                 size="small"
                 name="audio_bitrate_sampling"
@@ -187,7 +201,7 @@
               <Select
                 v-model="torrentForm.audio_channels"
                 inputId="audio_channels"
-                :options="selectableAudioChannels"
+                :options="getSelectableAudioChannels()"
                 class="select"
                 size="small"
                 name="audio_channels"
@@ -290,12 +304,20 @@ import Message from 'primevue/message'
 import { FormField, type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms'
 import { Form } from '@primevue/forms'
 import { getFileInfo } from '@/services/fileinfo/fileinfo.js'
-import { getSelectableExtras } from '@/services/helpers'
+import {
+  getSelectableExtras,
+  getFeatures,
+  getLanguages,
+  getSelectableVideoCodecs,
+  getSelectableVideoResolutions,
+  getSelectableAudioCodecs,
+  getSelectableAudioBitrateSamplings,
+  getSelectableAudioChannels,
+} from '@/services/helpers'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent, editTorrent, type Torrent, type UploadedTorrent, type EditedTorrent, type Extras } from '@/services/api/torrentService'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { useI18n } from 'vue-i18n'
-import { getFeatures, getLanguages } from '@/services/helpers'
 import { nextTick } from 'vue'
 import type { VNodeRef } from 'vue'
 import _ from 'lodash'
@@ -306,7 +328,7 @@ const formRef = ref<VNodeRef | null>(null)
 const torrentFile = ref({ files: [] as unknown[] })
 const torrentForm = ref({
   id: 0,
-  extras: [],
+  extras: [] as Extras[],
   edition_group_id: 0,
   release_name: '',
   release_group: '',
@@ -329,30 +351,6 @@ const torrentForm = ref({
   uploaded_as_anonymous: false,
 })
 const isExtras = ref(false)
-// TODO : move all the selectable* arrays to an helper function
-const selectableVideoCodecs = ['mpeg1', 'mpeg2', 'divX', 'DivX', 'h264', 'h265', 'vc-1', 'vp9', 'BD50', 'UHD100']
-const selectableVideoResolutions = ['Other', '480p', '480i', '576p', '576i', '720p', '1080p', '1080i', '1440p', '2160p', '4320p']
-const selectableAudioCodecs = ['aac', 'opus', 'mp3', 'mp2', 'aac', 'ac3', 'dts', 'flac', 'pcm', 'true-hd', 'dsd']
-const selectableAudioBitrateSamplings = [
-  '64',
-  '128',
-  '192',
-  '256',
-  '320',
-  'APS (VBR)',
-  'V2 (VBR)',
-  'V1 (VBR)',
-  'V0 (VBR)',
-  'APX (VBR)',
-  'Lossless',
-  '24bit Lossless',
-  'DSD64',
-  'DSD128',
-  'DSD256',
-  'DSD512',
-  'Other',
-]
-const selectableAudioChannels = ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1']
 const uploadingTorrent = ref(false)
 const titleGroupStore = ref(useTitleGroupStore())
 const editionGroupStore = ref(useEditionGroupStore())

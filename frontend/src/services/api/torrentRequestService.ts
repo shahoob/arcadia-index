@@ -9,6 +9,12 @@ export type TorrentRequestWithTitleGroupLite = components['schemas']['TorrentReq
 
 export type SearchTorrentRequestsQuery = components['schemas']['SearchTorrentRequestsQuery']
 
+export type UserCreatedTorrentRequest = components['schemas']['UserCreatedTorrentRequest']
+
 export const searchTorrentRequests = async (form: SearchTorrentRequestsQuery): Promise<TorrentRequestWithTitleGroupLite[]> => {
   return (await api.get<TorrentRequestWithTitleGroupLite[]>('/search/torrent-request', { params: form })).data
+}
+
+export const createTorrentRequest = async (torrentRequest: UserCreatedTorrentRequest): Promise<TorrentRequest> => {
+  return (await api.post<TorrentRequest>('/torrent-request', torrentRequest)).data
 }

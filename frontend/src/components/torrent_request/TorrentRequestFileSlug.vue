@@ -35,7 +35,7 @@ const computedSlug = computed<string[][]>(() => {
     }
   }
 
-  if (props.torrentRequest.video_resolution) {
+  if (['movie', 'tv-show', 'video', 'collection'].indexOf(props?.contentType) >= 0) {
     if (
       props.torrentRequest.video_resolution.includes('Other') &&
       'video_resolution_other_x' in props.torrentRequest &&
@@ -48,9 +48,9 @@ const computedSlug = computed<string[][]>(() => {
       firstPart.push(t('torrent.any_video_resolution'))
     }
   }
-  // addIfPresent(firstPart, props.torrentRequest.source, true, 'source')
-  addIfPresent(firstPart, props.torrentRequest.video_codec, true, 'video_codec')
-  // addIfPresent(firstPart, props.torrentRequest.edition_name, false, 'edition')
+  if (['movie', 'tv-show', 'video', 'collection'].indexOf(props?.contentType) >= 0) {
+    addIfPresent(firstPart, props.torrentRequest.video_codec, true, 'video_codec')
+  }
   if (props.contentType !== 'music') {
     addIfPresent(firstPart, props.torrentRequest.container, false, 'container')
   }

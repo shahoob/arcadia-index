@@ -118,6 +118,7 @@
     "joined_at": "Joined",
     "last_seen": "Last seen",
     "bonus_points": "Bonus points",
+    "upload": "Upload",
     "invited": "Invited",
     "seeding_size": "Seeding size",
     "banned": "Banned",
@@ -243,6 +244,7 @@
     "torrent_edited_success": "Torrent edited successfuly",
     "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly",
     "delete_torrent": "Delete torrent",
+    "subtitle_language": "Subtitle language | Subtitle languages",
     "extras": {
       "extras": "Extras",
       "booklet": "Booklet",
@@ -254,6 +256,14 @@
       "other": "Other"
     },
     "extras_hint": "This torrent doesn't contain the \"main\" content, but extra media that goes with it"
+  },
+  "torrent_request": {
+    "new_request": "New request",
+    "my_requests": "My requests",
+    "voted_requests": "Requests I've voted on",
+    "bookmarked_requests": "Bookmarked requests",
+    "edition_name": "Edition name",
+    "created_success": "Torrent request successfuly created"
   },
   "entity": {
     "entity": "Entity | Entities",

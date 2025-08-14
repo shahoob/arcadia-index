@@ -35,7 +35,7 @@
             @click="editTitleGroupDialogVisible = true"
           />
           <i @click="uploadTorrent" v-tooltip.top="t('torrent.upload_torrent')" class="pi pi-upload" />
-          <i v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
+          <i @click="requestTorrent" v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
         </div>
         <FloatLabel class="sort-by-select" variant="on">
           <Select v-model="sortBy" inputId="sort_by" :options="selectableSortingOptions" class="select" size="small">
@@ -166,13 +166,6 @@ const fetchTitleGroup = async () => {
   const contentTypeShouldHaveResolution = ['tv_show', 'movie'].includes(title_group.value.content_type)
   if (contentTypeShouldHaveResolution && !resolutionInSortingOptions) selectableSortingOptions.unshift('video_resolution')
   else if (!contentTypeShouldHaveResolution && resolutionInSortingOptions) selectableSortingOptions.splice(selectableSortingOptions.indexOf('resolution'), 1)
-
-  titleGroupStore.id = title_group.value.id
-  titleGroupStore.original_release_date = title_group.value.original_release_date
-  titleGroupStore.name = title_group.value.name
-  titleGroupStore.edition_groups = title_group.value.edition_groups
-  titleGroupStore.content_type = title_group.value.content_type
-
   /*
     For series, the title group name just holds the season name (i.e. 'Season 1')
     so we want to show the series name itself in the document title as well.
@@ -180,10 +173,24 @@ const fetchTitleGroup = async () => {
   document.title = titleGroup.series.name ? `${titleGroup.name} (${titleGroup.series.name}) - ${siteName}` : `${titleGroup.name} - ${siteName}`
 }
 
-const uploadTorrent = () => {
+const populateTitleGroupStore = () => {
   if (title_group.value) {
-    router.push({ path: '/upload' })
+    titleGroupStore.id = title_group.value.id
+    titleGroupStore.original_release_date = title_group.value.original_release_date
+    titleGroupStore.name = title_group.value.name
+    titleGroupStore.edition_groups = title_group.value.edition_groups
+    titleGroupStore.content_type = title_group.value.content_type
   }
+}
+
+const uploadTorrent = () => {
+  populateTitleGroupStore()
+  router.push({ path: '/upload' })
+}
+
+const requestTorrent = () => {
+  populateTitleGroupStore()
+  router.push({ path: '/new-torrent-request' })
 }
 
 const toggleSubscribtion = async () => {

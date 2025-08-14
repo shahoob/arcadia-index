@@ -55,6 +55,11 @@ const router = createRouter({
       component: () => import('../views/TorrentRequestSearchView.vue'),
     },
     {
+      path: '/new-torrent-request',
+      name: 'New torrent request',
+      component: () => import('../views/NewTorrentRequestView.vue'),
+    },
+    {
       path: '/series/:id',
       name: 'Series',
       meta: {

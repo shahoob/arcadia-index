@@ -1,5 +1,13 @@
 <template>
   <div v-if="searchResults">
+    <div class="actions">
+      <RouterLink to="/new-torrent-request">
+        <i class="pi pi-plus" v-tooltip.top="t('torrent_request.new_request')" />
+      </RouterLink>
+      <i class="pi pi-user" v-tooltip.top="t('torrent_request.my_requests')" />
+      <i class="pi pi-heart" v-tooltip.top="t('torrent_request.voted_requests')" />
+      <i class="pi pi-bookmark" v-tooltip.top="t('torrent_request.bookmarked_requests')" />
+    </div>
     <TorrentRequestSearchInputs ref="searchInputsRef" class="torrent-request-search-inputs" @search="search" :loading :initialForm />
     <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
     <TorrentRequestsTable :torrentRequests="searchResults" displayTitleGroup />
@@ -16,6 +24,9 @@ import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 import type { VNodeRef } from 'vue'
 import { searchTorrentRequests, type SearchTorrentRequestsQuery, type TorrentRequestWithTitleGroupLite } from '@/services/api/torrentRequestService'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 
@@ -62,5 +73,12 @@ watch(
 <style scoped>
 .torrent-request-search-inputs {
   margin-bottom: 25px;
+}
+.actions {
+  text-align: center;
+  i {
+    margin: 15px 10px;
+    color: white;
+  }
 }
 </style>

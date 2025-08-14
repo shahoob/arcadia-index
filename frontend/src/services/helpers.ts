@@ -193,3 +193,85 @@ export const isValidUrl = (url: string) => {
     return false
   }
 }
+
+export const getSelectableVideoCodecs = () => {
+  return ['mpeg1', 'mpeg2', 'divX', 'DivX', 'h264', 'h265', 'vc-1', 'vp9', 'BD50', 'UHD100']
+}
+
+export const getSelectableVideoResolutions = () => {
+  return ['Other', '480p', '480i', '576p', '576i', '720p', '1080p', '1080i', '1440p', '2160p', '4320p']
+}
+
+export const getSelectableAudioCodecs = () => {
+  return ['aac', 'opus', 'mp3', 'mp2', 'aac', 'ac3', 'dts', 'flac', 'pcm', 'true-hd', 'dsd']
+}
+
+export const getSelectableAudioBitrateSamplings = () => {
+  return [
+    '64',
+    '128',
+    '192',
+    '256',
+    '320',
+    'APS (VBR)',
+    'V2 (VBR)',
+    'V1 (VBR)',
+    'V0 (VBR)',
+    'APX (VBR)',
+    'Lossless',
+    '24bit Lossless',
+    'DSD64',
+    'DSD128',
+    'DSD256',
+    'DSD512',
+    'Other',
+  ]
+}
+
+export const getSelectableAudioChannels = () => {
+  return ['1.0', '2.0', '2.1', '5.0', '5.1', '7.1']
+}
+
+export const getSelectableContainers = () => {
+  return [
+    'mkv',
+    'mp4',
+    'avi',
+    'mov',
+    'wmv',
+    'flv',
+    'webm',
+    'm4v',
+    '3gp',
+    'ogv',
+    'ts',
+    'mts',
+    'm2ts',
+    'vob',
+    'iso',
+    'img',
+    'bin',
+    'cue',
+    'flac',
+    'mp3',
+    'wav',
+    'aac',
+    'ogg',
+    'm4a',
+    'wma',
+    'opus',
+    'pdf',
+    'epub',
+    'mobi',
+    'azw3',
+    'cbz',
+    'cbr',
+    'zip',
+    'rar',
+    '7z',
+    'tar',
+    'gz',
+    'bz2',
+    'xz',
+  ]
+}
