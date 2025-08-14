@@ -1,12 +1,6 @@
 <template>
   <div v-if="searchResults">
-    <TorrentRequestSearchInputs
-      ref="searchInputsRef"
-      class="torrent-request-search-inputs"
-      @search="search"
-      :loading
-      :initialForm
-    />
+    <TorrentRequestSearchInputs ref="searchInputsRef" class="torrent-request-search-inputs" @search="search" :loading :initialForm />
     <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
     <TorrentRequestsTable :torrentRequests="searchResults" displayTitleGroup />
     <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
@@ -45,7 +39,7 @@ const search = async (form: SearchTorrentRequestsQuery) => {
 
 const loadSearchForm = async () => {
   initialForm.value.title_group_name = route.query.title_group_name?.toString() ?? null
-  initialForm.value.tags = route.query.tags ? (Array.isArray(route.query.tags) ? route.query.tags : [route.query.tags.toString()]) : null
+  initialForm.value.tags = route.query.tags ? (Array.isArray(route.query.tags) ? (route.query.tags as string[]) : [route.query.tags.toString()]) : null
 
   search(initialForm.value)
 }
