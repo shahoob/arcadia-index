@@ -1781,7 +1781,7 @@ export interface components {
         TorrentRequestAndAssociatedData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             series: components["schemas"]["SeriesLite"];
-            title_group: components["schemas"]["TitleGroupLite"];
+            title_group: components["schemas"]["TitleGroup"];
             torrent_request: components["schemas"]["TorrentRequest"];
             votes: components["schemas"]["TorrentRequestVote"][];
         };
@@ -1801,7 +1801,6 @@ export interface components {
             audio_bitrate_sampling?: null | components["schemas"]["AudioBitrateSampling"];
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
-            bounties: components["schemas"]["TorrentRequestBounties"];
             container: string;
             /** Format: date-time */
             created_at: string;

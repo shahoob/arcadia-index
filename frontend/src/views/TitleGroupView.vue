@@ -14,7 +14,12 @@
         'with-sidebar': userStore.settings.site_appearance.item_detail_layout.includes('sidebar'),
       }"
     >
-      <TitleGroupFullHeader :title_group="titleGroupAndAssociatedData" v-if="userStore.settings.site_appearance.item_detail_layout == 'header'" />
+      <TitleGroupFullHeader
+        :title_group="titleGroupAndAssociatedData.title_group"
+        :series="titleGroupAndAssociatedData.series"
+        :affiliatedArtists="titleGroupAndAssociatedData.affiliated_artists"
+        v-if="userStore.settings.site_appearance.item_detail_layout == 'header'"
+      />
       <TitleGroupSlimHeader
         v-else
         :titleGroup="titleGroupAndAssociatedData.title_group"
@@ -80,7 +85,7 @@
         v-if="Object.keys(titleGroupAndAssociatedData.title_group.embedded_links).length > 0"
         :links="titleGroupAndAssociatedData.title_group.embedded_links"
       />
-      <ContentContainer class="description" v-if="titleGroupAndAssociatedData" :container-title="t('title_group.description')">
+      <ContentContainer class="description" :container-title="t('title_group.description')">
         <div class="title-group-description">
           <BBCodeRenderer :content="titleGroupAndAssociatedData.title_group.description" />
         </div>

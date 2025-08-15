@@ -7,7 +7,7 @@ use crate::models::{
     artist::AffiliatedArtistHierarchy,
     edition_group::Source,
     series::SeriesLite,
-    title_group::TitleGroupLite,
+    title_group::{TitleGroup, TitleGroupLite},
     torrent::AudioChannels,
     torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
     user::UserLite,
@@ -126,7 +126,7 @@ pub struct TorrentRequestFill {
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct TorrentRequestAndAssociatedData {
     pub torrent_request: TorrentRequest,
-    pub title_group: TitleGroupLite,
+    pub title_group: TitleGroup,
     pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
     pub series: SeriesLite,
     pub votes: Vec<TorrentRequestVote>,

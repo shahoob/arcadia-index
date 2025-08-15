@@ -33,13 +33,16 @@
         {{ t('artist.no_affiliated_artist_registered') }}
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="t('entity.entity', 2)" v-if="affiliatedEntities.length != 0">
+    <ContentContainer :container-title="t('entity.entity', 2)" v-if="affiliatedEntities && affiliatedEntities?.length != 0">
       <!-- <template #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template> -->
       <div class="affiliated-entities">
         <AffiliatedEntity class="affiliated-entity" v-for="entity in affiliatedEntities" :key="entity.entity_id" :affiliatedEntity="entity" />
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="`${t('master_group.in_same_master_group')} (${title_group.master_group_id})`" v-if="inSameMasterGroup.length != 0">
+    <ContentContainer
+      :container-title="`${t('master_group.in_same_master_group')} (${title_group.master_group_id})`"
+      v-if="inSameMasterGroup && inSameMasterGroup?.length != 0"
+    >
       <div class="flex justify-content-center links">
         <MasterGroupLink v-for="tg in inSameMasterGroup" :key="tg.id" :title_group="tg" />
       </div>
@@ -78,10 +81,10 @@ const emit = defineEmits<{
 
 defineProps<{
   title_group: TitleGroup
-  inSameMasterGroup: TitleGroupLite[]
+  inSameMasterGroup?: TitleGroupLite[]
   series: SeriesLite
   affiliatedArtists: AffiliatedArtistHierarchy[]
-  affiliatedEntities: AffiliatedEntityHierarchy[]
+  affiliatedEntities?: AffiliatedEntityHierarchy[]
 }>()
 </script>
 <style scoped>

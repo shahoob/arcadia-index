@@ -59,14 +59,14 @@ const router = createRouter({
       name: 'New torrent request',
       component: () => import('../views/NewTorrentRequestView.vue'),
     },
-    // {
-    //   path: '/torrent-request/:id',
-    //   name: 'Torrent request',
-    //   meta: {
-    //     dynamicDocumentTitle: true,
-    //   },
-    //   component: () => import('../views/TorrentRequestView.vue'),
-    // },
+    {
+      path: '/torrent-request/:id',
+      name: 'Torrent request',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
+      component: () => import('../views/TorrentRequestView.vue'),
+    },
     {
       path: '/series/:id',
       name: 'Series',

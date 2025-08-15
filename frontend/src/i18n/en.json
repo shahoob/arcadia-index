@@ -263,7 +263,16 @@
     "voted_requests": "Requests I've voted on",
     "bookmarked_requests": "Bookmarked requests",
     "edition_name": "Edition name",
-    "created_success": "Torrent request successfuly created"
+    "created_success": "Torrent request successfuly created",
+    "acceptable_audio_bitrate_sampling": "Acceptable Audio Bitrate Sampling",
+    "acceptable_audio_channels": "Acceptable Audio Channels",
+    "acceptable_audio_codec": "Acceptable Audio Codec",
+    "acceptable_container": "Acceptable Container",
+    "acceptable_edition_name": "Acceptable",
+    "acceptable_features": "Acceptable Features",
+    "acceptable_source": "Acceptable Source",
+    "acceptable_video_codec": "Acceptable Video Codec",
+    "acceptable_video_resolution": "Acceptable Video Resolution"
   },
   "entity": {
     "entity": "Entity | Entities",

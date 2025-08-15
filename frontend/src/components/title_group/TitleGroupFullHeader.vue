@@ -42,10 +42,10 @@
             <span class="item-title">{{ t('general.country') }}:</span>
             {{ title_group.country_from }}
           </div>
-          <div v-if="title_group.series.id" class="information-line series">
+          <div v-if="series.id" class="information-line series">
             <span class="item-title">{{ t('general.series') }}:</span>
-            <RouterLink :to="`/series/${title_group.series.id}`">
-              {{ title_group.series.name }}
+            <RouterLink :to="`/series/${series.id}`">
+              {{ series.name }}
             </RouterLink>
           </div>
           <div class="information-line link-logos">
@@ -57,11 +57,7 @@
       </div>
       <div class="right">
         <div class="affiliated_artists">
-          <AffiliatedArtist
-            v-for="affiliated_artist in title_group.affiliated_artists"
-            :key="affiliated_artist.artist.id"
-            :affiliated_artist="affiliated_artist"
-          />
+          <AffiliatedArtist v-for="affiliated_artist in affiliatedArtists" :key="affiliated_artist.artist.id" :affiliated_artist="affiliated_artist" />
         </div>
       </div>
     </div>
@@ -74,13 +70,17 @@ import { Galleria } from 'primevue'
 import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
-import type { TitleGroupAndAssociatedData } from '@/services/api/torrentService'
+import type { TitleGroup } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
+import type { SeriesLite } from '@/services/api/seriesService'
+import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 
 const { t } = useI18n()
 
 defineProps<{
-  title_group: TitleGroupAndAssociatedData
+  title_group: TitleGroup
+  series: SeriesLite
+  affiliatedArtists: AffiliatedArtistHierarchy[]
 }>()
 </script>
 <style scoped>

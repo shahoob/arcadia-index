@@ -285,15 +285,7 @@ pub async fn find_torrent_request_hierarchy(
         r#"
         SELECT json_build_object(
             'torrent_request', tr,
-            'title_group', json_build_object(
-                'id', tg.id,
-                'name', tg.name,
-                'content_type', tg.content_type,
-                'original_release_date', tg.original_release_date,
-                'covers', tg.covers,
-                'edition_groups', '[]',
-                'platform', tg.platform
-            ),
+            'title_group', tg,
             'affiliated_artists', COALESCE((
                 SELECT json_agg(
                     json_build_object(
