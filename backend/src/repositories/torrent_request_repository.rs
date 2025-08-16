@@ -104,7 +104,7 @@ pub async fn fill_torrent_request(
         total_bonus: i64,
     }
 
-    let bounties_summary = query_as!(
+    let bounty_summary = query_as!(
         BountySummary,
         r#"
         SELECT
@@ -120,8 +120,8 @@ pub async fn fill_torrent_request(
 
     // Calculate the share for each user (50% each).
     // Ensure floating-point division for accurate half-shares, then cast back to i64 for database.
-    let upload_share = (bounties_summary.total_upload as f32 / 2.0).round() as i32;
-    let bonus_share = (bounties_summary.total_bonus as f32 / 2.0).round() as i32;
+    let upload_share = (bounty_summary.total_upload as f32 / 2.0).round() as i32;
+    let bonus_share = (bounty_summary.total_bonus as f32 / 2.0).round() as i32;
 
     let torrent_uploader_id: i64 = query_scalar!(
         r#"
@@ -205,7 +205,7 @@ pub async fn search_torrent_requests(
                     'edition_groups', '[]',
                     'platform', tg.platform
                 ),
-                'bounties', json_build_object(
+                'bounty', json_build_object(
                     'upload', (
                         SELECT COALESCE(SUM(trv.bounty_upload), 0)
                         FROM torrent_request_votes trv

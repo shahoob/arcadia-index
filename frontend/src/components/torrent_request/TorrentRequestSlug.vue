@@ -7,6 +7,11 @@
       </span>
     </template>
   </template>
+  <span class="separator" v-if="computedSlug.some((part) => part.length > 0) && computedSecondSlug.length > 0"> | </span>
+  <span v-for="(item, itemIndex) in computedSecondSlug" :key="itemIndex">
+    <span class="slash" v-if="itemIndex > 0"> / </span>
+    <span>{{ item }}</span>
+  </span>
 </template>
 
 <script lang="ts" setup>
@@ -22,18 +27,18 @@ const props = defineProps<{
   contentType: ContentType
 }>()
 
+function addIfPresent(arr: string[], value: string | string[] | undefined | null, specify_any: boolean, name?: string, prefix?: string) {
+  if (value && (typeof value === 'string' || value.length > 0)) {
+    arr.push(Array.isArray(value) ? value.join(', ') : value)
+  } else if (specify_any && value && typeof value === 'object' && value.length === 0) {
+    arr.push(t(`${prefix}.any_${name}`))
+  }
+}
+
 const computedSlug = computed<string[][]>(() => {
   const firstPart: string[] = []
   const features: string[] = []
   const releaseGroup: string[] = []
-
-  function addIfPresent(arr: string[], value: string | string[] | undefined | null, specify_any: boolean, name?: string) {
-    if (value && (typeof value === 'string' || value.length > 0)) {
-      arr.push(Array.isArray(value) ? value.join(', ') : value)
-    } else if (specify_any && value && typeof value === 'object' && value.length === 0) {
-      arr.push(t(`torrent.any_${name}`))
-    }
-  }
 
   if (['movie', 'tv-show', 'video', 'collection'].indexOf(props?.contentType) >= 0) {
     if (
@@ -48,15 +53,18 @@ const computedSlug = computed<string[][]>(() => {
       firstPart.push(t('torrent.any_video_resolution'))
     }
   }
+
   if (['movie', 'tv-show', 'video', 'collection'].indexOf(props?.contentType) >= 0) {
-    addIfPresent(firstPart, props.torrentRequest.video_codec, true, 'video_codec')
+    addIfPresent(firstPart, props.torrentRequest.video_codec, true, 'video_codec', 'torrent')
   }
+
   if (props.contentType !== 'music') {
-    addIfPresent(firstPart, props.torrentRequest.container, false, 'container')
+    addIfPresent(firstPart, props.torrentRequest.container, false, 'container', 'torrent')
   }
-  addIfPresent(firstPart, props.torrentRequest.audio_codec, true, 'audio_codec')
-  addIfPresent(firstPart, props.torrentRequest.audio_channels, false, 'audio_channels')
-  addIfPresent(firstPart, props.torrentRequest.audio_bitrate_sampling, true, 'audio_bitrate_sampling')
+
+  addIfPresent(firstPart, props.torrentRequest.audio_codec, true, 'audio_codec', 'torrent')
+  addIfPresent(firstPart, props.torrentRequest.audio_channels, false, 'audio_channels', 'torrent')
+  addIfPresent(firstPart, props.torrentRequest.audio_bitrate_sampling, true, 'audio_bitrate_sampling', 'torrent')
 
   if (props.torrentRequest.languages.length === 1 && props.torrentRequest.languages[0] !== 'English') {
     firstPart.push(props.torrentRequest.languages[0])
@@ -75,9 +83,22 @@ const computedSlug = computed<string[][]>(() => {
 
   return [firstPart, features, releaseGroup]
 })
+
+const computedSecondSlug = computed<string[]>(() => {
+  const slug: string[] = []
+
+  addIfPresent(slug, props.torrentRequest.edition_name, false, undefined, 'edition_group')
+  addIfPresent(slug, props.torrentRequest.source, true, 'source', 'edition_group')
+
+  return slug
+})
 </script>
+
 <style scoped>
 .slash {
   font-weight: 300;
+}
+.separator {
+  margin: 0 4px;
 }
 </style>

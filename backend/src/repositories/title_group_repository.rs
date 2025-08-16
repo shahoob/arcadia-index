@@ -85,7 +85,7 @@ pub async fn find_title_group_hierarchy(
                 LEFT JOIN users u ON u.id = t.created_by_id
                 GROUP BY t.edition_group_id
             ),
-            torrent_request_with_bounties AS (
+            torrent_request_with_bounty AS (
                 SELECT
                     tr.*,
                     u.username,
@@ -126,15 +126,15 @@ pub async fn find_title_group_hierarchy(
                 SELECT
                     trb.title_group_id,
                     jsonb_agg(
-                        (to_jsonb(trb) - 'created_by_id') ||
                         jsonb_build_object(
+                            'torrent_request', to_jsonb(trb),
                             'created_by', jsonb_build_object(
                                 'id', trb.created_by_id,
                                 'username', trb.username,
                                 'warned', trb.warned,
                                 'banned', trb.banned
                             ),
-                            'bounties', jsonb_build_object(
+                            'bounty', jsonb_build_object(
                                 'upload', trb.total_upload_bounty,
                                 'bonus_points', trb.total_bonus_bounty
                             ),
@@ -142,7 +142,7 @@ pub async fn find_title_group_hierarchy(
                         )
                         ORDER BY trb.id
                     ) AS torrent_requests
-                FROM torrent_request_with_bounties trb
+                FROM torrent_request_with_bounty trb
                 GROUP BY trb.title_group_id
             ),
             edition_data AS (

@@ -72,46 +72,24 @@ pub struct UserCreatedTorrentRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
-pub struct TorrentRequestBounties {
+pub struct TorrentRequestBounty {
     bonus_points: i64,
     upload: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentRequestHierarchyLite {
-    pub id: i64,
-    pub title_group_id: i64,
-    #[schema(value_type = String, format = DateTime)]
-    pub created_at: DateTime<Utc>,
-    #[schema(value_type = String, format = DateTime)]
-    pub updated_at: DateTime<Utc>,
+    pub torrent_request: TorrentRequest,
     pub created_by: UserLite,
-    pub filled_by_user_id: Option<i64>,
-    pub filled_by_torrent_id: Option<i64>,
-    #[schema(value_type = String, format = DateTime)]
-    pub filled_at: Option<DateTime<Utc>>,
-    pub edition_name: Option<String>,
-    pub release_group: Option<String>,
-    pub description: Option<String>,
-    pub languages: Vec<Language>,
-    pub container: String,
     pub user_votes_amount: i32,
-    pub audio_codec: Option<AudioCodec>,
-    pub audio_channels: Option<String>,
-    pub audio_bitrate_sampling: Option<AudioBitrateSampling>,
-    pub video_codec: Option<VideoCodec>,
-    pub features: Option<Vec<Features>>,
-    pub subtitle_languages: Vec<Language>,
-    pub video_resolution: Option<VideoResolution>,
-    pub video_resolution_other_x: Option<i32>,
-    pub video_resolution_other_y: Option<i32>,
+    pub bounty: TorrentRequestBounty,
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct TorrentRequestWithTitleGroupLite {
     pub torrent_request: TorrentRequest,
     pub title_group: TitleGroupLite,
-    pub bounties: TorrentRequestBounties,
+    pub bounty: TorrentRequestBounty,
     pub user_votes_amount: i32,
     pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
     pub series: SeriesLite,
