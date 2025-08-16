@@ -50,7 +50,8 @@
     "view": "View",
     "cancel": "Cancel",
     "validate": "Validate",
-    "sent": "Sent"
+    "sent": "Sent",
+    "any": "Any"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -262,17 +263,24 @@
     "my_requests": "My requests",
     "voted_requests": "Requests I've voted on",
     "bookmarked_requests": "Bookmarked requests",
+    "description": "Request description",
     "edition_name": "Edition name",
     "created_success": "Torrent request successfuly created",
     "acceptable_audio_bitrate_sampling": "Acceptable Audio Bitrate Sampling",
     "acceptable_audio_channels": "Acceptable Audio Channels",
     "acceptable_audio_codec": "Acceptable Audio Codec",
     "acceptable_container": "Acceptable Container",
-    "acceptable_edition_name": "Acceptable",
+    "acceptable_edition_name": "Acceptable Edition",
     "acceptable_features": "Acceptable Features",
     "acceptable_source": "Acceptable Source",
     "acceptable_video_codec": "Acceptable Video Codec",
-    "acceptable_video_resolution": "Acceptable Video Resolution"
+    "acceptable_video_resolution": "Acceptable Video Resolution",
+    "voter": "Voter",
+    "voted_at": "Voted at",
+    "new_vote": "New vote",
+    "vote": "Vote | Votes",
+    "bounty": "Bounty",
+    "vote_successful": "Your vote has been added!"
   },
   "entity": {
     "entity": "Entity | Entities",

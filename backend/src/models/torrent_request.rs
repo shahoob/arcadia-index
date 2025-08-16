@@ -9,7 +9,7 @@ use crate::models::{
     series::SeriesLite,
     title_group::{TitleGroup, TitleGroupLite},
     torrent::AudioChannels,
-    torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
+    torrent_request_vote::{TorrentRequestVoteHierarchy, UserCreatedTorrentRequestVote},
     user::UserLite,
 };
 
@@ -129,5 +129,5 @@ pub struct TorrentRequestAndAssociatedData {
     pub title_group: TitleGroup,
     pub affiliated_artists: Vec<AffiliatedArtistHierarchy>,
     pub series: SeriesLite,
-    pub votes: Vec<TorrentRequestVote>,
+    pub votes: Vec<TorrentRequestVoteHierarchy>,
 }

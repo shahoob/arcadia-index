@@ -47,7 +47,8 @@
           <!-- <i @click="requestTorrent" v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" /> -->
         </div>
       </div>
-      <TorrentRequestDetails :torrentRequest="torrentRequestAndAssociatedData.torrent_request" />
+      <TorrentRequestDetails :torrentRequest="torrentRequestAndAssociatedData.torrent_request" :votes="torrentRequestAndAssociatedData.votes" @voted="voted" />
+      <TorrentRequestVotesTable class="votes-table" :votes="torrentRequestAndAssociatedData.votes" />
       <!-- <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="titleGroupAndAssociatedData.title_group.screenshots.length !== 0">
         <CustomGalleria :images="titleGroupAndAssociatedData.title_group.screenshots" />
       </ContentContainer> -->
@@ -68,9 +69,10 @@
         :links="titleGroupAndAssociatedData.title_group.embedded_links"
       /> -->
       <ContentContainer class="description" :container-title="t('title_group.description')">
-        <div class="title-group-description">
-          <BBCodeRenderer :content="torrentRequestAndAssociatedData.title_group.description" />
-        </div>
+        <BBCodeRenderer :content="torrentRequestAndAssociatedData.title_group.description" />
+      </ContentContainer>
+      <ContentContainer class="description" :container-title="t('torrent_request.description')">
+        <BBCodeRenderer :content="torrentRequestAndAssociatedData.torrent_request.description" />
       </ContentContainer>
       <!-- <TitleGroupComments :comments="titleGroupAndAssociatedData.title_group_comments" @newComment="newComment" /> -->
     </div>
@@ -90,6 +92,7 @@ import { useUserStore } from '@/stores/user'
 import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import TitleGroupSidebar from '@/components/title_group/TitleGroupSidebar.vue'
 import ContentContainer from '@/components/ContentContainer.vue'
+import TorrentRequestVotesTable from '@/components/torrent_request/TorrentRequestVotesTable.vue'
 // import { getTitleGroup, type TitleGroup, type TitleGroupAndAssociatedData } from '@/services/api/torrentService'
 // import TitleGroupTable from '@/components/title_group/TitleGroupTable.vue'
 // import TorrentRequestsTable from '@/components/torrent_request/TorrentRequestsTable.vue'
@@ -108,6 +111,7 @@ import { useI18n } from 'vue-i18n'
 // import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import { getTorrentRequest, type TorrentRequestAndAssociatedData } from '@/services/api/torrentRequestService'
 import TorrentRequestDetails from '@/components/torrent_request/TorrentRequestDetails.vue'
+import type { TorrentRequestVoteHierarchy } from '@/services/api/torrentRequestVoteService'
 
 const router = useRouter()
 const route = useRoute()
@@ -137,13 +141,14 @@ const fetchTorrentRequest = async () => {
   //   : `${titleGroupAndAssociatedData.value.title_group.name} - ${siteName}`
 }
 
+// TODO: also include the edition groups in torrentRequestAndAssociatedData, or pass an argument to the upload page to fetch them
 // const populateTitleGroupStore = () => {
-//   if (titleGroupAndAssociatedData.value) {
-//     titleGroupStore.id = titleGroupAndAssociatedData.value.title_group.id
-//     titleGroupStore.original_release_date = titleGroupAndAssociatedData.value.title_group.original_release_date
-//     titleGroupStore.name = titleGroupAndAssociatedData.value.title_group.name
-//     titleGroupStore.edition_groups = titleGroupAndAssociatedData.value.edition_groups
-//     titleGroupStore.content_type = titleGroupAndAssociatedData.value.title_group.content_type
+//   if (torrentRequestAndAssociatedData.value) {
+//     titleGroupStore.id = torrentRequestAndAssociatedData.value.title_group.id
+//     titleGroupStore.original_release_date = torrentRequestAndAssociatedData.value.title_group.original_release_date
+//     titleGroupStore.name = torrentRequestAndAssociatedData.value.title_group.name
+//     // titleGroupStore.edition_groups = torrentRequestAndAssociatedData.value.edition_groups
+//     titleGroupStore.content_type = torrentRequestAndAssociatedData.value.title_group.content_type
 //   }
 // }
 
@@ -175,6 +180,12 @@ const uploadTorrent = () => {
 //   titleGroupAndAssociatedData.value?.title_group_comments.push(comment)
 // }
 
+const voted = (vote: TorrentRequestVoteHierarchy) => {
+  if (torrentRequestAndAssociatedData.value) {
+    torrentRequestAndAssociatedData.value.votes.push(vote)
+  }
+}
+
 watch(() => route.params.id, fetchTorrentRequest, { immediate: true })
 </script>
 
@@ -196,10 +207,7 @@ watch(() => route.params.id, fetchTorrentRequest, { immediate: true })
   color: white;
   cursor: pointer;
 }
-.screenshots {
-  margin-top: 20px;
-}
-.torrent-requests {
+.votes-table {
   margin-top: 20px;
 }
 .embedded-links {
@@ -211,13 +219,6 @@ watch(() => route.params.id, fetchTorrentRequest, { immediate: true })
 .title-group-description {
   margin-top: 10px;
   margin-bottom: 25px;
-}
-.edition-description {
-  margin-top: 15px;
-}
-.edition-description .edition-group-slug {
-  color: var(--color-primary);
-  margin-bottom: 5px;
 }
 .ratings {
   margin-top: 20px;

@@ -43,10 +43,12 @@ use crate::{
             TorrentRequestHierarchyLite, TorrentRequestWithTitleGroupLite,
             UserCreatedTorrentRequest,
         },
-        torrent_request_vote::{TorrentRequestVote, UserCreatedTorrentRequestVote},
+        torrent_request_vote::{
+            TorrentRequestVote, TorrentRequestVoteHierarchy, UserCreatedTorrentRequestVote,
+        },
         user::{
             EditedUser, Login, LoginResponse, Profile, PublicProfile, PublicUser, RefreshToken,
-            Register, User, UserCreatedUserWarning, UserWarning,
+            Register, User, UserCreatedUserWarning, UserLite, UserWarning,
         },
         user_application::{UserApplication, UserApplicationStatus, UserCreatedUserApplication},
         wiki::{UserCreatedWikiArticle, WikiArticle, WikiArticleHierarchy},
@@ -199,7 +201,9 @@ use crate::{
         EditedTitleGroup,
         Extras,
         SearchTorrentRequestsQuery,
-        SeriesLite
+        SeriesLite,
+        TorrentRequestVoteHierarchy,
+        UserLite,
     ),)
 )]
 pub struct ApiDoc;

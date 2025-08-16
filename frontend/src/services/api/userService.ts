@@ -3,6 +3,8 @@ import api from './api.ts'
 
 export type Peer = components['schemas']['Peer']
 
+export type UserLite = components['schemas']['UserLite']
+
 // TODO: update when we can deserialize the settings field to a rust struct and get the type for
 // this field generated automatically
 // https://github.com/launchbadge/sqlx/issues/3153#issuecomment-2798756953

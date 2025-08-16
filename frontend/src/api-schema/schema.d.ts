@@ -1783,7 +1783,7 @@ export interface components {
             series: components["schemas"]["SeriesLite"];
             title_group: components["schemas"]["TitleGroup"];
             torrent_request: components["schemas"]["TorrentRequest"];
-            votes: components["schemas"]["TorrentRequestVote"][];
+            votes: components["schemas"]["TorrentRequestVoteHierarchy"][];
         };
         TorrentRequestBounties: {
             /** Format: int64 */
@@ -1839,6 +1839,21 @@ export interface components {
             bounty_upload: number;
             /** Format: date-time */
             created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            torrent_request_id: number;
+        };
+        TorrentRequestVoteHierarchy: {
+            /** Format: int64 */
+            bounty_bonus_points: number;
+            /** Format: int64 */
+            bounty_upload: number;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
             /** Format: int64 */
             created_by_id: number;
             /** Format: int64 */
