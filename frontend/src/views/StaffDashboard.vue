@@ -27,7 +27,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 </script>
 
-<style>
+<style scoped>
 #staff-dashboard {
   .p-tablist-tab-list {
     display: flex;

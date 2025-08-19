@@ -46,7 +46,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped>
 #home-page {
   display: flex;
   justify-content: space-between;
