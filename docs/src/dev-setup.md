@@ -22,7 +22,7 @@ It isn't required to use them but can be useful in some cases (especially if you
 You need these to make meaningful contributions to Arcadia, outside the cases of documentation for example.
 
 - [Node.js & npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-- [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
+- [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) (version 1.88.0 and higher)
 
 ## Recommended Tools
 
