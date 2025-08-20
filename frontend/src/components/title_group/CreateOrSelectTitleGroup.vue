@@ -54,14 +54,14 @@
       v-model="titleGroupForm.name"
     />
   </template>
-  <CreateOrEditTitleGroup v-else-if="action === 'create'" @done="titleGroupCreated" :initial-title-group-form="titleGroupForm" />
+  <CreateOrEditTitleGroup v-else-if="action === 'create'" @done="titleGroupCreated" :initial-title-group="titleGroupForm" />
 </template>
 
 <script setup lang="ts">
-import type { TitleGroup, TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
+import type { ContentType, TitleGroup, TitleGroupLite, UserCreatedEditionGroup, UserCreatedTitleGroup } from '@/services/api/torrentService'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CreateOrEditTitleGroup, { type UserCreatedTitleGroupForm } from './CreateOrEditTitleGroup.vue'
+import CreateOrEditTitleGroup from './CreateOrEditTitleGroup.vue'
 import TitleGroupSearchBar from './TitleGroupSearchBar.vue'
 import ExternalDBSearchBar from './ExternalDBSearchBar.vue'
 import { Select, FloatLabel } from 'primevue'
@@ -78,7 +78,14 @@ const emit = defineEmits<{
 }>()
 
 const action = ref<'select' | 'create'>('select')
+
+// this type is used to allow more flexibility in certain fields in the frontend forms
+export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
+  content_type: ContentType | null
+  id: number
+}
 const titleGroupForm = ref<UserCreatedTitleGroupForm>({
+  id: 0,
   name: '',
   description: '',
   original_language: '',

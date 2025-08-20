@@ -223,18 +223,16 @@ import { onMounted } from 'vue'
 import { nextTick } from 'vue'
 import _ from 'lodash'
 import { showToast } from '@/main'
+import type { UserCreatedTitleGroupForm } from './CreateOrSelectTitleGroup.vue'
 
 const props = defineProps<{
-  initialTitleGroup?: EditedTitleGroup
+  initialTitleGroup?: EditedTitleGroup | UserCreatedTitleGroupForm
   editMode?: boolean
 }>()
 const titleGroupStore = ref(useTitleGroupStore())
 
 const sendingTitleGroup = ref(false)
 
-export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type'> & {
-  content_type: ContentType | null
-}
 const titleGroupForm = ref({
   id: 0,
   name: '',
