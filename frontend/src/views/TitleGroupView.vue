@@ -272,7 +272,7 @@ const affiliatedArtistsEdited = (newAffiliatedArtists: AffiliatedArtistHierarchy
 
 const titleGroupEdited = (updatedTitleGroup: TitleGroup) => {
   if (titleGroupAndAssociatedData.value) {
-    titleGroupAndAssociatedData.value = { ...titleGroupAndAssociatedData.value, ...updatedTitleGroup }
+    titleGroupAndAssociatedData.value.title_group = { ...titleGroupAndAssociatedData.value.title_group, ...updatedTitleGroup }
   }
   editTitleGroupDialogVisible.value = false
 }
