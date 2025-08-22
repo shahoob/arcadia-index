@@ -1,7 +1,8 @@
-use std::collections::HashSet;
+use crate::env::Env;
+use std::{ops::Deref, str::FromStr};
 
-use reqwest::Url;
 pub mod api_doc;
+pub mod env;
 pub mod handlers;
 pub mod models;
 pub mod periodic_tasks;
@@ -16,32 +17,41 @@ pub enum OpenSignups {
     Enabled,
 }
 
+impl FromStr for OpenSignups {
+    type Err = env::Error;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        match s {
+            "true" => Ok(Self::Enabled),
+            "false" => Ok(Self::Disabled),
+            _ => Err(env::Error::EnvVariableParseError(
+                "ARCADIA_OPEN_SIGNUPS".to_string(),
+            )),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct Arcadia {
     pub pool: sqlx::PgPool,
-    pub jwt_secret: String,
-    pub open_signups: OpenSignups,
-    pub tracker_name: String,
-    pub frontend_url: Url,
-    pub tracker_url: Url,
-    pub tracker_announce_interval: u32,
-    pub tracker_announce_interval_grace_period: u32,
-    pub allowed_torrent_clients: HashSet<Vec<u8>>,
-    pub global_upload_factor: f64,
-    pub global_download_factor: f64,
-    pub tmdb_api_key: Option<String>,
-    pub smtp_host: Option<String>,
-    pub smtp_port: Option<u16>,
-    pub smtp_username: Option<String>,
-    pub smtp_password: Option<String>,
-    pub smtp_from_email: Option<String>,
-    pub smtp_from_name: Option<String>,
+    env: Env,
+}
+
+impl Deref for Arcadia {
+    type Target = Env;
+
+    fn deref(&self) -> &Self::Target {
+        &self.env
+    }
 }
 
 impl Arcadia {
+    pub fn new(pool: sqlx::PgPool, env: Env) -> Self {
+        Self { pool, env }
+    }
     #[inline]
     pub fn is_open_signups(&self) -> bool {
-        self.open_signups == OpenSignups::Enabled
+        Into::<OpenSignups>::into(self.env.open_signups) == OpenSignups::Enabled
     }
 }
 

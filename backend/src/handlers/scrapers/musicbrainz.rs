@@ -148,8 +148,8 @@ pub async fn get_musicbrainz_data(
     // .expect("No MusicBrainz release/release-group match found in URL");
     let mut client = MusicBrainzClient::default();
     client
-        .set_user_agent(&format!("{} ({})", arc.tracker_name, arc.frontend_url))
-        .unwrap();
+        .set_user_agent(&format!("{} ({})", arc.tracker.name, arc.frontend_url))
+        .map_err(|_| Error::InvalidMusicbrainzUrl)?;
 
     let mut title_group: Option<UserCreatedTitleGroup> = None;
     let mut edition_group: Option<UserCreatedEditionGroup> = None;
