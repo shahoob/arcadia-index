@@ -1,5 +1,7 @@
 use crate::{Error, Result, models::notification::NotificationReason};
+use sqlx::PgPool;
 use sqlx::{Postgres, Transaction};
+use std::collections::HashMap;
 
 pub struct NotificationItemsIds {
     pub title_group_id: Option<i64>,
@@ -72,4 +74,30 @@ pub async fn notify_users(
     }
 
     Ok(())
+}
+
+pub async fn find_unread_notifications_amount(
+    pool: &PgPool,
+    user_id: i64,
+) -> Result<HashMap<NotificationReason, i64>> {
+    let rows = sqlx::query!(
+        r#"
+        SELECT reason as "reason: NotificationReason", 
+               COUNT(*) as "count!"
+        FROM notifications
+        WHERE receiver_id = $1 AND read_status = FALSE
+        GROUP BY reason
+        "#,
+        user_id
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(Error::CouldNotGetUnreadNotifications)?;
+
+    let map = rows
+        .into_iter()
+        .map(|r| (r.reason, r.count))
+        .collect::<HashMap<_, _>>();
+
+    Ok(map)
 }
