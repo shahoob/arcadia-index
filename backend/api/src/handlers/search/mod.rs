@@ -8,7 +8,7 @@ use actix_web::web::{get, post, resource, ServiceConfig};
 
 pub fn config(cfg: &mut ServiceConfig) {
     cfg.service(
-        resource("/title-groups/lite").route(post().to(self::search_title_group_info_lite::exec)),
+        resource("/title-groups/lite").route(get().to(self::search_title_group_info_lite::exec)),
     );
     cfg.service(resource("/torrents/lite").route(post().to(self::search_torrents::exec)));
     cfg.service(resource("/artists/lite").route(post().to(self::search_artists_lite::exec)));
