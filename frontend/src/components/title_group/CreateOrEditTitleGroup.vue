@@ -10,7 +10,7 @@
     validateOnBlur
     ref="formRef"
   >
-    <FloatLabel style="margin-top: 0px">
+    <FloatLabel style="margin-top: 0">
       <Select
         v-model="titleGroupForm.content_type"
         @update:model-value="(content_type) => (titleGroupStore.content_type = content_type)"
@@ -490,9 +490,6 @@ onMounted(async () => {
 }
 .select {
   width: 200px;
-}
-.p-floatlabel {
-  margin-top: 30px;
 }
 .original-release-date {
   margin-top: 30px;

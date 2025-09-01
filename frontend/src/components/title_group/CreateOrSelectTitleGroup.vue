@@ -1,6 +1,6 @@
 <template>
   <template v-if="action === 'select'">
-    <FloatLabel class="input">
+    <FloatLabel class="input select-content-type">
       <Select
         v-model="titleGroupForm.content_type"
         @update:model-value="(content_type) => (titleGroupStore.content_type = content_type)"
@@ -153,5 +153,8 @@ const externalDBDataFound = (data: ExternalDBData) => {
   .external-db-input {
     margin-right: 10px;
   }
+}
+.select-content-type {
+  margin-top: 0;
 }
 </style>
