@@ -493,9 +493,10 @@ onMounted(async () => {
 }
 .original-release-date {
   margin-top: 30px;
+  margin-bottom: 20px;
 }
 .input-list {
-  margin-top: 15px;
+  margin-bottom: 15px;
 }
 .input-list input {
   &:not(.artist) {
