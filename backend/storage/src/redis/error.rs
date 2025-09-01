@@ -6,7 +6,7 @@ pub type Result<T> = std::result::Result<T, RedisError>;
 pub enum RedisError {
     #[error("connection error")]
     ConnectionError(#[source] PoolError<redis::RedisError>),
-    #[error("cmd execution error")]
+    #[error("cmd execution error: '{0}'")]
     CmdError(#[source] redis::RedisError),
 }
 
