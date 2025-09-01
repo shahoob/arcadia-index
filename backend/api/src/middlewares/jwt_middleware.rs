@@ -36,10 +36,7 @@ pub async fn authenticate_user<R: RedisPoolInterface + 'static>(
     // These routes are explicitly not authenticated.
     if matches!(
         req.path(),
-        "/api/auth/login"
-            | "/api/auth/register"
-            | "/api/auth/refresh-token"
-            | "/api/user-applications"
+        "/api/auth/login" | "/api/auth/register" | "/api/auth/refresh-token" | "/api/auth/apply"
     ) {
         return Ok(req);
     }

@@ -23,7 +23,7 @@ pub struct GetUserApplicationsQuery {
     post,
     operation_id = "Create user application",
     tag = "User Application",
-    path = "/api/user-applications",
+    path = "/api/auth/apply",
     responses(
         (status = 201, description = "Successfully created user application", body = UserApplication)
     )

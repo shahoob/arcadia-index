@@ -5,7 +5,7 @@ use utoipa::{
 
 use crate::handlers::{
     artists::get_artist_publications::GetArtistPublicationsQuery,
-    auth::register::RegisterQuery,
+    auth::{create_user_application::GetUserApplicationsQuery, register::RegisterQuery},
     home::get_home::HomePage,
     scrapers::ExternalDBData,
     search::search_torrent_requests::SearchTorrentRequestsQuery,
@@ -13,10 +13,7 @@ use crate::handlers::{
         download_dottorrent_file::DownloadTorrentQuery, get_top_torrents::GetTopTorrentsQuery,
         get_upload_information::UploadInformation,
     },
-    user_applications::{
-        create_user_application::GetUserApplicationsQuery,
-        update_user_application_status::UpdateUserApplication,
-    },
+    user_applications::update_user_application_status::UpdateUserApplication,
 };
 use arcadia_storage::models::{
     artist::{
@@ -72,7 +69,7 @@ use arcadia_storage::models::{
         crate::handlers::users::get_user_conversations::exec,
         crate::handlers::users::get_me::exec,
         crate::handlers::users::get_registered_users::exec,
-        crate::handlers::user_applications::create_user_application::exec,
+        crate::handlers::auth::create_user_application::exec,
         crate::handlers::user_applications::get_user_applications::exec,
         crate::handlers::user_applications::update_user_application_status::exec,
         crate::handlers::home::get_home::exec,

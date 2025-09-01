@@ -1,3 +1,4 @@
+pub mod create_user_application;
 pub mod login;
 pub mod refresh_token;
 pub mod register;
@@ -9,4 +10,5 @@ pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
     cfg.service(resource("/register").route(post().to(self::register::exec::<R>)));
     cfg.service(resource("/login").route(post().to(self::login::exec::<R>)));
     cfg.service(resource("/refresh-token").route(post().to(self::refresh_token::exec::<R>)));
+    cfg.service(resource("/apply").route(post().to(self::create_user_application::exec::<R>)));
 }
