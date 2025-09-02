@@ -1,96 +1,54 @@
-FROM debian:bookworm-slim AS debian-base
+FROM rust:1.89 AS base
+RUN cargo install --locked cargo-chef
 
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+FROM base AS planner
 
-FROM alpine:3 AS alpine-base
-
-FROM rust:1.89-slim-bookworm AS prebuild
-# Don't delete any downloaded packages, we'd be using BuildKit cache mounts later!
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
 WORKDIR /app
-# COPY . .
-COPY .sqlx/ ./sqlx/
-COPY vendored vendored
 
-COPY Cargo.toml Cargo.lock ./
+COPY ./backend ./backend
+COPY Cargo.toml Cargo.toml
 
-# This doesn't mount anything from your system, it's all in the build cache
-# Helps speed up repetitive docker builds by A LOT
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/app/target \
-    apt-get update && apt-get install -y libssl-dev openssl curl pkg-config ca-certificates
+# Creates the manifest for dependencies
+RUN cargo chef prepare --recipe-path recipe.json
 
-COPY migrations/ migrations/
+FROM base AS builder
 
+WORKDIR /app
+
+COPY --from=planner /app/recipe.json recipe.json
+COPY --from=planner /app/backend/api/vendored /app/backend/api/vendored/
+# Necessary for `init_db`
+COPY --from=planner /app/backend/storage/migrations/ migrations/
+
+# Necessary for `init_db`
 RUN cargo install sqlx-cli --no-default-features --features native-tls,postgres
 
-# The dummy file is our only way to build only the dependencies before the app itself.
-RUN mkdir ./src && \
-    echo "fn main() {}" > ./src/dummy.rs
+# Caches the target directory for intermediate build artifacts.
+# Checks the .env.docker file to choose between dev and prod builds.
+# `cargo chef cook` downloads, builds, and caches all of the dependencies for future builds.
+RUN --mount=type=cache,target=target,sharing=locked if [ $(grep "^PRODUCTION_BUILD=" backend/api/.env.docker | cut -d '=' -f2) = "true" ]; then \
+    cargo chef cook --bin arcadia-api --release --recipe-path recipe.json; \
+    else \
+    cargo chef cook --bin arcadia-api --recipe-path recipe.json; \
+    fi
 
-FROM prebuild AS build-prod
-
-RUN mv ./src/dummy.rs ./src/main.rs
-
-RUN SQLX_OFFLINE=true cargo build --release
-
-RUN rm ./src/main.rs
 COPY . .
 
-RUN SQLX_OFFLINE=true cargo build --release
+# The finished binary is placed in /usr/local/bin because it can't be conditionally copied from the runtime stage, so 
+# both prod and dev can be copied from the same place.
+RUN --mount=type=cache,target=target,sharing=locked if [ $(grep "^PRODUCTION_BUILD=" backend/api/.env.docker | cut -d '=' -f2) = "true" ]; then \
+    SQLX_OFFLINE=true cargo build --bin arcadia-api --release && mv /app/target/release/arcadia-api /usr/local/bin; \
+    else \
+    SQLX_OFFLINE=true cargo build --bin arcadia-api && mv /app/target/debug/arcadia-api /usr/local/bin; \
+    fi
 
-FROM prebuild AS build-debug
-
-RUN mv ./src/dummy.rs ./src/main.rs
-
-RUN SQLX_OFFLINE=true cargo build
-
-RUN rm ./src/main.rs
-COPY . .
-
-RUN SQLX_OFFLINE=true cargo build
-
-FROM alpine-base AS debug-alpine
-
-RUN apk add --no-cache openssl
+FROM debian:bookworm-slim AS runtime
 
 WORKDIR /app
 
-COPY --chmod=777 --from=build-debug /app/target/debug/arcadia-api .
-CMD ["./arcadia-api"]
+RUN apt-get update && apt-get install -y libssl-dev openssl curl pkg-config ca-certificates
 
-FROM alpine-base AS alpine
+COPY --from=builder /usr/local/bin/arcadia-api /usr/local/bin 
 
-RUN apk add --no-cache openssl
-
-WORKDIR /app
-
-COPY --chmod=777 --from=build-prod /app/target/release/arcadia-api .
-CMD ["./arcadia-api"]
-
-# use --target debug when you want to build the debug variant
-FROM debian-base AS debug
-WORKDIR /app
-
-COPY --chmod=755 --from=build-debug /app/target/debug/arcadia-api .
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && apt-get install -y openssl ca-certificates
-
-CMD ["./arcadia-backend"]
-
-FROM debian-base
-WORKDIR /app
-
-COPY --chmod=755 --from=build-prod /app/target/release/arcadia-api .
-# COPY --from=prebuild /usr/local/cargo/bin/sqlx .
-# COPY  ./migrations ./migrations
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && apt-get install -y openssl ca-certificates
-
-CMD ["./arcadia-backend"]
+ENTRYPOINT ["/usr/local/bin/arcadia-api"]

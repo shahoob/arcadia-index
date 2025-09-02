@@ -1,6 +1,9 @@
 [workspace]
 members = [
-  "backend/*",
+  "backend/api",
+  "backend/common",
+  "backend/periodic-tasks",
+  "backend/storage",
 ]
 
 resolver = "2"
