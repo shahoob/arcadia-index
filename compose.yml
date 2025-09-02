@@ -12,7 +12,6 @@ services:
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
     volumes:
-      # - ./volumes/postgres-data/:/var/lib/postgresql/data/
       - db_data:/var/lib/postgresql/data/
     ports:
       - 4321:5432
@@ -29,6 +28,7 @@ services:
     container_name: init_db
     env_file:
       - backend/api/.env.docker
+      - backend/api/.env
     build:
       context: ./
       dockerfile: backend/api/Dockerfile
@@ -60,7 +60,7 @@ services:
       context: ./
       dockerfile: backend/api/Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     env_file:
       - backend/api/.env.docker
       - backend/api/.env
