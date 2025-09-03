@@ -5,6 +5,8 @@ export type StaffPm = components['schemas']['StaffPm']
 
 export type StaffPmOverview = components['schemas']['StaffPmOverview']
 
+export type StaffPmHierarchy = components['schemas']['StaffPmHierarchy']
+
 export type StaffPmMessage = components['schemas']['StaffPmMessage']
 
 export type UserCreatedStaffPm = components['schemas']['UserCreatedStaffPm']
@@ -23,7 +25,7 @@ export const postStaffPmMessage = async (message: UserCreatedStaffPmMessage): Pr
   return (await api.post<StaffPmMessage>('/staff-pms/messages', message)).data
 }
 
-export const getStaffPm = async (id: number) => {
+export const getStaffPm = async (id: number): Promise<StaffPmHierarchy> => {
   return (await api.get(`/staff-pms/${id}`)).data
 }
 

@@ -161,6 +161,14 @@ const router = createRouter({
       component: () => import('../views/conversation/ConversationView.vue'),
     },
     {
+      path: '/staff-pm/:id',
+      name: 'Staff PM',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
+      component: () => import('../views/StaffPmView.vue'),
+    },
+    {
       path: '/conversations',
       name: 'Conversations',
       component: () => import('../views/conversation/ConversationsView.vue'),

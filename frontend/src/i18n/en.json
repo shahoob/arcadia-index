@@ -51,7 +51,8 @@
     "cancel": "Cancel",
     "validate": "Validate",
     "sent": "Sent",
-    "any": "Any"
+    "any": "Any",
+    "created_by": "Created by"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -313,7 +314,9 @@
     }
   },
   "staff_pm": {
-    "staff_pm": "Staff PM | Staff PMs"
+    "staff_pm": "Staff PM | Staff PMs",
+    "resolve": "Resolve",
+    "resolved": "Resolved"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

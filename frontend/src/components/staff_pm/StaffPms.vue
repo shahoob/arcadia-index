@@ -21,11 +21,17 @@
         {{ timeAgo(slotProps.data.created_at) }}
       </template>
     </Column>
-    <Column :header="t('conversation.correspondent')">
+    <Column :header="t('general.created_by')">
       <template #body="slotProps">
         <RouterLink :to="`/user/${slotProps.data.created_by.id}`">
           {{ slotProps.data.created_by.username }}
         </RouterLink>
+      </template>
+    </Column>
+    <Column :header="t('staff_pm.resolved')">
+      <template #body="slotProps">
+        <i v-if="slotProps.data.resolved" class="pi pi-check" />
+        <i v-else class="pi pi-times" />
       </template>
     </Column>
   </DataTable>
@@ -50,7 +56,7 @@ const staffPMs = ref<StaffPmOverview[]>([])
 
 const isPMRead = (p: StaffPmOverview) => {
   const userId = useUserStore().id
-  return p.last_message.created_by.id === userId
+  return p.last_message.created_by.id === userId || p.created_by.id !== userId
 }
 
 onMounted(() => {
