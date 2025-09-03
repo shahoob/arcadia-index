@@ -1160,6 +1160,19 @@ export interface components {
             /** Format: date-time */
             updated_at: string;
         };
+        ForumPostHierarchy: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLiteAvatar"];
+            /** Format: int64 */
+            forum_thread_id: number;
+            /** Format: int64 */
+            id: number;
+            sticky: boolean;
+            /** Format: date-time */
+            updated_at: string;
+        };
         ForumSubCategoryHierarchy: {
             category: components["schemas"]["ForumCategoryLite"];
             forbidden_classes: string[];
@@ -1184,6 +1197,22 @@ export interface components {
             id: number;
             locked: boolean;
             name: string;
+            /** Format: int64 */
+            posts_amount: number;
+            sticky: boolean;
+        };
+        ForumThreadAndPosts: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int32 */
+            forum_sub_category_id: number;
+            /** Format: int64 */
+            id: number;
+            locked: boolean;
+            name: string;
+            posts: components["schemas"]["ForumPostHierarchy"][];
             /** Format: int64 */
             posts_amount: number;
             sticky: boolean;
@@ -1401,6 +1430,14 @@ export interface components {
             password: string;
             password_verify: string;
             username: string;
+        };
+        SearchTorrentRequestsQuery: {
+            /** Format: int64 */
+            page?: number | null;
+            /** Format: int64 */
+            page_size?: number | null;
+            tags?: string[] | null;
+            title_group_name?: string | null;
         };
         SentInvitation: {
             message: string;
@@ -2714,7 +2751,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ForumThreadHierarchy"];
+                    "application/json": components["schemas"]["ForumThreadAndPosts"];
                 };
             };
         };

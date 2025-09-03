@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { getForumThread, postForumPost, type ForumThreadsAndPosts, type UserCreatedForumPost, type ForumPostHierarchy } from '@/services/api/forumService'
+import { getForumThread, postForumPost, type UserCreatedForumPost, type ForumPostHierarchy, type ForumThreadAndPosts } from '@/services/api/forumService'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -40,7 +40,7 @@ import BBCodeEditor from '@/components/community/BBCodeEditor.vue'
 const route = useRoute()
 const { t } = useI18n()
 
-const forumThread = ref<null | ForumThreadsAndPosts>(null)
+const forumThread = ref<null | ForumThreadAndPosts>(null)
 const newPost = ref<UserCreatedForumPost>({
   content: '',
   forum_thread_id: 0,

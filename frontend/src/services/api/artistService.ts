@@ -5,8 +5,6 @@ export type Artist = components['schemas']['Artist']
 
 export type ArtistLite = components['schemas']['ArtistLite']
 
-export type AffiliatedArtist = components['schemas']['AffiliatedArtist']
-
 export type AffiliatedArtistHierarchy = components['schemas']['AffiliatedArtistHierarchy']
 
 export type ArtistAndTitleGroupsLite = components['schemas']['ArtistAndTitleGroupsLite']

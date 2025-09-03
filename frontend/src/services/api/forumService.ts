@@ -26,12 +26,10 @@ export const searchForumThreads = async (params: { title: string; offset?: numbe
   return (await api.get<ForumThreadHierarchy[]>(`/search/forum/thread?title=${params.title}`)).data
 }
 
-export type ForumThreadsAndPosts = components['schemas']['ForumThreadAndPosts']
-
 export type ForumPostHierarchy = components['schemas']['ForumPostHierarchy']
 
-export const getForumThread = async (forumThreadId: number): Promise<ForumThreadsAndPosts> => {
-  return (await api.get<ForumThreadsAndPosts>('/forum/thread?id=' + forumThreadId)).data
+export const getForumThread = async (forumThreadId: number): Promise<ForumThreadAndPosts> => {
+  return (await api.get<ForumThreadAndPosts>('/forum/thread?id=' + forumThreadId)).data
 }
 
 export type UserCreatedForumPost = components['schemas']['UserCreatedForumPost']

@@ -42,7 +42,7 @@ import { Button, InputText, MultiSelect } from 'primevue'
 import ArtistSearchBar from './ArtistSearchBar.vue'
 import { getArtistRoles } from '@/services/helpers'
 import { ref } from 'vue'
-import type { AffiliatedArtist, AffiliatedArtistHierarchy, ArtistLite, UserCreatedAffiliatedArtist } from '@/services/api/artistService'
+import type { AffiliatedArtistHierarchy, ArtistLite, UserCreatedAffiliatedArtist } from '@/services/api/artistService'
 import { useI18n } from 'vue-i18n'
 import type { ContentType } from '@/services/api/torrentService'
 import { onMounted } from 'vue'
@@ -52,7 +52,7 @@ import { type UserCreatedArtist, createArtists } from '@/services/api/artistServ
 const { t } = useI18n()
 
 const affiliated_artists_names = ref<string[]>([])
-const affiliated_artists = ref<(UserCreatedAffiliatedArtist | AffiliatedArtist)[]>([])
+const affiliated_artists = ref<(UserCreatedAffiliatedArtist | AffiliatedArtistHierarchy)[]>([])
 const removedExistingAffiliatedArtistsIds: number[] = []
 
 const props = defineProps<{

@@ -3,7 +3,10 @@ use utoipa::{
     Modify, OpenApi,
 };
 
-use crate::handlers::user_applications::get_user_applications::GetUserApplicationsQuery;
+use crate::handlers::{
+    search::search_torrent_requests::SearchTorrentRequestsQuery,
+    user_applications::get_user_applications::GetUserApplicationsQuery,
+};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -78,7 +81,8 @@ use crate::handlers::user_applications::get_user_applications::GetUserApplicatio
         crate::handlers::external_db::get_comic_vine_data::exec,
     ),
     components(schemas(
-        GetUserApplicationsQuery
+        GetUserApplicationsQuery,
+        SearchTorrentRequestsQuery
     ),)
 )]
 pub struct ApiDoc;
