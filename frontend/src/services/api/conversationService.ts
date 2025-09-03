@@ -6,7 +6,7 @@ export type UserCreatedConversation = components['schemas']['UserCreatedConversa
 export type Conversation = components['schemas']['Conversation']
 
 export const postConversation = async (conversation: UserCreatedConversation) => {
-  return (await api.post<Conversation>('/conversation', conversation)).data
+  return (await api.post<Conversation>('/conversations', conversation)).data
 }
 
 export type ConversationHierarchy = components['schemas']['ConversationHierarchy']
