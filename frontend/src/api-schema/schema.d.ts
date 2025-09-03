@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Create user application"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/login": {
         parameters: {
             query?: never;
@@ -421,6 +437,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/staff-pms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["List staff PMs"];
+        put?: never;
+        post: operations["Create staff PM"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/staff-pms/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Reply to staff PM"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/staff-pms/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Get staff PM"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/staff-pms/{id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["Resolve staff PM"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/subscriptions": {
         parameters: {
             query?: never;
@@ -622,7 +702,7 @@ export interface paths {
         };
         get: operations["Get user applications"];
         put: operations["Update user application status"];
-        post: operations["Create user application"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -729,20 +809,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        AffiliatedArtist: {
-            /** Format: int64 */
-            artist_id: number;
-            /** Format: date-time */
-            created_at: string;
-            /** Format: int64 */
-            created_by_id: number;
-            /** Format: int64 */
-            id: number;
-            nickname?: string | null;
-            roles: components["schemas"]["ArtistRole"][];
-            /** Format: int64 */
-            title_group_id: number;
-        };
         AffiliatedArtistHierarchy: {
             artist: components["schemas"]["Artist"];
             /** Format: int64 */
@@ -892,10 +958,6 @@ export interface components {
         };
         ConversationsOverview: {
             conversations: components["schemas"]["ConversationOverview"][];
-        };
-        DownloadTorrentQuery: {
-            /** Format: int64 */
-            id: number;
         };
         EditedTitleGroup: {
             category?: null | components["schemas"]["TitleGroupCategory"];
@@ -1098,19 +1160,6 @@ export interface components {
             /** Format: date-time */
             updated_at: string;
         };
-        ForumPostHierarchy: {
-            content: string;
-            /** Format: date-time */
-            created_at: string;
-            created_by: components["schemas"]["UserLiteAvatar"];
-            /** Format: int64 */
-            forum_thread_id: number;
-            /** Format: int64 */
-            id: number;
-            sticky: boolean;
-            /** Format: date-time */
-            updated_at: string;
-        };
         ForumSubCategoryHierarchy: {
             category: components["schemas"]["ForumCategoryLite"];
             forbidden_classes: string[];
@@ -1139,22 +1188,6 @@ export interface components {
             posts_amount: number;
             sticky: boolean;
         };
-        ForumThreadAndPosts: {
-            /** Format: date-time */
-            created_at: string;
-            /** Format: int64 */
-            created_by_id: number;
-            /** Format: int32 */
-            forum_sub_category_id: number;
-            /** Format: int64 */
-            id: number;
-            locked: boolean;
-            name: string;
-            posts: components["schemas"]["ForumPostHierarchy"][];
-            /** Format: int64 */
-            posts_amount: number;
-            sticky: boolean;
-        };
         ForumThreadHierarchy: {
             /** Format: date-time */
             created_at: string;
@@ -1175,15 +1208,6 @@ export interface components {
             /** Format: int64 */
             id: number;
             name: string;
-        };
-        GetArtistPublicationsQuery: {
-            /** Format: int64 */
-            id: number;
-        };
-        GetTopTorrentsQuery: {
-            /** Format: int64 */
-            amount: number;
-            period: string;
         };
         GetUserApplicationsQuery: {
             /** Format: int64 */
@@ -1320,7 +1344,7 @@ export interface components {
             banned: boolean;
             /** Format: int64 */
             bonus_points: number;
-            class: string;
+            class: components["schemas"]["UserClass"];
             /** Format: int64 */
             collages_started: number;
             /** Format: date-time */
@@ -1378,17 +1402,6 @@ export interface components {
             password_verify: string;
             username: string;
         };
-        RegisterQuery: {
-            invitation_key?: string | null;
-        };
-        SearchTorrentRequestsQuery: {
-            /** Format: int64 */
-            page?: number | null;
-            /** Format: int64 */
-            page_size?: number | null;
-            tags?: string[] | null;
-            title_group_name?: string | null;
-        };
         SentInvitation: {
             message: string;
             receiver_email: string;
@@ -1421,6 +1434,27 @@ export interface components {
         };
         /** @enum {string} */
         Source: "CD" | "DVD5" | "DVD9" | "Vinyl" | "Web" | "Soundboard" | "SACD" | "DAT" | "Cassette" | "Blu-Ray" | "LaserDisc" | "HD-DVD" | "HDTV" | "PDTV" | "TV" | "VHS" | "Mixed" | "Physical Book";
+        StaffPm: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            resolved: boolean;
+            subject: string;
+        };
+        StaffPmMessage: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            staff_pm_id: number;
+        };
         TitleGroup: {
             category?: null | components["schemas"]["TitleGroupCategory"];
             content_type: components["schemas"]["ContentType"];
@@ -1891,7 +1925,7 @@ export interface components {
             banned: boolean;
             /** Format: int64 */
             bonus_points: number;
-            class: string;
+            class: components["schemas"]["UserClass"];
             /** Format: int64 */
             collages_started: number;
             /** Format: date-time */
@@ -1965,6 +1999,8 @@ export interface components {
         };
         /** @enum {string} */
         UserApplicationStatus: "pending" | "accepted" | "rejected";
+        /** @enum {string} */
+        UserClass: "Newbie" | "Staff" | "Tracker";
         UserCreatedAffiliatedArtist: {
             /** Format: int64 */
             artist_id: number;
@@ -2033,6 +2069,15 @@ export interface components {
             description: string;
             name: string;
             tags: string[];
+        };
+        UserCreatedStaffPm: {
+            first_message: components["schemas"]["UserCreatedStaffPmMessage"];
+            subject: string;
+        };
+        UserCreatedStaffPmMessage: {
+            content: string;
+            /** Format: int64 */
+            staff_pm_id: number;
         };
         UserCreatedTitleGroup: {
             affiliated_artists: components["schemas"]["UserCreatedAffiliatedArtist"][];
@@ -2177,18 +2222,6 @@ export interface components {
             /** Format: int64 */
             updated_by_id: number;
         };
-        WikiArticleHierarchy: {
-            body: string;
-            /** Format: date-time */
-            created_at: string;
-            created_by: components["schemas"]["UserLite"];
-            /** Format: int64 */
-            id: number;
-            title: string;
-            /** Format: date-time */
-            updated_at: string;
-            updated_by: components["schemas"]["UserLite"];
-        };
     };
     responses: never;
     parameters: never;
@@ -2283,6 +2316,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Artist"][];
+                };
+            };
+        };
+    };
+    "Create user application": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                limit: number | null;
+                page: number | null;
+                status: null | components["schemas"]["UserApplicationStatus"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedUserApplication"];
+            };
+        };
+        responses: {
+            /** @description Successfully created user application */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserApplication"];
                 };
             };
         };
@@ -2908,6 +2969,120 @@ export interface operations {
             };
         };
     };
+    "List staff PMs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List staff PM conversations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    "Create staff PM": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedStaffPm"];
+            };
+        };
+        responses: {
+            /** @description Created staff PM conversation */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffPm"];
+                };
+            };
+        };
+    };
+    "Reply to staff PM": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedStaffPmMessage"];
+            };
+        };
+        responses: {
+            /** @description Created staff PM message */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffPmMessage"];
+                };
+            };
+        };
+    };
+    "Get staff PM": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Staff PM id */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Staff PM conversation details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    "Resolve staff PM": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Staff PM id */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Resolved staff PM */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffPm"];
+                };
+            };
+        };
+    };
     "Create subscription": {
         parameters: {
             query: {
@@ -3413,30 +3588,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-        };
-    };
-    "Create user application": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserCreatedUserApplication"];
-            };
-        };
-        responses: {
-            /** @description Successfully created user application */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserApplication"];
-                };
             };
         };
     };

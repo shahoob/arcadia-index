@@ -16,6 +16,7 @@ use crate::handlers::invitations::config as InvitationsConfig;
 use crate::handlers::master_groups::config as MasterGroupsConfig;
 use crate::handlers::search::config as SearchConfig;
 use crate::handlers::series::config as SeriesConfig;
+use crate::handlers::staff_pms::config as StaffPmsConfig;
 use crate::handlers::subscriptions::config as SubscriptionsConfig;
 use crate::handlers::title_groups::config as TitleGroupsConfig;
 use crate::handlers::torrent_requests::config as TorrentRequestsConfig;
@@ -47,6 +48,7 @@ pub fn init<R: RedisPoolInterface + 'static>(cfg: &mut web::ServiceConfig) {
             .service(scope("/external-sources").configure(ExternalDbConfig::<R>))
             .service(scope("/forum").configure(ForumConfig::<R>))
             .service(scope("/wiki").configure(WikiConfig::<R>))
+            .service(scope("/staff-pms").configure(StaffPmsConfig::<R>))
             .service(scope("/invitations").configure(InvitationsConfig::<R>))
             .service(scope("/home").configure(HomeConfig::<R>))
             .service(scope("/master-groups").configure(MasterGroupsConfig::<R>))

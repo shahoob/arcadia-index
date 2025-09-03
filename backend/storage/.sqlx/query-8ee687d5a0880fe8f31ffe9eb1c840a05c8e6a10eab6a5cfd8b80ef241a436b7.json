@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n\t\t\tSELECT\n\t\t\t\tjson_build_object(\n\t\t\t\t\t'id', sp.id,\n\t\t\t\t\t'created_at', sp.created_at,\n\t\t\t\t\t'subject', sp.subject,\n\t\t\t\t\t'created_by_id', sp.created_by_id,\n\t\t\t\t\t'resolved', sp.resolved,\n\t\t\t\t\t'messages', (\n\t\t\t\t\t\tSELECT json_agg(json_build_object(\n\t\t\t\t\t\t\t'id', m.id,\n\t\t\t\t\t\t\t'created_at', m.created_at,\n\t\t\t\t\t\t\t'created_by_id', m.created_by_id,\n\t\t\t\t\t\t\t'content', m.content\n\t\t\t\t\t\t) ORDER BY m.created_at ASC)\n\t\t\t\t\t\tFROM staff_pm_messages m\n\t\t\t\t\t\tWHERE m.staff_pm_id = sp.id\n\t\t\t\t\t)\n\t\t\t\t) AS \"conversation: serde_json::Value\"\n\t\t\tFROM staff_pms sp\n\t\t\tWHERE sp.id = $1 AND (($3)::bool OR sp.created_by_id = $2);\n\t\t\t",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "conversation: serde_json::Value",
+        "type_info": "Json"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Bool"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "8ee687d5a0880fe8f31ffe9eb1c840a05c8e6a10eab6a5cfd8b80ef241a436b7"
+}

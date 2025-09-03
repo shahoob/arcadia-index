@@ -759,6 +759,20 @@ CREATE TABLE conversation_messages (
     FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     FOREIGN KEY (created_by_id) REFERENCES users(id)
 );
+CREATE TABLE staff_pms (
+	id BIGSERIAL PRIMARY KEY,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	subject TEXT NOT NULL,
+	created_by_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	resolved BOOLEAN NOT NULL DEFAULT FALSE
+);
+CREATE TABLE staff_pm_messages (
+	id BIGSERIAL PRIMARY KEY,
+	staff_pm_id BIGINT NOT NULL REFERENCES staff_pms(id) ON DELETE CASCADE,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	created_by_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	content TEXT NOT NULL
+);
 CREATE TYPE notification_reason_enum AS ENUM (
     'TorrentUploadedInSubscribedTitleGroup',
     'SeedingTorrentDeleted',

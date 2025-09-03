@@ -85,6 +85,7 @@ pub struct User {
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::Type, ToSchema, PartialEq, Eq)]
 #[sqlx(type_name = "user_class_enum", rename_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
 pub enum UserClass {
     Newbie,
     Staff,
