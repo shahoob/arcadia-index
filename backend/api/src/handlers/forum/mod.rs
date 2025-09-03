@@ -14,7 +14,7 @@ pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
             .route(get().to(self::get_forum_thread::exec::<R>))
             .route(post().to(self::create_forum_thread::exec::<R>)),
     );
-    cfg.service(resource("/post").route(get().to(self::create_forum_post::exec::<R>)));
+    cfg.service(resource("/post").route(post().to(self::create_forum_post::exec::<R>)));
     cfg.service(
         resource("/sub-category").route(get().to(self::get_forum_sub_category_threads::exec::<R>)),
     );
