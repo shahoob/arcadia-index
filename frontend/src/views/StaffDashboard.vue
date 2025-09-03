@@ -1,15 +1,17 @@
 <template>
   <div id="staff-dashboard">
-    <Tabs value="0">
+    <Tabs value="1">
       <TabList>
         <Tab value="0">{{ t('staff.user_application.user_application', 2) }}</Tab>
-        <Tab value="1">Header II</Tab>
+        <Tab value="1">{{ t('staff_pm.staff_pm', 2) }}</Tab>
       </TabList>
       <TabPanels>
         <TabPanel value="0">
           <UserApplications />
         </TabPanel>
-        <TabPanel value="1"> </TabPanel>
+        <TabPanel value="1">
+          <StaffPms />
+        </TabPanel>
       </TabPanels>
     </Tabs>
   </div>
@@ -22,6 +24,7 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import UserApplications from '@/components/staff/UserApplications.vue'
+import StaffPms from '@/components/staff_pm/StaffPms.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

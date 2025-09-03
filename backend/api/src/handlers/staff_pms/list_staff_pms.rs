@@ -1,6 +1,7 @@
 use crate::{middlewares::jwt_middleware::Authdata, Arcadia};
 use actix_web::{web::Data, HttpResponse};
 use arcadia_common::error::Result;
+use arcadia_storage::models::staff_pm::StaffPmOverview;
 use arcadia_storage::{models::user::UserClass, redis::RedisPoolInterface};
 
 #[utoipa::path(
@@ -9,7 +10,7 @@ use arcadia_storage::{models::user::UserClass, redis::RedisPoolInterface};
 	tag = "StaffPM",
 	path = "/api/staff-pms",
 	security(("http" = ["Bearer"])) ,
-	responses((status = 200, description = "List staff PM conversations", body = serde_json::Value))
+	responses((status = 200, description = "List staff PM conversations", body = [StaffPmOverview]))
 )]
 pub async fn exec<R: RedisPoolInterface + 'static>(
     arc: Data<Arcadia<R>>,

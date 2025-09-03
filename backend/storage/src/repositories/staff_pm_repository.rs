@@ -88,11 +88,21 @@ impl ConnectionPool {
 							'id', sp.id,
 							'created_at', sp.created_at,
 							'subject', sp.subject,
-							'created_by_id', sp.created_by_id,
+							'created_by', json_build_object(
+								'id', u_creator.id,
+								'username', u_creator.username,
+								'banned', u_creator.banned,
+								'warned', u_creator.warned
+							),
 							'resolved', sp.resolved,
 							'last_message', jsonb_build_object(
 								'created_at', lm.created_at,
-								'created_by_id', lm.created_by_id
+								'created_by', jsonb_build_object(
+									'id', u_lm.id,
+									'username', u_lm.username,
+									'warned', u_lm.warned,
+									'banned', u_lm.banned
+								)
 							)
 						)
 						ORDER BY lm.created_at DESC
@@ -107,6 +117,8 @@ impl ConnectionPool {
 				ORDER BY created_at DESC
 				LIMIT 1
 			) lm ON TRUE
+			JOIN users u_lm ON lm.created_by_id = u_lm.id
+			INNER JOIN users u_creator ON sp.created_by_id = u_creator.id
 			WHERE ($2)::bool OR sp.created_by_id = $1;
 			"#,
             current_user_id,
@@ -132,20 +144,34 @@ impl ConnectionPool {
 					'id', sp.id,
 					'created_at', sp.created_at,
 					'subject', sp.subject,
-					'created_by_id', sp.created_by_id,
+					'created_by', json_build_object(
+						'id', u_creator.id,
+						'username', u_creator.username,
+						'banned', u_creator.banned,
+						'avatar', u_creator.avatar,
+						'warned', u_creator.warned
+					),
 					'resolved', sp.resolved,
 					'messages', (
 						SELECT json_agg(json_build_object(
 							'id', m.id,
 							'created_at', m.created_at,
-							'created_by_id', m.created_by_id,
+							'created_by', json_build_object(
+								'id', u_msg.id,
+								'username', u_msg.username,
+								'banned', u_msg.banned,
+								'avatar', u_msg.avatar,
+								'warned', u_msg.warned
+							),
 							'content', m.content
 						) ORDER BY m.created_at ASC)
 						FROM staff_pm_messages m
+						INNER JOIN users u_msg ON m.created_by_id = u_msg.id
 						WHERE m.staff_pm_id = sp.id
 					)
 				) AS "conversation: serde_json::Value"
 			FROM staff_pms sp
+			INNER JOIN users u_creator ON sp.created_by_id = u_creator.id
 			WHERE sp.id = $1 AND (($3)::bool OR sp.created_by_id = $2);
 			"#,
             staff_pm_id,

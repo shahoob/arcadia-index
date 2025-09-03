@@ -1444,6 +1444,16 @@ export interface components {
             resolved: boolean;
             subject: string;
         };
+        StaffPmHierarchy: {
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLiteAvatar"];
+            /** Format: int64 */
+            id: number;
+            messages: components["schemas"]["StaffPmMessageHierarchy"][];
+            resolved: boolean;
+            subject: string;
+        };
         StaffPmMessage: {
             content: string;
             /** Format: date-time */
@@ -1454,6 +1464,29 @@ export interface components {
             id: number;
             /** Format: int64 */
             staff_pm_id: number;
+        };
+        StaffPmMessageHierarchy: {
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLiteAvatar"];
+            /** Format: int64 */
+            id: number;
+        };
+        StaffPmMessageHierarchyLite: {
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+        };
+        StaffPmOverview: {
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+            /** Format: int64 */
+            id: number;
+            last_message: components["schemas"]["StaffPmMessageHierarchyLite"];
+            resolved: boolean;
+            subject: string;
         };
         TitleGroup: {
             category?: null | components["schemas"]["TitleGroupCategory"];
@@ -2000,7 +2033,7 @@ export interface components {
         /** @enum {string} */
         UserApplicationStatus: "pending" | "accepted" | "rejected";
         /** @enum {string} */
-        UserClass: "Newbie" | "Staff" | "Tracker";
+        UserClass: "newbie" | "staff" | "tracker";
         UserCreatedAffiliatedArtist: {
             /** Format: int64 */
             artist_id: number;
@@ -2984,7 +3017,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["StaffPmOverview"][];
                 };
             };
         };
@@ -3055,7 +3088,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["StaffPmHierarchy"];
                 };
             };
         };
