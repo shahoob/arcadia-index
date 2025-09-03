@@ -28,7 +28,7 @@ export const getMe = async (): Promise<Profile> => {
 }
 
 export const getUser = async (userId: number): Promise<PublicProfile> => {
-  return (await api.get<PublicProfile>(`/user?id=${userId}`)).data
+  return (await api.get<PublicProfile>(`/users?id=${userId}`)).data
 }
 
 export type UserCreatedUserWarning = components['schemas']['UserCreatedUserWarning']
@@ -36,7 +36,7 @@ export type UserCreatedUserWarning = components['schemas']['UserCreatedUserWarni
 export type UserWarning = components['schemas']['UserWarning']
 
 export const warnUser = async (warning: UserCreatedUserWarning): Promise<UserWarning> => {
-  return (await api.post<UserWarning>('/user/warn', warning)).data
+  return (await api.post<UserWarning>('/users/warn', warning)).data
 }
 
 export type EditedUser = components['schemas']['EditedUser']
