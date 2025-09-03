@@ -102,6 +102,9 @@ watch(
 )
 </script>
 <style scoped>
+.bbcode-editor {
+  width: 100%;
+}
 .boilerplate-inserters {
   width: 100%;
   margin-bottom: 5px;
