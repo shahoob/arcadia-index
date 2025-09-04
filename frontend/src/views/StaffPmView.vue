@@ -10,7 +10,7 @@
         @inputEmptied="emptyInput = false"
       >
         <template #buttons>
-          <Button :label="t('staff_pm.resolve')" icon="pi pi-check" :loading="resolvingPm" @click="resolvePm" />
+          <Button v-if="!staffPm.resolved" :label="t('staff_pm.resolve')" icon="pi pi-check" :loading="resolvingPm" @click="resolvePm" />
           <Button type="submit" :label="t('general.send')" icon="pi pi-send" :loading="sendingMessage" />
         </template>
       </BBCodeEditor>
@@ -32,6 +32,7 @@ import { getStaffPm, type StaffPmHierarchy } from '@/services/api/staffPmService
 import type { UserCreatedStaffPmMessage } from '@/services/api/staffPmService'
 import { postStaffPmMessage } from '@/services/api/staffPmService'
 import { resolveStaffPm } from '@/services/api/staffPmService'
+import { showToast } from '@/main'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -56,9 +57,16 @@ const fetchConversation = async (staffPmId: number) => {
 
 const resolvePm = async () => {
   resolvingPm.value = true
-  resolveStaffPm(parseInt(route.params.id as string)).finally(() => {
-    resolvingPm.value = false
-  })
+  resolveStaffPm(parseInt(route.params.id as string))
+    .then(() => {
+      if (staffPm.value) {
+        staffPm.value.resolved = true
+      }
+      showToast('', t('staff_pm.resolved_successfully'), 'success', 3000, true, 'tr')
+    })
+    .finally(() => {
+      resolvingPm.value = false
+    })
 }
 
 const sendMessage = async () => {

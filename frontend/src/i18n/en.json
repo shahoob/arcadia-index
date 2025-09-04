@@ -316,7 +316,8 @@
   "staff_pm": {
     "staff_pm": "Staff PM | Staff PMs",
     "resolve": "Resolve",
-    "resolved": "Resolved"
+    "resolved": "Resolved",
+    "resolved_successfully": "Staff PM resolved!"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",
