@@ -19,6 +19,7 @@ import type { TorrentRequest } from '@/services/api/torrentRequestService'
 import type { ContentType } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
+import { isAttributeUsed } from '@/services/helpers'
 
 const { t } = useI18n()
 
@@ -40,7 +41,7 @@ const computedSlug = computed<string[][]>(() => {
   const features: string[] = []
   const releaseGroup: string[] = []
 
-  if (['movie', 'tv-show', 'video', 'collection'].indexOf(props?.contentType) >= 0) {
+  if (isAttributeUsed('video_resolution', props?.contentType)) {
     if (
       props.torrentRequest.video_resolution.includes('Other') &&
       'video_resolution_other_x' in props.torrentRequest &&
@@ -54,7 +55,7 @@ const computedSlug = computed<string[][]>(() => {
     }
   }
 
-  if (['movie', 'tv-show', 'video', 'collection'].indexOf(props?.contentType) >= 0) {
+  if (isAttributeUsed('video_codec', props?.contentType)) {
     addIfPresent(firstPart, props.torrentRequest.video_codec, true, 'video_codec', 'torrent')
   }
 

@@ -2,7 +2,7 @@
   <ContentContainer id="torrent-request-details">
     <table>
       <tbody>
-        <tr v-for="requirement in requirements" :key="requirement">
+        <tr v-for="requirement in filteredRequirements" :key="requirement">
           <td class="name">{{ t(`torrent_request.acceptable_${requirement}`) }}</td>
           <td class="value">
             {{
@@ -55,9 +55,11 @@ import {
   type TorrentRequestVoteHierarchy,
   type UserCreatedTorrentRequestVote,
 } from '@/services/api/torrentRequestVoteService'
-import { bytesToReadable } from '@/services/helpers'
+import { bytesToReadable, isAttributeUsed } from '@/services/helpers'
 import { useUserStore } from '@/stores/user'
 import { showToast } from '@/main'
+import type { ContentType } from '@/services/api/torrentService'
+import { computed } from 'vue'
 
 const { t } = useI18n()
 const requirements = ref<(keyof TorrentRequest)[]>([
@@ -71,11 +73,15 @@ const requirements = ref<(keyof TorrentRequest)[]>([
   'video_codec',
   'video_resolution',
 ])
+const filteredRequirements = computed(() => {
+  return requirements.value.filter((requirement) => isAttributeUsed(requirement, props.contentType))
+})
 const selectableUploadUnits = ref(['MiB', 'GiB', 'TiB'])
 
 const props = defineProps<{
   torrentRequest: TorrentRequest
   votes: TorrentRequestVote[]
+  contentType: ContentType
 }>()
 
 const emit = defineEmits<{

@@ -1,4 +1,5 @@
-import type { ContentType, EditionGroupInfoLite, Extras, Features, Source } from './api/torrentService'
+import type { TorrentRequest } from './api/torrentRequestService'
+import type { ContentType, EditionGroupInfoLite, Extras, Features, Source, Torrent } from './api/torrentService'
 
 export const timeAgo = (date: string) => {
   const diff = (Date.now() - new Date(date).getTime()) / 1000
@@ -325,4 +326,27 @@ export const getSelectableContainers = () => {
     'bz2',
     'xz',
   ]
+}
+
+export const isAttributeUsed = (attribute: keyof Torrent | keyof TorrentRequest, contentType: ContentType): boolean => {
+  switch (attribute) {
+    case 'video_codec':
+      return ['movie', 'tv_show', 'video', 'collection'].includes(contentType)
+    case 'video_resolution':
+      return ['movie', 'tv_show', 'video', 'collection'].includes(contentType)
+    case 'video_resolution_other_x':
+      return ['movie', 'tv_show', 'video', 'collection'].includes(contentType)
+    case 'video_resolution_other_y':
+      return ['movie', 'tv_show', 'video', 'collection'].includes(contentType)
+    case 'audio_channels':
+      return ['movie', 'tv_show', 'video', 'collection'].includes(contentType)
+    case 'audio_bitrate_sampling':
+      return ['movie', 'tv_show', 'video', 'music', 'podcast', 'collection'].includes(contentType)
+    case 'audio_codec':
+      return ['movie', 'tv_show', 'video', 'music', 'podcast', 'collection'].includes(contentType)
+    case 'subtitle_languages':
+      return ['movie', 'tv-show', 'video', 'collection'].includes(contentType)
+    default:
+      return true
+  }
 }

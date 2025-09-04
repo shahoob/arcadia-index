@@ -47,7 +47,12 @@
           <!-- <i @click="requestTorrent" v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" /> -->
         </div>
       </div>
-      <TorrentRequestDetails :torrentRequest="torrentRequestAndAssociatedData.torrent_request" :votes="torrentRequestAndAssociatedData.votes" @voted="voted" />
+      <TorrentRequestDetails
+        :torrentRequest="torrentRequestAndAssociatedData.torrent_request"
+        :votes="torrentRequestAndAssociatedData.votes"
+        :contentType="torrentRequestAndAssociatedData.title_group.content_type"
+        @voted="voted"
+      />
       <TorrentRequestVotesTable class="votes-table" :votes="torrentRequestAndAssociatedData.votes" />
       <!-- <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="titleGroupAndAssociatedData.title_group.screenshots.length !== 0">
         <CustomGalleria :images="titleGroupAndAssociatedData.title_group.screenshots" />

@@ -60,7 +60,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'podcast', 'video', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="isAttributeUsed('video_codec', titleGroupStore.content_type)">
               <MultiSelect
                 v-model="torrentRequestForm.video_codec"
                 inputId="video_codec"
@@ -78,7 +78,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="isAttributeUsed('video_resolution', titleGroupStore.content_type)">
               <MultiSelect
                 v-model="torrentRequestForm.video_resolution"
                 inputId="video_resolution"
@@ -122,12 +122,7 @@
             </div>
           </template>
           <div>
-            <FloatLabel
-              v-if="
-                ['movie', 'tv_show', 'video', 'podcast', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0 ||
-                editionGroupStore.additional_information.format === 'audiobook'
-              "
-            >
+            <FloatLabel v-if="isAttributeUsed('audio_codec', titleGroupStore.content_type) || editionGroupStore.additional_information.format === 'audiobook'">
               <MultiSelect
                 v-model="torrentRequestForm.audio_codec"
                 inputId="audio_codec"
@@ -146,10 +141,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="
-                ['movie', 'tv_show', 'music', 'video', 'podcast', 'collection'].indexOf(titleGroupStore.content_type) >= 0 ||
-                editionGroupStore.additional_information.format === 'audiobook'
-              "
+              v-if="isAttributeUsed('audio_bitrate_sampling', titleGroupStore.content_type) || editionGroupStore.additional_information.format === 'audiobook'"
             >
               <MultiSelect
                 v-model="torrentRequestForm.audio_bitrate_sampling"
@@ -168,7 +160,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv-show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="isAttributeUsed('audio_channels', titleGroupStore.content_type)">
               <MultiSelect
                 v-model="torrentRequestForm.audio_channels"
                 inputId="audio_channels"
@@ -201,7 +193,7 @@
           <Message v-if="$form.languages?.invalid" severity="error" size="small" variant="simple">
             {{ $form.languages.error?.message }}
           </Message>
-          <FloatLabel v-if="['movie', 'tv-show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+          <FloatLabel v-if="isAttributeUsed('subtitle_languages', titleGroupStore.content_type)">
             <MultiSelect
               v-model="torrentRequestForm.subtitle_languages"
               inputId="subtitle_languages"
@@ -321,6 +313,7 @@ import {
   getSelectableAudioBitrateSamplings,
   getSelectableAudioChannels,
   getSelectableContainers,
+  isAttributeUsed,
 } from '@/services/helpers'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'

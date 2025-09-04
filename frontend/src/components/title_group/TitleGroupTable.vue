@@ -5,7 +5,7 @@
     rowGroupMode="subheader"
     :groupRowsBy="groupBy"
     sortMode="single"
-    :sortField="['edition', 'video_resolution', 'audio_codec'].indexOf(sortBy) >= 0 ? '' : sortBy"
+    :sortField="['edition', 'video_resolution', 'audio_codec'].includes(sortBy) ? '' : sortBy"
     :sortOrder="1"
     tableStyle="min-width: 50rem"
     size="small"

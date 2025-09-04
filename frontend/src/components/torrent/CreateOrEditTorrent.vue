@@ -95,7 +95,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'podcast', 'video', 'tv_show', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="isAttributeUsed('video_codec', titleGroupStore.content_type)">
               <Select
                 v-model="torrentForm.video_codec"
                 inputId="video_codec"
@@ -111,7 +111,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv_show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="isAttributeUsed('video_resolution', titleGroupStore.content_type)">
               <Select
                 v-model="torrentForm.video_resolution"
                 inputId="video_resolution"
@@ -155,12 +155,7 @@
             </div>
           </template>
           <div>
-            <FloatLabel
-              v-if="
-                ['movie', 'tv_show', 'video', 'podcast', 'music', 'collection'].indexOf(titleGroupStore.content_type) >= 0 ||
-                editionGroupStore.additional_information.format === 'audiobook'
-              "
-            >
+            <FloatLabel v-if="isAttributeUsed('audio_codec', titleGroupStore.content_type) || editionGroupStore.additional_information.format === 'audiobook'">
               <Select
                 v-model="torrentForm.audio_codec"
                 inputId="audio_codec"
@@ -177,10 +172,7 @@
           </div>
           <div>
             <FloatLabel
-              v-if="
-                ['movie', 'tv_show', 'music', 'video', 'podcast', 'collection'].indexOf(titleGroupStore.content_type) >= 0 ||
-                editionGroupStore.additional_information.format === 'audiobook'
-              "
+              v-if="isAttributeUsed('audio_bitrate_sampling', titleGroupStore.content_type) || editionGroupStore.additional_information.format === 'audiobook'"
             >
               <Select
                 v-model="torrentForm.audio_bitrate_sampling"
@@ -197,7 +189,7 @@
             </Message>
           </div>
           <div>
-            <FloatLabel v-if="['movie', 'tv-show', 'video', 'collection'].indexOf(titleGroupStore.content_type) >= 0">
+            <FloatLabel v-if="isAttributeUsed('audio_channels', titleGroupStore.content_type)">
               <Select
                 v-model="torrentForm.audio_channels"
                 inputId="audio_channels"
@@ -313,6 +305,7 @@ import {
   getSelectableAudioCodecs,
   getSelectableAudioBitrateSamplings,
   getSelectableAudioChannels,
+  isAttributeUsed,
 } from '@/services/helpers'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { uploadTorrent, editTorrent, type Torrent, type UploadedTorrent, type EditedTorrent, type Extras } from '@/services/api/torrentService'
@@ -381,16 +374,16 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.container == '') {
     errors.container = [{ message: t('error.select_container') }]
   }
-  if (!isExtras.value && ['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_codec) {
+  if (!isExtras.value && isAttributeUsed('video_codec', titleGroupStore.value.content_type) && !values.video_codec) {
     errors.video_codec = [{ message: t('error.select_codec') }]
   }
-  if (!isExtras.value && ['movie', 'tv_show'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.video_resolution) {
+  if (!isExtras.value && isAttributeUsed('video_resolution', titleGroupStore.value.content_type) && !values.video_resolution) {
     errors.video_resolution = [{ message: t('error.select_resolution') }]
   }
-  if (!isExtras.value && ['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_codec) {
+  if (!isExtras.value && isAttributeUsed('audio_codec', titleGroupStore.value.content_type) && !values.audio_codec) {
     errors.audio_codec = [{ message: t('error.select_codec') }]
   }
-  if (!isExtras.value && ['movie', 'tv_show', 'music'].indexOf(titleGroupStore.value.content_type) >= 0 && !values.audio_bitrate_sampling) {
+  if (!isExtras.value && isAttributeUsed('audio_bitrate_sampling', titleGroupStore.value.content_type) && !values.audio_bitrate_sampling) {
     errors.audio_bitrate_sampling = [{ message: t('error.select_bitrate') }]
   }
   if (titleGroupStore.value.content_type !== 'music' && values.languages && values.languages.length === 0) {

@@ -14,7 +14,7 @@
         :placeholder="t('artist.nickname')"
         class="artist"
         v-tooltip.top="t('artist.nickname_explanation')"
-        v-if="['movie', 'tv_show'].indexOf(contentType) >= 0"
+        v-if="['movie', 'tv_show'].includes(contentType)"
         :disabled="disableInputsExistingArtists && 'id' in affiliated_artists[index]"
       />
       <MultiSelect
