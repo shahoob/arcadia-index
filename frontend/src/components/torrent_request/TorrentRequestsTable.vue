@@ -5,7 +5,7 @@
         <TitleGroupSlimHeader
           :titleGroup="slotProps.data.title_group"
           :series="slotProps.data.series"
-          :nameLink="`/torrent-request/${slotProps.data.torrent_request.id}`"
+          :nameLink="`/title-group/${slotProps.data.title_group.id}`"
         />
       </template>
     </Column>
