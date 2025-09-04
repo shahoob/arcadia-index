@@ -49,7 +49,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
@@ -125,6 +125,7 @@ const torrentDone = (torrent: Torrent) => {
   router.push('/title-group/' + titleGroupStore.value.id + '?torrentId=' + torrent.id)
 }
 
+// the store is used to autofill some steps if the user comes from an existing title group
 onMounted(() => {
   if (titleGroupStore.value.id !== 0) {
     titleGroupDone()
@@ -132,6 +133,10 @@ onMounted(() => {
   getUploadInformation().then((data) => {
     announceUrl.value = data.announce_url
   })
+})
+onUnmounted(() => {
+  titleGroupStore.value.$reset()
+  editionGroupStore.value.$reset()
 })
 </script>
 
