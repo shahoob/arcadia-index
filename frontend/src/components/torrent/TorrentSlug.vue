@@ -1,4 +1,12 @@
 <template>
+  <span v-if="sortedBy !== 'edition'">
+    <span v-for="(item, itemIndex) in [editionGroup.source, editionGroup.name].filter((property) => property !== null)" :key="itemIndex">
+      <span class="slash" v-if="itemIndex > 0"> / </span>
+      <span>{{ item }}</span>
+    </span>
+    <span style="margin: 0.5em">|</span>
+  </span>
+
   <span class="bold" v-if="torrent.extras.length > 0">
     {{ t('torrent.extras.extras') }}
     (<span v-for="(item, itemIndex) in torrent.extras" :key="itemIndex">
@@ -46,15 +54,15 @@ const computedSlug = computed(() => {
       firstPart.push(props.torrent.video_resolution)
     }
   }
-  if (props.editionGroup?.source && props.sortedBy !== 'edition') {
-    firstPart.push(props.editionGroup.source)
-  }
+  // if (props.editionGroup?.source && props.sortedBy !== 'edition') {
+  //   firstPart.push(props.editionGroup.source)
+  // }
   if (props.torrent.video_codec) {
     firstPart.push(props.torrent.video_codec)
   }
-  if (props.editionGroup?.name && props.sortedBy !== 'edition') {
-    firstPart.push(props.editionGroup.name)
-  }
+  // if (props.editionGroup?.name && props.sortedBy !== 'edition') {
+  //   firstPart.push(props.editionGroup.name)
+  // }
   if (props.torrent.container && (props.contentType !== 'music' || props.torrent.extras.length > 0)) {
     firstPart.push(props.torrent.container)
   }
