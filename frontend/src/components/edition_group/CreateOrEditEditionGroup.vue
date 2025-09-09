@@ -253,8 +253,8 @@ const updateEditionGroupForm = async (form: UserCreatedEditionGroup) => {
     // the release_date needs to be set manually otherwise another field fails before (I guess) and it's not set
     formRef.value?.setFieldValue('release_date', editionGroupForm.value.release_date.split('T')[0])
     formRef.value?.setValues(editionGroupForm.value)
-  } catch (e) {
-    console.log(e)
+  } catch {
+    // console.log(e)
   }
 }
 

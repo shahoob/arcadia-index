@@ -69,6 +69,7 @@ import { useTitleGroupStore } from '@/stores/titleGroup'
 import { getSelectableContentTypes } from '@/services/helpers'
 import type { ExternalDBData } from '@/services/api/externalDatabasesService'
 import type { Language } from '@/services/api/torrentService'
+import { nextTick } from 'vue'
 
 const { t } = useI18n()
 const titleGroupStore = useTitleGroupStore()
@@ -128,11 +129,12 @@ const updateTitleGroupForm = (form: Partial<UserCreatedTitleGroupForm>) => {
   }
   createNew()
 }
-const externalDBDataFound = (data: ExternalDBData) => {
+const externalDBDataFound = async (data: ExternalDBData) => {
   if (data.title_group) {
     updateTitleGroupForm(data.title_group)
   }
   if (data.edition_group) {
+    await nextTick()
     emit('editionGroupDataFound', data.edition_group)
   }
 }
