@@ -59,7 +59,7 @@ struct WorkLink {
 struct Book {
     works: Vec<WorkLink>,
     #[serde(rename = "covers")]
-    cover_ids: Vec<u64>,
+    cover_ids: Vec<i64>,
     isbn_13: Vec<String>,
 }
 
@@ -99,7 +99,7 @@ pub async fn exec(query: web::Query<GetISBNDataQuery>) -> Result<HttpResponse> {
     let description = work
         .description
         .map(String::from)
-        .unwrap_or_else(|| "Description not provided.".into());
+        .unwrap_or_else(|| "".to_string());
 
     let title_group = UserCreatedTitleGroup {
         name: work.title,
