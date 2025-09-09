@@ -1,8 +1,15 @@
-use crate::handlers::scrapers::ExternalDBData;
-use actix_web::{web, HttpResponse};
-use arcadia_storage::models::{
-    edition_group::{create_default_edition_group, UserCreatedEditionGroup},
-    title_group::{create_default_title_group, ContentType, UserCreatedTitleGroup},
+use crate::{handlers::scrapers::ExternalDBData, middlewares::jwt_middleware::Authdata, Arcadia};
+use actix_web::{
+    web::{self, Data},
+    HttpResponse,
+};
+use arcadia_storage::{
+    models::{
+        artist::{AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist, UserCreatedArtist},
+        edition_group::{create_default_edition_group, UserCreatedEditionGroup},
+        title_group::{create_default_title_group, ContentType, UserCreatedTitleGroup},
+    },
+    redis::RedisPoolInterface,
 };
 use chrono::Utc;
 // Datelike and Timelike are needed in the tests, even though they are not directly referenced
@@ -56,8 +63,25 @@ struct WorkLink {
 }
 
 #[derive(Debug, Deserialize)]
+struct AuthorBio {
+    value: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct Author {
+    name: String,
+    bio: AuthorBio,
+}
+
+#[derive(Debug, Deserialize)]
+struct AuthorLink {
+    key: String,
+}
+
+#[derive(Debug, Deserialize)]
 struct Book {
     works: Vec<WorkLink>,
+    authors: Vec<AuthorLink>,
     #[serde(rename = "covers")]
     cover_ids: Vec<i64>,
     isbn_13: Vec<String>,
@@ -87,9 +111,14 @@ pub struct GetISBNDataQuery {
         (status = 200, description = "", body=ExternalDBData),
     )
 )]
-pub async fn exec(query: web::Query<GetISBNDataQuery>) -> Result<HttpResponse> {
+pub async fn exec<R: RedisPoolInterface + 'static>(
+    query: web::Query<GetISBNDataQuery>,
+    user: Authdata,
+    arc: Data<Arcadia<R>>,
+) -> Result<HttpResponse> {
     let book_url = format!("https://openlibrary.org/isbn/{}.json", query.isbn);
     let book = reqwest::get(&book_url).await?.json::<Book>().await?;
+    // there usually is only 1 work for an isbn (and there should only be 1 in theory as well)
     let work_path = &book.works.first().unwrap().key;
     let work_url = format!("https://openlibrary.org/{}.json", &work_path);
     let work = reqwest::get(&work_url).await?.json::<Work>().await?;
@@ -101,6 +130,31 @@ pub async fn exec(query: web::Query<GetISBNDataQuery>) -> Result<HttpResponse> {
         .map(String::from)
         .unwrap_or_else(|| "".to_string());
 
+    let mut authors: Vec<Author> = vec![];
+
+    for link in book.authors {
+        let author = reqwest::get(format!("https://openlibrary.org{}.json", link.key))
+            .await?
+            .json::<Author>()
+            .await?;
+        authors.push(author);
+    }
+
+    let artists = arc
+        .pool
+        .create_artists(
+            &authors
+                .iter()
+                .map(|author| UserCreatedArtist {
+                    name: author.name.clone(),
+                    description: author.bio.value.clone(),
+                    pictures: vec![],
+                })
+                .collect::<Vec<UserCreatedArtist>>(),
+            user.sub,
+        )
+        .await?;
+
     let title_group = UserCreatedTitleGroup {
         name: work.title,
         description,
@@ -111,6 +165,15 @@ pub async fn exec(query: web::Query<GetISBNDataQuery>) -> Result<HttpResponse> {
             book.cover_ids.first().unwrap()
         )],
         content_type: ContentType::Book,
+        affiliated_artists: artists
+            .iter()
+            .map(|artist| UserCreatedAffiliatedArtist {
+                artist_id: artist.id,
+                title_group_id: 0,
+                roles: vec![],
+                nickname: None,
+            })
+            .collect(),
         ..create_default_title_group()
     };
 
@@ -122,6 +185,19 @@ pub async fn exec(query: web::Query<GetISBNDataQuery>) -> Result<HttpResponse> {
     Ok(HttpResponse::Ok().json(ExternalDBData {
         title_group: Some(title_group),
         edition_group: Some(edition_group),
+        affiliated_artists: artists
+            .iter()
+            .map(|artist| AffiliatedArtistHierarchy {
+                id: 0,
+                artist: artist.clone(),
+                title_group_id: 0,
+                artist_id: artist.id,
+                roles: vec![],
+                nickname: None,
+                created_at: DateTime::default(),
+                created_by_id: 0,
+            })
+            .collect::<Vec<AffiliatedArtistHierarchy>>(),
     }))
 }
 

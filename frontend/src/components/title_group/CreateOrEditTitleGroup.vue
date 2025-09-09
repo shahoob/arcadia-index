@@ -152,7 +152,7 @@
         <EditAffiliatedArtists
           ref="editAffiliatedArtistsRef"
           :contentType="titleGroupForm.content_type"
-          :initial-artists-affiliations="[{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }]"
+          :initial-artists-affiliations="initialArtistsAffiliation"
         />
       </div>
       <div class="covers input-list">
@@ -224,9 +224,11 @@ import { nextTick } from 'vue'
 import _ from 'lodash'
 import { showToast } from '@/main'
 import type { UserCreatedTitleGroupForm } from './CreateOrSelectTitleGroup.vue'
+import type { AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist } from '@/services/api/artistService'
 
 const props = defineProps<{
   initialTitleGroup?: EditedTitleGroup | UserCreatedTitleGroupForm
+  initialArtistsAffiliation?: AffiliatedArtistHierarchy[] | UserCreatedAffiliatedArtist[]
   editMode?: boolean
 }>()
 const titleGroupStore = ref(useTitleGroupStore())

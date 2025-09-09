@@ -77,6 +77,7 @@ async fn get_tmdb_movie_data(client: &Client<ReqwestClient>, id: u64) -> Result<
     Ok(ExternalDBData {
         title_group: Some(title_group),
         edition_group: Some(edition_group),
+        affiliated_artists: vec![],
     })
 }
 

@@ -9,6 +9,7 @@ use actix_web::{
 use arcadia_common::error::{Error, Result};
 use arcadia_storage::{
     models::{
+        artist::AffiliatedArtistHierarchy,
         edition_group::{create_default_edition_group, UserCreatedEditionGroup},
         title_group::{create_default_title_group, ContentType, UserCreatedTitleGroup},
     },
@@ -175,6 +176,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
 
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "title_group": title_group,
-        "edition_group": edition_group
+        "edition_group": edition_group,
+        "affiliated_artists": Vec::<AffiliatedArtistHierarchy>::new()
     })))
 }

@@ -1110,6 +1110,7 @@ export interface components {
         /** @enum {string} */
         ExternalDB: "tmdb";
         ExternalDBData: {
+            affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             edition_group?: null | components["schemas"]["UserCreatedEditionGroup"];
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
         };

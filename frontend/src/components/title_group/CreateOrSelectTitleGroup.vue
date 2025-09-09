@@ -54,7 +54,7 @@
       v-model="titleGroupForm.name"
     />
   </template>
-  <CreateOrEditTitleGroup v-else-if="action === 'create'" @done="titleGroupCreated" :initial-title-group="titleGroupForm" />
+  <CreateOrEditTitleGroup v-else-if="action === 'create'" @done="titleGroupCreated" :initial-title-group="titleGroupForm" :initialArtistsAffiliation />
 </template>
 
 <script setup lang="ts">
@@ -70,6 +70,7 @@ import { getSelectableContentTypes } from '@/services/helpers'
 import type { ExternalDBData } from '@/services/api/externalDatabasesService'
 import type { Language } from '@/services/api/torrentService'
 import { nextTick } from 'vue'
+import type { AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist } from '@/services/api/artistService'
 
 const { t } = useI18n()
 const titleGroupStore = useTitleGroupStore()
@@ -87,6 +88,7 @@ export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_typ
   original_language: Language | null
   id: number
 }
+const initialArtistsAffiliation = ref<AffiliatedArtistHierarchy[] | UserCreatedAffiliatedArtist[]>()
 const titleGroupForm = ref<UserCreatedTitleGroupForm>({
   id: 0,
   name: '',
@@ -133,6 +135,8 @@ const externalDBDataFound = async (data: ExternalDBData) => {
   if (data.title_group) {
     updateTitleGroupForm(data.title_group)
   }
+  initialArtistsAffiliation.value =
+    data.affiliated_artists.length > 0 ? data.affiliated_artists : [{ artist_id: 0, nickname: null, roles: [], title_group_id: 0 }]
   if (data.edition_group) {
     await nextTick()
     emit('editionGroupDataFound', data.edition_group)
