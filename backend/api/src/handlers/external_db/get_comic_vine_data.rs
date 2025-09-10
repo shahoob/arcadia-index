@@ -1,5 +1,9 @@
 use crate::{
-    handlers::scrapers::ExternalDBData, services::common_service::naive_date_to_utc_midnight,
+    handlers::scrapers::ExternalDBData,
+    services::{
+        common_service::naive_date_to_utc_midnight,
+        external_db_service::check_if_existing_title_group_with_link_exists,
+    },
     Arcadia,
 };
 use actix_web::{
@@ -170,6 +174,11 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     query: Query<GetComicVineQuery>,
     arc: Data<Arcadia<R>>,
 ) -> Result<HttpResponse> {
+    if let Some(response) =
+        check_if_existing_title_group_with_link_exists(&arc.pool, &query.url).await?
+    {
+        return Ok(response);
+    }
     // TODO: add contact email from config
     let client = Client::builder()
         .user_agent(format!(
@@ -204,6 +213,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "title_group": title_group,
         "edition_group": null,
-        "affiliated_artists": Vec::<AffiliatedArtistHierarchy>::new()
+        "affiliated_artists": Vec::<AffiliatedArtistHierarchy>::new(),
+        "existing_title_group_id": null
     })))
 }

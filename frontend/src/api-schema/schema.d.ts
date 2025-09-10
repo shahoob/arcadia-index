@@ -1112,6 +1112,8 @@ export interface components {
         ExternalDBData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             edition_group?: null | components["schemas"]["UserCreatedEditionGroup"];
+            /** Format: int64 */
+            existing_title_group_id?: number | null;
             title_group?: null | components["schemas"]["UserCreatedTitleGroup"];
         };
         /** @enum {string} */

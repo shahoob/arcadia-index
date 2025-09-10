@@ -178,6 +178,9 @@
     "vote": "Vote | Votes",
     "edit_title_group": "Edit title group",
     "title_group_edited_success": "Successfuly edited the title group",
+    "existing_title_group": "Existing title group",
+    "existing_title_group_explanation": "The title group already exists. Make sure that the torrent you're trying to upload isn't already part of it, and use the 'add format' button.",
+    "go_to_title_group": "Go to the title group",
     "content_type": {
       "content_type": "Content type",
       "music": "Music",
@@ -247,6 +250,7 @@
     "autofilled_mediainfo": "Autofilled form and sanitized mediainfo successfuly",
     "delete_torrent": "Delete torrent",
     "subtitle_language": "Subtitle language | Subtitle languages",
+    "add_format": "Add format",
     "extras": {
       "extras": "Extras",
       "booklet": "Booklet",

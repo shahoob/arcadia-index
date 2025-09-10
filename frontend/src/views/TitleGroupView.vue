@@ -44,7 +44,7 @@
             class="pi pi-pen-to-square"
             @click="editTitleGroupDialogVisible = true"
           />
-          <i @click="uploadTorrent" v-tooltip.top="t('torrent.upload_torrent')" class="pi pi-upload" />
+          <i @click="uploadTorrent" v-tooltip.top="t('torrent.add_format')" class="pi pi-upload" />
           <i @click="requestTorrent" v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
         </div>
         <FloatLabel class="sort-by-select" variant="on">

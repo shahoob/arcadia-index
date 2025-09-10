@@ -55,6 +55,15 @@
     />
   </template>
   <CreateOrEditTitleGroup v-else-if="action === 'create'" @done="titleGroupCreated" :initial-title-group="titleGroupForm" :initialArtistsAffiliation />
+  <Dialog closeOnEscape modal :header="t('title_group.existing_title_group')" v-model:visible="existingTitleGroupModalVisible">
+    {{ t('title_group.existing_title_group_explanation') }}
+    <br />
+    <div class="wrapper-center" style="margin-top: 15px">
+      <RouterLink :to="`/title-group/${existingTitleGroupId}`">
+        <span class="bold"> {{ t('title_group.go_to_title_group') }}</span>
+      </RouterLink>
+    </div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -63,8 +72,9 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreateOrEditTitleGroup from './CreateOrEditTitleGroup.vue'
 import TitleGroupSearchBar from './TitleGroupSearchBar.vue'
+import { RouterLink } from 'vue-router'
 import ExternalDBSearchBar from './ExternalDBSearchBar.vue'
-import { Select, FloatLabel } from 'primevue'
+import { Select, FloatLabel, Dialog } from 'primevue'
 import { useTitleGroupStore } from '@/stores/titleGroup'
 import { getSelectableContentTypes } from '@/services/helpers'
 import type { ExternalDBData } from '@/services/api/externalDatabasesService'
@@ -81,6 +91,8 @@ const emit = defineEmits<{
 }>()
 
 const action = ref<'select' | 'create'>('select')
+const existingTitleGroupModalVisible = ref(false)
+const existingTitleGroupId = ref(0)
 
 // this type is used to allow more flexibility in certain fields in the frontend forms
 export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_type' | 'original_language'> & {
@@ -132,6 +144,10 @@ const updateTitleGroupForm = (form: Partial<UserCreatedTitleGroupForm>) => {
   createNew()
 }
 const externalDBDataFound = async (data: ExternalDBData) => {
+  if (data.existing_title_group_id) {
+    existingTitleGroupId.value = data.existing_title_group_id
+    existingTitleGroupModalVisible.value = true
+  }
   if (data.title_group) {
     updateTitleGroupForm(data.title_group)
   }

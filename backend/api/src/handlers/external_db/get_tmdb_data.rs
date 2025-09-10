@@ -1,7 +1,11 @@
 use std::str::FromStr;
 
 use crate::{
-    handlers::scrapers::ExternalDBData, services::common_service::naive_date_to_utc_midnight,
+    handlers::scrapers::ExternalDBData,
+    services::{
+        common_service::naive_date_to_utc_midnight,
+        external_db_service::check_if_existing_title_group_with_link_exists,
+    },
     Arcadia,
 };
 use actix_web::{
@@ -78,6 +82,7 @@ async fn get_tmdb_movie_data(client: &Client<ReqwestClient>, id: u64) -> Result<
         title_group: Some(title_group),
         edition_group: Some(edition_group),
         affiliated_artists: vec![],
+        existing_title_group_id: None,
     })
 }
 
@@ -95,6 +100,12 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     query: Query<GetTMDBQuery>,
     arc: Data<Arcadia<R>>,
 ) -> Result<HttpResponse> {
+    if let Some(response) =
+        check_if_existing_title_group_with_link_exists(&arc.pool, &query.url).await?
+    {
+        return Ok(response);
+    }
+
     if arc.tmdb_api_key.is_none() {
         return Err(Error::TMDBDataFetchingNotAvailable);
     }

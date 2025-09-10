@@ -173,6 +173,9 @@ pub enum Error {
     #[error("error while searching for torrents: '{0}'")]
     ErrorSearchingForTorrents(String),
 
+    #[error("error while searching for title group: '{0}'")]
+    ErrorSearchingForTitleGroup(String),
+
     #[error("error while deleting torrent: '{0}'")]
     ErrorDeletingTorrent(String),
 

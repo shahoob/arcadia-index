@@ -1,4 +1,7 @@
-use crate::{handlers::scrapers::ExternalDBData, middlewares::jwt_middleware::Authdata, Arcadia};
+use crate::{
+    handlers::scrapers::ExternalDBData, middlewares::jwt_middleware::Authdata,
+    services::external_db_service::check_if_existing_title_group_with_link_exists, Arcadia,
+};
 use actix_web::{
     web::{self, Data},
     HttpResponse,
@@ -62,7 +65,7 @@ struct WorkLink {
     key: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 struct AuthorBio {
     value: String,
 }
@@ -70,7 +73,7 @@ struct AuthorBio {
 #[derive(Debug, Deserialize)]
 struct Author {
     name: String,
-    bio: AuthorBio,
+    bio: Option<AuthorBio>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -84,7 +87,7 @@ struct Book {
     authors: Vec<AuthorLink>,
     #[serde(rename = "covers")]
     cover_ids: Vec<i64>,
-    isbn_13: Vec<String>,
+    isbn_13: Option<Vec<String>>,
 }
 
 fn parse_date(date: &str) -> Option<DateTime<Utc>> {
@@ -123,6 +126,14 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     let work_url = format!("https://openlibrary.org/{}.json", &work_path);
     let work = reqwest::get(&work_url).await?.json::<Work>().await?;
 
+    let work_group_url = format!("https://openlibrary.org{}", work_path);
+
+    if let Some(response) =
+        check_if_existing_title_group_with_link_exists(&arc.pool, &work_group_url).await?
+    {
+        return Ok(response);
+    }
+
     let original_release_date = work.first_publish_date.as_ref().and_then(|d| parse_date(d));
 
     let description = work
@@ -147,7 +158,13 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
                 .iter()
                 .map(|author| UserCreatedArtist {
                     name: author.name.clone(),
-                    description: author.bio.value.clone(),
+                    description: author
+                        .bio
+                        .clone()
+                        .unwrap_or(AuthorBio {
+                            value: "".to_string(),
+                        })
+                        .value,
                     pictures: vec![],
                 })
                 .collect::<Vec<UserCreatedArtist>>(),
@@ -158,7 +175,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     let title_group = UserCreatedTitleGroup {
         name: work.title,
         description,
-        external_links: vec![format!("https://openlibrary.org{}", work_path)],
+        external_links: vec![work_group_url],
         original_release_date,
         covers: vec![format!(
             "https://covers.openlibrary.org/b/id/{}-L.jpg",
@@ -178,7 +195,9 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     };
 
     let edition_group = UserCreatedEditionGroup {
-        additional_information: Some(json!({"isbn_13": book.isbn_13.first().unwrap()})),
+        additional_information: Some(
+            json!({"isbn_13": book.isbn_13.unwrap_or(vec![]).first().unwrap_or(&"".to_string())}),
+        ),
         ..create_default_edition_group()
     };
 
@@ -198,6 +217,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
                 created_by_id: 0,
             })
             .collect::<Vec<AffiliatedArtistHierarchy>>(),
+        existing_title_group_id: None,
     }))
 }
 

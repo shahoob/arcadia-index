@@ -382,4 +382,23 @@ impl ConnectionPool {
 
         Ok(updated_title_group)
     }
+
+    pub async fn does_title_group_with_link_exist(
+        &self,
+        external_link: &str,
+    ) -> Result<Option<i64>> {
+        let title_group_id: Option<i64> = sqlx::query_scalar!(
+            r#"
+            SELECT id
+            FROM title_groups
+            WHERE external_links @> ARRAY[$1::TEXT];
+            "#,
+            external_link
+        )
+        .fetch_optional(self.borrow())
+        .await
+        .map_err(|e| Error::ErrorSearchingForTitleGroup(e.to_string()))?;
+
+        Ok(title_group_id)
+    }
 }

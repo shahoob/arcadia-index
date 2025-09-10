@@ -1,5 +1,9 @@
 use crate::{
-    handlers::scrapers::ExternalDBData, services::common_service::naive_date_to_utc_midnight,
+    handlers::scrapers::ExternalDBData,
+    services::{
+        common_service::naive_date_to_utc_midnight,
+        external_db_service::check_if_existing_title_group_with_link_exists,
+    },
     Arcadia,
 };
 use actix_web::{
@@ -163,12 +167,25 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     let mut edition_group: Option<UserCreatedEditionGroup> = None;
     match entity_type {
         MusicBrainzResourceType::ReleaseGroup => {
+            if let Some(response) =
+                check_if_existing_title_group_with_link_exists(&arc.pool, &query.url).await?
+            {
+                return Ok(response);
+            }
             title_group = Some(get_musicbrainz_release_group_data(&id, &client).await?);
         }
         MusicBrainzResourceType::Release => {
             let (eg, release_group_id) = get_musicbrainz_release_data(&id, &client).await?;
             edition_group = Some(eg);
             if let Some(rgid) = release_group_id {
+                if let Some(response) = check_if_existing_title_group_with_link_exists(
+                    &arc.pool,
+                    &format!("https://musicbrainz.org/release-group/{rgid}"),
+                )
+                .await?
+                {
+                    return Ok(response);
+                }
                 title_group = Some(get_musicbrainz_release_group_data(&rgid, &client).await?);
             }
         }
@@ -177,6 +194,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "title_group": title_group,
         "edition_group": edition_group,
-        "affiliated_artists": Vec::<AffiliatedArtistHierarchy>::new()
+        "affiliated_artists": Vec::<AffiliatedArtistHierarchy>::new(),
+        "existing_title_group_id": null
     })))
 }
