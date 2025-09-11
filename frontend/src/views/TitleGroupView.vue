@@ -170,6 +170,8 @@ import EditArtistsModal from '@/components/artist/EditArtistsModal.vue'
 import { Dialog } from 'primevue'
 import EmbeddedLinks from '@/components/title_group/EmbeddedLinks.vue'
 import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
+import { onUnmounted } from 'vue'
+import { useEditionGroupStore } from '@/stores/editionGroup'
 
 const router = useRouter()
 const route = useRoute()
@@ -213,7 +215,14 @@ const fetchTitleGroup = async () => {
   document.title = titleGroupAndAssociatedData.value.series.name
     ? `${titleGroupAndAssociatedData.value.title_group.name} (${titleGroupAndAssociatedData.value.series.name}) - ${siteName}`
     : `${titleGroupAndAssociatedData.value.title_group.name} - ${siteName}`
+
+  populateTitleGroupStore()
 }
+
+onUnmounted(() => {
+  titleGroupStore.$reset()
+  useEditionGroupStore().$reset()
+})
 
 const populateTitleGroupStore = () => {
   if (titleGroupAndAssociatedData.value) {
@@ -226,7 +235,6 @@ const populateTitleGroupStore = () => {
 }
 
 const uploadTorrent = () => {
-  populateTitleGroupStore()
   router.push({ path: '/upload' })
 }
 

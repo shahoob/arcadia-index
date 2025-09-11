@@ -61,6 +61,7 @@
             size="small"
             name="format"
             class="select"
+            @value-change="editionGroupStore.additional_information = editionGroupForm.additional_information"
           />
           <label for="format">{{ t('edition_group.format') }}</label>
         </FloatLabel>
@@ -144,6 +145,7 @@ import { useI18n } from 'vue-i18n'
 import { getSources } from '@/services/helpers'
 import type { TitleGroupLite, UserCreatedEditionGroup } from '@/services/api/torrentService'
 import type { VNodeRef } from 'vue'
+import { useEditionGroupStore } from '@/stores/editionGroup'
 
 interface Props {
   titleGroup: TitleGroupLite
@@ -155,6 +157,7 @@ const { titleGroup, sendingEditionGroup = false, initialEditionGroupForm = null 
 const { t } = useI18n()
 
 const formRef = ref<VNodeRef | null>(null)
+const editionGroupStore = useEditionGroupStore()
 
 const emit = defineEmits<{
   validated: [editionGroup: UserCreatedEditionGroup]

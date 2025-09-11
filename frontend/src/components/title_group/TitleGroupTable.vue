@@ -189,6 +189,7 @@ import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import CreateOrEditTorrent from '../torrent/CreateOrEditTorrent.vue'
 import { useUserStore } from '@/stores/user'
+import { useEditionGroupStore } from '@/stores/editionGroup'
 
 interface Props {
   title_group: TitleGroup | TitleGroupHierarchyLite
@@ -238,6 +239,7 @@ const reportTorrent = (id: number) => {
 }
 const editTorrent = (torrent: EditedTorrent) => {
   torrentBeingEdited.value = torrent
+  useEditionGroupStore().additional_information = getEditionGroupById(torrent.edition_group_id).additional_information
   editTorrentDialogVisible.value = true
 }
 const deleteTorrent = (torrentId: number) => {
