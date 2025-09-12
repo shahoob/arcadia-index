@@ -321,7 +321,7 @@ const resolver = ({ values }: FormResolverOptions) => {
   if (values.country_from == '') {
     errors.country_from = [{ message: t('error.select_country') }]
   }
-  if (values.original_release_date == '') {
+  if (values.original_release_date === null || values.original_release_date == '') {
     errors.original_release_date = [{ message: t('error.select_date') }]
   }
   // affiliated_artists_names.value.forEach((artist_name: string, index: number) => {
