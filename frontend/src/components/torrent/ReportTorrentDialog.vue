@@ -31,10 +31,13 @@ const emit = defineEmits<{
 const sendReport = () => {
   loading.value = true
   report.value.reported_torrent_id = props.torrentId
-  reportTorrent(report.value).then((data: TorrentReport) => {
-    loading.value = false
-    emit('reported', data)
-  })
+  reportTorrent(report.value)
+    .then((data: TorrentReport) => {
+      emit('reported', data)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
 

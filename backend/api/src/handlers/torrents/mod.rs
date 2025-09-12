@@ -21,5 +21,5 @@ pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
     cfg.service(resource("/registered").route(get().to(self::get_registered_torrents::exec::<R>)));
     cfg.service(resource("/upload-info").route(get().to(self::get_upload_information::exec::<R>)));
     cfg.service(resource("/top").route(get().to(self::get_top_torrents::exec::<R>)));
-    cfg.service(resource("/reports").route(get().to(self::create_torrent_report::exec::<R>)));
+    cfg.service(resource("/reports").route(post().to(self::create_torrent_report::exec::<R>)));
 }
