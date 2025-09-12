@@ -5,6 +5,8 @@ export interface RouteNamedMap {
   TitleGroup: RouteRecordInfo<'TitleGroup', '/title-group/:id', { id: string | number }>
   Series: RouteRecordInfo<'Series', '/series/:id', { id: string | number }, { id: string }>
   Artist: RouteRecordInfo<'Artist', '/artist/:id', { id: string | number }, { id: string }>
+  UploadTorrent: RouteRecordInfo<'UploadTorrent', '/upload'>
+  NewTorrentRequest: RouteRecordInfo<'NewTorrentRequest', '/new-torrent-request'>
 }
 
 declare module 'vue-router' {
@@ -51,17 +53,23 @@ const router = createRouter({
     },
     {
       path: '/torrent-requests',
-      name: 'Torrent requests',
+      name: 'TorrentRequests',
+      meta: {
+        documentTitle: 'Torrent requests',
+      },
       component: () => import('../views/TorrentRequestSearchView.vue'),
     },
     {
       path: '/new-torrent-request',
-      name: 'New torrent request',
+      name: 'NewTorrentRequest',
+      meta: {
+        documentTitle: 'New torrent request',
+      },
       component: () => import('../views/NewTorrentRequestView.vue'),
     },
     {
       path: '/torrent-request/:id',
-      name: 'Torrent request',
+      name: 'TorrentRequest',
       meta: {
         dynamicDocumentTitle: true,
       },

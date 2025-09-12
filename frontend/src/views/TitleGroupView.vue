@@ -170,8 +170,8 @@ import EditArtistsModal from '@/components/artist/EditArtistsModal.vue'
 import { Dialog } from 'primevue'
 import EmbeddedLinks from '@/components/title_group/EmbeddedLinks.vue'
 import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
-import { onUnmounted } from 'vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -219,9 +219,14 @@ const fetchTitleGroup = async () => {
   populateTitleGroupStore()
 }
 
-onUnmounted(() => {
-  titleGroupStore.$reset()
-  useEditionGroupStore().$reset()
+onBeforeRouteLeave((to, from, next) => {
+  console.log(to, from, next)
+  if (to.name !== 'UploadTorrent' && to.name !== 'NewTorrentRequest') {
+    titleGroupStore.$reset()
+    useEditionGroupStore().$reset()
+  }
+  // we must call `next()` to continue navigation
+  next()
 })
 
 const populateTitleGroupStore = () => {
@@ -234,12 +239,11 @@ const populateTitleGroupStore = () => {
   }
 }
 
-const uploadTorrent = () => {
+const uploadTorrent = async () => {
   router.push({ path: '/upload' })
 }
 
 const requestTorrent = () => {
-  populateTitleGroupStore()
   router.push({ path: '/new-torrent-request' })
 }
 
