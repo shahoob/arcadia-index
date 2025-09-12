@@ -23,6 +23,7 @@
         v-else
         :titleGroup="torrentRequestAndAssociatedData.title_group"
         :series="torrentRequestAndAssociatedData.series"
+        :nameLink="`/title-group/${torrentRequestAndAssociatedData.title_group.id}`"
         class="slim-header title"
       />
       <div class="actions">
