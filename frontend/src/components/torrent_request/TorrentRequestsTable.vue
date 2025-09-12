@@ -19,7 +19,7 @@
     <Column header="Bounty">
       <template #body="slotProps"> {{ bytesToReadable(slotProps.data.bounty.upload) }} + {{ slotProps.data.bounty.bonus_points }} bp </template>
     </Column>
-    <Column header="Votes">
+    <Column header="Voters">
       <template #body="slotProps"> {{ slotProps.data.user_votes_amount }} </template>
     </Column>
   </DataTable>
