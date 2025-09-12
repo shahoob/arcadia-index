@@ -110,6 +110,8 @@ const vote = async () => {
   newTorrentRequestVote({ ...newVote.value, torrent_request_id: props.torrentRequest.id })
     .then((castedVote) => {
       emit('voted', { ...castedVote, created_by: userStore })
+      userStore.uploaded -= castedVote.bounty_upload
+      userStore.bonus_points -= castedVote.bounty_bonus_points
       showToast('', t('torrent_request.vote_successful'), 'success', 3000, true, 'tr')
     })
     .finally(() => (newVoteLoading.value = false))
