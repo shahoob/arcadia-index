@@ -26,18 +26,7 @@
     </table>
     <div class="new-vote">
       <span class="bold">{{ t('torrent_request.new_vote') }}</span>
-      <div class="inputs">
-        <FloatLabel>
-          <InputNumber v-model="bountyUploadUnited" />
-          <label for="name">{{ t('user.upload') }}</label>
-        </FloatLabel>
-        <Select v-model="bountyUploadUnit" :options="selectableUploadUnits" size="small" class="select-unit" />
-        <FloatLabel>
-          <InputNumber v-model="newVote.bounty_bonus_points" />
-          <label for="name">{{ t('user.bonus_points') }}</label>
-        </FloatLabel>
-        <Button size="small" :loading="newVoteLoading" :label="t('torrent_request.vote')" @click="vote" />
-      </div>
+      <TorrentRequestVoteInputs showVoteBtn @vote="vote" :loading="newVoteLoading" />
     </div>
   </ContentContainer>
 </template>
@@ -45,8 +34,6 @@
 <script lang="ts" setup>
 import type { TorrentRequest } from '@/services/api/torrentRequestService'
 import ContentContainer from '../ContentContainer.vue'
-import { FloatLabel } from 'primevue'
-import { InputNumber, Select, Button } from 'primevue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import {
@@ -60,8 +47,10 @@ import { useUserStore } from '@/stores/user'
 import { showToast } from '@/main'
 import type { ContentType } from '@/services/api/torrentService'
 import { computed } from 'vue'
+import TorrentRequestVoteInputs from './TorrentRequestVoteInputs.vue'
 
 const { t } = useI18n()
+
 const requirements = ref<(keyof TorrentRequest)[]>([
   'audio_bitrate_sampling',
   'audio_channels',
@@ -76,7 +65,6 @@ const requirements = ref<(keyof TorrentRequest)[]>([
 const filteredRequirements = computed(() => {
   return requirements.value.filter((requirement) => isAttributeUsed(requirement, props.contentType))
 })
-const selectableUploadUnits = ref(['MiB', 'GiB', 'TiB'])
 
 const props = defineProps<{
   torrentRequest: TorrentRequest
@@ -89,31 +77,16 @@ const emit = defineEmits<{
 }>()
 
 const userStore = useUserStore()
-
-const newVote = ref<UserCreatedTorrentRequestVote>({
-  bounty_bonus_points: 0,
-  bounty_upload: 0,
-  torrent_request_id: 0,
-})
-const bountyUploadUnit = ref('MiB')
-const bountyUploadUnited = ref(0)
 const newVoteLoading = ref(false)
 
-const vote = async () => {
+const vote = async (newVote: UserCreatedTorrentRequestVote) => {
   newVoteLoading.value = true
-  const unitsInBytes: Record<string, number> = {
-    MiB: 1024 ** 2,
-    GiB: 1024 ** 3,
-    TiB: 1024 ** 4,
-  }
-  newVote.value.bounty_upload = bountyUploadUnited.value * unitsInBytes[bountyUploadUnit.value]
-  newTorrentRequestVote({ ...newVote.value, torrent_request_id: props.torrentRequest.id })
+
+  newTorrentRequestVote({ ...newVote, torrent_request_id: props.torrentRequest.id })
     .then((castedVote) => {
       emit('voted', { ...castedVote, created_by: userStore })
       userStore.uploaded -= castedVote.bounty_upload
       userStore.bonus_points -= castedVote.bounty_bonus_points
-      bountyUploadUnited.value = 0
-      newVote.value.bounty_bonus_points = 0
       showToast('', t('torrent_request.vote_successful'), 'success', 3000, true, 'tr')
     })
     .finally(() => (newVoteLoading.value = false))
@@ -139,25 +112,5 @@ table {
   margin-top: 40px;
   display: flex;
   align-items: center;
-  .inputs {
-    display: flex;
-    align-items: end;
-    .p-floatlabel {
-      margin-left: 10px;
-    }
-  }
-  .p-button {
-    margin-left: 15px;
-  }
-}
-</style>
-<style>
-.new-vote {
-  .p-inputnumber-input {
-    width: 6em;
-  }
-}
-.select-unit {
-  width: 5em;
 }
 </style>

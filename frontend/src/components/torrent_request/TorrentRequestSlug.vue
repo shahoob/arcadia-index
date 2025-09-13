@@ -1,4 +1,11 @@
 <template>
+  <!-- Edition information -->
+  <span v-for="(item, itemIndex) in computedSecondSlug" :key="itemIndex">
+    <span class="slash" v-if="itemIndex > 0"> / </span>
+    <span>{{ item }}</span>
+  </span>
+  <span class="separator" v-if="computedSlug.some((part) => part.length > 0) && computedSecondSlug.length > 0"> | </span>
+  <!-- Torrent information -->
   <template v-for="(part, partIndex) in computedSlug" :key="partIndex">
     <template v-if="part.length > 0">
       <span v-for="(item, itemIndex) in part" :key="itemIndex">
@@ -7,11 +14,6 @@
       </span>
     </template>
   </template>
-  <span class="separator" v-if="computedSlug.some((part) => part.length > 0) && computedSecondSlug.length > 0"> | </span>
-  <span v-for="(item, itemIndex) in computedSecondSlug" :key="itemIndex">
-    <span class="slash" v-if="itemIndex > 0"> / </span>
-    <span>{{ item }}</span>
-  </span>
 </template>
 
 <script lang="ts" setup>

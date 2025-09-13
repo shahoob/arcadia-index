@@ -239,41 +239,8 @@
             {{ $form.description.error?.message }}
           </Message>
         </div>
-        <div class="line bounty-section">
-          <div>
-            <FloatLabel>
-              <InputNumber
-                v-model="torrentRequestForm.initial_vote.bounty_upload"
-                inputId="bounty_upload"
-                name="bounty_upload"
-                size="small"
-                :min="0"
-                :max="userStore.uploaded"
-                suffix=" bytes"
-              />
-              <label for="bounty_upload">{{ t('user.upload') }}</label>
-            </FloatLabel>
-            <Message v-if="$form.bounty_upload?.invalid" severity="error" size="small" variant="simple">
-              {{ $form.bounty_upload.error?.message }}
-            </Message>
-          </div>
-          <div>
-            <FloatLabel>
-              <InputNumber
-                v-model="torrentRequestForm.initial_vote.bounty_bonus_points"
-                inputId="bounty_bonus_points"
-                name="bounty_bonus_points"
-                size="small"
-                :min="0"
-                :max="userStore.bonus_points"
-                suffix=" points"
-              />
-              <label for="bounty_bonus_points">{{ t('user.bonus_points') }}</label>
-            </FloatLabel>
-            <Message v-if="$form.bounty_bonus_points?.invalid" severity="error" size="small" variant="simple">
-              {{ $form.bounty_bonus_points.error?.message }}
-            </Message>
-          </div>
+        <div class="bounty-section">
+          <TorrentRequestVoteInputs ref="torrentRequestVoteInputsRef" />
         </div>
       </div>
       <div class="flex justify-content-center">
@@ -317,7 +284,6 @@ import {
 } from '@/services/helpers'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { useTitleGroupStore } from '@/stores/titleGroup'
-import { useUserStore } from '@/stores/user'
 import { useI18n } from 'vue-i18n'
 import { nextTick } from 'vue'
 import type { VNodeRef } from 'vue'
@@ -325,6 +291,8 @@ import _ from 'lodash'
 import { showToast } from '@/main'
 import type { UserCreatedTorrentRequest, TorrentRequest } from '@/services/api/torrentRequestService'
 import { createTorrentRequest } from '@/services/api/torrentRequestService'
+import TorrentRequestVoteInputs from './TorrentRequestVoteInputs.vue'
+import { useUserStore } from '@/stores/user'
 
 const formRef = ref<VNodeRef | null>(null)
 const torrentRequestForm = ref<UserCreatedTorrentRequest>({
@@ -354,9 +322,10 @@ const torrentRequestForm = ref<UserCreatedTorrentRequest>({
 const creatingTorrentRequest = ref(false)
 const titleGroupStore = ref(useTitleGroupStore())
 const editionGroupStore = ref(useEditionGroupStore())
-const userStore = ref(useUserStore())
 
 const { t } = useI18n()
+const torrentRequestVoteInputsRef = ref<InstanceType<typeof TorrentRequestVoteInputs>>()
+const userStore = useUserStore()
 
 const props = defineProps<{
   initialTorrentRequest?: UserCreatedTorrentRequest
@@ -377,12 +346,6 @@ const resolver = (/*{ values }: FormResolverOptions*/) => {
   // if (values.languages.length === 0) {
   //   errors.languages = [{ message: t('error.select_at_least_x_language', [1]) }]
   // }
-  if (torrentRequestForm.value.initial_vote.bounty_upload < 0) {
-    errors.initial_vote = [{ message: t('error.invalid_bounty_upload') }]
-  }
-  if (torrentRequestForm.value.initial_vote.bounty_bonus_points < 0) {
-    errors.initial_vote = [{ message: t('error.invalid_bounty_bonus_points') }]
-  }
   // if (values.video_resolution.includes('Other')) {
   //   if (!values.video_resolution_other_x || isNaN(Number(values.video_resolution_other_x))) {
   //     errors.video_resolution_other_x = [{ message: 'Invalid resolution X' }]
@@ -404,12 +367,21 @@ const onFormSubmit = ({ valid }: FormSubmitEvent) => {
 }
 
 const submitTorrentRequest = () => {
+  if (torrentRequestVoteInputsRef.value) {
+    const newVote = torrentRequestVoteInputsRef.value.vote()
+    torrentRequestForm.value.initial_vote.bounty_bonus_points = newVote.bounty_bonus_points
+    torrentRequestForm.value.initial_vote.bounty_upload = newVote.bounty_upload
+  } else {
+    return
+  }
   creatingTorrentRequest.value = true
   torrentRequestForm.value.title_group_id = titleGroupStore.value.id
 
   createTorrentRequest(torrentRequestForm.value)
     .then((data) => {
       showToast('', t('torrent_request.created_success'), 'success', 3000, true, 'tr')
+      userStore.uploaded -= torrentRequestForm.value.initial_vote.bounty_upload
+      userStore.bonus_points -= torrentRequestForm.value.initial_vote.bounty_bonus_points
       emit('done', data)
     })
     .finally(() => {
