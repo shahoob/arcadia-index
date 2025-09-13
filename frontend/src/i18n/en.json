@@ -281,12 +281,13 @@
     "acceptable_source": "Acceptable Source",
     "acceptable_video_codec": "Acceptable Video Codec",
     "acceptable_video_resolution": "Acceptable Video Resolution",
-    "voter": "Voter",
+    "voter": "Voter | Voters",
     "voted_at": "Voted at",
     "new_vote": "New vote",
     "vote": "Vote | Votes",
     "bounty": "Bounty",
-    "vote_successful": "Your vote has been added!"
+    "vote_successful": "Your vote has been added!",
+    "requirement": "Requirement | Requirements"
   },
   "entity": {
     "entity": "Entity | Entities",
