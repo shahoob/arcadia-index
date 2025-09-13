@@ -20,7 +20,7 @@
       <template #body="slotProps">{{ bytesToReadable(slotProps.data.bounty.upload) }}</template>
     </Column>
     <Column :header="t('user.bonus_points')">
-      <template #body="slotProps">{{ slotProps.data.bounty.bonus_points }} bp</template>
+      <template #body="slotProps">{{ slotProps.data.bounty.bonus_points }}</template>
     </Column>
     <Column :header="t('torrent_request.voter', 2)">
       <template #body="slotProps"> {{ slotProps.data.user_votes_amount }} </template>

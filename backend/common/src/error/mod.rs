@@ -233,6 +233,9 @@ pub enum Error {
     #[error("could not find conversations")]
     CouldNotFindConversations(#[source] sqlx::Error),
 
+    #[error("could not create collage")]
+    CouldNotCreateCollage(#[source] sqlx::Error),
+
     #[error("error getting musicbrainz data")]
     ErrorGettingMusicbrainzData(#[source] musicbrainz_rs::Error),
 

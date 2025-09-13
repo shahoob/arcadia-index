@@ -6,6 +6,7 @@ use crate::handlers::affiliated_artists::config as AffiliatedArtistsConfig;
 use crate::handlers::announces::config as AnnouncesConfig;
 use crate::handlers::artists::config as ArtistsConfig;
 use crate::handlers::auth::config as AuthConfig;
+use crate::handlers::collages::config as CollagesConfig;
 use crate::handlers::conversations::config as ConversationsConfig;
 use crate::handlers::edition_groups::config as EditionGroupsConfig;
 use crate::handlers::external_db::config as ExternalDbConfig;
@@ -52,6 +53,7 @@ pub fn init<R: RedisPoolInterface + 'static>(cfg: &mut web::ServiceConfig) {
             .service(scope("/invitations").configure(InvitationsConfig::<R>))
             .service(scope("/home").configure(HomeConfig::<R>))
             .service(scope("/master-groups").configure(MasterGroupsConfig::<R>))
-            .service(scope("/gifts").configure(GiftsConfig::<R>)),
+            .service(scope("/gifts").configure(GiftsConfig::<R>))
+            .service(scope("/collages").configure(CollagesConfig::<R>)),
     );
 }

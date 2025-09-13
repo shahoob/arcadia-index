@@ -75,6 +75,7 @@ use crate::handlers::{
         crate::handlers::staff_pms::get_staff_pm::exec,
         crate::handlers::staff_pms::list_staff_pms::exec,
         crate::handlers::staff_pms::resolve_staff_pm::exec,
+        crate::handlers::collages::create_collage::exec,
         crate::handlers::external_db::get_isbn_data::exec,
         crate::handlers::external_db::get_musicbrainz_data::exec,
         crate::handlers::external_db::get_tmdb_data::exec,

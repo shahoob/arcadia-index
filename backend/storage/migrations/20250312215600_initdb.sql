@@ -629,11 +629,11 @@ CREATE TYPE collage_category_enum AS ENUM (
     'External',
     'Theme'
 );
-CREATE TYPE collage_type_enum AS ENUM (
-    'Artist',
-    'Entity',
-    'Title'
-);
+-- CREATE TYPE collage_type_enum AS ENUM (
+--     'Artist',
+--     'Entity',
+--     'Title'
+-- );
 CREATE TABLE collage (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -643,7 +643,7 @@ CREATE TABLE collage (
     description TEXT NOT NULL,
     tags VARCHAR[] NOT NULL,
     category collage_category_enum NOT NULL,
-    section collage_type_enum NOT NULL,
+    -- section collage_type_enum NOT NULL,
     FOREIGN KEY (created_by_id) REFERENCES users(id)
 );
 CREATE TABLE collage_title_group_entry (
@@ -652,8 +652,20 @@ CREATE TABLE collage_title_group_entry (
     created_by_id BIGINT NOT NULL,
     title_group_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
+    note TEXT,
     FOREIGN KEY (collage_id) REFERENCES users(id),
     FOREIGN KEY (title_group_id) REFERENCES title_groups(id),
+    FOREIGN KEY (created_by_id) REFERENCES users(id)
+);
+CREATE TABLE collage_master_group_entry (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_by_id BIGINT NOT NULL,
+    master_group_id BIGINT NOT NULL,
+    collage_id BIGINT NOT NULL,
+    note TEXT,
+    FOREIGN KEY (collage_id) REFERENCES users(id),
+    FOREIGN KEY (master_group_id) REFERENCES master_groups(id),
     FOREIGN KEY (created_by_id) REFERENCES users(id)
 );
 CREATE TABLE collage_artist_entry (
@@ -662,6 +674,7 @@ CREATE TABLE collage_artist_entry (
     created_by_id BIGINT NOT NULL,
     artist_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
+    note TEXT,
     FOREIGN KEY (artist_id) REFERENCES artists(id),
     FOREIGN KEY (collage_id) REFERENCES users(id),
     FOREIGN KEY (created_by_id) REFERENCES users(id)
@@ -672,6 +685,7 @@ CREATE TABLE collage_entity_entry (
     created_by_id BIGINT NOT NULL,
     entity_id BIGINT NOT NULL,
     collage_id BIGINT NOT NULL,
+    note TEXT,
     FOREIGN KEY (entity_id) REFERENCES entities(id),
     FOREIGN KEY (collage_id) REFERENCES users(id),
     FOREIGN KEY (created_by_id) REFERENCES users(id)

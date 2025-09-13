@@ -1,0 +1,93 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                INSERT INTO collage (created_by_id, name, covers, description, tags, category)\n                VALUES ($1, $2, $3, $4, $5, $6::collage_category_enum)\n                RETURNING id, created_at, created_by_id, name, covers, description, tags,\n                                          category as \"category: CollageCategory\"\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 2,
+        "name": "created_by_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "covers",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "tags",
+        "type_info": "VarcharArray"
+      },
+      {
+        "ordinal": 7,
+        "name": "category: CollageCategory",
+        "type_info": {
+          "Custom": {
+            "name": "collage_category_enum",
+            "kind": {
+              "Enum": [
+                "Personal",
+                "Staff Picks",
+                "External",
+                "Theme"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Varchar",
+        "Varchar",
+        "Text",
+        "VarcharArray",
+        {
+          "Custom": {
+            "name": "collage_category_enum",
+            "kind": {
+              "Enum": [
+                "Personal",
+                "Staff Picks",
+                "External",
+                "Theme"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "dffaac38190e780228d22f14d579b62deba2e609496c5f4fa0ff70e231d21dc3"
+}

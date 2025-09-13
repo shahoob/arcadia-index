@@ -12,7 +12,7 @@ impl ConnectionPool {
         &self,
         application: &UserCreatedUserApplication,
     ) -> Result<UserApplication> {
-        let gift = sqlx::query_as!(
+        let created_application = sqlx::query_as!(
             UserApplication,
             r#"
                 INSERT INTO user_applications (body, referral, email, staff_note, status)
@@ -28,7 +28,7 @@ impl ConnectionPool {
         .await
         .map_err(Error::CouldNotCreateUserApplication)?;
 
-        Ok(gift)
+        Ok(created_application)
     }
 
     pub async fn find_user_applications(
