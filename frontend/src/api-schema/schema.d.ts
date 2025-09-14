@@ -100,6 +100,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/collages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Create a collage"];
+        put?: never;
+        post: operations["Create a collage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/collages/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Inserts entries into a collage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/conversations": {
         parameters: {
             query?: never;
@@ -884,6 +916,70 @@ export interface components {
         AudioChannels: "1.0" | "2.0" | "2.1" | "5.0" | "5.1" | "7.1";
         /** @enum {string} */
         AudioCodec: "mp2" | "mp3" | "aac" | "ac3" | "dts" | "flac" | "pcm" | "true-hd" | "opus" | "dsd";
+        Collage: {
+            category: components["schemas"]["CollageCategory"];
+            collage_type: components["schemas"]["CollageType"];
+            covers: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            description: string;
+            /** Format: int64 */
+            id: number;
+            name: string;
+            tags: string[];
+        };
+        CollageAndAssociatedData: {
+            collage: components["schemas"]["Collage"];
+            entries: components["schemas"]["CollageEntryHierarchy"][];
+        };
+        /** @enum {string} */
+        CollageCategory: "Personal" | "Staff Picks" | "External" | "Theme";
+        CollageEntry: {
+            /** Format: int64 */
+            artist_id?: number | null;
+            /** Format: int64 */
+            collage_id: number;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            entity_id?: number | null;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            master_group_id?: number | null;
+            note?: string | null;
+            /** Format: int64 */
+            title_group_id?: number | null;
+        };
+        CollageEntryHierarchy: {
+            artist?: null | components["schemas"]["ArtistLite"];
+            /** Format: int64 */
+            artist_id?: number | null;
+            /** Format: int64 */
+            collage_id: number;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            entity?: null | components["schemas"]["EntityLite"];
+            /** Format: int64 */
+            entity_id?: number | null;
+            /** Format: int64 */
+            id: number;
+            master_group?: null | components["schemas"]["MasterGroupLite"];
+            /** Format: int64 */
+            master_group_id?: number | null;
+            note?: string | null;
+            title_group?: null | components["schemas"]["TitleGroupHierarchyLite"];
+            /** Format: int64 */
+            title_group_id?: number | null;
+        };
+        /** @enum {string} */
+        CollageType: "Artist" | "Entity" | "TitleGroup" | "MasterGroup";
         /** @enum {string} */
         ContentType: "movie" | "video" | "tv_show" | "music" | "podcast" | "software" | "book" | "collection";
         Conversation: {
@@ -1100,6 +1196,12 @@ export interface components {
             /** Format: int64 */
             created_by_id: number;
             description: string;
+            /** Format: int64 */
+            id: number;
+            name: string;
+            pictures: string[];
+        };
+        EntityLite: {
             /** Format: int64 */
             id: number;
             name: string;
@@ -1326,6 +1428,11 @@ export interface components {
             name?: string | null;
             /** Format: date-time */
             updated_at: string;
+        };
+        MasterGroupLite: {
+            /** Format: int64 */
+            id: number;
+            name?: string | null;
         };
         Peer: {
             /** Format: date-time */
@@ -1622,6 +1729,7 @@ export interface components {
             name: string;
             /** Format: date-time */
             original_release_date: string;
+            platform: components["schemas"]["Platform"];
             tags: string[];
         };
         TitleGroupLite: {
@@ -2087,6 +2195,27 @@ export interface components {
             name: string;
             pictures: string[];
         };
+        UserCreatedCollage: {
+            category: components["schemas"]["CollageCategory"];
+            collage_type: components["schemas"]["CollageType"];
+            covers: string;
+            description: string;
+            name: string;
+            tags: string[];
+        };
+        UserCreatedCollageEntry: {
+            /** Format: int64 */
+            artist_id?: number | null;
+            /** Format: int64 */
+            collage_id: number;
+            /** Format: int64 */
+            entity_id?: number | null;
+            /** Format: int64 */
+            master_group_id?: number | null;
+            note?: string | null;
+            /** Format: int64 */
+            title_group_id?: number | null;
+        };
         UserCreatedConversation: {
             first_message: components["schemas"]["UserCreatedConversationMessage"];
             /** Format: int64 */
@@ -2489,6 +2618,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["User"];
+                };
+            };
+        };
+    };
+    "Create a collage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Collage information and its entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CollageAndAssociatedData"];
+                };
+            };
+        };
+    };
+    "Create a collage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedCollage"];
+            };
+        };
+        responses: {
+            /** @description Successfully created the collage */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Collage"];
+                };
+            };
+        };
+    };
+    "Inserts entries into a collage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreatedCollageEntry"][];
+            };
+        };
+        responses: {
+            /** @description Successfully created the collage entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CollageEntry"][];
                 };
             };
         };

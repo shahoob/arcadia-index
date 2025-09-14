@@ -25,7 +25,7 @@ impl ConnectionPool {
             "#,
             user_id,
             collage.name,
-            collage.covers,
+            &collage.covers,
             collage.description,
             &collage.tags,
             collage.category as _,
@@ -112,7 +112,7 @@ impl ConnectionPool {
                                             ELSE NULL
                                         END,
                                 'title_group_id', ce.title_group_id,
-                                'title_group', tgd,
+                                'title_group', tgd.title_group_data,
                                 'master_group_id', ce.master_group_id,
                                 'master_group', CASE
                                                     WHEN mg.id IS NOT NULL THEN

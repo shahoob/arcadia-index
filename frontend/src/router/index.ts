@@ -182,6 +182,14 @@ const router = createRouter({
       component: () => import('../views/conversation/ConversationsView.vue'),
     },
     {
+      path: '/collage/:id',
+      name: 'Collage',
+      meta: {
+        dynamicDocumentTitle: true,
+      },
+      component: () => import('../views/collage/CollageView.vue'),
+    },
+    {
       path: '/staff-dashboard',
       name: 'StaffDashboard',
       component: () => import('../views/StaffDashboard.vue'),

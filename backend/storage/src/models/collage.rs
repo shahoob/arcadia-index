@@ -35,7 +35,7 @@ pub struct Collage {
     pub created_at: DateTime<Local>,
     pub created_by_id: i64,
     pub name: String,
-    pub covers: String,
+    pub covers: Vec<String>,
     pub description: String,
     pub tags: Vec<String>,
     pub category: CollageCategory,
@@ -45,7 +45,7 @@ pub struct Collage {
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct UserCreatedCollage {
     pub name: String,
-    pub covers: String,
+    pub covers: Vec<String>,
     pub description: String,
     pub tags: Vec<String>,
     pub category: CollageCategory,

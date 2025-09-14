@@ -181,6 +181,7 @@ pub struct TitleGroupHierarchyLite {
     pub tags: Vec<String>,
     #[schema(value_type = String, format = DateTime)]
     pub original_release_date: DateTime<Utc>,
+    pub platform: Platform,
     pub edition_groups: Vec<EditionGroupHierarchyLite>,
     pub affiliated_artists: Vec<AffiliatedArtistLite>,
 }

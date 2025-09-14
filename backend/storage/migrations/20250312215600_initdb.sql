@@ -640,7 +640,7 @@ CREATE TABLE collage (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     name VARCHAR NOT NULL,
-    covers VARCHAR NOT NULL,
+    covers TEXT[] NOT NULL,
     description TEXT NOT NULL,
     tags VARCHAR[] NOT NULL,
     category collage_category_enum NOT NULL,
@@ -1025,6 +1025,7 @@ ORDER BY
                 tg.content_type,
                 tg.tags,
                 tg.original_release_date,
+                tg.platform,
                 CASE
                     WHEN p_external_link IS NOT NULL THEN 1.0
                     WHEN p_title_group_name IS NOT NULL THEN
@@ -1070,7 +1071,8 @@ ORDER BY
                 'category', tgr.category,
                 'content_type', tgr.content_type,
                 'tags', tgr.tags,
-                'original_release_date', tgr.original_release_date
+                'original_release_date', tgr.original_release_date,
+                'platform', tgr.platform
             ) || jsonb_build_object(
                 'edition_groups', COALESCE(jsonb_agg(egwt.eg_data ORDER BY egwt.eg_id) FILTER (WHERE egwt.eg_data IS NOT NULL), '[]'::jsonb),
                 'affiliated_artists', COALESCE(aad.affiliated_artists, '[]'::jsonb)
@@ -1080,7 +1082,7 @@ ORDER BY
         LEFT JOIN affiliated_artists_data aad ON tgr.id = aad.title_group_id
         WHERE (p_include_empty_groups = TRUE OR (egwt.eg_data IS NOT NULL AND (egwt.eg_data -> 'torrents')::jsonb <> '[]'::jsonb))
         GROUP BY
-            tgr.id, tgr.name, tgr.covers, tgr.category, tgr.content_type, tgr.tags, tgr.original_release_date, tgr.relevance_score, aad.affiliated_artists
+            tgr.id, tgr.name, tgr.covers, tgr.category, tgr.content_type, tgr.tags, tgr.original_release_date, tgr.platform, tgr.relevance_score, aad.affiliated_artists
         ORDER BY
             CASE
                 WHEN p_sort_by = 'relevance' AND p_order = 'asc' THEN tgr.relevance_score

@@ -9,26 +9,18 @@
       :showStaffOptions="userStore.class === 'staff'"
     />
     <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
-    <ContentContainer v-if="title_group_preview_mode == 'cover-only'">
-      <div class="title-groups">
-        <TitleGroupPreviewCoverOnly v-for="title_group in search_results.title_groups" :key="title_group.id" :titleGroup="title_group" />
-      </div>
-    </ContentContainer>
-    <div v-if="title_group_preview_mode == 'table'">
-      <TitleGroupPreviewTable v-for="title_group in search_results.title_groups" :key="title_group.id" :title_group="title_group" class="preview-table" />
-    </div>
+    <TitleGroupList :titleGroups="search_results.title_groups" :titleGroupPreview />
     <ResultsPagination v-if="searchInputsRef" :page="searchInputsRef.searchForm.page" @changePage="searchInputsRef.changePage" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import ContentContainer from '@/components/ContentContainer.vue'
-import TitleGroupPreviewCoverOnly from '@/components/title_group/TitleGroupPreviewCoverOnly.vue'
 import ResultsPagination from '@/components/ResultsPagination.vue'
-import TitleGroupPreviewTable from '@/components/title_group/TitleGroupPreviewTable.vue'
 import { searchTorrentsLite, type TorrentSearch, type TorrentSearchResults } from '@/services/api/torrentService'
 import TorrentSearchInputs from '@/components/torrent/TorrentSearchInputs.vue'
+import TitleGroupList from '@/components/title_group/TitleGroupList.vue'
+import type { titleGroupPreviewMode } from '@/components/title_group/TitleGroupList.vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 import { useUserStore } from '@/stores/user'
@@ -40,7 +32,7 @@ const userStore = useUserStore()
 const searchInputsRef = ref<VNodeRef | null>(null)
 
 const search_results = ref<TorrentSearchResults>()
-const title_group_preview_mode = ref<'table' | 'cover-only'>('table') // TODO: make a select button to switch from cover-only to table
+const titleGroupPreview = ref<titleGroupPreviewMode>('table') // TODO: make a select button to switch from cover-only to table
 const loading = ref(false)
 const initialForm = ref<TorrentSearch>({
   title_group: { name: '', include_empty_groups: false },
@@ -87,14 +79,5 @@ watch(
 <style scoped>
 .torrent-search-inputs {
   margin-bottom: 25px;
-}
-.title-groups {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-.preview-table {
-  margin-bottom: 15px;
 }
 </style>
