@@ -57,7 +57,7 @@ const router = createRouter({
       meta: {
         documentTitle: 'Torrent requests',
       },
-      component: () => import('../views/TorrentRequestSearchView.vue'),
+      component: () => import('../views/torrent_request/TorrentRequestSearchView.vue'),
     },
     {
       path: '/new-torrent-request',
@@ -73,7 +73,7 @@ const router = createRouter({
       meta: {
         dynamicDocumentTitle: true,
       },
-      component: () => import('../views/TorrentRequestView.vue'),
+      component: () => import('../views/torrent_request/TorrentRequestView.vue'),
     },
     {
       path: '/series/:id',
