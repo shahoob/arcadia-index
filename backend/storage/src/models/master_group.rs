@@ -5,9 +5,10 @@ use utoipa::ToSchema;
 
 // TODO: This is a temporary doc, move it to a proper documentation when made
 // MasterGroups are optional depending on the type of content
-// They are not used for : Music, Movies, Books, TV Shows
+// They are not used for : Movies, Books, TV Shows
 // They are used for :
 //   - Games (master group = game, title group = platform)
+//   - Music (master group = game, title group = soundtrack)
 //
 // When they are used, SimilarMasterGroups should be favored over SimilarTitleGroups for similarities/recommendations
 //
@@ -34,6 +35,12 @@ pub struct MasterGroup {
     // pub fan_arts: Option<Vec<String>>,
     // pub category: Option<String>,
     // pub tags: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct MasterGroupLite {
+    pub id: i64,
+    pub name: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

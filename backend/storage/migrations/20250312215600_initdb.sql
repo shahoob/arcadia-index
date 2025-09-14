@@ -658,6 +658,20 @@ CREATE TABLE collage_entry (
     master_group_id BIGINT REFERENCES master_groups(id),
     note TEXT
 );
+-- prevent duplicate entries in a collage
+CREATE UNIQUE INDEX unique_artist_per_collage
+ON collage_entry (collage_id, artist_id)
+WHERE artist_id IS NOT NULL;
+CREATE UNIQUE INDEX unique_entity_per_collage
+ON collage_entry (collage_id, entity_id)
+WHERE entity_id IS NOT NULL;
+CREATE UNIQUE INDEX unique_title_group_per_collage
+ON collage_entry (collage_id, title_group_id)
+WHERE title_group_id IS NOT NULL;
+CREATE UNIQUE INDEX unique_master_group_per_collage
+ON collage_entry (collage_id, master_group_id)
+WHERE master_group_id IS NOT NULL;
+-- make sure each entry matches the collage type (no title groups in an artist collage for example)
 CREATE FUNCTION enforce_collage_entry_type()
 RETURNS TRIGGER AS $$
 DECLARE

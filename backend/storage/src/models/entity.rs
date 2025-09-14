@@ -33,6 +33,12 @@ pub struct Entity {
     pub pictures: Vec<String>,
 }
 #[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
+pub struct EntityLite {
+    pub id: i64,
+    pub name: String,
+    pub pictures: Vec<String>,
+}
+#[derive(Debug, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct AffiliatedEntity {
     pub id: i64,
     pub title_group_id: i64,
