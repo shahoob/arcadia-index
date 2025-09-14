@@ -236,6 +236,9 @@ pub enum Error {
     #[error("could not create collage")]
     CouldNotCreateCollage(#[source] sqlx::Error),
 
+    #[error("could not create collage entry: {0}")]
+    CouldNotCreateCollageEntry(String),
+
     #[error("error getting musicbrainz data")]
     ErrorGettingMusicbrainzData(#[source] musicbrainz_rs::Error),
 

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                INSERT INTO collage (created_by_id, name, covers, description, tags, category)\n                VALUES ($1, $2, $3, $4, $5, $6::collage_category_enum)\n                RETURNING id, created_at, created_by_id, name, covers, description, tags,\n                                          category as \"category: CollageCategory\"\n            ",
+  "query": "\n                INSERT INTO collage (created_by_id, name, covers, description, tags, category, collage_type)\n                VALUES ($1, $2, $3, $4, $5, $6::collage_category_enum, $7::collage_type_enum)\n                RETURNING id, created_at, created_by_id, name, covers, description, tags, collage_type as \"collage_type: CollageType\",\n                                          category as \"category: CollageCategory\"\n            ",
   "describe": {
     "columns": [
       {
@@ -40,6 +40,23 @@
       },
       {
         "ordinal": 7,
+        "name": "collage_type: CollageType",
+        "type_info": {
+          "Custom": {
+            "name": "collage_type_enum",
+            "kind": {
+              "Enum": [
+                "Artist",
+                "Entity",
+                "TitleGroup",
+                "MasterGroup"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 8,
         "name": "category: CollageCategory",
         "type_info": {
           "Custom": {
@@ -75,6 +92,19 @@
               ]
             }
           }
+        },
+        {
+          "Custom": {
+            "name": "collage_type_enum",
+            "kind": {
+              "Enum": [
+                "Artist",
+                "Entity",
+                "TitleGroup",
+                "MasterGroup"
+              ]
+            }
+          }
         }
       ]
     },
@@ -86,8 +116,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "dffaac38190e780228d22f14d579b62deba2e609496c5f4fa0ff70e231d21dc3"
+  "hash": "ac0c0fa5e9b7528510d4c5494b24e202968fd27c5cc35588648c6803a30d4bcc"
 }

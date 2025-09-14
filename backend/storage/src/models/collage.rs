@@ -14,13 +14,14 @@ pub enum CollageCategory {
     Theme,
 }
 
-// #[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
-// #[sqlx(type_name = "collage_type_enum")]
-// pub enum CollageSection {
-//     Artist,
-//     Entity,
-//     Title,
-// }
+#[derive(Debug, Serialize, Deserialize, ToSchema, sqlx::Type)]
+#[sqlx(type_name = "collage_type_enum")]
+pub enum CollageType {
+    Artist,
+    Entity,
+    TitleGroup,
+    MasterGroup,
+}
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Collage {
@@ -33,7 +34,7 @@ pub struct Collage {
     pub description: String,
     pub tags: Vec<String>,
     pub category: CollageCategory,
-    // pub section: CollageSection,
+    pub collage_type: CollageType,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
@@ -43,16 +44,29 @@ pub struct UserCreatedCollage {
     pub description: String,
     pub tags: Vec<String>,
     pub category: CollageCategory,
-    // pub section: CollageSection,
+    pub collage_type: CollageType,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
-pub struct CollageTitleGroupEntry {
+pub struct CollageEntry {
     pub id: i64,
     #[schema(value_type = String, format = DateTime)]
     pub created_at: DateTime<Local>,
     pub created_by_id: i64,
-    pub title_group_id: i64,
+    pub artist_id: Option<i64>,
+    pub entity_id: Option<i64>,
+    pub title_group_id: Option<i64>,
+    pub master_group_id: Option<i64>,
     pub collage_id: i64,
-    pub note: String,
+    pub note: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+pub struct UserCreatedCollageEntry {
+    pub artist_id: Option<i64>,
+    pub entity_id: Option<i64>,
+    pub title_group_id: Option<i64>,
+    pub master_group_id: Option<i64>,
+    pub collage_id: i64,
+    pub note: Option<String>,
 }

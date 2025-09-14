@@ -629,11 +629,12 @@ CREATE TYPE collage_category_enum AS ENUM (
     'External',
     'Theme'
 );
--- CREATE TYPE collage_type_enum AS ENUM (
---     'Artist',
---     'Entity',
---     'Title'
--- );
+CREATE TYPE collage_type_enum AS ENUM (
+    'Artist',
+    'Entity',
+    'TitleGroup',
+    'MasterGroup'
+);
 CREATE TABLE collage (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -643,53 +644,66 @@ CREATE TABLE collage (
     description TEXT NOT NULL,
     tags VARCHAR[] NOT NULL,
     category collage_category_enum NOT NULL,
-    -- section collage_type_enum NOT NULL,
+    collage_type collage_type_enum NOT NULL,
     FOREIGN KEY (created_by_id) REFERENCES users(id)
 );
-CREATE TABLE collage_title_group_entry (
+CREATE TABLE collage_entry (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_by_id BIGINT NOT NULL,
-    title_group_id BIGINT NOT NULL,
-    collage_id BIGINT NOT NULL,
-    note TEXT,
-    FOREIGN KEY (collage_id) REFERENCES users(id),
-    FOREIGN KEY (title_group_id) REFERENCES title_groups(id),
-    FOREIGN KEY (created_by_id) REFERENCES users(id)
+    created_by_id BIGINT NOT NULL REFERENCES users(id),
+    collage_id BIGINT NOT NULL REFERENCES collage(id),
+    artist_id BIGINT REFERENCES artists(id),
+    entity_id BIGINT REFERENCES entities(id),
+    title_group_id BIGINT REFERENCES title_groups(id),
+    master_group_id BIGINT REFERENCES master_groups(id),
+    note TEXT
 );
-CREATE TABLE collage_master_group_entry (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_by_id BIGINT NOT NULL,
-    master_group_id BIGINT NOT NULL,
-    collage_id BIGINT NOT NULL,
-    note TEXT,
-    FOREIGN KEY (collage_id) REFERENCES users(id),
-    FOREIGN KEY (master_group_id) REFERENCES master_groups(id),
-    FOREIGN KEY (created_by_id) REFERENCES users(id)
-);
-CREATE TABLE collage_artist_entry (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_by_id BIGINT NOT NULL,
-    artist_id BIGINT NOT NULL,
-    collage_id BIGINT NOT NULL,
-    note TEXT,
-    FOREIGN KEY (artist_id) REFERENCES artists(id),
-    FOREIGN KEY (collage_id) REFERENCES users(id),
-    FOREIGN KEY (created_by_id) REFERENCES users(id)
-);
-CREATE TABLE collage_entity_entry (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    created_by_id BIGINT NOT NULL,
-    entity_id BIGINT NOT NULL,
-    collage_id BIGINT NOT NULL,
-    note TEXT,
-    FOREIGN KEY (entity_id) REFERENCES entities(id),
-    FOREIGN KEY (collage_id) REFERENCES users(id),
-    FOREIGN KEY (created_by_id) REFERENCES users(id)
-);
+CREATE FUNCTION enforce_collage_entry_type()
+RETURNS TRIGGER AS $$
+DECLARE
+    c_type collage_type_enum;
+BEGIN
+    SELECT collage_type INTO c_type
+    FROM collage
+    WHERE id = NEW.collage_id;
+
+    IF c_type = 'Artist' THEN
+        IF NEW.artist_id IS NULL OR
+           NEW.entity_id IS NOT NULL OR
+           NEW.title_group_id IS NOT NULL OR
+           NEW.master_group_id IS NOT NULL THEN
+            RAISE EXCEPTION 'CollageEntry must reference only artist_id for Artist collages';
+        END IF;
+    ELSIF c_type = 'Entity' THEN
+        IF NEW.entity_id IS NULL OR
+           NEW.artist_id IS NOT NULL OR
+           NEW.title_group_id IS NOT NULL OR
+           NEW.master_group_id IS NOT NULL THEN
+            RAISE EXCEPTION 'CollageEntry must reference only entity_id for Entity collages';
+        END IF;
+    ELSIF c_type = 'TitleGroup' THEN
+        IF NEW.title_group_id IS NULL OR
+           NEW.artist_id IS NOT NULL OR
+           NEW.entity_id IS NOT NULL OR
+           NEW.master_group_id IS NOT NULL THEN
+            RAISE EXCEPTION 'CollageEntry must reference only title_group_id for TitleGroup collages';
+        END IF;
+    ELSIF c_type = 'MasterGroup' THEN
+        IF NEW.master_group_id IS NULL OR
+           NEW.artist_id IS NOT NULL OR
+           NEW.entity_id IS NOT NULL OR
+           NEW.title_group_id IS NOT NULL THEN
+            RAISE EXCEPTION 'CollageEntry must reference only master_group_id for MasterGroup collages';
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER check_collage_entry_type
+BEFORE INSERT OR UPDATE ON collage_entry
+FOR EACH ROW
+EXECUTE FUNCTION enforce_collage_entry_type();
 CREATE TABLE forum_categories (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
