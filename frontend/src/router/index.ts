@@ -190,6 +190,11 @@ const router = createRouter({
       component: () => import('../views/collage/CollageView.vue'),
     },
     {
+      path: '/collages',
+      name: 'Collages',
+      component: () => import('../views/collage/CollageSearchView.vue'),
+    },
+    {
       path: '/staff-dashboard',
       name: 'StaffDashboard',
       component: () => import('../views/StaffDashboard.vue'),

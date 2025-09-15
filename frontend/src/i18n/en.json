@@ -52,7 +52,9 @@
     "validate": "Validate",
     "sent": "Sent",
     "any": "Any",
-    "created_by": "Created by"
+    "created_by": "Created by",
+    "started_by": "Started by",
+    "created_at": "Created at"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -324,6 +326,13 @@
     "resolve": "Resolve",
     "resolved": "Resolved",
     "resolved_successfully": "Staff PM resolved!"
+  },
+  "collage": {
+    "collage": "Collage",
+    "entries_amount": "Amount of entries",
+    "category": "Category",
+    "last_entry_at": "Last entry at",
+    "collage_type": "Type"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

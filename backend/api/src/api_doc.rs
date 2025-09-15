@@ -1,3 +1,4 @@
+use arcadia_storage::models::collage::SearchCollagesQuery;
 use utoipa::{
     openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
     Modify, OpenApi,
@@ -86,7 +87,8 @@ use crate::handlers::{
     ),
     components(schemas(
         GetUserApplicationsQuery,
-        SearchTorrentRequestsQuery
+        SearchTorrentRequestsQuery,
+        SearchCollagesQuery
     ),)
 )]
 pub struct ApiDoc;

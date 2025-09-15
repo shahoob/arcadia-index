@@ -12,7 +12,7 @@
         }
       "
     />
-    <ArtistSearchBar :placeholder="t('artist.artist', 2)" @artistSelected="artistSelected" :clearInputOnSelect="true" />
+    <ArtistSearchBar :placeholder="t('artist.artist', 2)" @artistSelected="artistSelected" :clearInputOnSelect="true" v-model="searchForm.artists" />
     <InputText type="text" :placeholder="t('series.series')" v-model="searchForm.series" size="small" />
     <InputText type="text" :placeholder="t('forum.forum', 2)" v-model="searchForm.forums" size="small" />
     <InputText type="text" :placeholder="t('user.user', 2)" v-model="searchForm.users" size="small" />

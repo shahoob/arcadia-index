@@ -389,6 +389,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/search/collages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Case insensitive */
+        get: operations["Search collages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/search/forum/threads": {
         parameters: {
             query?: never;
@@ -919,7 +936,7 @@ export interface components {
         Collage: {
             category: components["schemas"]["CollageCategory"];
             collage_type: components["schemas"]["CollageType"];
-            covers: string;
+            covers: string[];
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
@@ -977,6 +994,30 @@ export interface components {
             title_group?: null | components["schemas"]["TitleGroupHierarchyLite"];
             /** Format: int64 */
             title_group_id?: number | null;
+        };
+        CollageSearchResponse: {
+            results: components["schemas"]["CollageSearchResult"][];
+            /** Format: int64 */
+            total_items: number;
+        };
+        CollageSearchResult: {
+            category: components["schemas"]["CollageCategory"];
+            collage_type: components["schemas"]["CollageType"];
+            covers: string[];
+            /** Format: date-time */
+            created_at: string;
+            created_by: components["schemas"]["UserLite"];
+            /** Format: int64 */
+            created_by_id: number;
+            description: string;
+            /** Format: int64 */
+            entries_amount: number;
+            /** Format: int64 */
+            id: number;
+            /** Format: date-time */
+            last_entry_at: string;
+            name: string;
+            tags: string[];
         };
         /** @enum {string} */
         CollageType: "Artist" | "Entity" | "TitleGroup" | "MasterGroup";
@@ -1540,6 +1581,14 @@ export interface components {
             password: string;
             password_verify: string;
             username: string;
+        };
+        SearchCollagesQuery: {
+            name?: string | null;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            page_size: number;
+            tags?: string[] | null;
         };
         SearchTorrentRequestsQuery: {
             /** Format: int64 */
@@ -2198,7 +2247,7 @@ export interface components {
         UserCreatedCollage: {
             category: components["schemas"]["CollageCategory"];
             collage_type: components["schemas"]["CollageType"];
-            covers: string;
+            covers: string[];
             description: string;
             name: string;
             tags: string[];
@@ -3089,6 +3138,31 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ArtistLite"][];
+                };
+            };
+        };
+    };
+    "Search collages": {
+        parameters: {
+            query: {
+                name?: string | null;
+                tags?: string[] | null;
+                page: number;
+                page_size: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully got the collages and some data about them */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CollageSearchResponse"];
                 };
             };
         };
