@@ -55,6 +55,7 @@ use crate::handlers::{
         crate::handlers::search::search_torrent_requests::exec,
         crate::handlers::search::search_artists_lite::exec,
         crate::handlers::search::search_forum_thread::exec,
+        crate::handlers::search::search_collages::exec,
         crate::handlers::torrent_requests::create_torrent_request::exec,
         crate::handlers::torrent_requests::get_torrent_request::exec,
         crate::handlers::torrent_requests::fill_torrent_request::exec,

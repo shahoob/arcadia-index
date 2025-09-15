@@ -1,12 +1,13 @@
 use crate::{
     connection_pool::ConnectionPool,
     models::collage::{
-        Collage, CollageCategory, CollageEntry, CollageType, UserCreatedCollage,
-        UserCreatedCollageEntry,
+        Collage, CollageCategory, CollageEntry, CollageSearchResponse, CollageSearchResult,
+        CollageType, SearchCollagesQuery, UserCreatedCollage, UserCreatedCollageEntry,
     },
 };
 use arcadia_common::error::{Error, Result};
 use serde_json::Value;
+use sqlx::{query_as_unchecked, query_scalar};
 use std::borrow::Borrow;
 
 impl ConnectionPool {
@@ -150,5 +151,68 @@ impl ConnectionPool {
         .await?;
 
         Ok(collage_data.collage_data.unwrap())
+    }
+
+    pub async fn search_collages(
+        &self,
+        form: &SearchCollagesQuery,
+    ) -> Result<CollageSearchResponse> {
+        let offset = (form.page - 1) * form.page_size;
+
+        let total_items: i64 = query_scalar!(
+            "
+            SELECT COUNT(*)
+            FROM collage c
+            WHERE (c.name ILIKE '%' || $1 || '%')
+            ",
+            form.name,
+        )
+        .fetch_one(self.borrow())
+        .await
+        .unwrap()
+        .unwrap();
+
+        let results = query_as_unchecked!(
+            CollageSearchResult,
+            r#"
+            SELECT
+                c.id,
+                c.created_at,
+                c.created_by_id,
+                ROW(u.id, u.username, u.warned, u.banned) AS created_by,
+                c.name,
+                c.covers,
+                c.description,
+                c.tags,
+                c.category,
+                c.collage_type,
+                COUNT(ce.id) AS entries_amount,
+                MAX(ce.created_at) AS last_entry_at
+            FROM
+                collage c
+            JOIN
+                users u ON c.created_by_id = u.id
+            LEFT JOIN
+                collage_entry ce ON c.id = ce.collage_id
+            WHERE
+                (c.name ILIKE '%' || $1 || '%')
+            GROUP BY
+                c.id, u.id
+            ORDER BY
+                c.created_at DESC
+            OFFSET $2
+            LIMIT $3
+            "#,
+            form.name,
+            offset as i64,
+            form.page_size as i64
+        )
+        .fetch_all(self.borrow())
+        .await?;
+
+        Ok(CollageSearchResponse {
+            results,
+            total_items,
+        })
     }
 }

@@ -2,6 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 use sqlx::types::ipnetwork::IpNetwork;
+use sqlx::Decode;
 use utoipa::ToSchema;
 
 use super::peer::Peer;
@@ -170,7 +171,7 @@ pub struct PublicUser {
     pub warned: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema, Decode)]
 pub struct UserLite {
     pub id: i64,
     pub username: String,
