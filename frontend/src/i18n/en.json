@@ -54,7 +54,8 @@
     "any": "Any",
     "created_by": "Created by",
     "started_by": "Started by",
-    "created_at": "Created at"
+    "created_at": "Created at",
+    "add": "Add"
   },
   "auth": {
     "remember_me": "Remember me"
@@ -333,11 +334,13 @@
     "category": "Category",
     "last_entry_at": "Last entry at",
     "collage_type": "Type",
+    "note": "Note",
     "new_collage": "New collage",
     "collages_i_started": "Collages I started",
     "bookmarked_collages": "Bookmarked collages",
     "create": "Create collage",
-    "cover_url": "Cover url"
+    "cover_url": "Cover url",
+    "add_to_collage": "Add entry to collage | Add entries to collage"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

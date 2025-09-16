@@ -31,5 +31,5 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
 ) -> Result<HttpResponse> {
     let collage = arc.pool.find_collage_and_associated_data(&query.id).await?;
 
-    Ok(HttpResponse::Created().json(collage))
+    Ok(HttpResponse::Ok().json(collage))
 }
