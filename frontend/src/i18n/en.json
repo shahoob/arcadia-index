@@ -332,7 +332,12 @@
     "entries_amount": "Amount of entries",
     "category": "Category",
     "last_entry_at": "Last entry at",
-    "collage_type": "Type"
+    "collage_type": "Type",
+    "new_collage": "New collage",
+    "collages_i_started": "Collages I started",
+    "bookmarked_collages": "Bookmarked collages",
+    "create": "Create collage",
+    "cover_url": "Cover url"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

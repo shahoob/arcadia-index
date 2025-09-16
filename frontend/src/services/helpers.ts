@@ -1,3 +1,4 @@
+import type { CollageCategory, CollageType } from './api/collageService'
 import type { TorrentRequest } from './api/torrentRequestService'
 import type { ContentType, EditionGroupInfoLite, Extras, Features, Source, Torrent } from './api/torrentService'
 
@@ -143,9 +144,14 @@ export const getLanguages = () => {
 export const getPlatforms = () => {
   return ['Linux', 'MacOS', 'Windows']
 }
-
 export const getSelectableContentTypes = (): ContentType[] => {
   return ['movie', 'video', 'tv_show', 'music', 'podcast', 'software', 'book', 'collection']
+}
+export const getCollageTypes = (): CollageType[] => {
+  return ['TitleGroup', 'Artist', 'Entity', 'MasterGroup']
+}
+export const getCollageCategories = (): CollageCategory[] => {
+  return ['External', 'Personal', 'Staff Picks', 'Theme']
 }
 export const getSources = (contentType: ContentType) => {
   const sources = ['Web']

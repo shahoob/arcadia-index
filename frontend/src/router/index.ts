@@ -65,7 +65,7 @@ const router = createRouter({
       meta: {
         documentTitle: 'New torrent request',
       },
-      component: () => import('../views/NewTorrentRequestView.vue'),
+      component: () => import('../views/torrent_request/NewTorrentRequestView.vue'),
     },
     {
       path: '/torrent-request/:id',
@@ -193,6 +193,14 @@ const router = createRouter({
       path: '/collages',
       name: 'Collages',
       component: () => import('../views/collage/CollageSearchView.vue'),
+    },
+    {
+      path: '/new-collage',
+      name: 'NewCollage',
+      meta: {
+        documentTitle: 'New collage',
+      },
+      component: () => import('../views/collage/NewCollageView.vue'),
     },
     {
       path: '/staff-dashboard',

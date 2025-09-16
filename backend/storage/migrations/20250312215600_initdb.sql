@@ -640,7 +640,7 @@ CREATE TABLE collage (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by_id BIGINT NOT NULL,
     name VARCHAR NOT NULL,
-    covers TEXT[] NOT NULL,
+    cover TEXT,
     description TEXT NOT NULL,
     tags VARCHAR[] NOT NULL,
     category collage_category_enum NOT NULL,

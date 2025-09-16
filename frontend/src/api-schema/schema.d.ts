@@ -107,7 +107,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["Create a collage"];
+        get: operations["Get a collage"];
         put?: never;
         post: operations["Create a collage"];
         delete?: never;
@@ -936,7 +936,7 @@ export interface components {
         Collage: {
             category: components["schemas"]["CollageCategory"];
             collage_type: components["schemas"]["CollageType"];
-            covers: string[];
+            cover?: string | null;
             /** Format: date-time */
             created_at: string;
             /** Format: int64 */
@@ -1003,7 +1003,7 @@ export interface components {
         CollageSearchResult: {
             category: components["schemas"]["CollageCategory"];
             collage_type: components["schemas"]["CollageType"];
-            covers: string[];
+            cover?: string | null;
             /** Format: date-time */
             created_at: string;
             created_by: components["schemas"]["UserLite"];
@@ -2247,7 +2247,7 @@ export interface components {
         UserCreatedCollage: {
             category: components["schemas"]["CollageCategory"];
             collage_type: components["schemas"]["CollageType"];
-            covers: string[];
+            cover?: string | null;
             description: string;
             name: string;
             tags: string[];
@@ -2671,7 +2671,7 @@ export interface operations {
             };
         };
     };
-    "Create a collage": {
+    "Get a collage": {
         parameters: {
             query?: never;
             header?: never;

@@ -19,14 +19,14 @@ impl ConnectionPool {
         let created_collage = sqlx::query_as!(
             Collage,
             r#"
-                INSERT INTO collage (created_by_id, name, covers, description, tags, category, collage_type)
+                INSERT INTO collage (created_by_id, name, cover, description, tags, category, collage_type)
                 VALUES ($1, $2, $3, $4, $5, $6::collage_category_enum, $7::collage_type_enum)
-                RETURNING id, created_at, created_by_id, name, covers, description, tags, collage_type as "collage_type: CollageType",
+                RETURNING id, created_at, created_by_id, name, cover, description, tags, collage_type as "collage_type: CollageType",
                                           category as "category: CollageCategory"
             "#,
             user_id,
             collage.name,
-            &collage.covers,
+            collage.cover,
             collage.description,
             &collage.tags,
             collage.category as _,
@@ -181,7 +181,7 @@ impl ConnectionPool {
                 c.created_by_id,
                 ROW(u.id, u.username, u.warned, u.banned) AS created_by,
                 c.name,
-                c.covers,
+                c.cover,
                 c.description,
                 c.tags,
                 c.category,

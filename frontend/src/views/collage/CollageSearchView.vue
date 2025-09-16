@@ -1,4 +1,11 @@
 <template>
+  <div class="wrapper-center actions">
+    <RouterLink to="/new-collage">
+      <i class="pi pi-plus" v-tooltip.top="t('collage.new_collage')" />
+    </RouterLink>
+    <i class="pi pi-user" v-tooltip.top="t('collage.collages_i_started')" />
+    <i class="pi pi-bookmark" v-tooltip.top="t('collage.bookmarked_collages')" />
+  </div>
   <CollageSearchForm @gotResults="gotResults" style="margin-bottom: 15px" />
   <CollagesTable :collages />
 </template>
@@ -7,6 +14,9 @@ import type { CollageSearchResponse, CollageSearchResult } from '@/services/api/
 import { ref } from 'vue'
 import CollageSearchForm from '@/components/collage/CollageSearchForm.vue'
 import CollagesTable from '@/components/collage/CollagesTable.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const collages = ref<CollageSearchResult[]>([])
 
@@ -17,6 +27,12 @@ const gotResults = (collageSearchResponse: CollageSearchResponse) => {
 <style scoped>
 #collage-view {
   display: flex;
+}
+.actions {
+  i {
+    margin: 10px;
+    color: white;
+  }
 }
 .main-content {
   width: 80%;

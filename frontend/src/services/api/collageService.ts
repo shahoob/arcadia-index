@@ -11,10 +11,20 @@ export type SearchCollagesQuery = components['schemas']['SearchCollagesQuery']
 
 export type CollageSearchResult = components['schemas']['CollageSearchResult']
 
+export type UserCreatedCollage = components['schemas']['UserCreatedCollage']
+
+export type CollageType = components['schemas']['CollageType']
+
+export type CollageCategory = components['schemas']['CollageCategory']
+
 export const getCollage = async (id: number): Promise<CollageAndAssociatedData> => {
   return (await api.get<CollageAndAssociatedData>('/collages?id=' + id)).data
 }
 
 export const searchCollages = async (form: SearchCollagesQuery): Promise<CollageSearchResponse> => {
   return (await api.get<CollageSearchResponse>('/search/collages', { params: form })).data
+}
+
+export const createCollage = async (form: UserCreatedCollage): Promise<Collage> => {
+  return (await api.post<Collage>('/collages', form)).data
 }
