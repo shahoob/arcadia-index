@@ -100,7 +100,14 @@ export type UserCreatedTitleGroupForm = Omit<UserCreatedTitleGroup, 'content_typ
   original_language: Language | null
   id: number
 }
-const initialArtistsAffiliation = ref<AffiliatedArtistHierarchy[] | UserCreatedAffiliatedArtist[]>()
+const initialArtistsAffiliation = ref<AffiliatedArtistHierarchy[] | UserCreatedAffiliatedArtist[]>([
+  {
+    artist_id: 0,
+    nickname: null,
+    roles: [],
+    title_group_id: 0,
+  },
+])
 const titleGroupForm = ref<UserCreatedTitleGroupForm>({
   id: 0,
   name: '',

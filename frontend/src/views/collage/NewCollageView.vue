@@ -15,7 +15,7 @@
           <label for="collage_type">{{ t('collage.collage_type') }}</label>
         </FloatLabel>
       </div>
-      <TagsInput v-model="form.tags" @update:modelValue="(tags) => (form.tags = tags)" />
+      <TagsInput v-model="form.tags" />
       <FloatLabel>
         <Textarea v-model="form.description" name="description" rows="5" style="width: 100%" />
         <label for="description">{{ t('general.description') }}</label>

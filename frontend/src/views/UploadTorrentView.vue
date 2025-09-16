@@ -127,7 +127,6 @@ const torrentDone = (torrent: Torrent) => {
 
 // the store is used to autofill some steps if the user comes from an existing title group
 onMounted(() => {
-  console.log(titleGroupStore.value.id)
   if (titleGroupStore.value.id !== 0) {
     titleGroupDone()
   }

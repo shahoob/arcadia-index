@@ -67,15 +67,12 @@
             {{ $form.category.error?.message }}
           </Message>
         </div>
-        <div class="tags">
-          <FloatLabel>
-            <InputText size="small" v-model="tagsString" name="tags" />
-            <label for="tags">{{ t('general.tags_comma_separated') }}</label>
-          </FloatLabel>
-          <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
-            {{ $form.tags.error?.message }}
-          </Message>
-        </div>
+      </div>
+      <div class="tags" style="width: 100%">
+        <TagsInput v-model="titleGroupForm.tags" @keydown.enter.prevent />
+        <Message v-if="$form.tags?.invalid" severity="error" size="small" variant="simple">
+          {{ $form.tags.error?.message }}
+        </Message>
       </div>
       <div>
         <FloatLabel>
@@ -225,6 +222,7 @@ import _ from 'lodash'
 import { showToast } from '@/main'
 import type { UserCreatedTitleGroupForm } from './CreateOrSelectTitleGroup.vue'
 import type { AffiliatedArtistHierarchy, UserCreatedAffiliatedArtist } from '@/services/api/artistService'
+import TagsInput from '../TagsInput.vue'
 
 const props = defineProps<{
   initialTitleGroup?: EditedTitleGroup | UserCreatedTitleGroupForm
@@ -268,7 +266,6 @@ const original_release_date = computed({
   },
 })
 
-const tagsString = ref('')
 const selectableCountries = ['France', 'UK', 'USA']
 const selectableCategories: Record<ContentType, TitleGroupCategory[]> = {
   book: ['Illustrated', 'Periodical', 'Book', 'Article', 'Manual'],
@@ -306,8 +303,9 @@ const resolver = ({ values }: FormResolverOptions) => {
     errors.category = [{ message: t('error.select_category') }]
   }
   //TODO config: the minimum amount of tags required should be taken from the global config file
-  if (tagsString.value == '' || tagsString.value.split(',').length - 1 < 1) {
-    errors.tags = [{ message: t('error.enter_at_least_x_tags', [2]) }]
+  if (titleGroupForm.value.tags.length === 0) {
+    // somehow isn't displayed in the form and doesn't prevent submitting
+    errors.tags = [{ message: t('error.enter_at_least_x_tags', [1]) }]
   }
   if (values.description.length < 10) {
     errors.description = [{ message: t('error.write_more_than_x_chars', [10]) }]
@@ -379,7 +377,6 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
     return
   }
   sendingTitleGroup.value = true
-  titleGroupForm.value.tags = tagsString.value.trim().split(',')
   titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter((screenshot) => screenshot.trim() !== '')
   if (props.editMode && props.initialTitleGroup) {
     titleGroupForm.value.id = props.initialTitleGroup.id
@@ -450,9 +447,6 @@ const removeScreenshot = (index: number) => {
 onMounted(async () => {
   if (props.initialTitleGroup) {
     Object.assign(titleGroupForm.value, _.pick(props.initialTitleGroup, Object.keys(titleGroupForm.value)))
-    if (titleGroupForm.value.tags.length > 0) {
-      tagsString.value = titleGroupForm.value.tags.join(',')
-    }
     await nextTick()
     Object.keys(titleGroupForm.value).forEach((key) => {
       try {
@@ -481,12 +475,6 @@ onMounted(async () => {
 .name {
   width: 50%;
   .name-input {
-    width: 100%;
-  }
-}
-.tags {
-  width: 50%;
-  input {
     width: 100%;
   }
 }
