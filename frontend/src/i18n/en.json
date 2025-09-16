@@ -329,8 +329,8 @@
     "resolved_successfully": "Staff PM resolved!"
   },
   "collage": {
-    "collage": "Collage",
-    "entries_amount": "Amount of entries",
+    "collage": "Collage | Collages",
+    "entry": "Entry | Entries",
     "category": "Category",
     "last_entry_at": "Last entry at",
     "collage_type": "Type",

@@ -213,6 +213,46 @@ impl ConnectionPool {
                     JOIN title_groups tg_inner ON tg_inner.master_group_id = tg_main.master_group_id AND tg_inner.id != tg_main.id
                     WHERE tg_main.id = $2 AND tg_main.master_group_id IS NOT NULL
                     GROUP BY tg_main.master_group_id
+                ),
+                collage_metrics AS (
+                    SELECT
+                        collage_id,
+                        COUNT(id) AS entries_amount,
+                        MAX(created_at) AS last_entry_at
+                    FROM collage_entry
+                    GROUP BY collage_id
+                ),
+                collage_data AS (
+                    SELECT
+                        ce.title_group_id,
+                        jsonb_agg(
+                            jsonb_build_object(
+                                'id', c.id,
+                                'created_at', c.created_at,
+                                'created_by_id', c.created_by_id,
+                                'created_by', jsonb_build_object(
+                                    'id', u.id,
+                                    'username', u.username,
+                                    'warned', u.warned,
+                                    'banned', u.banned
+                                ),
+                                'name', c.name,
+                                'cover', c.cover,
+                                'description', c.description,
+                                'tags', c.tags,
+                                'category', c.category,
+                                'collage_type', c.collage_type,
+                                'entries_amount', cm.entries_amount,
+                                'last_entry_at', cm.last_entry_at
+                            )
+                            ORDER BY c.created_at
+                        ) AS collages
+                    FROM collage_entry ce
+                    JOIN collage c ON c.id = ce.collage_id
+                    JOIN users u ON u.id = c.created_by_id
+                    LEFT JOIN collage_metrics cm ON cm.collage_id = c.id
+                    WHERE ce.title_group_id = $2
+                    GROUP BY ce.title_group_id
                 )
                 SELECT
                     jsonb_build_object(
@@ -224,7 +264,8 @@ impl ConnectionPool {
                         'title_group_comments', COALESCE(cd.title_group_comments, '[]'::jsonb),
                         'torrent_requests', COALESCE(trd.torrent_requests, '[]'::jsonb),
                         'is_subscribed', COALESCE(sud.is_subscribed, false),
-                        'in_same_master_group', COALESCE(smg.in_same_master_group, '[]'::jsonb)
+                        'in_same_master_group', COALESCE(smg.in_same_master_group, '[]'::jsonb),
+                        'collages', COALESCE(cod.collages, '[]'::jsonb)
                     ) AS title_group_data
                 FROM title_groups tg
                 LEFT JOIN edition_data ed ON ed.title_group_id = tg.id
@@ -235,6 +276,7 @@ impl ConnectionPool {
                 LEFT JOIN torrent_request_data trd ON trd.title_group_id = tg.id
                 LEFT JOIN subscription_data sud ON sud.id = tg.id
                 LEFT JOIN same_master_group smg ON TRUE -- Only one row will be returned from same_master_group when master_group_id is set
+                LEFT JOIN collage_data cod ON cod.title_group_id = tg.id
                 WHERE tg.id = $2;"#, user_id, title_group_id)
             .fetch_one(self.borrow())
             .await?;

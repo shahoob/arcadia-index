@@ -1722,6 +1722,7 @@ export interface components {
         TitleGroupAndAssociatedData: {
             affiliated_artists: components["schemas"]["AffiliatedArtistHierarchy"][];
             affiliated_entities: components["schemas"]["AffiliatedEntityHierarchy"][];
+            collages: components["schemas"]["CollageSearchResult"][];
             edition_groups: components["schemas"]["EditionGroupHierarchy"][];
             in_same_master_group: components["schemas"]["TitleGroupLite"][];
             is_subscribed: boolean;

@@ -70,7 +70,15 @@
       <ContentContainer :container-title="t('general.screenshots')" class="screenshots" v-if="titleGroupAndAssociatedData.title_group.screenshots.length !== 0">
         <CustomGalleria :images="titleGroupAndAssociatedData.title_group.screenshots" />
       </ContentContainer>
-      <Accordion v-if="titleGroupAndAssociatedData.torrent_requests.length != 0" value="0" class="torrent-requests dense-accordion">
+      <Accordion v-if="titleGroupAndAssociatedData.collages.length != 0" value="0" class="dense-accordion">
+        <AccordionPanel value="0">
+          <AccordionHeader> {{ t('collage.collage', 2) }} ({{ titleGroupAndAssociatedData.collages.length }}) </AccordionHeader>
+          <AccordionContent>
+            <CollagesTable :collages="titleGroupAndAssociatedData.collages" />
+          </AccordionContent>
+        </AccordionPanel>
+      </Accordion>
+      <Accordion v-if="titleGroupAndAssociatedData.torrent_requests.length != 0" value="0" class="dense-accordion">
         <AccordionPanel value="0">
           <AccordionHeader> {{ t('torrent.requests') }} ({{ titleGroupAndAssociatedData.torrent_requests.length }}) </AccordionHeader>
           <AccordionContent>
@@ -177,6 +185,7 @@ import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGr
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { onBeforeRouteLeave } from 'vue-router'
 import AddCollagesToEntryDialog from '@/components/collage/AddCollagesToEntryDialog.vue'
+import CollagesTable from '@/components/collage/CollagesTable.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -319,7 +328,7 @@ watch(() => route.params.id, fetchTitleGroup, { immediate: true })
 .screenshots {
   margin-top: 20px;
 }
-.torrent-requests {
+.dense-accordion {
   margin-top: 20px;
 }
 .embedded-links {

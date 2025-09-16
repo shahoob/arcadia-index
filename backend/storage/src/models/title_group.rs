@@ -12,7 +12,7 @@ use super::{
     title_group_comment::TitleGroupCommentHierarchy,
 };
 use crate::models::{
-    entity::AffiliatedEntityHierarchy, torrent::Language,
+    collage::CollageSearchResult, entity::AffiliatedEntityHierarchy, torrent::Language,
     torrent_request::TorrentRequestHierarchyLite,
 };
 
@@ -216,6 +216,7 @@ pub struct TitleGroupAndAssociatedData {
     pub torrent_requests: Vec<TorrentRequestHierarchyLite>,
     pub is_subscribed: bool,
     pub in_same_master_group: Vec<TitleGroupLite>,
+    pub collages: Vec<CollageSearchResult>,
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
