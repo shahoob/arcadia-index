@@ -46,6 +46,7 @@ impl ConnectionPool {
     ) -> Result<Vec<CollageEntry>> {
         let mut created_entries = Vec::with_capacity(collage_entries.len());
 
+        // TODO: do it as a transaction
         for entry in collage_entries {
             let created = sqlx::query_as!(
                 CollageEntry,

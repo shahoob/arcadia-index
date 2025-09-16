@@ -2,7 +2,7 @@
   <div id="add-entries-to-collage-dialog">
     <div class="entries">
       <div v-for="(_link, index) in newCollageEntries" :key="index" class="entry">
-        <InputText placeholder="entry link" v-model="entryLinks[index]" />
+        <InputText placeholder="collage link" v-model="collageLinks[index]" />
         <InputText class="note" :placeholder="t('collage.note')" v-model="newCollageEntries[index].note" />
         <Button v-if="index == 0" @click="addCollageEntry" icon="pi pi-plus" size="small" />
         <Button v-if="newCollageEntries.length > 0" @click="removeCollageEntry(index)" icon="pi pi-minus" size="small" />
@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { InputText, Button } from 'primevue'
 import { useI18n } from 'vue-i18n'
-import { createCollageEntries, type CollageEntry, type CollageType, type UserCreatedCollageEntry } from '@/services/api/collageService'
+import { createCollageEntries, type CollageEntry, type UserCreatedCollageEntry } from '@/services/api/collageService'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 
@@ -26,21 +26,21 @@ const emit = defineEmits<{
   addedEntries: [CollageEntry[]]
 }>()
 const props = defineProps<{
-  collageId: number
-  collageType: CollageType
+  entryId: number
+  entryType: 'TitleGroup' | 'Artist' | 'Entity' | 'MasterGroup'
 }>()
 
 const loading = ref(false)
 const newCollageEntries = ref<UserCreatedCollageEntry[]>([])
-const entryLinks = ref<string[]>([])
+const collageLinks = ref<string[]>([])
 
 const sendCollageEntries = async () => {
   loading.value = true
   newCollageEntries.value.forEach((entry, index) => {
-    const id = parseInt(entryLinks.value[index].split('/').pop() as string)
-    switch (props.collageType) {
+    entry.collage_id = parseInt(collageLinks.value[index].split('/').pop() as string)
+    switch (props.entryType) {
       case 'TitleGroup': {
-        entry.title_group_id = id
+        entry.title_group_id = props.entryId
       }
     }
   })
@@ -52,12 +52,12 @@ const sendCollageEntries = async () => {
 }
 
 const addCollageEntry = () => {
-  entryLinks.value.push('')
-  newCollageEntries.value.push({ collage_id: props.collageId, note: null })
+  collageLinks.value.push('')
+  newCollageEntries.value.push({ collage_id: 0, note: null })
 }
 const removeCollageEntry = (index: number) => {
   newCollageEntries.value.splice(index, 1)
-  entryLinks.value.splice(index, 1)
+  collageLinks.value.splice(index, 1)
 }
 
 onMounted(() => addCollageEntry())

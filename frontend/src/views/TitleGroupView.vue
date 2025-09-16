@@ -46,6 +46,7 @@
           />
           <i @click="uploadTorrent" v-tooltip.top="t('torrent.add_format')" class="pi pi-upload" />
           <i @click="requestTorrent" v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" />
+          <i @click="addCollagesDialogVisible = true" v-tooltip.top="t('collage.add_collage_to_entry', 2)" class="pi pi-folder-plus" />
         </div>
         <FloatLabel class="sort-by-select" variant="on">
           <Select v-model="sortBy" inputId="sort_by" :options="selectableSortingOptions" class="select" size="small">
@@ -135,6 +136,9 @@
         @done="titleGroupEdited"
       />
     </Dialog>
+    <Dialog modal :header="t('collage.add_collage_to_entry', 2)" v-model:visible="addCollagesDialogVisible">
+      <AddCollagesToEntryDialog :entryId="titleGroupAndAssociatedData.title_group.id" entryType="TitleGroup" @addedEntries="router.go(0)" />
+    </Dialog>
   </div>
 </template>
 
@@ -172,12 +176,14 @@ import EmbeddedLinks from '@/components/title_group/EmbeddedLinks.vue'
 import CreateOrEditTitleGroup from '@/components/title_group/CreateOrEditTitleGroup.vue'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import { onBeforeRouteLeave } from 'vue-router'
+import AddCollagesToEntryDialog from '@/components/collage/AddCollagesToEntryDialog.vue'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 
 const editAffiliatedArtistsDialogVisible = ref(false)
+const addCollagesDialogVisible = ref(false)
 const userStore = useUserStore()
 const titleGroupStore = useTitleGroupStore()
 const editTitleGroupDialogVisible = ref(false)

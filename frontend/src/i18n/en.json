@@ -340,7 +340,8 @@
     "bookmarked_collages": "Bookmarked collages",
     "create": "Create collage",
     "cover_url": "Cover url",
-    "add_to_collage": "Add entry to collage | Add entries to collage"
+    "add_entry_to_collage": "Add entry to collage | Add entries to collage",
+    "add_collage_to_entry": "Add entry to collage | Add entry to collages"
   },
   "error": {
     "write_more_than_x_chars": "Write more than {0} characters",

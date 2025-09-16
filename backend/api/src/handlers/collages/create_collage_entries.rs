@@ -26,7 +26,8 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     arc: Data<Arcadia<R>>,
     user: Authdata,
 ) -> Result<HttpResponse> {
-    // TODO: instead, we should return Vec<CollageEntryHierarchy> so the frontend can hydrate the page without having to refetch the whole collage
+    // TODO: instead, we should return Vec<CollageAndAssociatedData> so the frontend can hydrate the page
+    // without having to refetch everything
     let collage_entries = arc
         .pool
         .create_collage_entries(&collage_entries, user.sub)

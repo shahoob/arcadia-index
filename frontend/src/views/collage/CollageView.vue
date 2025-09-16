@@ -20,7 +20,7 @@
             class="pi pi-pen-to-square"
             @click="editTitleGroupDialogVisible = true"
           /> -->
-          <i @click="addEntriesModalVisible = true" v-tooltip.top="t('collage.add_to_collage', 2)" class="pi pi-plus cursor-pointer" />
+          <i @click="addEntriesModalVisible = true" v-tooltip.top="t('collage.add_entry_to_collage', 2)" class="pi pi-plus cursor-pointer" />
           <!-- <i @click="requestTorrent" v-tooltip.top="t('torrent.request_format')" class="pi pi-shopping-cart" /> -->
         </div>
       </div>
@@ -32,7 +32,7 @@
       <!-- TODO: display Artists, Entities and Master Groups -->
     </div>
     <CollageSidebar :collage="collageAndAssociatedData.collage" />
-    <Dialog modal :header="t('collage.add_to_collage', 2)" v-model:visible="addEntriesModalVisible">
+    <Dialog modal :header="t('collage.add_entry_to_collage', 2)" v-model:visible="addEntriesModalVisible">
       <AddEntriesToCollageDialog
         :collageId="collageAndAssociatedData.collage.id"
         :collageType="collageAndAssociatedData.collage.collage_type"
