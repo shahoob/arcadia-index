@@ -675,40 +675,35 @@ WHERE master_group_id IS NOT NULL;
 CREATE FUNCTION enforce_collage_entry_type()
 RETURNS TRIGGER AS $$
 DECLARE
-    c_type collage_type_enum;
+    expected_id_column TEXT;
 BEGIN
-    SELECT collage_type INTO c_type
+    SELECT
+        CASE collage_type
+            WHEN 'Artist' THEN 'artist_id'
+            WHEN 'Entity' THEN 'entity_id'
+            WHEN 'TitleGroup' THEN 'title_group_id'
+            WHEN 'MasterGroup' THEN 'master_group_id'
+        END
+    INTO expected_id_column
     FROM collage
     WHERE id = NEW.collage_id;
 
-    IF c_type = 'Artist' THEN
-        IF NEW.artist_id IS NULL OR
-           NEW.entity_id IS NOT NULL OR
-           NEW.title_group_id IS NOT NULL OR
-           NEW.master_group_id IS NOT NULL THEN
-            RAISE EXCEPTION 'CollageEntry must reference only artist_id for Artist collages';
-        END IF;
-    ELSIF c_type = 'Entity' THEN
-        IF NEW.entity_id IS NULL OR
-           NEW.artist_id IS NOT NULL OR
-           NEW.title_group_id IS NOT NULL OR
-           NEW.master_group_id IS NOT NULL THEN
-            RAISE EXCEPTION 'CollageEntry must reference only entity_id for Entity collages';
-        END IF;
-    ELSIF c_type = 'TitleGroup' THEN
-        IF NEW.title_group_id IS NULL OR
-           NEW.artist_id IS NOT NULL OR
-           NEW.entity_id IS NOT NULL OR
-           NEW.master_group_id IS NOT NULL THEN
-            RAISE EXCEPTION 'CollageEntry must reference only title_group_id for TitleGroup collages';
-        END IF;
-    ELSIF c_type = 'MasterGroup' THEN
-        IF NEW.master_group_id IS NULL OR
-           NEW.artist_id IS NOT NULL OR
-           NEW.entity_id IS NOT NULL OR
-           NEW.title_group_id IS NOT NULL THEN
-            RAISE EXCEPTION 'CollageEntry must reference only master_group_id for MasterGroup collages';
-        END IF;
+    IF (
+        (expected_id_column = 'artist_id' AND NEW.artist_id IS NULL) OR
+        (expected_id_column = 'entity_id' AND NEW.entity_id IS NULL) OR
+        (expected_id_column = 'title_group_id' AND NEW.title_group_id IS NULL) OR
+        (expected_id_column = 'master_group_id' AND NEW.master_group_id IS NULL)
+    ) THEN
+        RAISE EXCEPTION 'Collage entry must have a non-null % for collage ID %', expected_id_column, NEW.collage_id;
+    END IF;
+
+    IF (
+        (expected_id_column != 'artist_id' AND NEW.artist_id IS NOT NULL) OR
+        (expected_id_column != 'entity_id' AND NEW.entity_id IS NOT NULL) OR
+        (expected_id_column != 'title_group_id' AND NEW.title_group_id IS NOT NULL) OR
+        (expected_id_column != 'master_group_id' AND NEW.master_group_id IS NOT NULL)
+    ) THEN
+        RAISE EXCEPTION 'Collage entry for collage ID % must not reference any other type than %', NEW.collage_id, expected_id_column;
     END IF;
 
     RETURN NEW;
