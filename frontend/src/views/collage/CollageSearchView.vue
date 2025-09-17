@@ -7,7 +7,7 @@
     <i class="pi pi-bookmark" v-tooltip.top="t('collage.bookmarked_collages')" />
   </div>
   <CollageSearchForm @gotResults="gotResults" style="margin-bottom: 15px" />
-  <CollagesTable :collages />
+  <CollagesTable :collages showCollageType showTags />
 </template>
 <script setup lang="ts">
 import type { CollageSearchResponse, CollageSearchResult } from '@/services/api/collageService'

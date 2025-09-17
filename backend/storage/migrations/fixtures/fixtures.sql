@@ -21,18 +21,18 @@ SET row_security = off;
 -- Data for Name: _sqlx_migrations; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public._sqlx_migrations VALUES (20250312215600, 'initdb', '2025-09-01 17:17:54.233823+00', true, '\x84918a42b2194cd07bc21bf4caa4344524aeebb8f39bccf46805a83d80f37662d4044470efc945f15efa615f4d65be48', 40502370);
+INSERT INTO public._sqlx_migrations VALUES (20250312215600, 'initdb', '2025-09-17 09:15:16.459727+00', true, '\xf6e0db7e42d33acc1b0cf4bf604f99520d8c303d3f5c3627fc205c35975e8e7c387f9c10ea75a45afb16de09f18e8fa9', 33483991);
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.users VALUES (1, 'creator', NULL, 'none@domain.com', 'none', '127.0.0.1', '2025-09-01 17:17:54.233823+00', '', 0, 0, 1, 1, 0, 0, '2025-09-01 17:17:54.233823+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{}', 1, 1, false, false, '');
+INSERT INTO public.users VALUES (1, 'creator', NULL, 'none@domain.com', 'none', '127.0.0.1', '2025-09-17 09:15:16.459727+00', '', 0, 0, 1, 1, 0, 0, '2025-09-17 09:15:16.459727+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{}', 1, 1, false, false, '');
 INSERT INTO public.users VALUES (5, 'waterbottle', 'https://i.pinimg.com/736x/a6/27/12/a6271204df8d387c3e614986c106f549.jpg', 'user2@example.com', 'hashedpassword2', '192.168.1.2', '2025-03-30 16:24:57.388152+00', '', 0, 0, 1, 1, 0, 0, '2025-03-30 16:24:57.388152+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', 5493004881313328037, 2566432999990446913, false, false, '''''');
 INSERT INTO public.users VALUES (3, 'coolguy', 'https://i.pinimg.com/474x/c1/5a/6c/c15a6c91515e22f6ea8b766f89c12f0c.jpg', 'user3@example.com', 'hashedpassword3', '192.168.1.3', '2025-03-30 16:24:57.388152+00', '', 0, 0, 1, 1, 0, 0, '2025-03-30 16:24:57.388152+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', 2274483400846363122, 1270934296711348124, false, false, '''''');
-INSERT INTO public.users VALUES (4, 'test', NULL, 'test@test.tsttt', '$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M', '127.0.0.1', '2025-04-10 19:15:51.036818+00', '', 979900000000, 0, 1, 1, 0, 0, '2025-09-01 18:03:14.844037+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 99999000, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -7167291202215854785, 1526268353104531819, false, false, '''''');
-INSERT INTO public.users VALUES (2, 'picolo', 'https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1', '2025-03-30 16:24:57.388152+00', '', 10000, 0, 1, 1, 0, 0, '2025-09-01 18:05:58.279489+00', 'staff', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 999999410, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -197409747985172542, 1837889239438807682, false, false, '''''');
+INSERT INTO public.users VALUES (2, 'picolo', 'https://img.freepik.com/premium-vector/random-people-line-art-vector_567805-63.jpg', 'user1@example.com', '$argon2id$v=19$m=19456,t=2,p=1$s4XJtCUk9IrGgNsTfP6Ofw$ktoGbBEoFaVgdiTn19Gh9h45LjFiv7AUEL5KHhzm4d0', '192.168.1.1', '2025-03-30 16:24:57.388152+00', '', 10000, 0, 1, 1, 0, 0, '2025-09-17 09:27:11.336576+00', 'staff', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 999999410, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -197409747985172542, 1837889239438807682, false, false, '''''');
+INSERT INTO public.users VALUES (4, 'test', NULL, 'test@test.tsttt', '$argon2id$v=19$m=19456,t=2,p=1$yaA+WqA4OfSyAqR3iXhDng$/Ngv7VeJvVNHli9rBgQG0d/O2W+qoI2yHhQxZSxxW2M', '127.0.0.1', '2025-04-10 19:15:51.036818+00', '', 979900000000, 0, 1, 1, 0, 0, '2025-09-17 09:15:44.322914+00', 'newbie', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 99999000, 0, '{"site_appearance": {"item_detail_layout": "sidebar_right"}}', -7167291202215854785, 1526268353104531819, false, false, '''''');
 
 
 --
@@ -130,24 +130,25 @@ INSERT INTO public.entities VALUES (3, 'MTV', 'MTV (Originally an initialism of 
 -- Data for Name: collage; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
+INSERT INTO public.collage VALUES (1, '2025-09-17 09:16:22.70365+00', 2, 'Picolo''s favorites', NULL, 'My favorite media!', '{}', 'Personal', 'TitleGroup');
+INSERT INTO public.collage VALUES (2, '2025-09-17 09:20:11.893864+00', 2, '15th Academy Awards 1943', NULL, 'The 15th Academy Awards winners and nominees.
+
+Cocoanut Grove of the Ambassador Hotel
+Thursday, March 4, 1943
+Honoring movies released in 1942
+
+https://www.oscars.org/oscars/ceremonies/1943', '{}', 'External', 'TitleGroup');
+INSERT INTO public.collage VALUES (3, '2025-09-17 09:23:04.072738+00', 2, 'Film Allusions in "The Simpsons"', NULL, 'Few TV series have been as richly layered with allusions to contemporary and classic films as "The Simpsons." From blink-and-you''ll-miss-it sight gags to clever dialogue puns to meticulous recreations of entire scenes, the show boasts enough movie references to hold any film lover''s interest.', '{}', 'Theme', 'TitleGroup');
 
 
 --
--- Data for Name: collage_artist_entry; Type: TABLE DATA; Schema: public; Owner: arcadia
+-- Data for Name: collage_entry; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-
-
---
--- Data for Name: collage_entity_entry; Type: TABLE DATA; Schema: public; Owner: arcadia
---
-
-
-
---
--- Data for Name: collage_title_group_entry; Type: TABLE DATA; Schema: public; Owner: arcadia
---
-
+INSERT INTO public.collage_entry VALUES (1, '2025-09-17 09:17:04.379344+00', 2, 1, NULL, NULL, 2, NULL, NULL);
+INSERT INTO public.collage_entry VALUES (2, '2025-09-17 09:17:04.384084+00', 2, 1, NULL, NULL, 1, NULL, 'I really like track 2');
+INSERT INTO public.collage_entry VALUES (3, '2025-09-17 09:20:21.285121+00', 2, 2, NULL, NULL, 2, NULL, NULL);
+INSERT INTO public.collage_entry VALUES (4, '2025-09-17 09:23:18.04636+00', 2, 3, NULL, NULL, 2, NULL, 'In SxxExx');
 
 
 --
@@ -203,7 +204,7 @@ INSERT INTO public.edition_groups VALUES (18, 8, NULL, '2004-03-04 00:00:00+00',
 -- Data for Name: forum_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_categories VALUES (1, 'Site', '2025-09-01 17:17:54.233823+00', 1);
+INSERT INTO public.forum_categories VALUES (1, 'Site', '2025-09-17 09:15:16.459727+00', 1);
 INSERT INTO public.forum_categories VALUES (3, 'Community', '2025-05-22 08:01:35.753162+00', 1);
 
 
@@ -211,7 +212,7 @@ INSERT INTO public.forum_categories VALUES (3, 'Community', '2025-05-22 08:01:35
 -- Data for Name: forum_sub_categories; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_sub_categories VALUES (1, 1, 'Announcements', '2025-09-01 17:17:54.233823+00', 1, 1, 1, '{}');
+INSERT INTO public.forum_sub_categories VALUES (1, 1, 'Announcements', '2025-09-17 09:15:16.459727+00', 1, 1, 1, '{}');
 INSERT INTO public.forum_sub_categories VALUES (5, 3, 'Lounge', '2025-05-22 08:02:15.125336+00', 1, 1, 1, '{}');
 INSERT INTO public.forum_sub_categories VALUES (7, 3, 'Technology', '2025-05-22 08:05:01.192217+00', 1, 1, 1, '{}');
 
@@ -220,7 +221,7 @@ INSERT INTO public.forum_sub_categories VALUES (7, 3, 'Technology', '2025-05-22 
 -- Data for Name: forum_threads; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_threads VALUES (1, 1, 'Welcome to the site!', '2025-09-01 17:17:54.233823+00', 1, 1, false, false);
+INSERT INTO public.forum_threads VALUES (1, 1, 'Welcome to the site!', '2025-09-17 09:15:16.459727+00', 1, 1, false, false);
 INSERT INTO public.forum_threads VALUES (3, 5, 'Hello everyone', '2025-05-22 08:03:08.400255+00', 1, 1, false, false);
 INSERT INTO public.forum_threads VALUES (5, 7, 'Favorite OS for daily driving', '2025-05-22 08:06:06.724797+00', 1, 1, false, false);
 
@@ -229,7 +230,7 @@ INSERT INTO public.forum_threads VALUES (5, 7, 'Favorite OS for daily driving', 
 -- Data for Name: forum_posts; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
-INSERT INTO public.forum_posts VALUES (1, 1, '2025-09-01 17:17:54.233823+00', '2025-09-01 17:17:54.233823+00', 1, 'Welcome!', false);
+INSERT INTO public.forum_posts VALUES (1, 1, '2025-09-17 09:15:16.459727+00', '2025-09-17 09:15:16.459727+00', 1, 'Welcome!', false);
 INSERT INTO public.forum_posts VALUES (3, 3, '2025-05-22 08:03:48.66391+00', '2025-05-22 08:03:48.66391+00', 1, 'Hello there, I just joined!', false);
 INSERT INTO public.forum_posts VALUES (4, 5, '2025-05-22 08:06:36.225458+00', '2025-05-22 08:06:36.225458+00', 2, 'I use arch btw :)', false);
 
@@ -1285,6 +1286,18 @@ Track 3: Initial Single version
 
 
 --
+-- Data for Name: staff_pms; Type: TABLE DATA; Schema: public; Owner: arcadia
+--
+
+
+
+--
+-- Data for Name: staff_pm_messages; Type: TABLE DATA; Schema: public; Owner: arcadia
+--
+
+
+
+--
 -- Data for Name: subscriptions; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 
@@ -1402,31 +1415,17 @@ SELECT pg_catalog.setval('public.artists_id_seq', 4, true);
 
 
 --
--- Name: collage_artist_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
+-- Name: collage_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
-SELECT pg_catalog.setval('public.collage_artist_entry_id_seq', 1, false);
-
-
---
--- Name: collage_entity_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
---
-
-SELECT pg_catalog.setval('public.collage_entity_entry_id_seq', 1, false);
+SELECT pg_catalog.setval('public.collage_entry_id_seq', 4, true);
 
 
 --
 -- Name: collage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
-SELECT pg_catalog.setval('public.collage_id_seq', 1, false);
-
-
---
--- Name: collage_title_group_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
---
-
-SELECT pg_catalog.setval('public.collage_title_group_entry_id_seq', 1, false);
+SELECT pg_catalog.setval('public.collage_id_seq', 3, true);
 
 
 --
@@ -1528,6 +1527,20 @@ SELECT pg_catalog.setval('public.series_id_seq', 4, false);
 
 
 --
+-- Name: staff_pm_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
+--
+
+SELECT pg_catalog.setval('public.staff_pm_messages_id_seq', 1, false);
+
+
+--
+-- Name: staff_pms_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
+--
+
+SELECT pg_catalog.setval('public.staff_pms_id_seq', 1, false);
+
+
+--
 -- Name: subscriptions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: arcadia
 --
 
@@ -1614,3 +1627,4 @@ SELECT pg_catalog.setval('public.wiki_articles_id_seq', 1, true);
 --
 -- PostgreSQL database dump complete
 --
+

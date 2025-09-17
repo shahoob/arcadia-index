@@ -6,9 +6,9 @@
         <RouterLink :to="`/collage/${slotProps.data.id}`">{{ slotProps.data.name }}</RouterLink>
       </template>
     </Column>
-    <Column :header="t('collage.collage_type')" field="collage_type" />
+    <Column v-if="showCollageType" :header="t('collage.collage_type')" field="collage_type" />
     <Column :header="t('collage.entry', 2)" field="entries_amount" />
-    <Column :header="t('general.tags')">
+    <Column v-if="showTags" :header="t('general.tags')">
       <template #body="slotProps">
         {{ slotProps.data.tags.join(', ') }}
       </template>
@@ -41,6 +41,8 @@ import { timeAgo } from '@/services/helpers'
 
 defineProps<{
   collages: CollageSearchResult[]
+  showCollageType?: boolean
+  showTags?: boolean
 }>()
 
 const { t } = useI18n()

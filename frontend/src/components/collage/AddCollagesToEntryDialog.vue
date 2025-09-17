@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="wrapper-center" style="margin-top: 10px">
-      <Button :label="t('collage.add_entry_to_collage', 2)" size="small" :loading @click="sendCollageEntries" />
+      <Button :label="t('collage.add_collage_to_entry', 2)" size="small" :loading @click="sendCollageEntries" />
     </div>
   </div>
 </template>
