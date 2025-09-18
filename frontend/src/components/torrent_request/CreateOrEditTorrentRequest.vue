@@ -11,6 +11,7 @@
   >
     <div id="create-torrent-request">
       <div>
+        <div class="wrapper-center" style="color: red">{{ t('torrent_request.creation_explanation') }}</div>
         <div class="line">
           <div>
             <FloatLabel>
@@ -240,7 +241,7 @@
           </Message>
         </div>
         <div class="bounty-section">
-          <TorrentRequestVoteInputs ref="torrentRequestVoteInputsRef" />
+          <span class="bold">{{ t('torrent_request.bounty') }}</span> <TorrentRequestVoteInputs ref="torrentRequestVoteInputsRef" />
         </div>
       </div>
       <div class="flex justify-content-center">
@@ -420,7 +421,9 @@ onMounted(async () => {
 .bounty-section {
   margin-top: 30px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 .res-label-text {
   font-size: small;

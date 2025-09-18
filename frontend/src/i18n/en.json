@@ -290,7 +290,8 @@
     "vote": "Vote | Votes",
     "bounty": "Bounty",
     "vote_successful": "Your vote has been added!",
-    "requirement": "Requirement | Requirements"
+    "requirement": "Requirement | Requirements",
+    "creation_explanation": "Only enter values for the requirements you have. For example, if you don't require a specific source, leave it blank (don't select them all); that goes for all the fields in this form."
   },
   "entity": {
     "entity": "Entity | Entities",
