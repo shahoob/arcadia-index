@@ -378,6 +378,7 @@ const sendTitleGroup = async ({ valid }: FormSubmitEvent) => {
   }
   sendingTitleGroup.value = true
   titleGroupForm.value.screenshots = titleGroupForm.value.screenshots.filter((screenshot) => screenshot.trim() !== '')
+  titleGroupForm.value.external_links = titleGroupForm.value.external_links.filter((link) => link.trim() !== '')
   if (props.editMode && props.initialTitleGroup) {
     titleGroupForm.value.id = props.initialTitleGroup.id
     editTitleGroup(titleGroupForm.value as EditedTitleGroup)
