@@ -65,9 +65,13 @@ const computedSlug = computed<string[][]>(() => {
     addIfPresent(firstPart, props.torrentRequest.container, false, 'container', 'torrent')
   }
 
-  addIfPresent(firstPart, props.torrentRequest.audio_codec, true, 'audio_codec', 'torrent')
+  if (isAttributeUsed('audio_codec', props?.contentType)) {
+    addIfPresent(firstPart, props.torrentRequest.audio_codec, true, 'audio_codec', 'torrent')
+  }
   addIfPresent(firstPart, props.torrentRequest.audio_channels, false, 'audio_channels', 'torrent')
-  addIfPresent(firstPart, props.torrentRequest.audio_bitrate_sampling, true, 'audio_bitrate_sampling', 'torrent')
+  if (isAttributeUsed('audio_bitrate_sampling', props?.contentType)) {
+    addIfPresent(firstPart, props.torrentRequest.audio_bitrate_sampling, true, 'audio_bitrate_sampling', 'torrent')
+  }
 
   if (props.torrentRequest.languages.length === 1 && props.torrentRequest.languages[0] !== 'English') {
     firstPart.push(props.torrentRequest.languages[0])
