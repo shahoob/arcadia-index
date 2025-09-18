@@ -1,10 +1,6 @@
 <template>
   <div id="series-sidebar">
-    <Image class="series-covers" :src="series.covers[0]" preview>
-      <template #previewicon>
-        <i class="pi pi-search"></i>
-      </template>
-    </Image>
+    <ImagePreview :imageLink="series.covers[0]" class="series-covers" />
     <ContentContainer class="header-wrapper" container-title="Description">
       <div class="description">
         <BBCodeRenderer :content="series.description" />
@@ -17,7 +13,7 @@
 import ContentContainer from '@/components/ContentContainer.vue'
 import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import type { Series } from '@/services/api/seriesService'
-import { Image } from 'primevue'
+import ImagePreview from '../ImagePreview.vue'
 
 defineProps<{
   series: Series

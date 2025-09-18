@@ -422,6 +422,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/search/series": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Case insensitive */
+        get: operations["Search series"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/search/title-groups/lite": {
         parameters: {
             query?: never;
@@ -1590,6 +1607,14 @@ export interface components {
             page_size: number;
             tags?: string[] | null;
         };
+        SearchSeriesQuery: {
+            name?: string | null;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            page_size: number;
+            tags?: string[] | null;
+        };
         SearchTorrentRequestsQuery: {
             /** Format: int64 */
             page?: number | null;
@@ -1627,6 +1652,25 @@ export interface components {
             /** Format: int64 */
             id: number;
             name: string;
+        };
+        SeriesSearchResponse: {
+            results: components["schemas"]["SeriesSearchResult"][];
+            /** Format: int64 */
+            total_items: number;
+        };
+        SeriesSearchResult: {
+            banners?: string[] | null;
+            covers: string[];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            created_by_id: number;
+            /** Format: int64 */
+            id: number;
+            name: string;
+            tags: string[];
+            /** Format: int64 */
+            title_groups_amount: number;
         };
         /** @enum {string} */
         Source: "CD" | "DVD5" | "DVD9" | "Vinyl" | "Web" | "Soundboard" | "SACD" | "DAT" | "Cassette" | "Blu-Ray" | "LaserDisc" | "HD-DVD" | "HDTV" | "PDTV" | "TV" | "VHS" | "Mixed" | "Physical Book";
@@ -3188,6 +3232,31 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForumThreadHierarchy"][];
+                };
+            };
+        };
+    };
+    "Search series": {
+        parameters: {
+            query: {
+                name?: string | null;
+                tags?: string[] | null;
+                page: number;
+                page_size: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully got the series and some data about them */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeriesSearchResponse"];
                 };
             };
         };

@@ -1,11 +1,7 @@
 <template>
   <ContentContainer class="header-wrapper artist-full-header">
     <div class="header">
-      <Image class="artist-pictures" v-if="artist.pictures?.length" :src="artist.pictures[0]" preview>
-        <template #previewicon>
-          <i class="pi pi-search"></i>
-        </template>
-      </Image>
+      <ImagePreview :imageLink="artist.pictures[0]" />
       <div class="textual-information">
         <div class="name">{{ artist.name }}</div>
         <div class="description">
@@ -19,7 +15,7 @@
 import ContentContainer from '@/components/ContentContainer.vue'
 import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import { type Artist } from '@/services/api/artistService'
-import { Image } from 'primevue'
+import type ImagePreview from '../ImagePreview.vue'
 
 defineProps<{
   artist: Artist

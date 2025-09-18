@@ -1,10 +1,6 @@
 <template>
   <div id="user-sidebar">
-    <Image :src="user.avatar ?? '/default_user_avatar.jpg'" :alt="user.username + '\'s avatar'" preview>
-      <template #previewicon>
-        <i class="pi pi-search"></i>
-      </template>
-    </Image>
+    <ImagePreview :imageLink="user.avatar ?? '/default_user_avatar.jpg'" :alt="user.username + '\'s avatar'" />
     <ContentContainer :container-title="t('community.statistics')" class="stats-container">
       {{ t('user.joined_at') }}:
       <span v-tooltip.top="formatDate(user.created_at)">{{ timeAgo(user.created_at) }}</span>
@@ -51,10 +47,10 @@
 
 <script setup lang="ts">
 import type { PublicUser, User } from '@/services/api/userService'
-import { Image } from 'primevue'
 import ContentContainer from '../ContentContainer.vue'
 import { useI18n } from 'vue-i18n'
 import { bytesToReadable, timeAgo, formatDate } from '@/services/helpers'
+import ImagePreview from '../ImagePreview.vue'
 
 const { t } = useI18n()
 

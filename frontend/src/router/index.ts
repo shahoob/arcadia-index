@@ -81,7 +81,12 @@ const router = createRouter({
       meta: {
         dynamicDocumentTitle: true,
       },
-      component: () => import('../views/SeriesView.vue'),
+      component: () => import('../views/series/SeriesView.vue'),
+    },
+    {
+      path: '/series',
+      name: 'Search series',
+      component: () => import('../views/series/SeriesSearchView.vue'),
     },
     {
       path: '/artist/:id',

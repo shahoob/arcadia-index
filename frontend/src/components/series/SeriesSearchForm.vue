@@ -1,6 +1,6 @@
 <template>
   <ContentContainer>
-    <Form @submit="fetchCollages">
+    <Form @submit="fetchSeries">
       <FloatLabel>
         <InputText v-model="form.name" name="name" size="small" />
         <label for="name">{{ t('general.name') }}</label>
@@ -12,7 +12,7 @@
   </ContentContainer>
 </template>
 <script setup lang="ts">
-import { searchCollages, type CollageSearchResponse, type SearchCollagesQuery } from '@/services/api/collageService'
+import { searchSeries, type SeriesSearchResponse, type SearchSeriesQuery } from '@/services/api/seriesService'
 import ContentContainer from '../ContentContainer.vue'
 import { InputText, Button, FloatLabel } from 'primevue'
 import { Form } from '@primevue/forms'
@@ -21,31 +21,27 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const form = ref<SearchCollagesQuery>({
+const form = ref<SearchSeriesQuery>({
   name: '',
   page: 1,
   page_size: 50,
   tags: [],
 })
 const loading = ref(false)
-const collageSearchResponse = ref<CollageSearchResponse>()
+const seriesSearchResponse = ref<SeriesSearchResponse>()
 
 onMounted(async () => {
-  await fetchCollages()
+  await fetchSeries()
 })
 
-const fetchCollages = async () => {
+const fetchSeries = async () => {
   loading.value = true
-  collageSearchResponse.value = await searchCollages(form.value).finally(() => (loading.value = false))
-  emit('gotResults', collageSearchResponse.value)
+  seriesSearchResponse.value = await searchSeries(form.value).finally(() => (loading.value = false))
+  emit('gotResults', seriesSearchResponse.value)
 }
 
 const emit = defineEmits<{
-  gotResults: [CollageSearchResponse]
+  gotResults: [SeriesSearchResponse]
 }>()
-
-// defineProps<{
-//   collage: Collage
-// }>()
 </script>
 <style scoped></style>

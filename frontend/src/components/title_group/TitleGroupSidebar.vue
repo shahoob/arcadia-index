@@ -10,11 +10,7 @@
       class="carousel"
     >
       <template #item="slotProps">
-        <Image :src="slotProps.item" preview>
-          <template #previewicon>
-            <i class="pi pi-search"></i>
-          </template>
-        </Image>
+        <ImagePreview :imageLink="slotProps.item" />
       </template>
     </Galleria>
     <ContentContainer :container-title="t('general.link', 2)">
@@ -61,7 +57,6 @@
 </template>
 <script setup lang="ts">
 import { Galleria } from 'primevue'
-import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 import MasterGroupLink from '@/components/MasterGroupLink.vue'
@@ -72,6 +67,7 @@ import AffiliatedEntity from '../artist/AffiliatedEntity.vue'
 import type { SeriesLite } from '@/services/api/seriesService'
 import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
 import type { AffiliatedEntityHierarchy } from '@/services/api/entityService'
+import ImagePreview from '../ImagePreview.vue'
 
 const { t } = useI18n()
 

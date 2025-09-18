@@ -12,11 +12,7 @@
           class="carousel"
         >
           <template #item="slotProps">
-            <Image :src="slotProps.item" preview>
-              <template #previewicon>
-                <i class="pi pi-search"></i>
-              </template>
-            </Image>
+            <ImagePreview :imageLink="slotProps.item" />
           </template>
         </Galleria>
         <div class="textual-information">
@@ -67,13 +63,13 @@
 import ContentContainer from '@/components/ContentContainer.vue'
 
 import { Galleria } from 'primevue'
-import Image from 'primevue/image'
 import AffiliatedArtist from '@/components/artist/AffiliatedArtist.vue'
 import ExternalLink from '@/components/ExternalLink.vue'
 import type { TitleGroup } from '@/services/api/torrentService'
 import { useI18n } from 'vue-i18n'
 import type { SeriesLite } from '@/services/api/seriesService'
 import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
+import ImagePreview from '../ImagePreview.vue'
 
 const { t } = useI18n()
 

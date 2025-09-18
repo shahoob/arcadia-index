@@ -1,10 +1,6 @@
 <template>
   <div class="affiliated-entity">
-    <Image :src="affiliatedEntity.entity.pictures[0] ?? ''" :preview="affiliatedEntity.entity.pictures.length !== 0">
-      <template #previewicon>
-        <i class="pi pi-search"></i>
-      </template>
-    </Image>
+    <ImagePreview :imageLink="affiliatedEntity.entity.pictures[0] ?? ''" />
     <RouterLink :to="`/entity/${affiliatedEntity.entity.id}`">
       <div class="name">{{ affiliatedEntity.entity.name }}</div>
     </RouterLink>
@@ -20,8 +16,8 @@
 
 <script setup lang="ts">
 import type { AffiliatedEntityHierarchy } from '@/services/api/entityService'
-import { Image } from 'primevue'
 import { useI18n } from 'vue-i18n'
+import ImagePreview from '../ImagePreview.vue'
 
 const { t } = useI18n()
 

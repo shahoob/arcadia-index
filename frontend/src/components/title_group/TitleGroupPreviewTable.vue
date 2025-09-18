@@ -4,11 +4,7 @@
       <!-- TODO : add tags and other potentially useful information -->
       <!-- TODO : clicking on a torrent should redirect to the title_group page
       edit the titlegrouptable component to have a prop that allows this -->
-      <Image :src="title_group.covers[0]" preview class="cover">
-        <template #previewicon>
-          <i class="pi pi-search"></i>
-        </template>
-      </Image>
+      <ImagePreview class="cover" :imageLink="title_group.covers[0]" />
       <div class="right">
         <div class="title">
           <RouterLink :to="`/title-group/${title_group.id}`">{{ title_group.name }}</RouterLink>
@@ -20,10 +16,10 @@
   </ContentContainer>
 </template>
 <script setup lang="ts">
-import { Image } from 'primevue'
 import TitleGroupTable from './TitleGroupTable.vue'
 import ContentContainer from '../ContentContainer.vue'
 import type { TitleGroupHierarchyLite } from '@/services/api/artistService'
+import ImagePreview from '../ImagePreview.vue'
 
 defineProps<{
   title_group: TitleGroupHierarchyLite

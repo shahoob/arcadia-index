@@ -236,7 +236,6 @@ const fetchTitleGroup = async () => {
 }
 
 onBeforeRouteLeave((to, from, next) => {
-  console.log(to, from, next)
   if (to.name !== 'UploadTorrent' && to.name !== 'NewTorrentRequest') {
     titleGroupStore.$reset()
     useEditionGroupStore().$reset()

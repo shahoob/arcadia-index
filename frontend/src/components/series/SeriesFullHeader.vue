@@ -1,11 +1,7 @@
 <template>
   <ContentContainer id="series-full-header" class="header-wrapper">
     <div class="header">
-      <Image class="series-covers" :src="series.covers[0]" preview>
-        <template #previewicon>
-          <i class="pi pi-search"></i>
-        </template>
-      </Image>
+      <ImagePreview :imageLink="series.covers[0]" />
       <div class="textual-information">
         <div class="name">{{ series.name }}</div>
         <div class="description">
@@ -20,7 +16,7 @@
 import ContentContainer from '@/components/ContentContainer.vue'
 import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import type { Series } from '@/services/api/seriesService'
-import { Image } from 'primevue'
+import ImagePreview from '../ImagePreview.vue'
 
 defineProps<{
   series: Series

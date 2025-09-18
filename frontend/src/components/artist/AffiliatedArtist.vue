@@ -1,10 +1,6 @@
 <template>
   <div class="affiliated-artist">
-    <Image :src="affiliated_artist.artist.pictures[0] ?? '/default_artist_picture.svg'" :preview="affiliated_artist.artist.pictures.length !== 0">
-      <template #previewicon>
-        <i class="pi pi-search"></i>
-      </template>
-    </Image>
+    <ImagePreview :imageLink="affiliated_artist.artist.pictures[0] ?? '/default_artist_picture.svg'" />
     <RouterLink :to="`/artist/${affiliated_artist.artist.id}`">
       <div class="name">{{ affiliated_artist.artist.name }}</div>
     </RouterLink>
@@ -21,8 +17,8 @@
 
 <script setup lang="ts">
 import type { AffiliatedArtistHierarchy } from '@/services/api/artistService'
-import { Image } from 'primevue'
 import { useI18n } from 'vue-i18n'
+import ImagePreview from '../ImagePreview.vue'
 
 const { t } = useI18n()
 

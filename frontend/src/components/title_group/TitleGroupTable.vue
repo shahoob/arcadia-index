@@ -121,11 +121,7 @@
           <AccordionContent>
             <div class="screenshots-container">
               <div v-for="(screenshot, index) in slotProps.data.screenshots" :key="index" class="screenshot">
-                <Image :src="screenshot" preview class="screenshot-image">
-                  <template #previewicon>
-                    <i class="pi pi-search"></i>
-                  </template>
-                </Image>
+                <ImagePreview class="screenshot-image" :imageLink="screenshot" />
               </div>
             </div>
           </AccordionContent>
@@ -162,7 +158,6 @@ import { computed, onMounted, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import TorrentSlug from '../torrent/TorrentSlug.vue'
 import Column from 'primevue/column'
-import Image from 'primevue/image'
 import BBCodeRenderer from '@/components/community/BBCodeRenderer.vue'
 import DOMPurify from 'dompurify'
 import Accordion from 'primevue/accordion'
@@ -190,6 +185,7 @@ import { RouterLink } from 'vue-router'
 import CreateOrEditTorrent from '../torrent/CreateOrEditTorrent.vue'
 import { useUserStore } from '@/stores/user'
 import { useEditionGroupStore } from '@/stores/editionGroup'
+import ImagePreview from '../ImagePreview.vue'
 
 interface Props {
   title_group: TitleGroup | TitleGroupHierarchyLite
