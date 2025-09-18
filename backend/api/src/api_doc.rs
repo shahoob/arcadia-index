@@ -1,4 +1,5 @@
 use arcadia_storage::models::collage::SearchCollagesQuery;
+use arcadia_storage::models::series::SearchSeriesQuery;
 use utoipa::{
     openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
     Modify, OpenApi,
@@ -57,6 +58,7 @@ use crate::handlers::{
         crate::handlers::search::search_artists_lite::exec,
         crate::handlers::search::search_forum_thread::exec,
         crate::handlers::search::search_collages::exec,
+        crate::handlers::search::search_series::exec,
         crate::handlers::torrent_requests::create_torrent_request::exec,
         crate::handlers::torrent_requests::get_torrent_request::exec,
         crate::handlers::torrent_requests::fill_torrent_request::exec,
@@ -88,7 +90,8 @@ use crate::handlers::{
     components(schemas(
         GetUserApplicationsQuery,
         SearchTorrentRequestsQuery,
-        SearchCollagesQuery
+        SearchCollagesQuery,
+        SearchSeriesQuery
     ),)
 )]
 pub struct ApiDoc;

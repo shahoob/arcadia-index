@@ -1,9 +1,12 @@
 use crate::{
     connection_pool::ConnectionPool,
-    models::series::{Series, UserCreatedSeries},
+    models::series::{
+        SearchSeriesQuery, Series, SeriesSearchResponse, SeriesSearchResult, UserCreatedSeries,
+    },
 };
 use arcadia_common::error::{Error, Result};
 use serde_json::Value;
+use sqlx::{query_as_unchecked, query_scalar};
 use std::borrow::Borrow;
 
 impl ConnectionPool {
@@ -59,5 +62,58 @@ impl ConnectionPool {
 
         // Ok(serde_json::from_value(found_series.series_and_groups.unwrap()).unwrap())
         Ok(found_series.series_and_title_groups.unwrap())
+    }
+
+    pub async fn search_series(&self, form: &SearchSeriesQuery) -> Result<SeriesSearchResponse> {
+        let offset = (form.page - 1) * form.page_size;
+
+        let total_items: i64 = query_scalar!(
+            r#"
+            SELECT COUNT(*)
+            FROM series s
+            WHERE (s.name ILIKE '%' || $1 || '%')
+            "#,
+            form.name,
+        )
+        .fetch_one(self.borrow())
+        .await
+        .unwrap()
+        .unwrap();
+
+        let results = query_as_unchecked!(
+            SeriesSearchResult,
+            r#"
+            SELECT
+                s.id,
+                s.name,
+                s.created_at,
+                s.created_by_id,
+                s.covers,
+                s.banners,
+                s.tags,
+                COALESCE(tg_count.cnt, 0) AS title_groups_amount
+            FROM series s
+            LEFT JOIN (
+                SELECT series_id, COUNT(*) AS cnt
+                FROM title_groups
+                WHERE series_id IS NOT NULL
+                GROUP BY series_id
+            ) tg_count ON tg_count.series_id = s.id
+            WHERE (s.name ILIKE '%' || $1 || '%')
+            ORDER BY s.created_at DESC
+            OFFSET $2
+            LIMIT $3
+            "#,
+            form.name,
+            offset as i64,
+            form.page_size as i64
+        )
+        .fetch_all(self.borrow())
+        .await?;
+
+        Ok(SeriesSearchResponse {
+            results,
+            total_items,
+        })
     }
 }

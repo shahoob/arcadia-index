@@ -198,7 +198,7 @@ pub struct TitleGroupLite {
     pub platform: Option<Platform>,
 }
 
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema, sqlx::Decode)]
 pub struct TitleGroupInfoLite {
     pub id: i64,
     pub name: String,
