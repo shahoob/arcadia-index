@@ -23,7 +23,7 @@
       </div>
     </ContentContainer>
     <ContentContainer :container-title="t('artist.artist', 2)">
-      <template #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template>
+      <template v-if="editAffiliationBtns" #top-right><i class="pi pi-pen-to-square cursor-pointer" @click="emit('editAffiliatedArtistsClicked')" /></template>
       <template v-if="affiliatedArtists.length != 0">
         <div class="affiliated-artists">
           <AffiliatedArtist class="affiliated-artist" v-for="artist in affiliatedArtists" :key="artist.artist_id" :affiliated_artist="artist" />
@@ -85,6 +85,7 @@ defineProps<{
   series: SeriesLite
   affiliatedArtists: AffiliatedArtistHierarchy[]
   affiliatedEntities?: AffiliatedEntityHierarchy[]
+  editAffiliationBtns?: boolean
 }>()
 </script>
 <style scoped>

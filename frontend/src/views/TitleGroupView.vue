@@ -119,6 +119,7 @@
         :affiliatedArtists="titleGroupAndAssociatedData.affiliated_artists"
         :affiliatedEntities="titleGroupAndAssociatedData.affiliated_entities"
         :series="titleGroupAndAssociatedData.series"
+        editAffiliationBtns
         @edit-affiliated-artists-clicked="editAffiliatedArtistsDialogVisible = true"
       />
     </div>
