@@ -43,7 +43,7 @@
         <MasterGroupLink v-for="tg in inSameMasterGroup" :key="tg.id" :title_group="tg" />
       </div>
     </ContentContainer>
-    <ContentContainer :container-title="t('general.series')" v-if="series.id">
+    <ContentContainer :container-title="t('series.series')" v-if="series.id">
       <RouterLink :to="`/series/${series.id}`">
         {{ series.name }}
       </RouterLink>

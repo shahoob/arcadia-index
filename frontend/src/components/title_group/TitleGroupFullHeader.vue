@@ -39,7 +39,7 @@
             {{ title_group.country_from }}
           </div>
           <div v-if="series.id" class="information-line series">
-            <span class="item-title">{{ t('general.series') }}:</span>
+            <span class="item-title">{{ t('series.series') }}:</span>
             <RouterLink :to="`/series/${series.id}`">
               {{ series.name }}
             </RouterLink>

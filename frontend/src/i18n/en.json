@@ -23,7 +23,6 @@
     "tags_comma_separated": "Tags (comma separated)",
     "tags": "Tags",
     "alias": "Alias | Aliases",
-    "series": "Series",
     "link": "Link | Links",
     "report": "Report",
     "reported": "Reported",
@@ -92,7 +91,9 @@
   },
   "series": {
     "series": "Series",
-    "entry": "Entry | Entries"
+    "entry": "Entry | Entries",
+    "new_series": "New series",
+    "bookmarked_series": "Bookmarked series"
   },
   "forum": {
     "forum": "Forum | Forums",
