@@ -13,7 +13,8 @@ export function parseBBCode(bbcode: string): string {
 }
 
 //TODO: properly type this function
-const walk = (t) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const walk = (t: any) => {
   const tree = t
 
   if (Array.isArray(tree)) {
@@ -42,5 +43,6 @@ const walk = (t) => {
 }
 
 export const lineBreakPlugin = () => {
-  return (tree) => walk(tree)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any) => walk(tree)
 }

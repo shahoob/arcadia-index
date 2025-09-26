@@ -6,7 +6,7 @@ const initialState: User = {
   avatar: null,
   average_seeding_time: 0,
   bonus_points: 0,
-  class: '',
+  class: 'newbie',
   collages_started: 0,
   created_at: '',
   description: '',

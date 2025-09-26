@@ -54,7 +54,7 @@ onMounted(async () => {
     title_groups.value = data.title_groups
   }
 
-  document.title = `${series.value.name} - ${siteName}`
+  document.title = `${series.value?.name} - ${siteName}`
 })
 </script>
 

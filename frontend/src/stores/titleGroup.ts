@@ -9,6 +9,8 @@ export const useTitleGroupStore = defineStore('titleGroup', {
       content_type: 'movie',
       edition_groups: [],
       name: '',
+      covers: [],
+      original_release_date: '',
     }
   },
 })

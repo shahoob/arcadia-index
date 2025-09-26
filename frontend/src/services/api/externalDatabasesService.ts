@@ -21,6 +21,6 @@ export const getExternalDatabaseData = async (item_id: string | number, database
     //   return (await api.get('external_db/tmdb/tv?id=' + item_id)).data
     // }
     default:
-      return {}
+      throw 'database not supported'
   }
 }
