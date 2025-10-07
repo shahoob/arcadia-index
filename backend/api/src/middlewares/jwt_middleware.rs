@@ -15,7 +15,7 @@ use jsonwebtoken::{decode, errors::ErrorKind, DecodingKey, Validation};
 
 #[derive(Debug, Clone)]
 pub struct Authdata {
-    pub sub: i64,
+    pub sub: i32,
     pub class: UserClass,
 }
 
