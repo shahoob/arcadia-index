@@ -23,3 +23,5 @@ indexmap = { version = "2.11.0", default-features = false, features = ["std", "s
 anyhow = { version = "1.0.99", default-features = true, features = ["std"] }
 arcadia-shared = { path = "../../shared" }
 parking_lot = "0.12.4"
+bincode = "2.0.1"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }

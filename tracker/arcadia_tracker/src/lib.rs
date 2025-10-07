@@ -25,15 +25,15 @@ impl Deref for Tracker {
 }
 
 impl Tracker {
-    pub fn new(env: Env) -> Self {
+    pub async fn new(env: Env) -> Self {
         print!("Getting users...");
         std::io::stdout().flush().unwrap();
-        let users = .await?;
+        let users = common::models::user::Map::from_backend().await;
         println!("[Finished] Records: {:?}", users.len());
 
         Self {
             env,
-            users: RwLock::new(common::models::user::Map::default()),
+            users: RwLock::new(users),
         }
     }
 }

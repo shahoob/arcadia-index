@@ -1,22 +1,22 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                    SELECT created_by_id FROM torrents WHERE id = $1\n                ",
+  "query": "\n                SELECT id FROM users\n                WHERE passkey = $1\n            ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "created_by_id",
+        "name": "id",
         "type_info": "Int4"
       }
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Text"
       ]
     },
     "nullable": [
       false
     ]
   },
-  "hash": "a45ff60d399a52538e67de35897d248d11539d4805fd53b8d27f3d1a0568ce92"
+  "hash": "754696aaea3476a25a9dd63bb9c543db792348caafc6ce3a1638a840dac18fec"
 }
