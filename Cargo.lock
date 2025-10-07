@@ -577,6 +577,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "arcadia_tracker"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "actix-web-httpauth",
+ "dotenvy",
+ "env_logger",
+ "envconfig",
+ "futures",
+ "thiserror 2.0.16",
+ "tokio",
+ "utoipa",
+ "utoipa-actix-web",
+ "utoipa-swagger-ui",
+]
+
+[[package]]
 name = "argon2"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
