@@ -26,10 +26,10 @@ impl Deref for Tracker {
 
 impl Tracker {
     pub async fn new(env: Env) -> Self {
-        print!("Getting users...");
+        log::info!("[Setup] Getting users...");
         std::io::stdout().flush().unwrap();
         let users = common::models::user::Map::from_backend().await;
-        println!("[Finished] Records: {:?}", users.len());
+        log::info!("[Setup] Got {:?} users", users.len());
 
         Self {
             env,

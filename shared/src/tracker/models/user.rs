@@ -3,10 +3,12 @@ use serde::{Deserialize, Serialize, Serializer};
 use sqlx::{Database, Decode};
 use std::{fmt::Display, str::FromStr};
 
-#[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq)]
+#[derive(
+    Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, bincode::Encode, bincode::Decode,
+)]
 pub struct Passkey(pub [u8; 32]);
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, bincode::Encode, bincode::Decode, PartialEq)]
 pub struct User {
     pub id: u32,
     pub passkey: Passkey,

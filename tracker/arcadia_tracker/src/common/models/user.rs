@@ -1,5 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
+use bincode::config;
 use indexmap::IndexMap;
 use reqwest::Client;
 use serde::Serialize;
@@ -28,7 +29,9 @@ impl Map {
             .await
             .expect("failed to read users response body");
 
-        let users: Vec<User> = serde_bencode::from_bytes(&bytes).expect("failed to decode users");
+        let config = config::standard();
+        let (users, _): (Vec<User>, usize) =
+            bincode::decode_from_slice(&bytes[..], config).unwrap();
         let mut map = IndexMap::new();
         for user in users {
             map.insert(user.id, user);

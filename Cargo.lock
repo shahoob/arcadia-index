@@ -566,6 +566,7 @@ name = "arcadia-shared"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "bincode",
  "indexmap",
  "serde",
  "sqlx",
