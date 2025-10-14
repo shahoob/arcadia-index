@@ -26,7 +26,7 @@ use crate::handlers::tracker::config as TrackerConfig;
 use crate::handlers::user_applications::config as UserApplicationsConfig;
 use crate::handlers::users::config as UsersConfig;
 use crate::handlers::wiki::config as WikiConfig;
-use crate::middlewares::jwt_middleware::authenticate_user;
+use crate::middlewares::auth_middleware::authenticate_user;
 
 pub fn init<R: RedisPoolInterface + 'static>(cfg: &mut web::ServiceConfig) {
     cfg.service(scope("/announce").configure(AnnouncesConfig::<R>));

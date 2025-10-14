@@ -6,7 +6,7 @@ use std::{fmt::Display, str::FromStr};
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq)]
 pub struct Passkey(pub [u8; 32]);
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct User {
     pub id: u32,
     pub passkey: Passkey,

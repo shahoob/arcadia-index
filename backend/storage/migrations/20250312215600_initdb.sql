@@ -48,7 +48,7 @@ CREATE TABLE users (
     UNIQUE(passkey)
 );
 INSERT INTO users (username, email, password_hash, registered_from_ip, settings, passkey)
-VALUES ('creator', 'none@domain.com', 'none', '127.0.0.1', '{}'::jsonb, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+VALUES ('creator', 'none@domain.com', 'none', '127.0.0.1', '{}'::jsonb, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 CREATE TABLE api_keys (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

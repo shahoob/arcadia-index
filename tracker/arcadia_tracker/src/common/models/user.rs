@@ -1,11 +1,12 @@
 use std::ops::{Deref, DerefMut};
 
 use indexmap::IndexMap;
+use reqwest::Client;
 use serde::Serialize;
 
 pub use arcadia_shared::tracker::models::user::{Passkey, User};
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct Map(IndexMap<u32, User>);
 
 impl Map {
@@ -14,7 +15,14 @@ impl Map {
             std::env::var("ARCADIA_API_BASE_URL").expect("env var ARCADIA_API_BASE_URL not set");
         let url = format!("{}/api/tracker/users", base_url);
 
-        let resp = reqwest::get(url).await.expect("failed to fetch users");
+        let client = Client::new();
+        let api_key = std::env::var("API_KEY").expect("env var API_KEY not set");
+        let resp = client
+            .get(url)
+            .header("api_key", api_key)
+            .send()
+            .await
+            .expect("failed to fetch users");
         let bytes = resp
             .bytes()
             .await
