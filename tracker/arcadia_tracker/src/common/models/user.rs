@@ -1,14 +1,15 @@
-use std::ops::{Deref, DerefMut};
-
 use bincode::config;
-use indexmap::IndexMap;
 use reqwest::Client;
 use serde::Serialize;
+use std::{
+    collections::HashMap,
+    ops::{Deref, DerefMut},
+};
 
 pub use arcadia_shared::tracker::models::user::{Passkey, User};
 
 #[derive(Debug, Serialize)]
-pub struct Map(IndexMap<Passkey, User>);
+pub struct Map(HashMap<Passkey, User>);
 
 impl Map {
     pub async fn from_backend() -> Self {
@@ -32,7 +33,7 @@ impl Map {
         let config = config::standard();
         let (users, _): (Vec<User>, usize) =
             bincode::decode_from_slice(&bytes[..], config).unwrap();
-        let mut map = IndexMap::new();
+        let mut map = HashMap::new();
         for user in users {
             map.insert(user.passkey, user);
         }
@@ -41,7 +42,7 @@ impl Map {
 }
 
 impl Deref for Map {
-    type Target = IndexMap<Passkey, User>;
+    type Target = HashMap<Passkey, User>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -51,11 +52,5 @@ impl Deref for Map {
 impl DerefMut for Map {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
-    }
-}
-
-impl Default for Map {
-    fn default() -> Self {
-        Self(IndexMap::new())
     }
 }

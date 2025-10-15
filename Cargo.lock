@@ -609,7 +609,6 @@ dependencies = [
  "env_logger",
  "envconfig",
  "futures",
- "indexmap",
  "log",
  "parking_lot",
  "reqwest",

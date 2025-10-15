@@ -1,12 +1,14 @@
-use std::ops::{Deref, DerefMut};
+use std::{
+    collections::HashMap,
+    ops::{Deref, DerefMut},
+};
 
 use arcadia_shared::tracker::models::torrent::{InfoHash, Torrent};
 use bincode::config;
-use indexmap::IndexMap;
 use reqwest::Client;
 
 #[derive(Debug)]
-pub struct Map(IndexMap<InfoHash, Torrent>);
+pub struct Map(HashMap<InfoHash, Torrent>);
 
 impl Map {
     pub async fn from_backend() -> Self {
@@ -30,7 +32,7 @@ impl Map {
         let config = config::standard();
         let (torrents, _): (Vec<Torrent>, usize) =
             bincode::decode_from_slice(&bytes[..], config).unwrap();
-        let mut map = IndexMap::new();
+        let mut map = HashMap::new();
         for torrent in torrents {
             map.insert(torrent.info_hash, torrent);
         }
@@ -39,7 +41,7 @@ impl Map {
 }
 
 impl Deref for Map {
-    type Target = IndexMap<InfoHash, Torrent>;
+    type Target = HashMap<InfoHash, Torrent>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -49,11 +51,5 @@ impl Deref for Map {
 impl DerefMut for Map {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
-    }
-}
-
-impl Default for Map {
-    fn default() -> Self {
-        Self(IndexMap::new())
     }
 }
