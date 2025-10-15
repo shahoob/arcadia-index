@@ -8,7 +8,7 @@ use serde::Serialize;
 pub use arcadia_shared::tracker::models::user::{Passkey, User};
 
 #[derive(Debug, Serialize)]
-pub struct Map(IndexMap<u32, User>);
+pub struct Map(IndexMap<Passkey, User>);
 
 impl Map {
     pub async fn from_backend() -> Self {
@@ -34,14 +34,14 @@ impl Map {
             bincode::decode_from_slice(&bytes[..], config).unwrap();
         let mut map = IndexMap::new();
         for user in users {
-            map.insert(user.id, user);
+            map.insert(user.passkey, user);
         }
         Self(map)
     }
 }
 
 impl Deref for Map {
-    type Target = IndexMap<u32, User>;
+    type Target = IndexMap<Passkey, User>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
