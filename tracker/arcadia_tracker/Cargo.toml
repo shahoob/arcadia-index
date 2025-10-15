@@ -24,3 +24,4 @@ arcadia-shared = { path = "../../shared" }
 parking_lot = "0.12.4"
 bincode = "2.0.1"
 reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
+percent-encoding = "2.3.1"

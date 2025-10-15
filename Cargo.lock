@@ -611,6 +611,7 @@ dependencies = [
  "futures",
  "log",
  "parking_lot",
+ "percent-encoding",
  "reqwest",
  "serde",
  "serde_bencode",
