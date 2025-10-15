@@ -130,7 +130,6 @@ fn validate_tracker_api_key<R: RedisPoolInterface + 'static>(
     req: ServiceRequest,
     api_key: &str,
 ) -> std::result::Result<ServiceRequest, (actix_web::Error, ServiceRequest)> {
-    println!("tracker req");
     let arc = req.app_data::<Data<Arcadia<R>>>().expect("app data set");
 
     if arc.env.tracker.api_key != api_key {

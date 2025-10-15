@@ -1,8 +1,4 @@
-use serde::Deserialize;
 use strum::{Display, EnumString};
-
-#[derive(Clone, Copy, Deserialize, Debug, Eq, Hash, PartialEq, PartialOrd, Ord)]
-pub struct InfoHash(pub [u8; 20]);
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub struct PeerId(pub [u8; 20]);

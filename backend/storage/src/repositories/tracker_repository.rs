@@ -1,6 +1,9 @@
 use crate::connection_pool::ConnectionPool;
 use arcadia_common::error::Result;
-use arcadia_shared::tracker::models::user::{Passkey, User};
+use arcadia_shared::tracker::models::{
+    torrent::{InfoHash, Torrent},
+    user::{Passkey, User},
+};
 use std::borrow::Borrow;
 
 // This file contains functions for Arcadia's tracker
@@ -11,6 +14,7 @@ impl ConnectionPool {
         // TODO: fix this
         // query_as!() doesn't work as it requires the FromString trait
         // which is implemented, but somehow still throws an error
+        //
         let rows = sqlx::query!(
             r#"
                 SELECT
@@ -41,5 +45,42 @@ impl ConnectionPool {
             .collect();
 
         Ok(users)
+    }
+
+    pub async fn find_torrents(&self) -> Result<Vec<Torrent>> {
+        // TODO: fix this
+        // query_as!() doesn't work as it requires the FromString trait
+        // which is implemented, but somehow still throws an error
+        let rows = sqlx::query!(
+            r#"
+                SELECT
+                    id,
+                    info_hash,
+                    upload_factor,
+                    download_factor,
+                    seeders,
+                    leechers,
+                    completed
+                FROM torrents
+            "#
+        )
+        .fetch_all(self.borrow())
+        .await
+        .expect("could not get torrents");
+
+        let torrents = rows
+            .into_iter()
+            .map(|r| Torrent {
+                id: r.id as u32,
+                info_hash: InfoHash(r.info_hash.try_into().expect("invalid info hash length")),
+                upload_factor: r.upload_factor,
+                download_factor: r.download_factor,
+                seeders: r.seeders,
+                leechers: r.leechers,
+                completed: r.completed,
+            })
+            .collect();
+
+        Ok(torrents)
     }
 }

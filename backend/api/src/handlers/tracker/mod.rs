@@ -1,3 +1,4 @@
+pub mod get_torrents;
 pub mod get_users;
 
 use actix_web::{
@@ -10,6 +11,7 @@ use bincode::config;
 
 pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
     cfg.service(resource("/users").route(get().to(self::get_users::exec::<R>)));
+    cfg.service(resource("/torrents").route(get().to(self::get_torrents::exec::<R>)));
 }
 
 fn binary_response<T: bincode::Encode>(value: &T) -> Result<HttpResponse> {

@@ -14,6 +14,7 @@ pub struct Tracker {
     env: Env,
 
     pub users: RwLock<common::models::user::Map>,
+    pub torrents: RwLock<common::models::torrent::Map>,
 }
 
 impl Deref for Tracker {
@@ -31,9 +32,15 @@ impl Tracker {
         let users = common::models::user::Map::from_backend().await;
         log::info!("[Setup] Got {:?} users", users.len());
 
+        log::info!("[Setup] Getting torrents...");
+        std::io::stdout().flush().unwrap();
+        let torrents = common::models::torrent::Map::from_backend().await;
+        log::info!("[Setup] Got {:?} torrents", torrents.len());
+
         Self {
             env,
             users: RwLock::new(users),
+            torrents: RwLock::new(torrents),
         }
     }
 }
