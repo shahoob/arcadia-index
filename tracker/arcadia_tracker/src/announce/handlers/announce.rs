@@ -1,13 +1,6 @@
-use actix_web::{
-    dev,
-    web::{Data, Path},
-    FromRequest, HttpRequest, HttpResponse, ResponseError,
-};
+use actix_web::web::Path;
 
-use crate::{
-    announce::error::{AnnounceError, Result},
-    Tracker,
-};
+use crate::announce::error::AnnounceError;
 
 #[utoipa::path(
     post,
@@ -18,9 +11,9 @@ use crate::{
         (status = 200, description = "Announce"),
     )
 )]
-pub async fn exec(arc: Data<Tracker>, passkey: Path<String>) /*-> Result<HttpResponse>*/
+pub async fn exec(/*arc: Data<Tracker>, */ passkey: Path<String>) /*-> Result<HttpResponse>*/
 {
-    let passkey = u128::from_str_radix(&passkey, 16).map_err(|_| AnnounceError::InvalidPassKey);
+    let _passkey = u128::from_str_radix(&passkey, 16).map_err(|_| AnnounceError::InvalidPassKey);
     //?;
 
     // Ok(HttpResponse::Ok())

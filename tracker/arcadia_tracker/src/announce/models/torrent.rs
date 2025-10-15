@@ -20,15 +20,15 @@ pub enum Event {
     Stopped,
 }
 
-pub struct Announce {
-    info_hash: InfoHash,
-    peer_id: PeerId,
-    port: u16,
-    uploaded: u64,
-    downloaded: u64,
-    left: u64,
-    event: Event,
-    numwant: usize,
-    corrupt: Option<u64>,
-    key: Option<String>,
-}
+// pub struct Announce {
+//     info_hash: InfoHash,
+//     peer_id: PeerId,
+//     port: u16,
+//     uploaded: u64,
+//     downloaded: u64,
+//     left: u64,
+//     event: Event,
+//     numwant: usize,
+//     corrupt: Option<u64>,
+//     key: Option<String>,
+// }

@@ -1,4 +1,4 @@
-use actix_web::web::{self, scope};
+use actix_web::web::{self};
 // use actix_web_httpauth::middleware::HttpAuthentication;
 
 // use crate::middleware::authenticate_user;
