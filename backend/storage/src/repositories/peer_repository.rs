@@ -34,7 +34,7 @@ impl ConnectionPool {
 
     pub async fn remove_peer(
         &self,
-        torrent_id: &i64,
+        torrent_id: &i32,
         peer_id: &[u8; 20],
         ip: &IpNetwork,
         port: u16,
@@ -57,7 +57,7 @@ impl ConnectionPool {
     // returns uploaded/downloaded before the update
     pub async fn insert_or_update_peer(
         &self,
-        torrent_id: &i64,
+        torrent_id: &i32,
         ip: &IpNetwork,
         user_id: &i32,
         ann: &Announce,
@@ -115,7 +115,7 @@ impl ConnectionPool {
             .unwrap_or((0, 0))
     }
 
-    pub async fn find_torrent_peers(&self, torrent_id: &i64, user_id: &i32) -> Vec<Peer> {
+    pub async fn find_torrent_peers(&self, torrent_id: &i32, user_id: &i32) -> Vec<Peer> {
         let peers = sqlx::query!(
             r#"
             SELECT peers.ip AS ip, peers.port AS port

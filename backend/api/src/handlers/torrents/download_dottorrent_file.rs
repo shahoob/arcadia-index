@@ -14,7 +14,7 @@ use arcadia_common::error::Result;
 
 #[derive(Debug, Deserialize, IntoParams, ToSchema)]
 pub struct DownloadTorrentQuery {
-    id: i64,
+    id: i32,
 }
 
 #[utoipa::path(

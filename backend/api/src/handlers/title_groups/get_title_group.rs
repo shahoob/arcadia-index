@@ -13,7 +13,7 @@ use arcadia_common::error::Result;
 
 #[derive(Debug, Deserialize, IntoParams)]
 pub struct GetTitleGroupQuery {
-    pub id: i64,
+    pub id: i32,
 }
 
 #[utoipa::path(

@@ -20,7 +20,7 @@ use std::{borrow::Borrow, str::FromStr};
 
 #[derive(sqlx::FromRow)]
 struct TitleGroupInfoLite {
-    id: i64,
+    id: i32,
     #[allow(dead_code)]
     name: String,
 }
@@ -201,7 +201,7 @@ impl ConnectionPool {
         Ok(uploaded_torrent)
     }
 
-    pub async fn find_torrent(&self, torrent_id: i64) -> Result<Torrent> {
+    pub async fn find_torrent(&self, torrent_id: i32) -> Result<Torrent> {
         let torrent = sqlx::query_as!(
             Torrent,
             r#"
@@ -239,7 +239,7 @@ impl ConnectionPool {
     pub async fn update_torrent(
         &self,
         edited_torrent: &EditedTorrent,
-        torrent_id: i64,
+        torrent_id: i32,
     ) -> Result<Torrent> {
         let updated_torrent = sqlx::query_as!(
             Torrent,
@@ -318,7 +318,7 @@ impl ConnectionPool {
     pub async fn get_torrent(
         &self,
         user_id: i32,
-        torrent_id: i64,
+        torrent_id: i32,
         tracker_name: &str,
         frontend_url: &str,
         tracker_url: &str,
@@ -546,7 +546,7 @@ impl ConnectionPool {
         Ok(())
     }
 
-    pub async fn increment_torrent_completed(&self, torrent_id: i64) -> Result<()> {
+    pub async fn increment_torrent_completed(&self, torrent_id: i32) -> Result<()> {
         let _ = sqlx::query!(
             r#"
             UPDATE torrents
