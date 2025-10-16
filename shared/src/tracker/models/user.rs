@@ -1,7 +1,14 @@
 use anyhow::bail;
+use bincode::config;
+use reqwest::Client;
 use serde::{Deserialize, Serialize, Serializer};
 use sqlx::{Database, Decode};
-use std::{fmt::Display, str::FromStr};
+use std::{
+    collections::HashMap,
+    fmt::Display,
+    ops::{Deref, DerefMut},
+    str::FromStr,
+};
 
 #[derive(
     Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, bincode::Encode, bincode::Decode,
@@ -10,12 +17,13 @@ pub struct Passkey(pub [u8; 32]);
 
 #[derive(Debug, Clone, Deserialize, Serialize, bincode::Encode, bincode::Decode, PartialEq)]
 pub struct User {
-    pub id: u32,
-    pub passkey: Passkey,
     pub can_download: bool,
     pub num_seeding: u32,
     pub num_leeching: u32,
 }
+
+#[derive(Debug, Serialize, bincode::Encode, bincode::Decode)]
+pub struct Map(HashMap<u32, User>);
 
 impl FromStr for Passkey {
     type Err = anyhow::Error;
@@ -61,5 +69,45 @@ impl Serialize for Passkey {
         S: Serializer,
     {
         serializer.serialize_str(&self.to_string())
+    }
+}
+
+impl Deref for Map {
+    type Target = HashMap<u32, User>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Map {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl Map {
+    pub async fn from_backend() -> Self {
+        let base_url =
+            std::env::var("ARCADIA_API_BASE_URL").expect("env var ARCADIA_API_BASE_URL not set");
+        let url = format!("{}/api/tracker/users", base_url);
+
+        let client = Client::new();
+        let api_key = std::env::var("API_KEY").expect("env var API_KEY not set");
+        let resp = client
+            .get(url)
+            .header("api_key", api_key)
+            .send()
+            .await
+            .expect("failed to fetch users");
+        let bytes = resp
+            .bytes()
+            .await
+            .expect("failed to read users response body");
+
+        let config = config::standard();
+        let (map, _): (Map, usize) = bincode::decode_from_slice(&bytes[..], config).unwrap();
+
+        map
     }
 }

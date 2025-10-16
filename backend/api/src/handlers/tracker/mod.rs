@@ -9,6 +9,7 @@ use arcadia_common::error::Result;
 use arcadia_storage::redis::RedisPoolInterface;
 use bincode::config;
 
+// TODO: protect by only allowing requests from tracker's ip
 pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
     cfg.service(resource("/users").route(get().to(self::get_users::exec::<R>)));
     cfg.service(resource("/torrents").route(get().to(self::get_torrents::exec::<R>)));

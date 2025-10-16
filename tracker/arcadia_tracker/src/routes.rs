@@ -4,6 +4,7 @@ use actix_web::web::{self};
 // use crate::middleware::authenticate_user;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
+    // TODO: protect by only allowing requests from backend's ip
     cfg.service(
         web::scope("/{passkey}"), //.wrap(HttpAuthentication::with_fn(authenticate_user(req, passkey))),
     );
