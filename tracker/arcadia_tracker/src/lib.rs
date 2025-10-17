@@ -9,6 +9,7 @@ pub mod env;
 pub mod middleware;
 pub mod routes;
 
+#[derive(Debug)]
 pub struct Tracker {
     env: Env,
 

@@ -1,7 +1,7 @@
 use envconfig::Envconfig;
 use std::{collections::HashSet, str::FromStr};
 
-#[derive(Envconfig, Clone)]
+#[derive(Debug, Envconfig, Clone)]
 pub struct Env {
     #[envconfig(from = "ANNOUNCE_INTERVAL")]
     pub announce_interval: u32,
@@ -25,7 +25,7 @@ pub enum Error {
     EnvVariableParseError(String),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct AllowedTorrentClientSet {
     pub clients: HashSet<Vec<u8>>,
 }

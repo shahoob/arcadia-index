@@ -1,7 +1,14 @@
 use std::future::{self, Ready};
 
-use crate::announce::{error::AnnounceError, models::torrent::Announce};
-use actix_web::{dev, web::Path, FromRequest, HttpRequest, HttpResponse, ResponseError};
+use crate::{
+    announce::{error::Result, models::torrent::Announce},
+    Tracker,
+};
+use actix_web::{
+    dev,
+    web::{Data, Path},
+    FromRequest, HttpRequest, HttpResponse, ResponseError,
+};
 
 #[derive(Debug)]
 pub struct UserAgent(pub String);
@@ -46,7 +53,7 @@ impl FromRequest for UserAgent {
 }
 
 #[utoipa::path(
-    post,
+    get,
     operation_id = "Announce",
     tag = "Announce",
     path = "/{passkey}/announce",
@@ -55,17 +62,18 @@ impl FromRequest for UserAgent {
     )
 )]
 pub async fn exec(
-    // arc: Data<Tracker>,
+    arc: Data<Tracker>,
     passkey: Path<String>,
-    // agent: Option<UserAgent>,
+    agent: Option<UserAgent>,
     ann: Announce,
-    // conn: dev::ConnectionInfo,
-) /*->Result<HttpResponse>*/
-{
-    println!("{:?}", ann);
-    let passkey = u128::from_str_radix(&passkey, 16).map_err(|_| AnnounceError::InvalidPassKey);
-    println!("{:?}", passkey);
-    //?;
+    conn: dev::ConnectionInfo,
+) -> Result<HttpResponse> {
+    println!("Announce request: {:?}", ann);
+    println!("Passkey: {:?}", passkey);
+    println!("User-Agent: {:?}", agent);
+    println!("Connection info: {:?}", conn);
+    println!("Tracker: {:?}", arc);
 
-    // Ok(HttpResponse::Ok())
+    // TODO: Implement actual announce logic
+    Ok(HttpResponse::Ok().json("{}"))
 }
