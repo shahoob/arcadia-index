@@ -44,7 +44,6 @@ CREATE TABLE users (
     warned BOOLEAN NOT NULL DEFAULT FALSE,
     banned BOOLEAN NOT NULL DEFAULT FALSE,
     staff_note TEXT NOT NULL DEFAULT '',
-    can_download BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE(passkey)
 );

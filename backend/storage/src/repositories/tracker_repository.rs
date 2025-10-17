@@ -7,19 +7,40 @@ use std::collections::HashMap;
 // This file contains functions for Arcadia's tracker
 // but not necessarily related to the tracker itself directly
 
+#[derive(Debug)]
+pub struct DBImportTorrent {
+    pub id: i32,
+    pub upload_factor: f64,
+    pub download_factor: f64,
+    pub seeders: i64,
+    pub leechers: i64,
+    pub times_completed: i32,
+}
+
+#[derive(Debug)]
+pub struct DBImportUser {
+    pub id: i32,
+    pub passkey: Passkey,
+    pub num_seeding: i32,
+    pub num_leeching: i32,
+}
+
+#[derive(Debug)]
+pub struct DBImportPasskey2Id {
+    pub id: i32,
+    pub passkey: Passkey,
+}
+
 impl ConnectionPool {
     pub async fn find_users(&self) -> Result<HashMap<u32, User>> {
-        // TODO: fix this
-        // query_as!() doesn't work as it requires the FromString trait
-        // which is implemented, but somehow still throws an error
-        let rows = sqlx::query!(
+        let rows = sqlx::query_as!(
+            DBImportUser,
             r#"
                 SELECT
                     id,
                     passkey as "passkey: Passkey",
-                    TRUE AS "can_download!",
-                    0::int4 AS "num_seeding!",
-                    0::int4 AS "num_leeching!"
+                    0::INT AS "num_seeding!",
+                    0::INT AS "num_leeching!"
                 FROM users
             "#
         )
@@ -29,23 +50,19 @@ impl ConnectionPool {
 
         let mut map: HashMap<u32, User> = HashMap::with_capacity(rows.len());
         for r in rows {
-            let id = r.id as u32;
             let user = User {
-                can_download: r.can_download,
                 num_seeding: r.num_seeding as u32,
                 num_leeching: r.num_leeching as u32,
             };
-            map.insert(id, user);
+            map.insert(r.id as u32, user);
         }
 
         Ok(map)
     }
 
     pub async fn find_torrents(&self) -> Result<HashMap<u32, Torrent>> {
-        // TODO: fix this
-        // query_as!() doesn't work as it requires the FromString trait
-        // which is implemented, but somehow still throws an error
-        let rows = sqlx::query!(
+        let rows = sqlx::query_as!(
+            DBImportTorrent,
             r#"
                 SELECT
                     id,
@@ -63,7 +80,6 @@ impl ConnectionPool {
 
         let mut map: HashMap<u32, Torrent> = HashMap::with_capacity(rows.len());
         for r in rows {
-            let id = r.id as u32;
             let torrent = Torrent {
                 upload_factor: r.upload_factor,
                 download_factor: r.download_factor,
@@ -71,7 +87,30 @@ impl ConnectionPool {
                 leechers: r.leechers,
                 times_completed: r.times_completed,
             };
-            map.insert(id, torrent);
+            map.insert(r.id as u32, torrent);
+        }
+
+        Ok(map)
+    }
+
+    pub async fn find_passkeys_2_ids(&self) -> Result<HashMap<u32, Passkey>> {
+        let rows = sqlx::query_as!(
+            DBImportPasskey2Id,
+            r#"
+                    SELECT
+                        id,
+                        passkey as "passkey: Passkey"
+                    FROM users
+                    WHERE banned = FALSE
+                "#
+        )
+        .fetch_all(self.borrow())
+        .await
+        .expect("could not get passkeys2ids");
+
+        let mut map: HashMap<u32, Passkey> = HashMap::with_capacity(rows.len());
+        for r in rows {
+            map.insert(r.id as u32, r.passkey);
         }
 
         Ok(map)

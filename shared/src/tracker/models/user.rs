@@ -17,7 +17,6 @@ pub struct Passkey(pub [u8; 32]);
 
 #[derive(Debug, Clone, Deserialize, Serialize, bincode::Encode, bincode::Decode, PartialEq)]
 pub struct User {
-    pub can_download: bool,
     pub num_seeding: u32,
     pub num_leeching: u32,
 }

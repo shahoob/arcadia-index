@@ -203,11 +203,6 @@
         "ordinal": 37,
         "name": "staff_note",
         "type_info": "Text"
-      },
-      {
-        "ordinal": 38,
-        "name": "can_download",
-        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -224,7 +219,6 @@
       false,
       false,
       true,
-      false,
       false,
       false,
       false,
