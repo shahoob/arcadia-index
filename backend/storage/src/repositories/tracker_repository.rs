@@ -1,6 +1,10 @@
 use crate::connection_pool::ConnectionPool;
 use arcadia_common::error::Result;
-use arcadia_shared::tracker::models::{torrent::Torrent, user::Passkey, user::User};
+use arcadia_shared::tracker::models::{
+    torrent::{InfoHash, Torrent},
+    user::Passkey,
+    user::User,
+};
 use std::borrow::Borrow;
 use std::collections::HashMap;
 
@@ -29,6 +33,12 @@ pub struct DBImportUser {
 pub struct DBImportPasskey2Id {
     pub id: i32,
     pub passkey: Passkey,
+}
+
+#[derive(Debug)]
+pub struct DBImportInfohash2Id {
+    pub id: i32,
+    pub info_hash: InfoHash,
 }
 
 impl ConnectionPool {
@@ -111,6 +121,28 @@ impl ConnectionPool {
         let mut map: HashMap<u32, Passkey> = HashMap::with_capacity(rows.len());
         for r in rows {
             map.insert(r.id as u32, r.passkey);
+        }
+
+        Ok(map)
+    }
+
+    pub async fn find_infohashes_2_ids(&self) -> Result<HashMap<u32, InfoHash>> {
+        let rows = sqlx::query_as!(
+            DBImportInfohash2Id,
+            r#"
+                    SELECT
+                        id,
+                        info_hash as "info_hash: InfoHash"
+                    FROM torrents
+                "#
+        )
+        .fetch_all(self.borrow())
+        .await
+        .expect("could not get infohashes2ids");
+
+        let mut map: HashMap<u32, InfoHash> = HashMap::with_capacity(rows.len());
+        for r in rows {
+            map.insert(r.id as u32, r.info_hash);
         }
 
         Ok(map)

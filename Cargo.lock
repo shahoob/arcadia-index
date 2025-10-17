@@ -571,6 +571,7 @@ dependencies = [
  "reqwest",
  "serde",
  "sqlx",
+ "thiserror 2.0.16",
 ]
 
 [[package]]

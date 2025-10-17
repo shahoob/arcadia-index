@@ -1,5 +1,6 @@
 use bincode::config;
 use reqwest::Client;
+use sqlx::{Database, Decode};
 use std::{
     collections::HashMap,
     ops::{Deref, DerefMut},
@@ -56,5 +57,27 @@ impl Deref for Map {
 impl DerefMut for Map {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+impl<'r, DB: Database> Decode<'r, DB> for InfoHash
+where
+    &'r [u8]: Decode<'r, DB>,
+{
+    /// Decodes the database's string representation of the 40 character long
+    /// infohash in hex into a byte slice
+    fn decode(
+        value: <DB as Database>::ValueRef<'r>,
+    ) -> Result<InfoHash, Box<dyn std::error::Error + 'static + Send + Sync>> {
+        let value = <&[u8] as Decode<DB>>::decode(value)?;
+
+        if value.len() != 20 {
+            let error: Box<dyn std::error::Error + Send + Sync> =
+                Box::new(crate::error::DecodeError::InfoHash);
+
+            return Err(error);
+        }
+
+        Ok(InfoHash(<[u8; 20]>::try_from(&value[0..20])?))
     }
 }

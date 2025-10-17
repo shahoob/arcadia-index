@@ -15,6 +15,7 @@ pub struct Tracker {
 
     pub users: RwLock<arcadia_shared::tracker::models::user::Map>,
     pub passkey2id: RwLock<arcadia_shared::tracker::models::passkey_2_id::Map>,
+    pub infohash2id: RwLock<arcadia_shared::tracker::models::infohash_2_id::Map>,
     pub torrents: RwLock<arcadia_shared::tracker::models::torrent::Map>,
 }
 
@@ -38,6 +39,11 @@ impl Tracker {
         let passkey2id = arcadia_shared::tracker::models::passkey_2_id::Map::from_backend().await;
         log::info!("[Setup] Got {:?} passkey2ids", passkey2id.len());
 
+        log::info!("[Setup] Getting infohash2id...");
+        std::io::stdout().flush().unwrap();
+        let infohash2id = arcadia_shared::tracker::models::infohash_2_id::Map::from_backend().await;
+        log::info!("[Setup] Got {:?} infohash2ids", infohash2id.len());
+
         log::info!("[Setup] Getting torrents...");
         std::io::stdout().flush().unwrap();
         let torrents = arcadia_shared::tracker::models::torrent::Map::from_backend().await;
@@ -47,6 +53,7 @@ impl Tracker {
             env,
             users: RwLock::new(users),
             passkey2id: RwLock::new(passkey2id),
+            infohash2id: RwLock::new(infohash2id),
             torrents: RwLock::new(torrents),
         }
     }
