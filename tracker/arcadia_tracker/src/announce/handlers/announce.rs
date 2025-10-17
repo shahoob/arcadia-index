@@ -35,13 +35,13 @@ impl FromRequest for UserAgent {
     type Future = Ready<std::result::Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut dev::Payload) -> Self::Future {
-        let user_agent = req
+        let agent = req
             .headers()
             .get("User-Agent")
             .ok_or(UserAgentExtractError::NoUserAgent)
             .and_then(|s| Ok(UserAgent(String::from(s.to_str()?))));
 
-        future::ready(user_agent)
+        future::ready(agent)
     }
 }
 
@@ -57,7 +57,7 @@ impl FromRequest for UserAgent {
 pub async fn exec(
     // arc: Data<Tracker>,
     passkey: Path<String>,
-    // user_agent: Option<UserAgent>,
+    // agent: Option<UserAgent>,
     ann: Announce,
     // conn: dev::ConnectionInfo,
 ) /*->Result<HttpResponse>*/
