@@ -1,6 +1,6 @@
 use crate::connection_pool::ConnectionPool;
 use arcadia_common::error::Result;
-use arcadia_shared::tracker::models::{torrent::Torrent, user::User};
+use arcadia_shared::tracker::models::{torrent::Torrent, user::Passkey, user::User};
 use std::borrow::Borrow;
 use std::collections::HashMap;
 
@@ -16,7 +16,7 @@ impl ConnectionPool {
             r#"
                 SELECT
                     id,
-                    passkey,
+                    passkey as "passkey: Passkey",
                     TRUE AS "can_download!",
                     0::int4 AS "num_seeding!",
                     0::int4 AS "num_leeching!"

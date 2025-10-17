@@ -44,6 +44,7 @@ CREATE TABLE users (
     warned BOOLEAN NOT NULL DEFAULT FALSE,
     banned BOOLEAN NOT NULL DEFAULT FALSE,
     staff_note TEXT NOT NULL DEFAULT '',
+    can_download BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE(passkey)
 );
@@ -553,29 +554,31 @@ CREATE TABLE torrent_reports (
     FOREIGN KEY (reported_by_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (reported_torrent_id) REFERENCES torrents(id) ON DELETE CASCADE
 );
-
-CREATE TYPE peer_status_enum AS ENUM('seeding', 'leeching');
 CREATE TABLE peers (
-    id BIGINT GENERATED ALWAYS AS IDENTITY,
-    user_id INT NOT NULL,
-    torrent_id INT NOT NULL,
-    peer_id BYTEA NOT NULL CHECK(octet_length(peer_id) = 20),
-    ip INET NOT NULL,
-    port INTEGER NOT NULL,
-    first_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-    last_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    real_uploaded BIGINT NOT NULL DEFAULT 0,
-    real_downloaded BIGINT NOT NULL DEFAULT 0,
-    user_agent TEXT,
-    status peer_status_enum NOT NULL,
-
-    PRIMARY KEY (id),
-
-    FOREIGN KEY (torrent_id) REFERENCES torrents(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-
-    UNIQUE (torrent_id, peer_id, ip, port)
+    peer_id bytea NOT NULL,
+    ip bytea NOT NULL,
+    port smallint NOT NULL,
+    agent varchar(64) NOT NULL,
+    uploaded bigint NOT NULL,
+    downloaded bigint NOT NULL,
+    "left" bigint NOT NULL,
+    seeder boolean NOT NULL,
+    created_at timestamp without time zone DEFAULT NULL,
+    updated_at timestamp without time zone DEFAULT NULL,
+    torrent_id integer NOT NULL,
+    user_id integer NOT NULL,
+    connectable boolean NOT NULL DEFAULT FALSE,
+    active boolean NOT NULL,
+    visible boolean NOT NULL,
+    PRIMARY KEY (user_id, torrent_id, peer_id)
 );
+CREATE INDEX peers_idx_seeder_user_id ON peers (seeder, user_id);
+CREATE INDEX peers_torrent_id_foreign ON peers (torrent_id);
+CREATE INDEX peers_active_index ON peers (active);
+ALTER TABLE peers
+ADD CONSTRAINT peers_torrent_id_foreign FOREIGN KEY (torrent_id) REFERENCES torrents (id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE peers
+ADD CONSTRAINT peers_user_id_foreign FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE;
 CREATE TABLE torrent_activities (
     id BIGSERIAL PRIMARY KEY,
     torrent_id INT NOT NULL,
