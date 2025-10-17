@@ -60,9 +60,9 @@
     <!-- TODO: replace with real data from the tracker -->
     <Column style="width: 2em">
       <template #header>
-        <i class="pi pi-replay" v-tooltip.top="t('torrent.completed')" />
+        <i class="pi pi-replay" v-tooltip.top="t('torrent.times_completed')" />
       </template>
-      <template #body="slotProps">{{ slotProps.data.completed }}</template>
+      <template #body="slotProps">{{ slotProps.data.times_completed }}</template>
     </Column>
     <Column style="width: 2em">
       <template #header>

@@ -1844,7 +1844,7 @@ export interface components {
             audio_channels?: null | components["schemas"]["AudioChannels"];
             audio_codec?: null | components["schemas"]["AudioCodec"];
             /** Format: int64 */
-            completed: number;
+            times_completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1901,7 +1901,7 @@ export interface components {
             audio_channels?: null | components["schemas"]["AudioChannels"];
             audio_codec?: null | components["schemas"]["AudioCodec"];
             /** Format: int64 */
-            completed: number;
+            times_completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;
@@ -1961,7 +1961,7 @@ export interface components {
             audio_channels?: string | null;
             audio_codec?: null | components["schemas"]["AudioCodec"];
             /** Format: int64 */
-            completed: number;
+            times_completed: number;
             container: string;
             /** Format: date-time */
             created_at: string;

@@ -434,7 +434,7 @@ CREATE TABLE torrents (
     download_factor FLOAT NOT NULL DEFAULT 1.0,
     seeders BIGINT NOT NULL DEFAULT 0,
     leechers BIGINT NOT NULL DEFAULT 0,
-    completed BIGINT NOT NULL DEFAULT 0,
+    times_completed INT NOT NULL DEFAULT 0,
     snatched BIGINT NOT NULL DEFAULT 0,
     edition_group_id INT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -550,7 +550,7 @@ CREATE TABLE torrent_reports (
 );
 CREATE TABLE peers (
     peer_id bytea NOT NULL,
-    ip bytea NOT NULL,
+    ip INET NOT NULL,
     port smallint NOT NULL,
     agent varchar(64) NOT NULL,
     uploaded bigint NOT NULL,
@@ -857,7 +857,7 @@ SELECT
     t.download_factor,
     t.seeders,
     t.leechers,
-    t.completed,
+    t.times_completed,
     t.edition_group_id,
     t.created_at,
     t.updated_at,
@@ -973,7 +973,7 @@ ORDER BY
                     'torrents', COALESCE(jsonb_agg(
                         jsonb_strip_nulls(jsonb_build_object(
                             'id', ft.id, 'upload_factor', ft.upload_factor, 'download_factor', ft.download_factor,
-                            'seeders', ft.seeders, 'leechers', ft.leechers, 'completed', ft.completed,
+                            'seeders', ft.seeders, 'leechers', ft.leechers, 'times_completed', ft.times_completed,
                             'edition_group_id', ft.edition_group_id, 'created_at', ft.created_at, 'extras', ft.extras,
                             'release_name', ft.release_name, 'release_group', ft.release_group,
                             'file_amount_per_type', ft.file_amount_per_type, 'trumpable', ft.trumpable,

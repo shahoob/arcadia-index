@@ -207,7 +207,7 @@ impl ConnectionPool {
             r#"
             SELECT
                 id, upload_factor, download_factor, seeders, leechers,
-                completed, snatched, edition_group_id, created_at, updated_at,
+                times_completed, snatched, edition_group_id, created_at, updated_at,
                 created_by_id,
                 deleted_at AS "deleted_at!: _",
                 deleted_by_id AS "deleted_by_id!: _",
@@ -271,7 +271,7 @@ impl ConnectionPool {
             WHERE id = $1 AND deleted_at IS NULL
             RETURNING
                 id, upload_factor, download_factor, seeders, leechers,
-                completed, snatched, edition_group_id, created_at, updated_at,
+                times_completed, snatched, edition_group_id, created_at, updated_at,
                 created_by_id,
                 deleted_at AS "deleted_at!: _",
                 deleted_by_id AS "deleted_by_id!: _",
@@ -540,12 +540,12 @@ impl ConnectionPool {
     //     Ok(())
     // }
 
-    pub async fn increment_torrent_completed(&self, torrent_id: i32) -> Result<()> {
+    pub async fn increment_torrent_times_completed(&self, torrent_id: i32) -> Result<()> {
         let _ = sqlx::query!(
             r#"
             UPDATE torrents
             SET
-                completed = completed + 1
+                times_completed = times_completed + 1
             WHERE
                 id = $1
             "#,

@@ -214,7 +214,7 @@
     "torrent": "Torrent | Torrents",
     "seeders": "Seeders",
     "leechers": "Leechers",
-    "completed": "Completed",
+    "times_completed": "Completed",
     "created_at": "Uploaded at",
     "upload_torrent": "Upload torrent",
     "request_format": "Request format",

@@ -14,7 +14,7 @@ pub struct Torrent {
     pub download_factor: f64,
     pub seeders: i64,
     pub leechers: i64,
-    pub completed: i64,
+    pub times_completed: i32,
 }
 
 #[derive(Debug, bincode::Encode, bincode::Decode)]

@@ -86,7 +86,7 @@
 //     }
 
 //     if let Some(TorrentEvent::Completed) = ann.event {
-//         let _ = arc.pool.increment_torrent_completed(torrent.id).await;
+//         let _ = arc.pool.increment_torrent_times_completed(torrent.id).await;
 //     }
 
 //     let (old_real_uploaded, old_real_downloaded) = arc

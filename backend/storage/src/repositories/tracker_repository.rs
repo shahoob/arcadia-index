@@ -53,7 +53,7 @@ impl ConnectionPool {
                     download_factor,
                     seeders,
                     leechers,
-                    completed
+                    times_completed
                 FROM torrents
             "#
         )
@@ -69,7 +69,7 @@ impl ConnectionPool {
                 download_factor: r.download_factor,
                 seeders: r.seeders,
                 leechers: r.leechers,
-                completed: r.completed,
+                times_completed: r.times_completed,
             };
             map.insert(id, torrent);
         }
