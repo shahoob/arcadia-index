@@ -560,7 +560,7 @@ CREATE TABLE peers (
     updated_at timestamp without time zone DEFAULT NULL,
     torrent_id integer NOT NULL,
     user_id integer NOT NULL,
-    connectable boolean NOT NULL DEFAULT FALSE,
+    -- connectable boolean NOT NULL DEFAULT FALSE,
     active boolean NOT NULL,
     visible boolean NOT NULL,
     PRIMARY KEY (user_id, torrent_id, peer_id)

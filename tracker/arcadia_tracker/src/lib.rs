@@ -1,4 +1,4 @@
-use parking_lot::RwLock;
+use parking_lot::{Mutex, RwLock};
 
 use crate::env::Env;
 use std::{io::Write, ops::Deref};
@@ -8,6 +8,7 @@ pub mod api_doc;
 pub mod env;
 pub mod middleware;
 pub mod routes;
+pub mod services;
 
 #[derive(Debug)]
 pub struct Tracker {
@@ -16,7 +17,7 @@ pub struct Tracker {
     pub users: RwLock<arcadia_shared::tracker::models::user::Map>,
     pub passkey2id: RwLock<arcadia_shared::tracker::models::passkey_2_id::Map>,
     pub infohash2id: RwLock<arcadia_shared::tracker::models::infohash_2_id::Map>,
-    pub torrents: RwLock<arcadia_shared::tracker::models::torrent::Map>,
+    pub torrents: Mutex<arcadia_shared::tracker::models::torrent::Map>,
 }
 
 impl Deref for Tracker {
@@ -54,7 +55,7 @@ impl Tracker {
             users: RwLock::new(users),
             passkey2id: RwLock::new(passkey2id),
             infohash2id: RwLock::new(infohash2id),
-            torrents: RwLock::new(torrents),
+            torrents: Mutex::new(torrents),
         }
     }
 }

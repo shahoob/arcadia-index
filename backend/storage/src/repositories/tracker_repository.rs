@@ -19,6 +19,8 @@ pub struct DBImportTorrent {
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,
+    // somehow sqlx can't see that the returned value is alaways not null
+    pub is_deleted: Option<bool>,
 }
 
 #[derive(Debug)]
@@ -74,14 +76,18 @@ impl ConnectionPool {
         let rows = sqlx::query_as!(
             DBImportTorrent,
             r#"
-                SELECT
-                    id,
-                    upload_factor,
-                    download_factor,
-                    seeders,
-                    leechers,
-                    times_completed
-                FROM torrents
+            SELECT
+                id,
+                upload_factor,
+                download_factor,
+                seeders,
+                leechers,
+                times_completed,
+                CASE
+                    WHEN deleted_at IS NOT NULL THEN TRUE
+                    ELSE FALSE
+                END AS is_deleted
+            FROM torrents
             "#
         )
         .fetch_all(self.borrow())
@@ -96,6 +102,7 @@ impl ConnectionPool {
                 seeders: r.seeders,
                 leechers: r.leechers,
                 times_completed: r.times_completed,
+                is_deleted: r.is_deleted.unwrap_or(false),
             };
             map.insert(r.id as u32, torrent);
         }
@@ -103,7 +110,7 @@ impl ConnectionPool {
         Ok(map)
     }
 
-    pub async fn find_passkeys_2_ids(&self) -> Result<HashMap<u32, Passkey>> {
+    pub async fn find_passkeys_2_ids(&self) -> Result<HashMap<Passkey, u32>> {
         let rows = sqlx::query_as!(
             DBImportPasskey2Id,
             r#"
@@ -118,15 +125,15 @@ impl ConnectionPool {
         .await
         .expect("could not get passkeys2ids");
 
-        let mut map: HashMap<u32, Passkey> = HashMap::with_capacity(rows.len());
+        let mut map: HashMap<Passkey, u32> = HashMap::with_capacity(rows.len());
         for r in rows {
-            map.insert(r.id as u32, r.passkey);
+            map.insert(r.passkey, r.id as u32);
         }
 
         Ok(map)
     }
 
-    pub async fn find_infohashes_2_ids(&self) -> Result<HashMap<u32, InfoHash>> {
+    pub async fn find_infohashes_2_ids(&self) -> Result<HashMap<InfoHash, u32>> {
         let rows = sqlx::query_as!(
             DBImportInfohash2Id,
             r#"
@@ -140,9 +147,9 @@ impl ConnectionPool {
         .await
         .expect("could not get infohashes2ids");
 
-        let mut map: HashMap<u32, InfoHash> = HashMap::with_capacity(rows.len());
+        let mut map: HashMap<InfoHash, u32> = HashMap::with_capacity(rows.len());
         for r in rows {
-            map.insert(r.id as u32, r.info_hash);
+            map.insert(r.info_hash, r.id as u32);
         }
 
         Ok(map)

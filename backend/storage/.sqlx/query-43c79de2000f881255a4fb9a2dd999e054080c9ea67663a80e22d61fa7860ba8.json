@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                SELECT\n                    id,\n                    upload_factor,\n                    download_factor,\n                    seeders,\n                    leechers,\n                    times_completed\n                FROM torrents\n            ",
+  "query": "\n            SELECT\n                id,\n                upload_factor,\n                download_factor,\n                seeders,\n                leechers,\n                times_completed,\n                CASE\n                    WHEN deleted_at IS NOT NULL THEN TRUE\n                    ELSE FALSE\n                END AS is_deleted\n            FROM torrents\n            ",
   "describe": {
     "columns": [
       {
@@ -32,6 +32,11 @@
         "ordinal": 5,
         "name": "times_completed",
         "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_deleted",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -43,8 +48,9 @@
       false,
       false,
       false,
-      false
+      false,
+      null
     ]
   },
-  "hash": "aa81a92598340d8727f85591fe18aef25e0f81c0b3a94c9154a52f9b33452fbd"
+  "hash": "43c79de2000f881255a4fb9a2dd999e054080c9ea67663a80e22d61fa7860ba8"
 }

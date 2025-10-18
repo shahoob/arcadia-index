@@ -14,21 +14,21 @@ pub struct PeerId(pub [u8; 20]);
 #[derive(Debug)]
 pub struct Announce {
     #[allow(dead_code)]
-    info_hash: InfoHash,
+    pub info_hash: InfoHash,
     #[allow(dead_code)]
-    peer_id: PeerId,
+    pub peer_id: PeerId,
     #[allow(dead_code)]
-    port: u16,
+    pub port: u16,
     #[allow(dead_code)]
-    uploaded: Option<u64>,
+    pub uploaded: Option<u64>,
     #[allow(dead_code)]
-    downloaded: Option<u64>,
+    pub downloaded: Option<u64>,
     #[allow(dead_code)]
-    left: Option<u64>,
+    pub left: Option<u64>,
     #[allow(dead_code)]
-    event: Option<TorrentEvent>,
+    pub event: TorrentEvent,
     #[allow(dead_code)]
-    numwant: Option<usize>,
+    pub numwant: Option<usize>,
     // corrupt: Option<u64>,
     // key: Option<String>,
     #[allow(dead_code)]
@@ -50,28 +50,25 @@ impl FromRequest for Announce {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Default, PartialEq)]
 pub enum TorrentEvent {
     Started,
     Stopped,
     Completed,
-}
-
-#[derive(Debug, PartialEq, thiserror::Error)]
-pub enum ParseTorrentEventError {
-    #[error("unknown event")]
-    UnknownEvent,
+    #[default]
+    Empty,
 }
 
 impl FromStr for TorrentEvent {
-    type Err = ParseTorrentEventError;
+    type Err = AnnounceError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "started" => Ok(TorrentEvent::Started),
-            "stopped" => Ok(TorrentEvent::Stopped),
-            "completed" => Ok(TorrentEvent::Completed),
-            _ => Err(ParseTorrentEventError::UnknownEvent),
+    fn from_str(event: &str) -> Result<Self, Self::Err> {
+        match event {
+            "" | "empty" | "paused" => Ok(Self::Empty),
+            "completed" => Ok(Self::Completed),
+            "started" => Ok(Self::Started),
+            "stopped" => Ok(Self::Stopped),
+            _ => Err(AnnounceError::UnsupportedEvent),
         }
     }
 }
@@ -157,7 +154,8 @@ pub fn decode_from_query_str(query: &str) -> Result<Announce, AnnounceError> {
                 left = Some(u64::from_str(value).map_err(AnnounceError::InvalidLeft)?);
             }
             "event" => {
-                event = Some(TorrentEvent::from_str(value).map_err(AnnounceError::InvalidEvent)?);
+                event =
+                    Some(TorrentEvent::from_str(value).map_err(|_| AnnounceError::InvalidEvent)?);
             }
             "compact" => match value {
                 "1" => compact = Some(true),
@@ -186,7 +184,7 @@ pub fn decode_from_query_str(query: &str) -> Result<Announce, AnnounceError> {
         uploaded,
         downloaded,
         left,
-        event,
+        event: event.unwrap_or_default(),
         compact,
         numwant,
     })

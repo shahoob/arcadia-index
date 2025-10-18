@@ -16,6 +16,7 @@ pub struct Torrent {
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,
+    pub is_deleted: bool,
 }
 
 #[derive(Debug, bincode::Encode, bincode::Decode)]

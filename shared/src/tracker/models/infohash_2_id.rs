@@ -7,10 +7,10 @@ use std::{
 };
 
 #[derive(Debug, bincode::Encode, bincode::Decode)]
-pub struct Map(HashMap<u32, InfoHash>);
+pub struct Map(HashMap<InfoHash, u32>);
 
 impl Deref for Map {
-    type Target = HashMap<u32, InfoHash>;
+    type Target = HashMap<InfoHash, u32>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
