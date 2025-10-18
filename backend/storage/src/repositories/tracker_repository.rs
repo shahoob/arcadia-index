@@ -1,12 +1,12 @@
 use crate::connection_pool::ConnectionPool;
 use arcadia_common::error::Result;
 use arcadia_shared::tracker::models::{
-    torrent::{InfoHash, Torrent},
-    user::Passkey,
-    user::User,
+    infohash_2_id, passkey_2_id, peer,
+    torrent::{self, InfoHash, Torrent},
+    user::{self, Passkey, User},
 };
+use indexmap::IndexMap;
 use std::borrow::Borrow;
-use std::collections::HashMap;
 
 // This file contains functions for Arcadia's tracker
 // but not necessarily related to the tracker itself directly
@@ -44,7 +44,7 @@ pub struct DBImportInfohash2Id {
 }
 
 impl ConnectionPool {
-    pub async fn find_users(&self) -> Result<HashMap<u32, User>> {
+    pub async fn find_users(&self) -> Result<user::Map> {
         let rows = sqlx::query_as!(
             DBImportUser,
             r#"
@@ -60,7 +60,7 @@ impl ConnectionPool {
         .await
         .expect("could not get users");
 
-        let mut map: HashMap<u32, User> = HashMap::with_capacity(rows.len());
+        let mut map: user::Map = user::Map(IndexMap::with_capacity(rows.len()));
         for r in rows {
             let user = User {
                 num_seeding: r.num_seeding as u32,
@@ -72,7 +72,7 @@ impl ConnectionPool {
         Ok(map)
     }
 
-    pub async fn find_torrents(&self) -> Result<HashMap<u32, Torrent>> {
+    pub async fn find_torrents(&self) -> Result<torrent::Map> {
         let rows = sqlx::query_as!(
             DBImportTorrent,
             r#"
@@ -94,15 +94,16 @@ impl ConnectionPool {
         .await
         .expect("could not get torrents");
 
-        let mut map: HashMap<u32, Torrent> = HashMap::with_capacity(rows.len());
+        let mut map: torrent::Map = torrent::Map(IndexMap::with_capacity(rows.len()));
         for r in rows {
             let torrent = Torrent {
                 upload_factor: r.upload_factor,
                 download_factor: r.download_factor,
-                seeders: r.seeders,
-                leechers: r.leechers,
-                times_completed: r.times_completed,
+                seeders: r.seeders as u32,
+                leechers: r.leechers as u32,
+                times_completed: r.times_completed as u32,
                 is_deleted: r.is_deleted.unwrap_or(false),
+                peers: peer::Map::new(),
             };
             map.insert(r.id as u32, torrent);
         }
@@ -110,7 +111,7 @@ impl ConnectionPool {
         Ok(map)
     }
 
-    pub async fn find_passkeys_2_ids(&self) -> Result<HashMap<Passkey, u32>> {
+    pub async fn find_passkeys_2_ids(&self) -> Result<passkey_2_id::Map> {
         let rows = sqlx::query_as!(
             DBImportPasskey2Id,
             r#"
@@ -125,7 +126,7 @@ impl ConnectionPool {
         .await
         .expect("could not get passkeys2ids");
 
-        let mut map: HashMap<Passkey, u32> = HashMap::with_capacity(rows.len());
+        let mut map: passkey_2_id::Map = passkey_2_id::Map(IndexMap::with_capacity(rows.len()));
         for r in rows {
             map.insert(r.passkey, r.id as u32);
         }
@@ -133,7 +134,7 @@ impl ConnectionPool {
         Ok(map)
     }
 
-    pub async fn find_infohashes_2_ids(&self) -> Result<HashMap<InfoHash, u32>> {
+    pub async fn find_infohashes_2_ids(&self) -> Result<infohash_2_id::Map> {
         let rows = sqlx::query_as!(
             DBImportInfohash2Id,
             r#"
@@ -147,7 +148,7 @@ impl ConnectionPool {
         .await
         .expect("could not get infohashes2ids");
 
-        let mut map: HashMap<InfoHash, u32> = HashMap::with_capacity(rows.len());
+        let mut map: infohash_2_id::Map = infohash_2_id::Map(IndexMap::with_capacity(rows.len()));
         for r in rows {
             map.insert(r.info_hash, r.id as u32);
         }

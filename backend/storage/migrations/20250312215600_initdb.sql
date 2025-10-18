@@ -40,7 +40,7 @@ CREATE TABLE users (
     bonus_points BIGINT NOT NULL DEFAULT 0,
     freeleech_tokens INT NOT NULL DEFAULT 0,
     settings JSONB NOT NULL DEFAULT '{}',
-    passkey VARCHAR(33) NOT NULL,
+    passkey VARCHAR(32) NOT NULL,
     warned BOOLEAN NOT NULL DEFAULT FALSE,
     banned BOOLEAN NOT NULL DEFAULT FALSE,
     staff_note TEXT NOT NULL DEFAULT '',

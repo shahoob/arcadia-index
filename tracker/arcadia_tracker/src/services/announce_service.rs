@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::announce::models::torrent::PeerId;
+use arcadia_shared::tracker::models::peer_id::PeerId;
 
 pub fn is_torrent_client_allowed(
     peer_id: &PeerId,

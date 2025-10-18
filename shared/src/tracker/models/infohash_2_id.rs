@@ -1,16 +1,14 @@
 use crate::tracker::models::torrent::InfoHash;
 use bincode::config;
+use indexmap::IndexMap;
 use reqwest::Client;
-use std::{
-    collections::HashMap,
-    ops::{Deref, DerefMut},
-};
+use std::ops::{Deref, DerefMut};
 
 #[derive(Debug, bincode::Encode, bincode::Decode)]
-pub struct Map(HashMap<InfoHash, u32>);
+pub struct Map(#[bincode(with_serde)] pub IndexMap<InfoHash, u32>);
 
 impl Deref for Map {
-    type Target = HashMap<InfoHash, u32>;
+    type Target = IndexMap<InfoHash, u32>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

@@ -1,15 +1,12 @@
-use actix_web::{dev, FromRequest, HttpRequest};
-use arcadia_shared::tracker::models::torrent::InfoHash;
+use actix_web::{dev, web::Data, FromRequest, HttpRequest};
+use arcadia_shared::tracker::models::{peer_id::PeerId, torrent::InfoHash};
 use std::{
     borrow::Cow,
     future::{self, Ready},
     str::FromStr,
 };
 
-use crate::announce::error::AnnounceError;
-
-#[derive(Debug, Clone, Copy, Eq, Hash, PartialEq, PartialOrd, Ord)]
-pub struct PeerId(pub [u8; 20]);
+use crate::{announce::error::AnnounceError, Tracker};
 
 #[derive(Debug)]
 pub struct Announce {
@@ -24,17 +21,15 @@ pub struct Announce {
     #[allow(dead_code)]
     pub downloaded: Option<u64>,
     #[allow(dead_code)]
-    pub left: Option<u64>,
+    pub left: u64,
     #[allow(dead_code)]
-    pub event: TorrentEvent,
+    pub event: AnnounceEvent,
     #[allow(dead_code)]
-    pub numwant: Option<usize>,
+    pub numwant: usize,
     // corrupt: Option<u64>,
     // key: Option<String>,
     #[allow(dead_code)]
     pub compact: Option<bool>,
-    #[allow(dead_code)]
-    pub ip: Option<std::net::Ipv4Addr>,
 }
 
 impl FromRequest for Announce {
@@ -44,14 +39,14 @@ impl FromRequest for Announce {
     fn from_request(req: &HttpRequest, _: &mut dev::Payload) -> Self::Future {
         let query_string = req.query_string();
 
-        let announce = decode_from_query_str(query_string);
+        let announce = decode_from_query_str(query_string, req);
 
         future::ready(announce)
     }
 }
 
-#[derive(Debug, Default, PartialEq)]
-pub enum TorrentEvent {
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub enum AnnounceEvent {
     Started,
     Stopped,
     Completed,
@@ -59,7 +54,7 @@ pub enum TorrentEvent {
     Empty,
 }
 
-impl FromStr for TorrentEvent {
+impl FromStr for AnnounceEvent {
     type Err = AnnounceError;
 
     fn from_str(event: &str) -> Result<Self, Self::Err> {
@@ -115,15 +110,14 @@ fn decode_into_20_byte_array(value: &str) -> Result<[u8; 20], IncorrectLength> {
     }))
 }
 
-pub fn decode_from_query_str(query: &str) -> Result<Announce, AnnounceError> {
+pub fn decode_from_query_str(query: &str, req: &HttpRequest) -> Result<Announce, AnnounceError> {
     let mut info_hash = Option::<[u8; 20]>::None;
     let mut peer_id = Option::<[u8; 20]>::None;
-    let mut ip = Option::<std::net::Ipv4Addr>::None;
     let mut port = Option::<u16>::None;
     let mut uploaded = Option::<u64>::None;
     let mut downloaded = Option::<u64>::None;
     let mut left = Option::<u64>::None;
-    let mut event = Option::<TorrentEvent>::None;
+    let mut event = Option::<AnnounceEvent>::None;
     let mut compact = Option::<bool>::None;
     let mut numwant = Option::<usize>::None;
 
@@ -155,18 +149,14 @@ pub fn decode_from_query_str(query: &str) -> Result<Announce, AnnounceError> {
             }
             "event" => {
                 event =
-                    Some(TorrentEvent::from_str(value).map_err(|_| AnnounceError::InvalidEvent)?);
+                    Some(AnnounceEvent::from_str(value).map_err(|_| AnnounceError::InvalidEvent)?);
             }
             "compact" => match value {
                 "1" => compact = Some(true),
                 "0" => return Err(AnnounceError::UnsupportedCompact),
                 _ => return Err(AnnounceError::InvalidCompact),
             },
-            "ip" => {
-                ip = Some(
-                    std::net::Ipv4Addr::from_str(value).map_err(AnnounceError::InvalidIpAddr)?,
-                );
-            }
+
             "numwant" => {
                 numwant = Some(usize::from_str(value).map_err(AnnounceError::InvalidNumWant)?);
             }
@@ -176,16 +166,23 @@ pub fn decode_from_query_str(query: &str) -> Result<Announce, AnnounceError> {
         };
     }
 
+    let arc = req.app_data::<Data<Tracker>>().expect("app data set");
+
     Ok(Announce {
         info_hash: InfoHash(info_hash.ok_or(AnnounceError::MissingInfoHash)?),
         peer_id: PeerId(peer_id.ok_or(AnnounceError::MissingPeerId)?),
-        ip,
         port: port.ok_or(AnnounceError::MissingPort)?,
         uploaded,
         downloaded,
-        left,
+        left: left.ok_or(AnnounceError::MissingLeft)?,
         event: event.unwrap_or_default(),
         compact,
-        numwant,
+        numwant: {
+            if event.unwrap_or_default() == AnnounceEvent::Stopped {
+                0
+            } else {
+                numwant.unwrap_or(arc.env.numwant_default)
+            }
+        },
     })
 }

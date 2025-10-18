@@ -1,18 +1,16 @@
 use anyhow::bail;
 use bincode::config;
+use indexmap::IndexMap;
 use reqwest::Client;
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use sqlx::{Database, Decode};
 use std::{
-    collections::HashMap,
     fmt::Display,
     ops::{Deref, DerefMut},
     str::FromStr,
 };
 
-#[derive(
-    Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, bincode::Encode, bincode::Decode,
-)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, bincode::Encode, bincode::Decode)]
 pub struct Passkey(pub [u8; 32]);
 
 #[derive(Debug, Clone, Deserialize, Serialize, bincode::Encode, bincode::Decode, PartialEq)]
@@ -22,7 +20,7 @@ pub struct User {
 }
 
 #[derive(Debug, Serialize, bincode::Encode, bincode::Decode)]
-pub struct Map(HashMap<u32, User>);
+pub struct Map(#[bincode(with_serde)] pub IndexMap<u32, User>);
 
 impl FromStr for Passkey {
     type Err = anyhow::Error;
@@ -71,8 +69,18 @@ impl Serialize for Passkey {
     }
 }
 
+impl<'de> Deserialize<'de> for Passkey {
+    fn deserialize<D>(deserializer: D) -> std::prelude::v1::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        s.parse().map_err(serde::de::Error::custom)
+    }
+}
+
 impl Deref for Map {
-    type Target = HashMap<u32, User>;
+    type Target = IndexMap<u32, User>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

@@ -1,16 +1,14 @@
 use crate::tracker::models::user::Passkey;
 use bincode::config;
+use indexmap::IndexMap;
 use reqwest::Client;
-use std::{
-    collections::HashMap,
-    ops::{Deref, DerefMut},
-};
+use std::ops::{Deref, DerefMut};
 
 #[derive(Debug, bincode::Encode, bincode::Decode)]
-pub struct Map(HashMap<Passkey, u32>);
+pub struct Map(#[bincode(with_serde)] pub IndexMap<Passkey, u32>);
 
 impl Deref for Map {
-    type Target = HashMap<Passkey, u32>;
+    type Target = IndexMap<Passkey, u32>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -44,6 +42,7 @@ impl Map {
 
         let config = config::standard();
         let (map, _): (Map, usize) = bincode::decode_from_slice(&bytes[..], config).unwrap();
+        println!("Decoded map: {:?}", map);
 
         map
     }

@@ -1,26 +1,39 @@
 use bincode::config;
+use indexmap::IndexMap;
 use reqwest::Client;
+use serde::{Deserialize, Serialize};
 use sqlx::{Database, Decode};
-use std::{
-    collections::HashMap,
-    ops::{Deref, DerefMut},
-};
+use std::ops::{Deref, DerefMut};
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, bincode::Encode, bincode::Decode)]
+use crate::tracker::models::peer;
+
+#[derive(
+    Clone,
+    Copy,
+    Serialize,
+    Deserialize,
+    Debug,
+    Eq,
+    Hash,
+    PartialEq,
+    bincode::Encode,
+    bincode::Decode,
+)]
 pub struct InfoHash(pub [u8; 20]);
 
-#[derive(Debug, Clone, bincode::Encode, bincode::Decode, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, bincode::Encode, bincode::Decode, PartialEq)]
 pub struct Torrent {
     pub upload_factor: f64,
     pub download_factor: f64,
-    pub seeders: i64,
-    pub leechers: i64,
-    pub times_completed: i32,
+    pub seeders: u32,
+    pub leechers: u32,
+    pub times_completed: u32,
     pub is_deleted: bool,
+    pub peers: peer::Map,
 }
 
 #[derive(Debug, bincode::Encode, bincode::Decode)]
-pub struct Map(HashMap<u32, Torrent>);
+pub struct Map(#[bincode(with_serde)] pub IndexMap<u32, Torrent>);
 
 impl Map {
     pub async fn from_backend() -> Self {
@@ -48,7 +61,7 @@ impl Map {
 }
 
 impl Deref for Map {
-    type Target = HashMap<u32, Torrent>;
+    type Target = IndexMap<u32, Torrent>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

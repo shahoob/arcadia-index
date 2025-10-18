@@ -3,8 +3,6 @@ use std::{collections::HashSet, str::FromStr};
 
 #[derive(Debug, Envconfig, Clone)]
 pub struct Env {
-    #[envconfig(from = "ANNOUNCE_INTERVAL")]
-    pub announce_interval: u32,
     #[envconfig(from = "ANNOUNCE_INTERVAL_GRACE_PERIOD")]
     pub announce_interval_grace_period: u32,
     #[envconfig(from = "ALLOWED_TORRENT_CLIENTS")]
@@ -17,6 +15,20 @@ pub struct Env {
     pub interval_update_torrent_seeders_leechers: String,
     #[envconfig(from = "TASK_INTERVAL_REMOVE_INACTIVE_PEERS")]
     pub interval_remove_inactive_peers: String,
+    #[envconfig(from = "NUMWANT_DEFAULT")]
+    pub numwant_default: usize,
+    #[envconfig(from = "NUMWANT_MAX")]
+    pub numwant_max: usize,
+    #[envconfig(from = "ANNOUNCE_MIN")]
+    pub announce_min: u32,
+    #[envconfig(from = "ANNOUNCE_MIN_ENFORCED")]
+    pub announce_min_enforced: u32,
+    #[envconfig(from = "ANNOUNCE_MAX")]
+    pub announce_max: u32,
+    #[envconfig(from = "MAX_PEERS_PER_TORRENT_PER_USER")]
+    pub max_peers_per_torrent_per_user: u8,
+    #[envconfig(from = "REVERSE_PROXY_CLIENT_IP_HEADER_NAME")]
+    pub reverse_proxy_client_ip_header_name: Option<String>,
 }
 
 #[derive(Debug, thiserror::Error)]

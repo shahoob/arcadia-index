@@ -6,6 +6,8 @@ pub type Result<T> = std::result::Result<T, AnnounceError>;
 
 #[derive(Debug, thiserror::Error)]
 pub enum AnnounceError {
+    #[error("Internal tracker error.")]
+    InternalTrackerError,
     #[error("invalid passkey")]
     InvalidPassKey,
     #[error("invalid info_hash")]
@@ -64,6 +66,14 @@ pub enum AnnounceError {
     TorrentNotFound,
     #[error("Torrent has been deleted.")]
     TorrentIsDeleted,
+    #[error("Query parameter 'left' is missing.")]
+    MissingLeft,
+    #[error("Missing IP address in query")]
+    MissingIpAddr,
+    #[error("Rate limit exceeded. Please wait.")]
+    RateLimitExceeded,
+    #[error("You already have {0} peers on this torrent. Ignoring.")]
+    PeersPerTorrentPerUserLimit(u8),
 }
 
 impl actix_web::ResponseError for AnnounceError {

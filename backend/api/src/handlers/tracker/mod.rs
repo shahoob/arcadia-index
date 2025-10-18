@@ -22,6 +22,7 @@ pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
 fn binary_response<T: bincode::Encode>(value: &T) -> Result<HttpResponse> {
     let config = config::standard();
     let bytes = bincode::encode_to_vec(value, config).expect("error encoding to bincode");
+
     Ok(HttpResponse::Ok()
         .content_type("application/octet-stream")
         .body(bytes))
