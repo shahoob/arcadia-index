@@ -307,8 +307,8 @@ impl FromStr for Features {
 #[derive(Debug, Serialize, FromRow, ToSchema)]
 pub struct Torrent {
     pub id: i32,
-    pub upload_factor: f64,
-    pub download_factor: f64,
+    pub upload_factor: i16,
+    pub download_factor: i16,
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,
@@ -477,8 +477,8 @@ pub struct TorrentSearch {
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentHierarchyLite {
     pub id: i32,
-    pub upload_factor: f64,
-    pub download_factor: f64,
+    pub upload_factor: i16,
+    pub download_factor: i16,
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,
@@ -524,8 +524,8 @@ pub struct TorrentHierarchyLite {
 #[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct TorrentHierarchy {
     pub id: i32,
-    pub upload_factor: f64,
-    pub download_factor: f64,
+    pub upload_factor: i16,
+    pub download_factor: i16,
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,

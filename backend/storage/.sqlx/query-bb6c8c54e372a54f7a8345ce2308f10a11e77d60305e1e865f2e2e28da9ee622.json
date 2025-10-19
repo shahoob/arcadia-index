@@ -11,12 +11,12 @@
       {
         "ordinal": 1,
         "name": "upload_factor",
-        "type_info": "Float8"
+        "type_info": "Int2"
       },
       {
         "ordinal": 2,
         "name": "download_factor",
-        "type_info": "Float8"
+        "type_info": "Int2"
       },
       {
         "ordinal": 3,

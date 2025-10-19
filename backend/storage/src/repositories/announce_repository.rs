@@ -110,6 +110,6 @@ impl ConnectionPool {
 #[derive(sqlx::FromRow)]
 pub struct TorrentCompact {
     pub id: i32,
-    pub upload_factor: f64,
-    pub download_factor: f64,
+    pub upload_factor: i16,
+    pub download_factor: i16,
 }

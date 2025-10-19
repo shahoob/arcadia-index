@@ -429,8 +429,8 @@ CREATE TYPE features_enum AS ENUM('HDR', 'HDR 10', 'HDR 10+', 'DV', 'Commentary'
 CREATE TYPE extras_enum AS ENUM('booklet', 'manual', 'behind_the_scenes', 'deleted_scenes', 'featurette', 'trailer', 'other');
 CREATE TABLE torrents (
     id SERIAL PRIMARY KEY,
-    upload_factor FLOAT NOT NULL DEFAULT 1.0,
-    download_factor FLOAT NOT NULL DEFAULT 1.0,
+    upload_factor SMALLINT NOT NULL DEFAULT 100,
+    download_factor SMALLINT NOT NULL DEFAULT 100,
     seeders BIGINT NOT NULL DEFAULT 0,
     leechers BIGINT NOT NULL DEFAULT 0,
     times_completed INT NOT NULL DEFAULT 0,

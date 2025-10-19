@@ -14,8 +14,8 @@ use std::borrow::Borrow;
 #[derive(Debug)]
 pub struct DBImportTorrent {
     pub id: i32,
-    pub upload_factor: f64,
-    pub download_factor: f64,
+    pub upload_factor: i16,
+    pub download_factor: i16,
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,

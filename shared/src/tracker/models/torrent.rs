@@ -23,8 +23,8 @@ pub struct InfoHash(pub [u8; 20]);
 
 #[derive(Debug, Clone, Serialize, Deserialize, bincode::Encode, bincode::Decode, PartialEq)]
 pub struct Torrent {
-    pub upload_factor: f64,
-    pub download_factor: f64,
+    pub upload_factor: i16,
+    pub download_factor: i16,
     pub seeders: u32,
     pub leechers: u32,
     pub times_completed: u32,

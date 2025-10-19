@@ -27,8 +27,8 @@ pub async fn create_test_app<R: RedisPoolInterface + 'static>(
     pool: Arc<ConnectionPool>,
     redis_pool: R,
     open_signups: OpenSignups,
-    global_upload_factor: f64,
-    global_download_factor: f64,
+    global_upload_factor: i16,
+    global_download_factor: i16,
 ) -> impl Service<Request, Response = ServiceResponse, Error = Error> {
     let mut env = Env::init_from_env().unwrap();
     env.open_signups = open_signups;
@@ -50,8 +50,8 @@ pub async fn create_test_app<R: RedisPoolInterface + 'static>(
 pub async fn create_test_app_and_login<R: RedisPoolInterface + 'static>(
     pool: Arc<ConnectionPool>,
     redis_pool: R,
-    global_upload_factor: f64,
-    global_download_factor: f64,
+    global_upload_factor: i16,
+    global_download_factor: i16,
 ) -> (
     impl Service<Request, Response = ServiceResponse, Error = Error>,
     LoginResponse,
