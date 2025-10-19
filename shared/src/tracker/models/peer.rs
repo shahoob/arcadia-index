@@ -32,6 +32,8 @@ pub struct Peer {
     #[serde(with = "ts_seconds")]
     #[bincode(with_serde)]
     pub updated_at: DateTime<Utc>,
+    pub uploaded: u64,
+    pub downloaded: u64,
 }
 
 impl Peer {

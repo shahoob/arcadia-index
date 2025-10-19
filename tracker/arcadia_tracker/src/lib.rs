@@ -1,3 +1,7 @@
+use arcadia_shared::tracker::models::{
+    user_update::{self, UserUpdate},
+    Queue,
+};
 use parking_lot::{Mutex, RwLock};
 
 use crate::env::Env;
@@ -18,6 +22,7 @@ pub struct Tracker {
     pub passkey2id: RwLock<arcadia_shared::tracker::models::passkey_2_id::Map>,
     pub infohash2id: RwLock<arcadia_shared::tracker::models::infohash_2_id::Map>,
     pub torrents: Mutex<arcadia_shared::tracker::models::torrent::Map>,
+    pub user_updates: Mutex<Queue<user_update::Index, UserUpdate>>,
 }
 
 impl Deref for Tracker {
@@ -29,7 +34,15 @@ impl Deref for Tracker {
 }
 
 impl Tracker {
-    pub async fn new(env: Env) -> Self {
+    pub async fn new(mut env: Env) -> Self {
+        log::info!("[Setup] Getting shared env...");
+        std::io::stdout().flush().unwrap();
+        let shared_env = arcadia_shared::tracker::models::env::Env::from_backend().await;
+        env.global_download_factor = shared_env.global_download_factor;
+        env.global_upload_factor = shared_env.global_upload_factor;
+        log::info!("[Setup] Got shared env");
+        println!("{:?}", env);
+
         log::info!("[Setup] Getting users...");
         std::io::stdout().flush().unwrap();
         let users = arcadia_shared::tracker::models::user::Map::from_backend().await;
@@ -56,6 +69,7 @@ impl Tracker {
             passkey2id: RwLock::new(passkey2id),
             infohash2id: RwLock::new(infohash2id),
             torrents: Mutex::new(torrents),
+            user_updates: Mutex::new(Queue::<user_update::Index, UserUpdate>::default()),
         }
     }
 }

@@ -32,8 +32,8 @@ pub async fn create_test_app<R: RedisPoolInterface + 'static>(
 ) -> impl Service<Request, Response = ServiceResponse, Error = Error> {
     let mut env = Env::init_from_env().unwrap();
     env.open_signups = open_signups;
-    env.tracker.global_upload_factor = global_upload_factor;
-    env.tracker.global_download_factor = global_download_factor;
+    env.global_upload_factor = global_upload_factor;
+    env.global_download_factor = global_download_factor;
 
     let arc = Arcadia::<R>::new(pool, Arc::new(redis_pool), env);
 

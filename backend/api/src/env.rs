@@ -15,6 +15,10 @@ pub struct Env {
     pub open_signups: OpenSignups,
     #[envconfig(from = "ARCADIA_FRONTEND_URL")]
     pub frontend_url: Url,
+    #[envconfig(from = "ARCADIA_GLOBAL_UPLOAD_FACTOR")]
+    pub global_upload_factor: i16,
+    #[envconfig(from = "ARCADIA_GLOBAL_DOWNLOAD_FACTOR")]
+    pub global_download_factor: i16,
     #[envconfig(nested)]
     pub tracker: TrackerConfig,
     #[envconfig(nested)]
@@ -61,10 +65,6 @@ pub struct TrackerConfig {
     pub announce_interval_grace_period: u32,
     #[envconfig(from = "ARCADIA_ALLOWED_TORRENT_CLIENTS")]
     pub allowed_torrent_clients: AllowedTorrentClientSet,
-    #[envconfig(from = "ARCADIA_GLOBAL_UPLOAD_FACTOR")]
-    pub global_upload_factor: i16,
-    #[envconfig(from = "ARCADIA_GLOBAL_DOWNLOAD_FACTOR")]
-    pub global_download_factor: i16,
     #[envconfig(from = "TASK_INTERVAL_UPDATE_TORRENT_SEEDERS_LEECHERS")]
     pub interval_update_torrent_seeders_leechers: String,
     #[envconfig(from = "TASK_INTERVAL_REMOVE_INACTIVE_PEERS")]

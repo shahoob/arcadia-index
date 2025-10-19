@@ -7,10 +7,6 @@ pub struct Env {
     pub announce_interval_grace_period: u32,
     #[envconfig(from = "ALLOWED_TORRENT_CLIENTS")]
     pub allowed_torrent_clients: AllowedTorrentClientSet,
-    // #[envconfig(from = "GLOBAL_UPLOAD_FACTOR")]
-    // pub global_upload_factor: i16,
-    // #[envconfig(from = "GLOBAL_DOWNLOAD_FACTOR")]
-    // pub global_download_factor: i16,
     #[envconfig(from = "TASK_INTERVAL_UPDATE_TORRENT_SEEDERS_LEECHERS")]
     pub interval_update_torrent_seeders_leechers: String,
     #[envconfig(from = "TASK_INTERVAL_REMOVE_INACTIVE_PEERS")]
@@ -29,6 +25,11 @@ pub struct Env {
     pub max_peers_per_torrent_per_user: u8,
     #[envconfig(from = "REVERSE_PROXY_CLIENT_IP_HEADER_NAME")]
     pub reverse_proxy_client_ip_header_name: Option<String>,
+    // Those are accessed with a request to the backend
+    #[envconfig(default = "100")]
+    pub global_upload_factor: i16,
+    #[envconfig(default = "100")]
+    pub global_download_factor: i16,
 }
 
 #[derive(Debug, thiserror::Error)]

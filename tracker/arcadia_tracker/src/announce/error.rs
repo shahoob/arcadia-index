@@ -74,6 +74,10 @@ pub enum AnnounceError {
     RateLimitExceeded,
     #[error("You already have {0} peers on this torrent. Ignoring.")]
     PeersPerTorrentPerUserLimit(u8),
+    #[error("Uploaded value is missing.")]
+    MissingUploaded,
+    #[error("Downloaded value is missing.")]
+    MissingDownloaded,
 }
 
 impl actix_web::ResponseError for AnnounceError {

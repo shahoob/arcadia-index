@@ -1,3 +1,4 @@
+pub mod get_env;
 pub mod get_infohash_2_id;
 pub mod get_passkey_2_id;
 pub mod get_torrents;
@@ -13,6 +14,7 @@ use bincode::config;
 
 // TODO: protect by only allowing requests from tracker's ip
 pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
+    cfg.service(resource("/env").route(get().to(self::get_env::exec::<R>)));
     cfg.service(resource("/users").route(get().to(self::get_users::exec::<R>)));
     cfg.service(resource("/torrents").route(get().to(self::get_torrents::exec::<R>)));
     cfg.service(resource("/passkeys-2-ids").route(get().to(self::get_passkey_2_id::exec::<R>)));

@@ -17,9 +17,9 @@ pub struct Announce {
     #[allow(dead_code)]
     pub port: u16,
     #[allow(dead_code)]
-    pub uploaded: Option<u64>,
+    pub uploaded: u64,
     #[allow(dead_code)]
-    pub downloaded: Option<u64>,
+    pub downloaded: u64,
     #[allow(dead_code)]
     pub left: u64,
     #[allow(dead_code)]
@@ -172,8 +172,8 @@ pub fn decode_from_query_str(query: &str, req: &HttpRequest) -> Result<Announce,
         info_hash: InfoHash(info_hash.ok_or(AnnounceError::MissingInfoHash)?),
         peer_id: PeerId(peer_id.ok_or(AnnounceError::MissingPeerId)?),
         port: port.ok_or(AnnounceError::MissingPort)?,
-        uploaded,
-        downloaded,
+        uploaded: uploaded.ok_or(AnnounceError::MissingUploaded)?,
+        downloaded: downloaded.ok_or(AnnounceError::MissingDownloaded)?,
         left: left.ok_or(AnnounceError::MissingLeft)?,
         event: event.unwrap_or_default(),
         compact,

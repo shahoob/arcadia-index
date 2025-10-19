@@ -20,6 +20,7 @@ use actix_web::{
 use arcadia_shared::tracker::models::{
     peer::{self, Peer},
     user::Passkey,
+    user_update::{self, UserUpdate},
 };
 use chrono::{Duration, Utc};
 use rand::{rng, seq::IteratorRandom, Rng};
@@ -102,7 +103,7 @@ impl FromRequest for ClientIp {
 pub async fn exec(
     arc: Data<Tracker>,
     passkey: Path<String>,
-    agent: UserAgent,
+    // agent: UserAgent,
     ann: Announce,
     ClientIp(ip): ClientIp,
 ) -> Result<HttpResponse> {
@@ -133,12 +134,12 @@ pub async fn exec(
         .cloned()
         .map_err(|_| AnnounceError::UserNotFound)?;
 
-    let user = arc
-        .users
-        .read()
-        .get(&user_id)
-        .ok_or(AnnounceError::UserNotFound)
-        .cloned();
+    // let user = arc
+    //     .users
+    //     .read()
+    //     .get(&user_id)
+    //     .ok_or(AnnounceError::UserNotFound)
+    //     .cloned();
 
     // Validate torrent
     let torrent_id_res = arc
@@ -168,13 +169,19 @@ pub async fn exec(
     let now = Utc::now();
 
     let (
+        upload_factor,
+        download_factor,
+        uploaded_delta,
+        downloaded_delta,
         seeder_delta,
         leecher_delta,
-        times_completed_delta,
-        is_visible,
-        is_active_after_stop,
-        user,
+        // times_completed_delta,
+        // is_visible,
+        // is_active_after_stop,
+        // user,
         user_id,
+        has_requested_seed_list,
+        has_requested_leech_list,
         response,
     ) = {
         let mut torrent_guard = arc.torrents.lock();
@@ -186,71 +193,14 @@ pub async fn exec(
             return Err(AnnounceError::TorrentIsDeleted);
         }
 
+        // Change of upload/download compared to previous announce
+        let uploaded_delta;
+        let downloaded_delta;
         let seeder_delta;
         let leecher_delta;
         let times_completed_delta;
-        let is_visible;
-        let mut is_active_after_stop = false;
-
-        let mut peers_ipv4: Vec<u8> = Vec::new();
-        let mut peers_ipv6: Vec<u8> = Vec::new();
-
-        // Only provide peer list if
-        // - it is not a stopped event,
-        // - there exist leechers (we have to remember to update the torrent leecher count before this check)
-        if ann.event != AnnounceEvent::Stopped && torrent.leechers > 0 {
-            let mut peers: Vec<(&peer::Index, &Peer)> = Vec::with_capacity(std::cmp::min(
-                ann.numwant,
-                torrent.seeders as usize + torrent.leechers as usize,
-            ));
-
-            // Don't return peers with the same user id or those that are marked as inactive
-            let valid_peers = torrent.peers.iter().filter(|(index, peer)| {
-                index.user_id != user_id && peer.is_included_in_peer_list()
-            });
-
-            // Make sure leech peer lists are filled with seeds
-            if ann.left > 0 && torrent.seeders > 0 && ann.numwant > peers.len() {
-                // if user.receive_seed_list_rates.is_under_limit() {
-                peers.extend(
-                    valid_peers
-                        .clone()
-                        .filter(|(_index, peer)| peer.is_seeder)
-                        .choose_multiple(&mut rng(), ann.numwant),
-                );
-                // } else {
-                //     is_over_seed_list_rate_limit = true;
-                // }
-            }
-
-            // Otherwise only send leeches until the numwant is reached
-            if torrent.leechers > 0 && ann.numwant > peers.len() {
-                // if user.receive_leech_list_rates.is_under_limit() {
-                peers.extend(
-                    valid_peers
-                        .filter(|(_index, peer)| !peer.is_seeder)
-                        .choose_multiple(&mut rng(), ann.numwant.saturating_sub(peers.len())),
-                );
-                // } else {
-                //     is_over_leech_list_rate_limit = true;
-                // }
-            }
-
-            // Split peers into ipv4 and ipv6 variants and serialize their socket
-            // to bytes according to the bittorrent spec
-            for (_index, peer) in peers.iter() {
-                match peer.ip_address {
-                    IpAddr::V4(ip) => {
-                        peers_ipv4.extend(&ip.octets());
-                        peers_ipv4.extend(&peer.port.to_be_bytes());
-                    }
-                    IpAddr::V6(ip) => {
-                        peers_ipv6.extend(&ip.octets());
-                        peers_ipv6.extend(&peer.port.to_be_bytes());
-                    }
-                }
-            }
-        }
+        // let is_visible;
+        // let mut is_active_after_stop = false;
 
         if ann.event == AnnounceEvent::Stopped {
             // Try and remove the peer
@@ -260,12 +210,17 @@ pub async fn exec(
             });
             // Check if peer was removed
             if let Some(peer) = removed_peer {
+                // Calculate change in upload and download compared to previous
+                // announce
+                uploaded_delta = ann.uploaded.saturating_sub(peer.uploaded);
+                downloaded_delta = ann.downloaded.saturating_sub(peer.downloaded);
+
                 leecher_delta = 0 - peer.is_included_in_leech_list() as i32;
                 seeder_delta = 0 - peer.is_included_in_seed_list() as i32;
 
                 for (&index, &peer) in torrent.peers.iter() {
                     if index.user_id == user_id && peer.is_active {
-                        is_active_after_stop = true;
+                        // is_active_after_stop = true;
 
                         break;
                     }
@@ -283,10 +238,12 @@ pub async fn exec(
                 // the client can successfully restart its session.
                 leecher_delta = 0;
                 seeder_delta = 0;
+                uploaded_delta = 0;
+                downloaded_delta = 0;
             }
 
             times_completed_delta = 0;
-            is_visible = false;
+            // is_visible = false;
         } else {
             // Insert the peer into the in-memory db
             let mut old_peer: Option<Peer> = None;
@@ -307,6 +264,8 @@ pub async fn exec(
                     peer.has_sent_completed =
                         peer.has_sent_completed || ann.event == AnnounceEvent::Completed;
                     peer.updated_at = now;
+                    peer.uploaded = ann.uploaded;
+                    peer.downloaded = ann.downloaded;
                 })
                 .or_insert(peer::Peer {
                     ip_address: ip,
@@ -316,9 +275,11 @@ pub async fn exec(
                     is_visible: true,
                     has_sent_completed: ann.event == AnnounceEvent::Completed,
                     updated_at: now,
+                    uploaded: ann.uploaded,
+                    downloaded: ann.downloaded,
                 });
 
-            is_visible = new_peer.is_visible;
+            // is_visible = new_peer.is_visible;
 
             // Update the user and torrent seeding/leeching counts in the
             // in-memory db
@@ -329,6 +290,19 @@ pub async fn exec(
                     seeder_delta = new_peer.is_included_in_seed_list() as i32
                         - old_peer.is_included_in_seed_list() as i32;
                     times_completed_delta = (new_peer.is_seeder && !old_peer.is_seeder) as u32;
+
+                    // Calculate change in upload and download compared to previous
+                    // announce
+                    if ann.uploaded < old_peer.uploaded || ann.downloaded < old_peer.downloaded {
+                        // Client sent the same peer id but restarted the session
+                        // Assume delta is 0
+                        uploaded_delta = 0;
+                        downloaded_delta = 0;
+                    } else {
+                        // Assume client continues previously tracked session
+                        uploaded_delta = ann.uploaded - old_peer.uploaded;
+                        downloaded_delta = ann.downloaded - old_peer.downloaded;
+                    }
 
                     // Warn user if peer last announced less than
                     // announce_min_enforced seconds ago and it's
@@ -368,6 +342,11 @@ pub async fn exec(
                     leecher_delta = new_peer.is_included_in_leech_list() as i32;
                     seeder_delta = new_peer.is_included_in_seed_list() as i32;
                     times_completed_delta = 0;
+
+                    // Calculate change in upload and download compared to previous
+                    // announce
+                    uploaded_delta = 0;
+                    downloaded_delta = 0;
                 }
             }
         }
@@ -378,6 +357,64 @@ pub async fn exec(
         torrent.times_completed = torrent
             .times_completed
             .saturating_add(times_completed_delta);
+
+        // Generate peer lists to return to client
+        let mut peers_ipv4: Vec<u8> = Vec::new();
+        let mut peers_ipv6: Vec<u8> = Vec::new();
+
+        let mut has_requested_seed_list = false;
+        let mut has_requested_leech_list = false;
+
+        // Only provide peer list if
+        // - it is not a stopped event,
+        // - there exist leechers (we have to remember to update the torrent leecher count before this check)
+        if ann.event != AnnounceEvent::Stopped && torrent.leechers > 0 {
+            let mut peers: Vec<(&peer::Index, &Peer)> = Vec::with_capacity(std::cmp::min(
+                ann.numwant,
+                torrent.seeders as usize + torrent.leechers as usize,
+            ));
+
+            // Don't return peers with the same user id or those that are marked as inactive
+            let valid_peers = torrent.peers.iter().filter(|(index, peer)| {
+                index.user_id != user_id && peer.is_included_in_peer_list()
+            });
+
+            // Make sure leech peer lists are filled with seeds
+            if ann.left > 0 && torrent.seeders > 0 && ann.numwant > peers.len() {
+                has_requested_seed_list = true;
+                peers.extend(
+                    valid_peers
+                        .clone()
+                        .filter(|(_index, peer)| peer.is_seeder)
+                        .choose_multiple(&mut rng(), ann.numwant),
+                );
+            }
+
+            // Otherwise only send leeches until the numwant is reached
+            if torrent.leechers > 0 && ann.numwant > peers.len() {
+                has_requested_leech_list = true;
+                peers.extend(
+                    valid_peers
+                        .filter(|(_index, peer)| !peer.is_seeder)
+                        .choose_multiple(&mut rng(), ann.numwant.saturating_sub(peers.len())),
+                );
+            }
+
+            // Split peers into ipv4 and ipv6 variants and serialize their socket
+            // to bytes according to the bittorrent spec
+            for (_index, peer) in peers.iter() {
+                match peer.ip_address {
+                    IpAddr::V4(ip) => {
+                        peers_ipv4.extend(&ip.octets());
+                        peers_ipv4.extend(&peer.port.to_be_bytes());
+                    }
+                    IpAddr::V6(ip) => {
+                        peers_ipv6.extend(&ip.octets());
+                        peers_ipv6.extend(&peer.port.to_be_bytes());
+                    }
+                }
+            }
+        }
 
         // Write out bencoded response (keys must be sorted to be within spec)
         let mut response: Vec<u8> = Vec::with_capacity(
@@ -418,6 +455,10 @@ pub async fn exec(
 
         response.extend(b"e");
 
+        let upload_factor = std::cmp::max(arc.env.global_upload_factor, torrent.upload_factor);
+        let download_factor =
+            std::cmp::min(arc.env.global_download_factor, torrent.download_factor);
+
         // Has to be dropped before any `await` calls.
         //
         // Unfortunately, `Drop` currently doesn't work in rust with borrowed values
@@ -431,16 +472,62 @@ pub async fn exec(
         drop(torrent_guard);
 
         (
+            upload_factor,
+            download_factor,
+            uploaded_delta,
+            downloaded_delta,
             seeder_delta,
             leecher_delta,
-            times_completed_delta,
-            is_visible,
-            is_active_after_stop,
-            user,
+            // times_completed_delta,
+            // is_visible,
+            // is_active_after_stop,
+            // user,
             user_id,
+            has_requested_seed_list,
+            has_requested_leech_list,
             response,
         )
     };
+
+    let credited_uploaded_delta = upload_factor as u64 * uploaded_delta / 100;
+    let credited_downloaded_delta = download_factor as u64 * downloaded_delta / 100;
+
+    // let completed_at = if ann.event == AnnounceEvent::Completed {
+    //     Some(now)
+    // } else {
+    //     None
+    // };
+
+    if seeder_delta != 0
+        || leecher_delta != 0
+        || has_requested_seed_list
+        || has_requested_leech_list
+    {
+        arc.users.write().entry(user_id).and_modify(|user| {
+            user.num_seeding = user.num_seeding.saturating_add_signed(seeder_delta);
+            user.num_leeching = user.num_leeching.saturating_add_signed(leecher_delta);
+
+            // TODO: setup seed/leech lists getting rate limiting
+            // has been partially done in unit3d-announce
+            // if has_requested_seed_list {
+            //     user.receive_seed_list_rates.tick();
+            // }
+
+            // if has_requested_leech_list {
+            //     user.receive_leech_list_rates.tick();
+            // }
+        });
+    }
+
+    if credited_uploaded_delta != 0 || credited_downloaded_delta != 0 {
+        arc.user_updates.lock().upsert(
+            user_update::Index { user_id },
+            UserUpdate {
+                uploaded_delta: credited_uploaded_delta,
+                downloaded_delta: credited_downloaded_delta,
+            },
+        );
+    }
 
     Ok(HttpResponse::Ok().body(response))
 }
