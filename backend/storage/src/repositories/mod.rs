@@ -18,6 +18,7 @@ pub mod title_group_comment_repository;
 pub mod title_group_repository;
 pub mod torrent_report_repository;
 pub mod torrent_repository;
+pub mod torrent_request_comment_repository;
 pub mod torrent_request_repository;
 pub mod torrent_request_vote_repository;
 pub mod tracker_repository;

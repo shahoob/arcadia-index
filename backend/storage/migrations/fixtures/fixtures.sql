@@ -1335,6 +1335,15 @@ INSERT INTO public.torrent_request_votes VALUES (3, 1, '2025-09-01 18:04:08.2141
 
 
 --
+-- Data for Name: torrent_request_comments; Type: TABLE DATA; Schema: public; Owner: arcadia
+--
+
+INSERT INTO public.torrent_request_comments VALUES (1, 1, 1, 'I would really love to see this release! This is one of my favorite titles.', '2025-09-01 17:25:30.123456+00', '2025-09-01 17:25:30.123456+00');
+INSERT INTO public.torrent_request_comments VALUES (2, 1, 2, 'I can try to work on this request. Does anyone have specific source preferences?', '2025-09-01 18:10:15.789012+00', '2025-09-01 18:10:15.789012+00');
+INSERT INTO public.torrent_request_comments VALUES (3, 2, 1, 'Adding bounty for high quality encode. Thanks in advance!', '2025-09-01 18:05:22.345678+00', '2025-09-01 18:05:22.345678+00');
+
+
+--
 -- Data for Name: user_warnings; Type: TABLE DATA; Schema: public; Owner: arcadia
 --
 

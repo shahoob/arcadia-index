@@ -80,6 +80,9 @@ pub enum Error {
     #[error("could not create torrent request vote")]
     CouldNotCreateTorrentRequestVote(#[source] sqlx::Error),
 
+    #[error("could not create torrent request comment")]
+    CouldNotCreateTorrentRequestComment(#[source] sqlx::Error),
+
     #[error("could not create torrent report")]
     CouldNotCreateTorrentReport(#[source] sqlx::Error),
 

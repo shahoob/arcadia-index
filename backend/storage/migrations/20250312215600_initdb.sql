@@ -538,6 +538,14 @@ CREATE TABLE torrent_request_votes(
     FOREIGN KEY (torrent_request_id) REFERENCES torrent_requests(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by_id) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE TABLE torrent_request_comments (
+    id BIGSERIAL PRIMARY KEY,
+    torrent_request_id BIGINT NOT NULL REFERENCES torrent_requests(id) ON DELETE CASCADE,
+    created_by_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
 CREATE TABLE torrent_reports (
     id BIGSERIAL PRIMARY KEY,
     reported_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
