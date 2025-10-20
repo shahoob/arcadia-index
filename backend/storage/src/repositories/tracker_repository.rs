@@ -19,8 +19,7 @@ pub struct DBImportTorrent {
     pub seeders: i64,
     pub leechers: i64,
     pub times_completed: i32,
-    // somehow sqlx can't see that the returned value is alaways not null
-    pub is_deleted: Option<bool>,
+    pub is_deleted: bool,
 }
 
 #[derive(Debug)]
@@ -86,7 +85,7 @@ impl ConnectionPool {
                 CASE
                     WHEN deleted_at IS NOT NULL THEN TRUE
                     ELSE FALSE
-                END AS is_deleted
+                END AS "is_deleted!"
             FROM torrents
             "#
         )
@@ -102,7 +101,7 @@ impl ConnectionPool {
                 seeders: r.seeders as u32,
                 leechers: r.leechers as u32,
                 times_completed: r.times_completed as u32,
-                is_deleted: r.is_deleted.unwrap_or(false),
+                is_deleted: r.is_deleted,
                 peers: peer::Map::new(),
             };
             map.insert(r.id as u32, torrent);
