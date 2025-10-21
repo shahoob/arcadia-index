@@ -4,6 +4,8 @@ use arcadia_shared::tracker::models::{
     infohash_2_id, passkey_2_id, peer,
     torrent::{self, InfoHash, Torrent},
     user::{self, Passkey, User},
+    user_update::{self, UserUpdate},
+    Queue,
 };
 use indexmap::IndexMap;
 use std::borrow::Borrow;
@@ -153,5 +155,48 @@ impl ConnectionPool {
         }
 
         Ok(map)
+    }
+
+    pub async fn bulk_update_user_statistics(
+        &self,
+        updates: &Queue<user_update::Index, UserUpdate>,
+    ) -> arcadia_shared::error::Result<()> {
+        if updates.is_empty() {
+            return Ok(());
+        }
+
+        // Extract user IDs, uploaded deltas, and downloaded deltas into separate arrays
+        let mut user_ids = Vec::new();
+        let mut uploaded_deltas = Vec::new();
+        let mut downloaded_deltas = Vec::new();
+
+        for (index, update) in updates.records.iter() {
+            user_ids.push(index.user_id as i32);
+            uploaded_deltas.push(update.uploaded_delta as i64);
+            downloaded_deltas.push(update.downloaded_delta as i64);
+        }
+
+        // Use unnest to perform bulk update in a single query
+        let _ = sqlx::query!(
+            r#"
+                UPDATE users
+                SET
+                    uploaded = uploaded + updates.uploaded_delta,
+                    downloaded = downloaded + updates.downloaded_delta
+                    -- real_uploaded = real_uploaded + updates.uploaded_delta,
+                    -- real_downloaded = real_downloaded + updates.downloaded_delta
+                FROM (
+                    SELECT * FROM unnest($1::int[], $2::bigint[], $3::bigint[]) AS t(user_id, uploaded_delta, downloaded_delta)
+                ) AS updates
+                WHERE users.id = updates.user_id
+            "#,
+            &user_ids,
+            &uploaded_deltas,
+            &downloaded_deltas
+        )
+        .execute(self.borrow())
+        .await.map_err(|e|arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;
+
+        Ok(())
     }
 }

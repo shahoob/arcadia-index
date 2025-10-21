@@ -7,10 +7,6 @@ pub struct Env {
     pub announce_interval_grace_period: u32,
     #[envconfig(from = "ALLOWED_TORRENT_CLIENTS")]
     pub allowed_torrent_clients: AllowedTorrentClientSet,
-    #[envconfig(from = "TASK_INTERVAL_UPDATE_TORRENT_SEEDERS_LEECHERS")]
-    pub interval_update_torrent_seeders_leechers: String,
-    #[envconfig(from = "TASK_INTERVAL_REMOVE_INACTIVE_PEERS")]
-    pub interval_remove_inactive_peers: String,
     #[envconfig(from = "NUMWANT_DEFAULT")]
     pub numwant_default: usize,
     #[envconfig(from = "NUMWANT_MAX")]
@@ -23,6 +19,10 @@ pub struct Env {
     pub announce_max: u32,
     #[envconfig(from = "MAX_PEERS_PER_TORRENT_PER_USER")]
     pub max_peers_per_torrent_per_user: u8,
+    #[envconfig(from = "FLUSH_INTERVAL_MILLISECONDS")]
+    pub flush_interval_milliseconds: u64,
+    #[envconfig(from = "PEER_EXPIRY_INTERVAL")]
+    pub peer_expiry_interval: u64,
     #[envconfig(from = "REVERSE_PROXY_CLIENT_IP_HEADER_NAME")]
     pub reverse_proxy_client_ip_header_name: Option<String>,
     // Those are accessed with a request to the backend

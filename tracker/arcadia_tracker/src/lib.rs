@@ -12,6 +12,7 @@ pub mod api_doc;
 pub mod env;
 pub mod middleware;
 pub mod routes;
+pub mod scheduler;
 pub mod services;
 
 #[derive(Debug)]

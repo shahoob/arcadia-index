@@ -12,4 +12,6 @@ bincode = { version = "2.0.1", features = ["serde"] }
 reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
 thiserror = { version = "2.0.16", default-features = false }
 chrono = { version = "0.4.41", default-features = false, features = ["serde"] }
-ringmap = "0.1.5"
+ringmap = { version = "0.1.5", features = ["serde"] }
+actix-web = "4"
+log = "0.4"
