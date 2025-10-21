@@ -27,7 +27,7 @@ pub struct Peer {
     pub port: u16,
     pub is_seeder: bool,
     pub is_active: bool,
-    pub is_visible: bool,
+    // pub is_visible: bool,
     pub has_sent_completed: bool,
     #[serde(with = "ts_seconds")]
     #[bincode(with_serde)]
@@ -40,7 +40,7 @@ impl Peer {
     /// Determines if the peer should be included in the peer list
     #[inline(always)]
     pub fn is_included_in_peer_list(&self) -> bool {
-        self.is_active && self.is_visible
+        self.is_active //&& self.is_visible
     }
 
     /// Determines if the peer should be included in the list of seeds

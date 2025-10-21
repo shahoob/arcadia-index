@@ -570,7 +570,7 @@ CREATE TABLE peers (
     user_id integer NOT NULL,
     -- connectable boolean NOT NULL DEFAULT FALSE,
     active boolean NOT NULL,
-    visible boolean NOT NULL,
+    -- visible boolean NOT NULL,
     PRIMARY KEY (user_id, torrent_id, peer_id)
 );
 CREATE INDEX peers_idx_seeder_user_id ON peers (seeder, user_id);

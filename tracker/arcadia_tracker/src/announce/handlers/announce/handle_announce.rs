@@ -259,7 +259,7 @@ pub async fn exec(
                     peer.ip_address = ip;
                     peer.port = ann.port;
                     peer.is_seeder = ann.left == 0;
-                    peer.is_visible = peer.is_included_in_leech_list();
+                    // peer.is_visible = peer.is_included_in_leech_list();
                     peer.is_active = true;
                     peer.has_sent_completed =
                         peer.has_sent_completed || ann.event == AnnounceEvent::Completed;
@@ -272,7 +272,7 @@ pub async fn exec(
                     port: ann.port,
                     is_seeder: ann.left == 0,
                     is_active: true,
-                    is_visible: true,
+                    // is_visible: true,
                     has_sent_completed: ann.event == AnnounceEvent::Completed,
                     updated_at: now,
                     uploaded: ann.uploaded,
