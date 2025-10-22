@@ -5,10 +5,7 @@ use actix_web::{
 };
 use arcadia_shared::{
     error::{BackendError, Result},
-    tracker::models::{
-        user_update::{Index, UserUpdate},
-        Queue,
-    },
+    tracker::models::user_update::{Index, UserUpdate},
 };
 use arcadia_storage::redis::RedisPoolInterface;
 use bincode::config;
@@ -18,7 +15,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     bytes: Bytes,
 ) -> Result<HttpResponse> {
     let config = config::standard();
-    let (updates, _): (Queue<Index, UserUpdate>, usize) =
+    let (updates, _): (Vec<(Index, UserUpdate)>, usize) =
         bincode::decode_from_slice(&bytes, config)
             .map_err(|e| BackendError::DecodingError(e.to_string()))?;
 

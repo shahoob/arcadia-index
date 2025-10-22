@@ -571,6 +571,7 @@ dependencies = [
  "chrono 0.4.41",
  "indexmap",
  "log",
+ "parking_lot",
  "reqwest",
  "ringmap",
  "serde",
@@ -3113,9 +3114,9 @@ dependencies = [
 
 [[package]]
 name = "ringmap"
-version = "0.1.8"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5009b8c75e4c1c7ff5842d2305eba7f3b76958169493f7a97ba3bd9bcac532d"
+checksum = "0495b2394bb197c1603939f55d0d8d99da799b2157d867a525eb57eb06e403e0"
 dependencies = [
  "equivalent",
  "hashbrown 0.16.0",

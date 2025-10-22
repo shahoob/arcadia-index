@@ -24,6 +24,5 @@ pub async fn handle(arc: &Arc<Tracker>) {
 }
 
 pub async fn flush(arc: &Arc<Tracker>) {
-    let user_updates_guard = arc.user_updates.lock();
-    join!(user_updates_guard.flush_to_backend(),);
+    join!(arc.user_updates.flush_to_backend(),);
 }

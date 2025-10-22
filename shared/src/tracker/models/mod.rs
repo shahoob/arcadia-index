@@ -1,4 +1,3 @@
-use crate::error::BackendError;
 use ringmap::RingMap;
 use serde::{de::DeserializeOwned, Serialize};
 use std::hash::Hash;
@@ -30,7 +29,7 @@ pub trait Mergeable {
 #[allow(async_fn_in_trait)]
 pub trait Flushable<T> {
     /// Flushes updates to postgresql database
-    async fn flush_to_backend(&self) -> Result<u64, BackendError>;
+    async fn flush_to_backend(&self);
 }
 
 impl<K, V> Queue<K, V>

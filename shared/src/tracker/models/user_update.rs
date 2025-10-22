@@ -1,9 +1,7 @@
+use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    error::BackendError,
-    tracker::models::{Flushable, Mergeable, Queue},
-};
+use crate::tracker::models::{Flushable, Mergeable, Queue};
 
 // Fields must be in same order as database primary key
 #[derive(
@@ -36,35 +34,41 @@ impl Mergeable for UserUpdate {
     }
 }
 
-impl Flushable<UserUpdate> for Queue<Index, UserUpdate> {
-    async fn flush_to_backend(&self) -> Result<u64, BackendError> {
-        if self.is_empty() {
-            Ok(0)
+impl Flushable<UserUpdate> for Mutex<Queue<Index, UserUpdate>> {
+    async fn flush_to_backend(&self) {
+        let amount_of_updates = self.lock().records.len();
+        let updates = self
+            .lock()
+            .records
+            .drain(0..amount_of_updates)
+            .collect::<Vec<(Index, UserUpdate)>>();
+        if updates.is_empty() {
+            return;
+        }
+        let base_url =
+            std::env::var("ARCADIA_API_BASE_URL").expect("env var ARCADIA_API_BASE_URL not set");
+        let url = format!("{}/api/tracker/user-updates", base_url);
+
+        let client = reqwest::Client::new();
+        let api_key = std::env::var("API_KEY").expect("env var API_KEY not set");
+
+        let config = bincode::config::standard();
+        let bytes = bincode::encode_to_vec(updates, config).expect("error encoding to bincode");
+
+        let response = client
+            .post(url)
+            .header("api_key", api_key)
+            .header("Content-Type", "application/octet-stream")
+            .body(bytes)
+            .send()
+            .await
+            .expect("failed to send user updates to backend");
+
+        if !response.status().is_success() {
+            // TODO: reinsert the updates that failed and retry
+            panic!("Backend returned error: {}", response.text().await.unwrap());
         } else {
-            let base_url = std::env::var("ARCADIA_API_BASE_URL")
-                .expect("env var ARCADIA_API_BASE_URL not set");
-            let url = format!("{}/api/tracker/user-updates", base_url);
-
-            let client = reqwest::Client::new();
-            let api_key = std::env::var("API_KEY").expect("env var API_KEY not set");
-
-            let config = bincode::config::standard();
-            let bytes = bincode::encode_to_vec(self, config).expect("error encoding to bincode");
-
-            let response = client
-                .post(url)
-                .header("api_key", api_key)
-                .header("Content-Type", "application/octet-stream")
-                .body(bytes)
-                .send()
-                .await
-                .expect("failed to send user updates to backend");
-
-            if !response.status().is_success() {
-                panic!("Backend returned status: {}", response.status());
-            }
-
-            Ok(self.records.len() as u64)
+            log::info!("Inserted {amount_of_updates} user updates");
         }
     }
 }

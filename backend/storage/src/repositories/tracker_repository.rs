@@ -5,7 +5,6 @@ use arcadia_shared::tracker::models::{
     torrent::{self, InfoHash, Torrent},
     user::{self, Passkey, User},
     user_update::{self, UserUpdate},
-    Queue,
 };
 use indexmap::IndexMap;
 use std::borrow::Borrow;
@@ -159,7 +158,7 @@ impl ConnectionPool {
 
     pub async fn bulk_update_user_statistics(
         &self,
-        updates: &Queue<user_update::Index, UserUpdate>,
+        updates: &Vec<(user_update::Index, UserUpdate)>,
     ) -> arcadia_shared::error::Result<()> {
         if updates.is_empty() {
             return Ok(());
@@ -170,7 +169,7 @@ impl ConnectionPool {
         let mut uploaded_deltas = Vec::new();
         let mut downloaded_deltas = Vec::new();
 
-        for (index, update) in updates.records.iter() {
+        for (index, update) in updates {
             user_ids.push(index.user_id as i32);
             uploaded_deltas.push(update.uploaded_delta as i64);
             downloaded_deltas.push(update.downloaded_delta as i64);
