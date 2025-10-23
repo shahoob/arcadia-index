@@ -25,6 +25,10 @@ pub struct Env {
     pub peer_expiry_interval: u64,
     #[envconfig(from = "REVERSE_PROXY_CLIENT_IP_HEADER_NAME")]
     pub reverse_proxy_client_ip_header_name: Option<String>,
+    #[envconfig(from = "INACTIVE_PEER_TTL")]
+    pub inactive_peer_ttl: u64,
+    #[envconfig(from = "ACTIVE_PEER_TTL")]
+    pub active_peer_ttl: u64,
     // Those are accessed with a request to the backend
     #[envconfig(default = "100")]
     pub global_upload_factor: i16,
