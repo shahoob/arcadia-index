@@ -19,6 +19,7 @@ use actix_web::{
 };
 use arcadia_shared::tracker::models::{
     peer::{self, Peer},
+    torrent_update::{self, TorrentUpdate},
     user::Passkey,
     user_update::{self, UserUpdate},
 };
@@ -175,7 +176,7 @@ pub async fn exec(
         downloaded_delta,
         seeder_delta,
         leecher_delta,
-        // times_completed_delta,
+        times_completed_delta,
         // is_visible,
         // is_active_after_stop,
         // user,
@@ -478,7 +479,7 @@ pub async fn exec(
             downloaded_delta,
             seeder_delta,
             leecher_delta,
-            // times_completed_delta,
+            times_completed_delta,
             // is_visible,
             // is_active_after_stop,
             // user,
@@ -527,6 +528,22 @@ pub async fn exec(
                 downloaded_delta: credited_downloaded_delta,
                 real_uploaded_delta: ann.uploaded,
                 real_downloaded_delta: ann.downloaded,
+            },
+        );
+    }
+
+    if seeder_delta != 0
+        || leecher_delta != 0
+        || times_completed_delta != 0
+        || uploaded_delta != 0
+        || downloaded_delta != 0
+    {
+        arc.torrent_updates.lock().upsert(
+            torrent_update::Index { torrent_id },
+            TorrentUpdate {
+                seeder_delta,
+                leecher_delta,
+                times_completed_delta,
             },
         );
     }

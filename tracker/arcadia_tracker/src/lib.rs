@@ -1,4 +1,5 @@
 use arcadia_shared::tracker::models::{
+    torrent_update::{self, TorrentUpdate},
     user_update::{self, UserUpdate},
     Queue,
 };
@@ -17,13 +18,14 @@ pub mod services;
 
 #[derive(Debug)]
 pub struct Tracker {
-    env: Env,
+    pub env: Env,
 
     pub users: RwLock<arcadia_shared::tracker::models::user::Map>,
     pub passkey2id: RwLock<arcadia_shared::tracker::models::passkey_2_id::Map>,
     pub infohash2id: RwLock<arcadia_shared::tracker::models::infohash_2_id::Map>,
     pub torrents: Mutex<arcadia_shared::tracker::models::torrent::Map>,
     pub user_updates: Mutex<Queue<user_update::Index, UserUpdate>>,
+    pub torrent_updates: Mutex<Queue<torrent_update::Index, TorrentUpdate>>,
 }
 
 impl Deref for Tracker {
@@ -71,6 +73,7 @@ impl Tracker {
             infohash2id: RwLock::new(infohash2id),
             torrents: Mutex::new(torrents),
             user_updates: Mutex::new(Queue::<user_update::Index, UserUpdate>::default()),
+            torrent_updates: Mutex::new(Queue::<torrent_update::Index, TorrentUpdate>::default()),
         }
     }
 }

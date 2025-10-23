@@ -24,5 +24,8 @@ pub async fn handle(arc: &Arc<Tracker>) {
 }
 
 pub async fn flush(arc: &Arc<Tracker>) {
-    join!(arc.user_updates.flush_to_backend(),);
+    join!(
+        arc.user_updates.flush_to_backend(),
+        arc.torrent_updates.flush_to_backend()
+    );
 }

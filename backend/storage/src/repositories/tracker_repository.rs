@@ -3,6 +3,7 @@ use arcadia_common::error::Result;
 use arcadia_shared::tracker::models::{
     infohash_2_id, passkey_2_id, peer,
     torrent::{self, InfoHash, Torrent},
+    torrent_update::{self, TorrentUpdate},
     user::{self, Passkey, User},
     user_update::{self, UserUpdate},
 };
@@ -156,7 +157,7 @@ impl ConnectionPool {
         Ok(map)
     }
 
-    pub async fn bulk_update_user_statistics(
+    pub async fn bulk_update_users(
         &self,
         updates: &Vec<(user_update::Index, UserUpdate)>,
     ) -> arcadia_shared::error::Result<()> {
@@ -164,7 +165,6 @@ impl ConnectionPool {
             return Ok(());
         }
 
-        // Extract user IDs, uploaded deltas, and downloaded deltas into separate arrays
         let mut user_ids = Vec::new();
         let mut uploaded_deltas = Vec::new();
         let mut downloaded_deltas = Vec::new();
@@ -179,7 +179,6 @@ impl ConnectionPool {
             real_downloaded_deltas.push(update.real_downloaded_delta as i64);
         }
 
-        // Use unnest to perform bulk update in a single query
         let _ = sqlx::query!(
             r#"
                 UPDATE users
@@ -202,6 +201,51 @@ impl ConnectionPool {
         )
         .execute(self.borrow())
         .await.map_err(|e|arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;
+
+        Ok(())
+    }
+
+    pub async fn bulk_update_torrents(
+        &self,
+        updates: &Vec<(torrent_update::Index, TorrentUpdate)>,
+    ) -> arcadia_shared::error::Result<()> {
+        if updates.is_empty() {
+            return Ok(());
+        }
+
+        let mut torrent_ids = Vec::new();
+        let mut seeder_deltas = Vec::new();
+        let mut leecher_deltas = Vec::new();
+        let mut times_completed_deltas = Vec::new();
+
+        for (index, update) in updates {
+            torrent_ids.push(index.torrent_id as i32);
+            seeder_deltas.push(update.seeder_delta as i64);
+            leecher_deltas.push(update.leecher_delta as i64);
+            times_completed_deltas.push(update.times_completed_delta as i64);
+        }
+
+        let _ = sqlx::query!(
+            r#"
+                UPDATE torrents
+                SET
+                    seeders = seeders + updates.seeder_delta,
+                    leechers = leechers + updates.leecher_delta,
+                    times_completed = times_completed + updates.times_completed_delta
+                FROM (
+                    SELECT * FROM unnest($1::int[], $2::bigint[], $3::bigint[], $4::bigint[]) AS
+                    t(torrent_id, seeder_delta, leecher_delta, times_completed_delta)
+                ) AS updates
+                WHERE torrents.id = updates.torrent_id
+            "#,
+            &torrent_ids,
+            &seeder_deltas,
+            &leecher_deltas,
+            &times_completed_deltas,
+        )
+        .execute(self.borrow())
+        .await
+        .map_err(|e| arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;
 
         Ok(())
     }

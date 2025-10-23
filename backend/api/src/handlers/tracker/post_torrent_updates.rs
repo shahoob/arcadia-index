@@ -5,7 +5,7 @@ use actix_web::{
 };
 use arcadia_shared::{
     error::{BackendError, Result},
-    tracker::models::user_update::{Index, UserUpdate},
+    tracker::models::torrent_update::{Index, TorrentUpdate},
 };
 use arcadia_storage::redis::RedisPoolInterface;
 use bincode::config;
@@ -15,11 +15,11 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
     bytes: Bytes,
 ) -> Result<HttpResponse> {
     let config = config::standard();
-    let (updates, _): (Vec<(Index, UserUpdate)>, usize) =
+    let (updates, _): (Vec<(Index, TorrentUpdate)>, usize) =
         bincode::decode_from_slice(&bytes, config)
             .map_err(|e| BackendError::DecodingError(e.to_string()))?;
 
-    arc.pool.bulk_update_users(&updates).await?;
+    arc.pool.bulk_update_torrents(&updates).await?;
 
     Ok(HttpResponse::Ok().body(""))
 }
