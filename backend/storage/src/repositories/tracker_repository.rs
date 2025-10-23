@@ -168,11 +168,15 @@ impl ConnectionPool {
         let mut user_ids = Vec::new();
         let mut uploaded_deltas = Vec::new();
         let mut downloaded_deltas = Vec::new();
+        let mut real_uploaded_deltas = Vec::new();
+        let mut real_downloaded_deltas = Vec::new();
 
         for (index, update) in updates {
             user_ids.push(index.user_id as i32);
             uploaded_deltas.push(update.uploaded_delta as i64);
             downloaded_deltas.push(update.downloaded_delta as i64);
+            real_uploaded_deltas.push(update.real_uploaded_delta as i64);
+            real_downloaded_deltas.push(update.real_downloaded_delta as i64);
         }
 
         // Use unnest to perform bulk update in a single query
@@ -181,17 +185,20 @@ impl ConnectionPool {
                 UPDATE users
                 SET
                     uploaded = uploaded + updates.uploaded_delta,
-                    downloaded = downloaded + updates.downloaded_delta
-                    -- real_uploaded = real_uploaded + updates.uploaded_delta,
-                    -- real_downloaded = real_downloaded + updates.downloaded_delta
+                    downloaded = downloaded + updates.downloaded_delta,
+                    real_uploaded = real_uploaded + updates.uploaded_delta,
+                    real_downloaded = real_downloaded + updates.downloaded_delta
                 FROM (
-                    SELECT * FROM unnest($1::int[], $2::bigint[], $3::bigint[]) AS t(user_id, uploaded_delta, downloaded_delta)
+                    SELECT * FROM unnest($1::int[], $2::bigint[], $3::bigint[], $4::bigint[], $5::bigint[]) AS
+                    t(user_id, uploaded_delta, downloaded_delta, real_uploaded_delta, real_downloaded_delta)
                 ) AS updates
                 WHERE users.id = updates.user_id
             "#,
             &user_ids,
             &uploaded_deltas,
-            &downloaded_deltas
+            &downloaded_deltas,
+            &real_uploaded_deltas,
+            &real_downloaded_deltas
         )
         .execute(self.borrow())
         .await.map_err(|e|arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;

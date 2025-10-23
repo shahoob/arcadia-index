@@ -25,12 +25,20 @@ pub struct Index {
 pub struct UserUpdate {
     pub uploaded_delta: u64,
     pub downloaded_delta: u64,
+    pub real_uploaded_delta: u64,
+    pub real_downloaded_delta: u64,
 }
 
 impl Mergeable for UserUpdate {
     fn merge(&mut self, new: &Self) {
         self.uploaded_delta = self.uploaded_delta.saturating_add(new.uploaded_delta);
         self.downloaded_delta = self.downloaded_delta.saturating_add(new.downloaded_delta);
+        self.real_uploaded_delta = self
+            .real_uploaded_delta
+            .saturating_add(new.real_uploaded_delta);
+        self.real_downloaded_delta = self
+            .real_downloaded_delta
+            .saturating_add(new.real_downloaded_delta);
     }
 }
 

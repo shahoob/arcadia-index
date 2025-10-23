@@ -525,6 +525,8 @@ pub async fn exec(
             UserUpdate {
                 uploaded_delta: credited_uploaded_delta,
                 downloaded_delta: credited_downloaded_delta,
+                real_uploaded_delta: ann.uploaded,
+                real_downloaded_delta: ann.downloaded,
             },
         );
     }
