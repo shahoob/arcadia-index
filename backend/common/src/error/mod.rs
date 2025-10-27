@@ -1,5 +1,3 @@
-pub mod announce;
-
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("database error: {0}")]

@@ -1,4 +1,3 @@
-pub mod announce_repository;
 pub mod artist_repository;
 pub mod auth_repository;
 pub mod collage_repository;
