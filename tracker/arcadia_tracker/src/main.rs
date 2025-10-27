@@ -45,4 +45,5 @@ async fn main() -> std::io::Result<()> {
     .run();
 
     server.await
+    //TODO: add graceful shutdown
 }

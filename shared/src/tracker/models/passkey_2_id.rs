@@ -42,7 +42,6 @@ impl Map {
 
         let config = config::standard();
         let (map, _): (Map, usize) = bincode::decode_from_slice(&bytes[..], config).unwrap();
-        println!("Decoded map: {:?}", map);
 
         map
     }

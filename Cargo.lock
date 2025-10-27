@@ -592,6 +592,7 @@ dependencies = [
  "chrono 0.4.41",
  "deadpool",
  "deadpool-redis",
+ "futures-util",
  "indexmap",
  "musicbrainz_rs",
  "rand 0.9.2",
