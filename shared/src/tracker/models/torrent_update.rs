@@ -65,7 +65,7 @@ impl Flushable<TorrentUpdate> for Mutex<Queue<Index, TorrentUpdate>> {
             .body(bytes)
             .send()
             .await
-            .expect("failed to send user updates to backend");
+            .expect("failed to send torrent updates to backend");
 
         if !response.status().is_success() {
             // TODO: reinsert the updates that failed and retry

@@ -8,6 +8,7 @@ pub mod passkey_2_id;
 pub mod peer;
 pub mod peer_id;
 pub mod torrent;
+pub mod torrent_activity_update;
 pub mod torrent_update;
 pub mod user;
 pub mod user_update;
