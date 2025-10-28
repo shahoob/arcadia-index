@@ -111,11 +111,11 @@
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel value="1" v-if="slotProps.data.mediainfo !== null">
-          <AccordionHeader class="aa" @click="toggleMediaInfo"
-            ><MediaInfoPreview :showPreview="showMediaInfoPreview" :mediainfo="slotProps.data.mediainfo"
-          /></AccordionHeader>
+          <AccordionHeader class="aa">
+            <div class="header-text">{{ t('torrent.mediainfo') }}</div>
+          </AccordionHeader>
           <AccordionContent>
-            <MediaInfoFullTable :mediainfo="slotProps.data.mediainfo" />
+            <MediaInfoPreview :mediainfo="slotProps.data.mediainfo" />
           </AccordionContent>
         </AccordionPanel>
         <AccordionPanel v-if="slotProps.data.screenshots && slotProps.data.screenshots.length > 0" value="3">
@@ -188,7 +188,6 @@ import { useUserStore } from '@/stores/user'
 import { useEditionGroupStore } from '@/stores/editionGroup'
 import ImagePreview from '../ImagePreview.vue'
 import MediaInfoPreview from '@/components/mediainfo/MediaInfoPreview.vue'
-import MediaInfoFullTable from '../mediainfo/MediaInfoFullTable.vue'
 
 interface Props {
   title_group: TitleGroup | TitleGroupHierarchyLite
@@ -259,11 +258,6 @@ const getEditionGroupById = (editionGroupId: number): EditionGroupInfoLite => {
 const getEditionGroupSlugById = (editionGroupId: number): string => {
   const editionGroup = getEditionGroupById(editionGroupId)
   return editionGroup ? getEditionGroupSlug(editionGroup) : ''
-}
-
-const showMediaInfoPreview = ref(true)
-const toggleMediaInfo = () => {
-  showMediaInfoPreview.value = !showMediaInfoPreview.value
 }
 
 onMounted(() => {
