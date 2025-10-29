@@ -431,4 +431,47 @@ impl ConnectionPool {
 
         Ok(result.rows_affected())
     }
+
+    pub async fn bulk_delete_peers(
+        &self,
+        peers: &Vec<peer_update::Index>,
+    ) -> arcadia_shared::error::Result<()> {
+        if peers.is_empty() {
+            return Ok(());
+        }
+
+        let mut user_ids: Vec<i32> = Vec::with_capacity(peers.len());
+        let mut torrent_ids: Vec<i32> = Vec::with_capacity(peers.len());
+        let mut peer_ids: Vec<Vec<u8>> = Vec::with_capacity(peers.len());
+
+        for index in peers {
+            user_ids.push(index.user_id as i32);
+            torrent_ids.push(index.torrent_id as i32);
+            peer_ids.push(index.peer_id.to_vec());
+        }
+
+        let _ = sqlx::query!(
+            r#"
+                DELETE FROM peers
+                WHERE (user_id, torrent_id, peer_id) IN (
+                    SELECT t.user_id, t.torrent_id, t.peer_id
+                    FROM (
+                        SELECT * FROM unnest(
+                            $1::int[],
+                            $2::int[],
+                            $3::bytea[]
+                        ) AS t(user_id, torrent_id, peer_id)
+                    ) AS t
+                )
+            "#,
+            &user_ids,
+            &torrent_ids,
+            &peer_ids
+        )
+        .execute(self.borrow())
+        .await
+        .map_err(|e| arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;
+
+        Ok(())
+    }
 }

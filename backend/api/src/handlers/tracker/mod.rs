@@ -1,13 +1,15 @@
+pub mod delete_peers;
 pub mod get_env;
 pub mod get_infohash_2_id;
 pub mod get_passkey_2_id;
 pub mod get_torrents;
 pub mod get_users;
+pub mod post_peer_updates;
 pub mod post_torrent_updates;
 pub mod post_user_updates;
 
 use actix_web::{
-    web::{get, post, resource, ServiceConfig},
+    web::{delete, get, post, resource, ServiceConfig},
     HttpResponse,
 };
 use arcadia_common::error::Result;
@@ -25,6 +27,8 @@ pub fn config<R: RedisPoolInterface + 'static>(cfg: &mut ServiceConfig) {
     cfg.service(
         resource("/torrent-updates").route(post().to(self::post_torrent_updates::exec::<R>)),
     );
+    cfg.service(resource("/peer-updates").route(post().to(self::post_peer_updates::exec::<R>)));
+    cfg.service(resource("/peers").route(delete().to(self::delete_peers::exec::<R>)));
 }
 
 fn binary_response<T: bincode::Encode>(value: &T) -> Result<HttpResponse> {

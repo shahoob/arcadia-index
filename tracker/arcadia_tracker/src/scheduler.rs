@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
 use arcadia_shared::tracker::models::{
+    peer::remove_peers_from_backend,
+    peer_update,
     torrent_update::{self, TorrentUpdate},
     Flushable,
 };
@@ -41,6 +43,7 @@ pub async fn reap(arc: &Arc<Tracker>) {
     let active_cutoff = Utc::now().checked_sub_signed(ttl).unwrap();
     let ttl = Duration::seconds(arc.env.inactive_peer_ttl.try_into().unwrap());
     let inactive_cutoff = Utc::now().checked_sub_signed(ttl).unwrap();
+    let mut all_removed_peers: Vec<peer_update::Index> = Vec::new();
 
     for (torrent_id, torrent) in arc.torrents.lock().iter_mut() {
         let mut seeder_delta: i32 = 0;
@@ -48,9 +51,23 @@ pub async fn reap(arc: &Arc<Tracker>) {
 
         // If a peer is marked as inactive and it has not announced for
         // more than inactive_peer_ttl, then it is permanently deleted.
-        torrent
+        let torrent_removed_peers = torrent
             .peers
-            .retain(|_index, peer| inactive_cutoff <= peer.updated_at || peer.is_active);
+            .extract_if(.., |_index, peer| {
+                inactive_cutoff <= peer.updated_at || peer.is_active
+            })
+            .map(|(index, _peer)| index)
+            .collect::<Vec<arcadia_shared::tracker::models::peer::Index>>();
+        all_removed_peers.extend(
+            torrent_removed_peers
+                .into_iter()
+                .map(|index| peer_update::Index {
+                    torrent_id: *torrent_id,
+                    peer_id: index.peer_id,
+                    user_id: index.user_id,
+                })
+                .collect::<Vec<peer_update::Index>>(),
+        );
 
         for (index, peer) in torrent.peers.iter_mut() {
             // Peers get marked as inactive if not announced for more than
@@ -90,4 +107,6 @@ pub async fn reap(arc: &Arc<Tracker>) {
             );
         }
     }
+
+    remove_peers_from_backend(&all_removed_peers).await;
 }

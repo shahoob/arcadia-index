@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize, Serializer};
 use sqlx::types::chrono::{DateTime, Utc};
 
 use crate::tracker::models::peer_id::PeerId;
+use crate::tracker::models::peer_update;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, bincode::Encode, bincode::Decode)]
 pub struct Map(#[bincode(with_serde)] IndexMap<Index, Peer>);
@@ -94,5 +95,37 @@ impl Serialize for Index {
         S: Serializer,
     {
         serializer.serialize_str(&self.to_string())
+    }
+}
+
+// we use peer_update::Index because we also need the torrent_id, which isn't in peer::Index
+pub async fn remove_peers_from_backend(peers: &Vec<peer_update::Index>) {
+    if peers.is_empty() {
+        return;
+    }
+    let base_url =
+        std::env::var("ARCADIA_API_BASE_URL").expect("env var ARCADIA_API_BASE_URL not set");
+    let url = format!("{}/api/tracker/peers", base_url);
+
+    let client = reqwest::Client::new();
+    let api_key = std::env::var("API_KEY").expect("env var API_KEY not set");
+
+    let config = bincode::config::standard();
+    let bytes = bincode::encode_to_vec(peers, config).expect("error encoding to bincode");
+
+    let response = client
+        .delete(url)
+        .header("api_key", api_key)
+        .header("Content-Type", "application/octet-stream")
+        .body(bytes)
+        .send()
+        .await
+        .expect("failed to send peer removals to backend");
+
+    if !response.status().is_success() {
+        // TODO: reinsert the updates that failed and retry
+        panic!("Backend returned error: {}", response.text().await.unwrap());
+    } else {
+        log::info!("Removed {} peers", peers.len());
     }
 }
