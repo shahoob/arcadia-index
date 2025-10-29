@@ -19,6 +19,7 @@ use actix_web::{
 };
 use arcadia_shared::tracker::models::{
     peer::{self, Peer},
+    peer_update::{self, PeerUpdate},
     torrent_update::{self, TorrentUpdate},
     user::Passkey,
     user_update::{self, UserUpdate},
@@ -104,9 +105,9 @@ impl FromRequest for ClientIp {
 pub async fn exec(
     arc: Data<Tracker>,
     passkey: Path<String>,
-    // agent: UserAgent,
+    user_agent: UserAgent,
     ann: Announce,
-    ClientIp(ip): ClientIp,
+    ClientIp(client_ip): ClientIp,
 ) -> Result<HttpResponse> {
     // let headers = req.headers();
     // if headers.contains_key(ACCEPT_LANGUAGE)
@@ -257,7 +258,7 @@ pub async fn exec(
                 .and_modify(|peer| {
                     old_peer = Some(*peer);
 
-                    peer.ip_address = ip;
+                    peer.ip_address = client_ip;
                     peer.port = ann.port;
                     peer.is_seeder = ann.left == 0;
                     // peer.is_visible = peer.is_included_in_leech_list();
@@ -269,7 +270,7 @@ pub async fn exec(
                     peer.downloaded = ann.downloaded;
                 })
                 .or_insert(peer::Peer {
-                    ip_address: ip,
+                    ip_address: client_ip,
                     port: ann.port,
                     is_seeder: ann.left == 0,
                     is_active: true,
@@ -519,6 +520,26 @@ pub async fn exec(
             // }
         });
     }
+
+    arc.peer_updates.lock().upsert(
+        peer_update::Index {
+            peer_id: ann.peer_id,
+            torrent_id,
+            user_id,
+        },
+        PeerUpdate {
+            ip: client_ip,
+            port: ann.port,
+            agent: user_agent.0,
+            uploaded: ann.uploaded,
+            downloaded: ann.downloaded,
+            is_active: ann.event != AnnounceEvent::Stopped,
+            is_seeder: ann.left == 0,
+            left: ann.left,
+            created_at: now,
+            updated_at: now,
+        },
+    );
 
     if credited_uploaded_delta != 0 || credited_downloaded_delta != 0 {
         arc.user_updates.lock().upsert(

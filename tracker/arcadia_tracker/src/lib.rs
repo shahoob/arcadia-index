@@ -1,4 +1,5 @@
 use arcadia_shared::tracker::models::{
+    peer_update::{self, PeerUpdate},
     torrent_update::{self, TorrentUpdate},
     user_update::{self, UserUpdate},
     Queue,
@@ -26,6 +27,7 @@ pub struct Tracker {
     pub torrents: Mutex<arcadia_shared::tracker::models::torrent::Map>,
     pub user_updates: Mutex<Queue<user_update::Index, UserUpdate>>,
     pub torrent_updates: Mutex<Queue<torrent_update::Index, TorrentUpdate>>,
+    pub peer_updates: Mutex<Queue<peer_update::Index, PeerUpdate>>,
 }
 
 impl Deref for Tracker {
@@ -74,6 +76,7 @@ impl Tracker {
             torrents: Mutex::new(torrents),
             user_updates: Mutex::new(Queue::<user_update::Index, UserUpdate>::default()),
             torrent_updates: Mutex::new(Queue::<torrent_update::Index, TorrentUpdate>::default()),
+            peer_updates: Mutex::new(Queue::<peer_update::Index, PeerUpdate>::default()),
         }
     }
 }

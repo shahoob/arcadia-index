@@ -4,6 +4,7 @@ use arcadia_shared::tracker::models::{
     infohash_2_id, passkey_2_id,
     peer::{self, Peer},
     peer_id::PeerId,
+    peer_update::{self, PeerUpdate},
     torrent::{self, InfoHash, Torrent},
     torrent_update::{self, TorrentUpdate},
     user::{self, Passkey, User},
@@ -12,6 +13,7 @@ use arcadia_shared::tracker::models::{
 use chrono::{DateTime, Utc};
 use futures_util::TryStreamExt;
 use indexmap::IndexMap;
+use sqlx::types::ipnetwork::IpNetwork;
 use std::{borrow::Borrow, net::IpAddr};
 
 // This file contains functions for Arcadia's tracker
@@ -295,5 +297,138 @@ impl ConnectionPool {
         .map_err(|e| arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;
 
         Ok(())
+    }
+
+    pub async fn bulk_upsert_peers(
+        &self,
+        updates: &Vec<(peer_update::Index, PeerUpdate)>,
+    ) -> arcadia_shared::error::Result<u64> {
+        if updates.is_empty() {
+            return Ok(0);
+        }
+
+        let mut user_ids: Vec<i32> = Vec::with_capacity(updates.len());
+        let mut torrent_ids: Vec<i32> = Vec::with_capacity(updates.len());
+        let mut peer_ids: Vec<Vec<u8>> = Vec::with_capacity(updates.len());
+        let mut ips: Vec<IpNetwork> = Vec::with_capacity(updates.len());
+        let mut ports: Vec<i32> = Vec::with_capacity(updates.len());
+        let mut agents: Vec<String> = Vec::with_capacity(updates.len());
+        let mut uploadeds: Vec<i64> = Vec::with_capacity(updates.len());
+        let mut downloadeds: Vec<i64> = Vec::with_capacity(updates.len());
+        let mut lefts: Vec<i64> = Vec::with_capacity(updates.len());
+        let mut actives: Vec<bool> = Vec::with_capacity(updates.len());
+        let mut seeders: Vec<bool> = Vec::with_capacity(updates.len());
+        let mut created_ats: Vec<DateTime<Utc>> = Vec::with_capacity(updates.len());
+        let mut updated_ats: Vec<DateTime<Utc>> = Vec::with_capacity(updates.len());
+
+        for (index, update) in updates {
+            user_ids.push(index.user_id as i32);
+            torrent_ids.push(index.torrent_id as i32);
+            peer_ids.push(index.peer_id.to_vec());
+            ips.push(IpNetwork::from(update.ip));
+            ports.push(update.port as i32);
+            agents.push(update.agent.clone());
+            uploadeds.push(update.uploaded as i64);
+            downloadeds.push(update.downloaded as i64);
+            lefts.push(update.left as i64);
+            actives.push(update.is_active);
+            seeders.push(update.is_seeder);
+            created_ats.push(update.created_at);
+            updated_ats.push(update.updated_at);
+        }
+
+        let result = sqlx::query!(
+            r#"
+                INSERT INTO peers (
+                    peer_id,
+                    ip,
+                    port,
+                    agent,
+                    uploaded,
+                    downloaded,
+                    "left",
+                    active,
+                    seeder,
+                    created_at,
+                    updated_at,
+                    torrent_id,
+                    user_id
+                )
+                SELECT
+                    t.peer_id,
+                    t.ip,
+                    t.port,
+                    t.agent,
+                    t.uploaded,
+                    t.downloaded,
+                    t."left",
+                    t.active,
+                    t.seeder,
+                    -- stored as timestamp without time zone in DB
+                    (t.created_at AT TIME ZONE 'UTC')::timestamp,
+                    (t.updated_at AT TIME ZONE 'UTC')::timestamp,
+                    t.torrent_id,
+                    t.user_id
+                FROM (
+                    SELECT * FROM unnest(
+                        $1::bytea[],
+                        $2::inet[],
+                        $3::int[],
+                        $4::varchar[],
+                        $5::bigint[],
+                        $6::bigint[],
+                        $7::bigint[],
+                        $8::boolean[],
+                        $9::boolean[],
+                        $10::timestamptz[],
+                        $11::timestamptz[],
+                        $12::int[],
+                        $13::int[]
+                    ) AS t(
+                        peer_id,
+                        ip,
+                        port,
+                        agent,
+                        uploaded,
+                        downloaded,
+                        "left",
+                        active,
+                        seeder,
+                        created_at,
+                        updated_at,
+                        torrent_id,
+                        user_id
+                    )
+                ) AS t
+                ON CONFLICT (user_id, torrent_id, peer_id) DO UPDATE SET
+                    ip = EXCLUDED.ip,
+                    port = EXCLUDED.port,
+                    agent = EXCLUDED.agent,
+                    uploaded = EXCLUDED.uploaded,
+                    downloaded = EXCLUDED.downloaded,
+                    "left" = EXCLUDED."left",
+                    active = EXCLUDED.active,
+                    seeder = EXCLUDED.seeder,
+                    updated_at = EXCLUDED.updated_at
+            "#,
+            &peer_ids,
+            &ips,
+            &ports,
+            &agents,
+            &uploadeds,
+            &downloadeds,
+            &lefts,
+            &actives,
+            &seeders,
+            &created_ats,
+            &updated_ats,
+            &torrent_ids,
+            &user_ids
+        )
+        .execute(self.borrow())
+        .await
+        .map_err(|e| arcadia_shared::error::BackendError::DatabseError(e.to_string()))?;
+
+        Ok(result.rows_affected())
     }
 }
