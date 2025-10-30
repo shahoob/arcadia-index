@@ -1,7 +1,7 @@
-use actix_web::{middleware, App, HttpServer};
+use actix_web::{middleware, web::Data, App, HttpServer};
 use arcadia_tracker::{api_doc::ApiDoc, env::Env, routes::init, scheduler, Tracker};
 use envconfig::Envconfig;
-use std::{env, sync::Arc};
+use std::env;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -20,7 +20,7 @@ async fn main() -> std::io::Result<()> {
     let server_url = format!("{}:{}", web_server_host, web_server_port);
     println!("Server running at http://{server_url}");
 
-    let arc = Arc::new(Tracker::new(env).await);
+    let arc = Data::new(Tracker::new(env).await);
 
     // Starts scheduler to automate flushing updates
     // to database and inactive peer removal.

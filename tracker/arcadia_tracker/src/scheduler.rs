@@ -1,5 +1,4 @@
-use std::sync::Arc;
-
+use actix_web::web::Data;
 use arcadia_shared::tracker::models::{
     peer::remove_peers_from_backend,
     peer_update,
@@ -11,7 +10,7 @@ use tokio::join;
 
 use crate::Tracker;
 
-pub async fn handle(arc: &Arc<Tracker>) {
+pub async fn handle(arc: &Data<Tracker>) {
     let mut interval = tokio::time::interval(std::time::Duration::from_millis(1));
     let mut counter = 0_u64;
 
@@ -29,7 +28,7 @@ pub async fn handle(arc: &Arc<Tracker>) {
     }
 }
 
-pub async fn flush(arc: &Arc<Tracker>) {
+pub async fn flush(arc: &Data<Tracker>) {
     join!(
         arc.user_updates.flush_to_backend(),
         arc.torrent_updates.flush_to_backend(),
@@ -38,7 +37,7 @@ pub async fn flush(arc: &Arc<Tracker>) {
 }
 
 /// Remove peers that have not announced for some time
-pub async fn reap(arc: &Arc<Tracker>) {
+pub async fn reap(arc: &Data<Tracker>) {
     let ttl = Duration::seconds(arc.env.active_peer_ttl.try_into().unwrap());
     let active_cutoff = Utc::now().checked_sub_signed(ttl).unwrap();
     let ttl = Duration::seconds(arc.env.inactive_peer_ttl.try_into().unwrap());
