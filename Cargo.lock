@@ -609,6 +609,7 @@ dependencies = [
 name = "arcadia_tracker"
 version = "0.1.0"
 dependencies = [
+ "actix-http",
  "actix-web",
  "actix-web-httpauth",
  "anyhow",
