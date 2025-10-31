@@ -1,6 +1,6 @@
 use actix_web::web::Data;
 use arcadia_shared::tracker::models::{
-    peer::remove_peers_from_backend,
+    peer::remove_peers_from_database,
     peer_update,
     torrent_update::{self, TorrentUpdate},
     Flushable,
@@ -30,9 +30,9 @@ pub async fn handle(arc: &Data<Tracker>) {
 
 pub async fn flush(arc: &Data<Tracker>) {
     join!(
-        arc.user_updates.flush_to_backend(),
-        arc.torrent_updates.flush_to_backend(),
-        arc.peer_updates.flush_to_backend()
+        arc.user_updates.flush_to_database(&arc.pool),
+        arc.torrent_updates.flush_to_database(&arc.pool),
+        arc.peer_updates.flush_to_database(&arc.pool)
     );
 }
 
@@ -107,5 +107,5 @@ pub async fn reap(arc: &Data<Tracker>) {
         }
     }
 
-    remove_peers_from_backend(&all_removed_peers).await;
+    remove_peers_from_database(&arc.pool, &all_removed_peers).await;
 }
