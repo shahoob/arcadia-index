@@ -73,7 +73,7 @@ pub async fn exec<R: RedisPoolInterface + 'static>(
 
     Ok(HttpResponse::Ok().json(json!({
         "user": current_user,
-        "peers": "[]",//peers,
+        "peers": [] ,
         "user_warnings": user_warnings,
         "unread_conversations_amount": unread_conversations_amount,
         "unread_notifications_amount":unread_notifications_amount,
