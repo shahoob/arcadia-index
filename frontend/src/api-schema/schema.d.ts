@@ -2651,11 +2651,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                limit: number | null;
-                page: number | null;
-                status: null | components["schemas"]["UserApplicationStatus"];
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody: {
